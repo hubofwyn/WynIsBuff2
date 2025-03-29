@@ -1,4 +1,5 @@
 import RAPIER from '@dimforge/rapier2d-compat';
+import { EventNames } from '../constants/EventNames';
 
 /**
  * LevelManager class handles the creation and management of level elements
@@ -9,10 +10,12 @@ export class LevelManager {
      * Create a new LevelManager
      * @param {Phaser.Scene} scene - The scene this manager belongs to
      * @param {RAPIER.World} world - The Rapier physics world
+     * @param {EventSystem} eventSystem - The event system for communication
      */
-    constructor(scene, world) {
+    constructor(scene, world, eventSystem) {
         this.scene = scene;
         this.world = world;
+        this.eventSystem = eventSystem;
         
         // Store created platforms for later reference
         this.platforms = [];
@@ -63,6 +66,14 @@ export class LevelManager {
                 sprite: groundSprite,
                 collider: groundCollider
             };
+            
+            // Emit event
+            if (this.eventSystem) {
+                this.eventSystem.emit(EventNames.custom('level', 'groundCreated'), {
+                    position: { x: width / 2, y },
+                    dimensions: { width, height }
+                });
+            }
             
             return this.ground;
         } catch (error) {
@@ -132,6 +143,16 @@ export class LevelManager {
                     });
                     
                     console.log(`[LevelManager] Platform ${index+1} created successfully`);
+                    
+                    // Emit event for each platform
+                    if (this.eventSystem) {
+                        this.eventSystem.emit(EventNames.custom('level', 'platformCreated'), {
+                            index,
+                            position: { x: platform.x, y: platform.y },
+                            dimensions: { width: platform.width, height: platform.height },
+                            color: platform.color
+                        });
+                    }
                 } catch (error) {
                     console.error(`[LevelManager] Error creating platform ${index+1}:`, error);
                 }

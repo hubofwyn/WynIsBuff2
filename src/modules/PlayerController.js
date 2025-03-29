@@ -1,4 +1,5 @@
 import RAPIER from '@dimforge/rapier2d-compat';
+import { EventNames } from '../constants/EventNames';
 
 /**
  * PlayerController class handles all player-related functionality including
@@ -9,12 +10,14 @@ export class PlayerController {
      * Create a new PlayerController
      * @param {Phaser.Scene} scene - The scene this controller belongs to
      * @param {RAPIER.World} world - The Rapier physics world
+     * @param {EventSystem} eventSystem - The event system for communication
      * @param {number} x - Initial x position
      * @param {number} y - Initial y position
      */
-    constructor(scene, world, x, y) {
+    constructor(scene, world, eventSystem, x = 512, y = 300) {
         this.scene = scene;
         this.world = world;
+        this.eventSystem = eventSystem;
         
         // Player state
         this.body = null;
@@ -23,17 +26,57 @@ export class PlayerController {
         this.isOnGround = false;
         this.jumpsUsed = 0;
         this.maxJumps = 3;
+        this.jumpState = 'grounded'; // 'grounded', 'rising', 'peak', 'falling'
         
         // Movement tracking variables
         this._lastMoveDir = 'none';
         this._lastOnGround = false;
         this._coyoteTimer = null;
+        this._jumpBufferTimer = null;
+        this._jumpKeyHeld = false;
+        this._jumpReleased = false;
+        this._currentJumpNumber = 0;
+        this._lastVelocityY = 0;
+        this._landingRecoveryTimer = null;
+        this._isInLandingRecovery = false;
+        
+        // Jump physics parameters
+        this.jumpParams = {
+            baseForce: -45,          // Base jump force
+            releaseMultiplier: 0.5,  // Multiplier when jump key is released early
+            minJumpTime: 100,        // Minimum jump time in ms
+            bufferTime: 150,         // Jump buffer time in ms
+            landingRecoveryTime: 80, // Landing recovery time in ms
+            
+            // Jump forces for each jump
+            forces: {
+                1: -45, // First jump
+                2: -50, // Second jump
+                3: -55  // Third jump
+            },
+            
+            // Air control parameters
+            airControl: {
+                acceleration: 0.6,   // Air acceleration factor (0-1)
+                maxSpeed: 30,        // Maximum air speed
+                directionChangeFactor: 1.2 // Direction change factor in air
+            }
+        };
         
         // Create the player at the specified position
         this.create(x, y);
         
         // Set up input handlers
         this.setupControls();
+        
+        // Emit player spawn event
+        if (this.eventSystem) {
+            this.eventSystem.emit(EventNames.PLAYER_SPAWN, {
+                position: { x, y },
+                maxJumps: this.maxJumps,
+                sprite: this.sprite
+            });
+        }
     }
     
     /**
@@ -116,17 +159,24 @@ export class PlayerController {
     /**
      * Update method called every frame
      * @param {Array} platforms - Array of platforms to check for collisions
-     * @param {Object} jumpText - Phaser Text object to update with jump count
      */
-    update(platforms, jumpText) {
+    update(platforms) {
         if (!this.body) return;
         
         // Process collisions to detect ground contact
         this.processCollisions(platforms);
         
+        // Track jump state changes
+        this.updateJumpState();
+        
         // Handle player movement and jumping
         this.handleMovement();
-        this.handleJumping(jumpText);
+        this.handleJumping();
+        
+        // Emit move event for particle effects
+        if (Math.abs(this.body.linvel().x) > 5) {
+            this.emitMoveEvent();
+        }
     }
     
     /**
@@ -194,6 +244,63 @@ export class PlayerController {
                     this._coyoteTimer.remove();
                     this._coyoteTimer = null;
                 }
+                
+                // Execute buffered jump if there is one
+                if (this._jumpBufferTimer && !this._isInLandingRecovery) {
+                    this.executeJump();
+                    this._jumpBufferTimer.remove();
+                    this._jumpBufferTimer = null;
+                }
+            }
+            
+            // Store previous ground state
+            const wasOnGround = this._lastOnGround;
+            
+            // Emit land event if just landed
+            if (!wasOnGround && this.isOnGround && this.eventSystem) {
+                // Start landing recovery timer
+                this._isInLandingRecovery = true;
+                this._landingRecoveryTimer = this.scene.time.delayedCall(
+                    this.jumpParams.landingRecoveryTime,
+                    () => {
+                        this._isInLandingRecovery = false;
+                        this._landingRecoveryTimer = null;
+                    }
+                );
+                
+                // Apply a small squash effect on landing
+                this.applySquashEffect(1.2, 0.8, 100);
+                
+                // Emit the land event
+                this.eventSystem.emit(EventNames.PLAYER_LAND, {
+                    position: {
+                        x: playerPos.x,
+                        y: playerPos.y
+                    },
+                    velocity: {
+                        x: playerVel.x,
+                        y: playerVel.y
+                    },
+                    sprite: this.sprite
+                });
+                
+                // Also emit the land impact event for effects
+                this.eventSystem.emit(EventNames.PLAYER_LAND_IMPACT, {
+                    position: {
+                        x: playerPos.x,
+                        y: playerPos.y
+                    },
+                    velocity: {
+                        x: playerVel.x,
+                        y: playerVel.y
+                    },
+                    impactForce: Math.min(Math.abs(playerVel.y) / 20, 2), // Cap at 2x
+                    sprite: this.sprite
+                });
+                
+                // Reset jump state
+                this.jumpState = 'grounded';
+                this._currentJumpNumber = 0;
             }
             
             // Store ground state for next frame
@@ -204,6 +311,122 @@ export class PlayerController {
     }
     
     /**
+     * Update jump state based on velocity changes
+     */
+    updateJumpState() {
+        if (!this.body) return;
+        
+        const currentVel = this.body.linvel();
+        const previousVel = this._lastVelocityY;
+        
+        // Only track jump state if we're in the air and have used jumps
+        if (!this.isOnGround && this._currentJumpNumber > 0) {
+            // Detect rising to peak transition
+            if (this.jumpState === 'rising' && currentVel.y >= -2 && currentVel.y <= 2) {
+                this.jumpState = 'peak';
+                
+                // Emit jump peak event
+                if (this.eventSystem) {
+                    this.eventSystem.emit(EventNames.PLAYER_JUMP_PEAK, {
+                        position: {
+                            x: this.body.translation().x,
+                            y: this.body.translation().y
+                        },
+                        jumpNumber: this._currentJumpNumber,
+                        sprite: this.sprite
+                    });
+                }
+            }
+            // Detect peak to falling transition
+            else if (this.jumpState === 'peak' && currentVel.y > 2) {
+                this.jumpState = 'falling';
+                
+                // Emit jump fall event
+                if (this.eventSystem) {
+                    this.eventSystem.emit(EventNames.PLAYER_JUMP_FALL, {
+                        position: {
+                            x: this.body.translation().x,
+                            y: this.body.translation().y
+                        },
+                        jumpNumber: this._currentJumpNumber,
+                        velocity: {
+                            x: currentVel.x,
+                            y: currentVel.y
+                        },
+                        sprite: this.sprite
+                    });
+                }
+            }
+            // Detect rising state if velocity is significantly upward
+            else if (this.jumpState === 'grounded' && currentVel.y < -5) {
+                this.jumpState = 'rising';
+                
+                // Emit jump start event
+                if (this.eventSystem) {
+                    this.eventSystem.emit(EventNames.PLAYER_JUMP_START, {
+                        position: {
+                            x: this.body.translation().x,
+                            y: this.body.translation().y
+                        },
+                        jumpNumber: this._currentJumpNumber,
+                        velocity: {
+                            x: currentVel.x,
+                            y: currentVel.y
+                        },
+                        sprite: this.sprite
+                    });
+                }
+            }
+        }
+        
+        // Store current velocity for next frame
+        this._lastVelocityY = currentVel.y;
+    }
+    
+    /**
+     * Emit move event for particle effects
+     */
+    emitMoveEvent() {
+        if (!this.eventSystem || !this.body) return;
+        
+        this.eventSystem.emit(EventNames.PLAYER_MOVE, {
+            position: {
+                x: this.body.translation().x,
+                y: this.body.translation().y
+            },
+            velocity: this.body.linvel(),
+            isOnGround: this.isOnGround,
+            sprite: this.sprite
+        });
+    }
+    
+    /**
+     * Apply a squash and stretch effect to the sprite
+     * @param {number} squashX - X scale factor for squash
+     * @param {number} squashY - Y scale factor for squash
+     * @param {number} duration - Effect duration in ms
+     */
+    applySquashEffect(squashX, squashY, duration) {
+        if (!this.sprite) return;
+        
+        // Store original scale
+        const originalScaleX = this.sprite.scaleX || 1;
+        const originalScaleY = this.sprite.scaleY || 1;
+        
+        // Apply squash
+        this.sprite.setScale(originalScaleX * squashX, originalScaleY * squashY);
+        
+        // Return to normal over duration
+        this.scene.tweens.add({
+            targets: this.sprite,
+            scaleX: originalScaleX,
+            scaleY: originalScaleY,
+            duration: duration,
+            ease: 'Elastic.Out'
+        });
+    }
+    
+    /**
      * Handle player movement based on input
      */
     handleMovement() {
@@ -211,11 +434,8 @@ export class PlayerController {
             // Only proceed if player body exists
             if (!this.body) return;
             
-            // Snappy movement parameters
-            const moveSpeed = 35; // Moderate max speed
-            const snapFactor = 0.8; // How quickly to snap to target velocity (0-1)
-            const stopSnapFactor = 0.9; // How quickly to stop (0-1)
-            const directionChangeFactor = 1.5; // Multiplier for direction changes
+            // Get movement parameters based on ground state
+            const params = this.getMovementParams();
             
             // Track movement direction changes
             const wasMovingLeft = this._lastMoveDir === 'left';
@@ -226,20 +446,20 @@ export class PlayerController {
             
             // Check WASD keys first
             if (this.wasd.left.isDown) {
-                vx = -moveSpeed;
+                vx = -params.moveSpeed;
                 isMovingLeft = true;
             } else if (this.wasd.right.isDown) {
-                vx = moveSpeed;
+                vx = params.moveSpeed;
                 isMovingRight = true;
             }
             
             // If WASD isn't pressed, check arrow keys
             if (vx === 0) {
                 if (this.cursors.left.isDown) {
-                    vx = -moveSpeed;
+                    vx = -params.moveSpeed;
                     isMovingLeft = true;
                 } else if (this.cursors.right.isDown) {
-                    vx = moveSpeed;
+                    vx = params.moveSpeed;
                     isMovingRight = true;
                 }
             }
@@ -247,11 +467,13 @@ export class PlayerController {
             // Get current velocity
             const currentVel = this.body.linvel();
             
-            // Apply falling acceleration
+            // Apply falling acceleration with improved feel
             let newVelY = currentVel.y;
             if (currentVel.y > 0 && !this.isOnGround) {
-                // Accelerate falling speed
-                newVelY = currentVel.y * 1.05; // 5% acceleration per frame
+                // Accelerate falling speed with a curve for better feel
+                // Slower acceleration at first, then faster as player falls
+                const fallAcceleration = 1.0 + (Math.min(currentVel.y, 20) / 40);
+                newVelY = currentVel.y * fallAcceleration;
                 
                 // Cap maximum fall speed
                 if (newVelY > 40) {
@@ -268,22 +490,31 @@ export class PlayerController {
                 
                 if (isChangingDirection) {
                     // When changing direction, apply a stronger snap factor
-                    newVelX = vx * 0.5 + currentVel.x * (1 - directionChangeFactor);
+                    // Use different factors for ground vs air
+                    const changeFactor = this.isOnGround ?
+                        params.directionChangeFactor :
+                        this.jumpParams.airControl.directionChangeFactor;
+                    
+                    newVelX = vx * 0.5 + currentVel.x * (1 - changeFactor);
                 } else {
                     // Normal movement - snap quickly to target velocity
-                    newVelX = vx * snapFactor + currentVel.x * (1 - snapFactor);
+                    newVelX = vx * params.snapFactor + currentVel.x * (1 - params.snapFactor);
                 }
                 
                 // Add a small immediate boost when starting to move
                 if ((isMovingLeft && !wasMovingLeft) || (isMovingRight && !wasMovingRight)) {
-                    newVelX = vx * 0.6; // Immediate 60% of target velocity
+                    // Different boost factor for ground vs air
+                    const boostFactor = this.isOnGround ? 0.6 : 0.4;
+                    newVelX = vx * boostFactor;
                 }
                 
                 // Store movement direction for next frame
                 this._lastMoveDir = isMovingLeft ? 'left' : 'right';
             } else {
                 // No movement keys pressed - snap quickly to zero
-                newVelX = currentVel.x * (1 - stopSnapFactor);
+                // Different stop factors for ground vs air
+                const stopFactor = this.isOnGround ? params.stopSnapFactor : 0.05;
+                newVelX = currentVel.x * (1 - stopFactor);
                 this._lastMoveDir = 'none';
             }
             
@@ -303,10 +534,44 @@ export class PlayerController {
     }
     
     /**
-     * Handle player jumping based on input
-     * @param {Object} jumpText - Phaser Text object to update with jump count
+     * Get movement parameters based on ground state
+     * @returns {object} Movement parameters
      */
-    handleJumping(jumpText) {
+    getMovementParams() {
+        // Base parameters for ground movement
+        const groundParams = {
+            moveSpeed: 35,         // Moderate max speed
+            snapFactor: 0.8,       // How quickly to snap to target velocity (0-1)
+            stopSnapFactor: 0.9,   // How quickly to stop (0-1)
+            directionChangeFactor: 1.5 // Multiplier for direction changes
+        };
+        
+        // If in air, modify parameters for air control
+        if (!this.isOnGround) {
+            return {
+                moveSpeed: this.jumpParams.airControl.maxSpeed,
+                snapFactor: this.jumpParams.airControl.acceleration,
+                stopSnapFactor: 0.05, // Much slower stopping in air
+                directionChangeFactor: this.jumpParams.airControl.directionChangeFactor
+            };
+        }
+        
+        // If in landing recovery, reduce movement speed slightly
+        if (this._isInLandingRecovery) {
+            return {
+                ...groundParams,
+                moveSpeed: groundParams.moveSpeed * 0.8, // 80% of normal speed during recovery
+                snapFactor: groundParams.snapFactor * 0.8 // 80% of normal acceleration
+            };
+        }
+        
+        return groundParams;
+    }
+    
+    /**
+     * Handle player jumping based on input
+     */
+    handleJumping() {
         try {
             // Only proceed if player body exists
             if (!this.body) return;
@@ -354,6 +619,23 @@ export class PlayerController {
                     
                     this.jumpsUsed++;
                     
+                    // Emit jump event
+                    if (this.eventSystem) {
+                        this.eventSystem.emit(EventNames.PLAYER_JUMP, {
+                            jumpsUsed: this.jumpsUsed,
+                            maxJumps: this.maxJumps,
+                            position: {
+                                x: this.body.translation().x,
+                                y: this.body.translation().y
+                            },
+                            velocity: {
+                                x: jumpBoostX,
+                                y: jumpForce
+                            },
+                            jumpNumber: this.jumpsUsed
+                        });
+                    }
+                    
                     // Change player color based on jump number (visual feedback)
                     if (this.sprite.setTint) {
                         // If it's a sprite with setTint method
@@ -375,11 +657,6 @@ export class PlayerController {
                         }
                     }
                 }
-            }
-            
-            // Update the jump text
-            if (jumpText) {
-                jumpText.setText(`Jumps Used: ${this.jumpsUsed} / ${this.maxJumps}`);
             }
             
             // Reset color when on ground

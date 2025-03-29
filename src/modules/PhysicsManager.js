@@ -1,4 +1,5 @@
 import RAPIER from '@dimforge/rapier2d-compat';
+import { EventNames } from '../constants/EventNames';
 
 /**
  * PhysicsManager class handles the Rapier physics world and synchronization
@@ -8,9 +9,11 @@ export class PhysicsManager {
     /**
      * Create a new PhysicsManager
      * @param {Phaser.Scene} scene - The scene this manager belongs to
+     * @param {EventSystem} eventSystem - The event system for communication
      */
-    constructor(scene) {
+    constructor(scene, eventSystem) {
         this.scene = scene;
+        this.eventSystem = eventSystem;
         this.world = null;
         this.initialized = false;
         this.bodyToSprite = new Map();
@@ -33,6 +36,14 @@ export class PhysicsManager {
             console.log('[PhysicsManager] Rapier world created with gravity:', gravityX, gravityY);
             
             this.initialized = true;
+            
+            if (this.eventSystem) {
+                this.eventSystem.emit(EventNames.GAME_INIT, {
+                    module: 'physics',
+                    gravity: { x: gravityX, y: gravityY }
+                });
+            }
+            
             return true;
         } catch (error) {
             console.error('[PhysicsManager] Error initializing physics:', error);

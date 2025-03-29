@@ -55,19 +55,31 @@ const platforms = levelManager.getPlatforms();
 
 ### PlayerController
 
-**File**: `src/modules/PlayerController.js`
+**File**: `src/modules/player/PlayerController.js`
 
-The PlayerController is responsible for:
-- Creating and managing the player character
-- Handling player input
-- Implementing movement and jumping mechanics
-- Managing player state (on ground, jumps used, etc.)
-- Detecting collisions with level elements
+The PlayerController has been refactored into a modular architecture with specialized controllers:
+
+1. **PlayerController**: Acts as a coordinator that delegates to specialized controllers
+2. **JumpController**: Handles all jump-related functionality
+3. **MovementController**: Handles horizontal movement and air control
+4. **CollisionController**: Handles collision detection and ground state
+
+Additionally, three effect managers provide visual feedback:
+1. **ParticleManager**: Handles particle effects for jumps, landings, and movement
+2. **CameraManager**: Handles screen shake and camera effects
+3. **ColorManager**: Handles color transitions for the player sprite
+
+For detailed documentation on the modular player controller architecture, see [ModularPlayerController.md](./ModularPlayerController.md).
 
 ```javascript
 // Example usage
-const playerController = new PlayerController(scene, physicsWorld, x, y);
-playerController.update(platforms, jumpText);
+const playerController = new PlayerController(scene, physicsWorld, eventSystem, x, y);
+playerController.update(platforms);
+
+// Accessing specialized controllers
+const jumpController = playerController.getJumpController();
+const movementController = playerController.getMovementController();
+const collisionController = playerController.getCollisionController();
 ```
 
 ## Integration with Phaser Scenes
@@ -143,18 +155,28 @@ When working with the modular architecture, follow these best practices:
 
 ## Future Improvements
 
-Potential improvements to the modular architecture:
+Several improvements have already been implemented:
 
-1. **Event System**: Implement an event system for communication between modules instead of direct references.
+1. ✅ **Event System**: Implemented an event system for communication between modules instead of direct references.
 
-2. **Module Registry**: Create a central registry for modules to facilitate discovery and communication.
+2. ✅ **UI Module**: Implemented a UIManager module for handling UI elements.
 
-3. **Configuration System**: Add a configuration system to allow modules to be configured without code changes.
+3. ✅ **Effect Systems**: Implemented specialized effect managers for particles, camera effects, and color transitions.
 
-4. **Asset Management Module**: Create a dedicated module for asset loading and management.
+4. ✅ **Modular Player Controller**: Refactored the PlayerController into specialized controllers for jumping, movement, and collisions.
 
-5. **UI Module**: Separate UI elements into their own module.
+Potential future improvements:
 
-6. **State Management**: Implement a more robust state management system for game state.
+1. **Module Registry**: Create a central registry for modules to facilitate discovery and communication.
 
-7. **Module Factories**: Create factory functions or classes for module instantiation.
+2. **Configuration System**: Add a configuration system to allow modules to be configured without code changes.
+
+3. **Asset Management Module**: Create a dedicated module for asset loading and management.
+
+4. **State Management**: Implement a more robust state management system for game state.
+
+5. **Module Factories**: Create factory functions or classes for module instantiation.
+
+6. **Input Manager**: Create a dedicated input manager to decouple input handling from player controllers.
+
+7. **Audio Manager**: Create a dedicated audio manager for sound effects and music.

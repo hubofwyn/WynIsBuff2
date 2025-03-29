@@ -1,7 +1,13 @@
 import { Scene } from 'phaser';
-import { PlayerController } from '../modules/PlayerController';
+import { PlayerController } from '../modules/player/PlayerController';
 import { LevelManager } from '../modules/LevelManager';
 import { PhysicsManager } from '../modules/PhysicsManager';
+import { EventSystem } from '../modules/EventSystem';
+import { EventNames } from '../constants/EventNames';
+import { UIManager } from '../modules/UIManager';
+import { ParticleManager } from '../modules/effects/ParticleManager';
+import { CameraManager } from '../modules/effects/CameraManager';
+import { ColorManager } from '../modules/effects/ColorManager';
 
 export class Game extends Scene {
     constructor() {
@@ -9,12 +15,16 @@ export class Game extends Scene {
         console.log('[Game] Constructor called');
         
         // Game managers
+        this.eventSystem = null;
         this.physicsManager = null;
         this.levelManager = null;
         this.playerController = null;
+        this.uiManager = null;
         
-        // UI elements
-        this.jumpText = null;
+        // Effect managers
+        this.particleManager = null;
+        this.cameraManager = null;
+        this.colorManager = null;
     }
 
     preload() {
@@ -25,8 +35,15 @@ export class Game extends Scene {
         console.log('[Game] Create method started');
         
         try {
+            // Initialize event system
+            this.eventSystem = new EventSystem();
+            this.eventSystem.setDebugMode(true);
+            
+            // Set up event listeners
+            this.setupEventListeners();
+            
             // Initialize physics
-            this.physicsManager = new PhysicsManager(this);
+            this.physicsManager = new PhysicsManager(this, this.eventSystem);
             const physicsInitialized = await this.physicsManager.initialize(0.0, 20.0);
             
             if (!physicsInitialized) {
@@ -42,24 +59,41 @@ export class Game extends Scene {
                 console.warn('[Game] Background texture not found');
             }
 
-            // Add instructions text
-            this.add.text(512, 100, 'WASD or Arrows to Move, SPACE to Jump (Triple Jump!)', {
-                fontFamily: 'Arial Black', fontSize: 20, color: '#ffffff',
-                stroke: '#000000', strokeThickness: 4,
+            // Initialize UI Manager
+            this.uiManager = new UIManager(this, this.eventSystem);
+            
+            // Create UI elements
+            const instructionsStyle = {
+                fontFamily: 'Arial Black',
+                fontSize: 20,
+                color: '#ffffff',
+                stroke: '#000000',
+                strokeThickness: 4,
                 align: 'center'
-            }).setOrigin(0.5);
+            };
+            
+            // Add instructions text
+            this.uiManager.createText(
+                'instructions',
+                512, 100,
+                'WASD or Arrows to Move, SPACE to Jump (Triple Jump!)',
+                instructionsStyle,
+                true
+            ).setOrigin(0.5);
             console.log('[Game] Instructions text added');
             
             // Display jump counter
-            this.jumpText = this.add.text(512, 150, 'Jumps Used: 0 / 3', {
-                fontFamily: 'Arial Black', fontSize: 20, color: '#ffffff',
-                stroke: '#000000', strokeThickness: 4,
-                align: 'center'
-            }).setOrigin(0.5);
+            this.uiManager.createText(
+                'jumpCounter',
+                512, 150,
+                'Jumps Used: 0 / 3',
+                instructionsStyle,
+                true
+            ).setOrigin(0.5);
             console.log('[Game] Jump counter text added');
 
             // Create level manager and initialize level
-            this.levelManager = new LevelManager(this, this.physicsManager.getWorld());
+            this.levelManager = new LevelManager(this, this.physicsManager.getWorld(), this.eventSystem);
             this.levelManager.createGround();
             this.levelManager.createPlatforms();
             
@@ -70,6 +104,7 @@ export class Game extends Scene {
             this.playerController = new PlayerController(
                 this,
                 this.physicsManager.getWorld(),
+                this.eventSystem,
                 512, // x position
                 300  // y position
             );
@@ -80,11 +115,21 @@ export class Game extends Scene {
                 this.playerController.getSprite()
             );
             
+            // Initialize effect managers
+            this.particleManager = new ParticleManager(this, this.eventSystem);
+            this.cameraManager = new CameraManager(this, this.eventSystem);
+            this.colorManager = new ColorManager(this, this.eventSystem);
+            
+            console.log('[Game] Effect managers initialized');
+            
             // Add ESC key for scene transition
             this.input.keyboard.once('keydown-ESC', () => {
                 console.log('[Game] ESC pressed, transitioning to GameOver scene');
                 this.scene.start('GameOver');
             });
+            
+            // Emit game init event
+            this.eventSystem.emit(EventNames.GAME_INIT, { scene: 'Game' });
             
             console.log('[Game] Create method completed successfully');
         } catch (error) {
@@ -95,6 +140,30 @@ export class Game extends Scene {
                 align: 'center'
             }).setOrigin(0.5);
         }
+    }
+    
+    /**
+     * Set up event listeners for the game
+     */
+    setupEventListeners() {
+        // Listen for player land events
+        this.eventSystem.on(EventNames.PLAYER_LAND, (data) => {
+            // Screen shake is now handled by CameraManager
+            if (this.cameraManager) {
+                // The CameraManager listens for these events directly
+                console.log('[Game] Player landed, CameraManager handling effects');
+            }
+        });
+        
+        // Listen for player jump events
+        this.eventSystem.on(EventNames.PLAYER_JUMP, (data) => {
+            console.log('[Game] Player jumped, effect managers handling feedback');
+            // Visual and audio feedback is handled by the effect managers
+        });
+        
+        // Note: UI updates are handled by the UIManager
+        // Note: Particle effects are handled by the ParticleManager
+        // Note: Color transitions are handled by the ColorManager
     }
 
     update() {
@@ -114,7 +183,7 @@ export class Game extends Scene {
             
             // Update player
             if (this.playerController) {
-                this.playerController.update(this.levelManager.getPlatforms(), this.jumpText);
+                this.playerController.update(this.levelManager.getPlatforms());
             }
         } catch (error) {
             console.error('[Game] Error in update:', error);
