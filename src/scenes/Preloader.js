@@ -93,8 +93,8 @@ export class Preloader extends Scene
         // Define player animations that can be used across scenes
         this.createPlayerAnimations();
 
-        // Move to Welcome Screen
-        this.scene.start('Welcome');
+        // Move to Character Select Screen
+        this.scene.start('CharacterSelect');
     }
 
     update (time, delta)

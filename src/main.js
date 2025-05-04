@@ -21,7 +21,6 @@ const config = {
     scene: [
         Boot,
         Preloader,
-        WelcomeScene,
         CharacterSelect,
         MainMenu,
         Game,
