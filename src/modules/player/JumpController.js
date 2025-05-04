@@ -31,32 +31,29 @@ export class JumpController {
         this._coyoteTimer = null;
         this._lastOnGround = false;
         
-        // Jump physics parameters
+        // Jump physics parameters (EXTREME BUFFNESS)
         this.jumpParams = {
-            baseForce: -60,          // Base jump force (snappier)
-            releaseMultiplier: 0.6,  // Multiplier when jump key is released early
-            minJumpTime: 80,         // Minimum jump time in ms
-            bufferTime: 120,         // Jump buffer time in ms
-            landingRecoveryTime: 60, // Landing recovery time in ms
-            coyoteTime: 80,          // Coyote time in ms
-            
+            baseForce: -75,          // Stronger initial pop
             // Jump forces for each jump
             forces: {
-                1: -60, // First jump
-                2: -65, // Second jump
-                3: -70  // Third jump
+                1: -75,  // First jump
+                2: -90,  // Second jump
+                3: -120  // Third jump (massive)
             },
-            
+            releaseMultiplier: 0.5,  // Tap jumps quicker; hold for max height
+            minJumpTime: 60,         // Quicker minimum jump time
+            bufferTime: 120,         // Generous buffer for frustration reduction
+            coyoteTime: 100,         // More forgiving off-ledge jumps
+            landingRecoveryTime: 30,  // Very short recovery for frantic re-jumps
             // Horizontal boost parameters
             horizontalBoost: {
-                threshold: 0.5,      // Minimum horizontal velocity to apply boost
-                multiplier: 1.5      // Boost multiplier
+                threshold: 0.5,
+                multiplier: 1.5
             },
-            
             // Additional impulse parameters
             additionalImpulse: {
                 x: 0,
-                y: -20
+                y: -30  // More initial upward kick
             }
         };
         

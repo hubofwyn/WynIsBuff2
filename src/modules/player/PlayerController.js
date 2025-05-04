@@ -97,8 +97,9 @@ export class PlayerController {
             // Create a collider (hitbox) for the player
             const playerColliderDesc = RAPIER.ColliderDesc
                 .cuboid(playerWidth / 2, playerHeight / 2)
-                .setDensity(1.0)
-                .setRestitution(0.0); // No bounce
+                .setFriction(0.1)      // Low friction for momentum sliding
+                .setDensity(2.0)       // High density for heavy feel
+                .setRestitution(0.15); // Slight bounce for impact feedback
                 
             this.collider = this.world.createCollider(
                 playerColliderDesc,

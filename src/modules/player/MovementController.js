@@ -21,8 +21,8 @@ export class MovementController {
         
         // Movement parameters
         this.groundParams = {
-            moveSpeed: 35,         // Moderate max speed
-            snapFactor: 0.8,       // How quickly to snap to target velocity (0-1)
+            moveSpeed: 20,         // Increased ground speed for BUFF movement
+            snapFactor: 0.9,       // Faster snappiness to target velocity
             stopSnapFactor: 0.9,   // How quickly to stop (0-1)
             directionChangeFactor: 1.5, // Multiplier for direction changes
             startBoostFactor: 0.6  // Immediate boost when starting to move
@@ -30,10 +30,10 @@ export class MovementController {
         
         // Air control parameters
         this.airParams = {
-            moveSpeed: 30,         // Slightly lower max speed in air
-            snapFactor: 0.6,       // Slower acceleration in air
+            moveSpeed: 30,         // Max speed in air
+            snapFactor: 0.8,       // More responsive acceleration in air
             stopSnapFactor: 0.05,  // Much slower stopping in air
-            directionChangeFactor: 1.2, // Less responsive direction changes in air
+            directionChangeFactor: 0.8, // Strong air control but weighty
             startBoostFactor: 0.4  // Smaller immediate boost in air
         };
         
@@ -45,10 +45,10 @@ export class MovementController {
         
         // Falling parameters
         this.fallingParams = {
-            accelerationCurve: true, // Curve-based falling acceleration
-            baseAcceleration: 1.1,    // Base acceleration factor (10% per frame)
-            maxAcceleration: 1.4,     // Maximum acceleration factor
-            maxFallSpeed: 60          // Maximum fall speed
+            accelerationCurve: true,   // Curve-based falling acceleration
+            baseAcceleration: 1.3,     // Accelerate downwards faster
+            maxAcceleration: 2.0,      // Stronger effect during falls
+            maxFallSpeed: 90           // Higher terminal velocity
         };
         
         // Self-balancing parameters
