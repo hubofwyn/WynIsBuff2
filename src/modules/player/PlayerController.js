@@ -1,3 +1,4 @@
+import Phaser from 'phaser';
 import RAPIER from '@dimforge/rapier2d-compat';
 import { EventNames } from '../../constants/EventNames';
 import { JumpController } from './JumpController';
@@ -17,10 +18,19 @@ export class PlayerController {
      * @param {number} x - Initial x position
      * @param {number} y - Initial y position
      */
-    constructor(scene, world, eventSystem, x = 512, y = 300) {
+    /**
+     * @param {Phaser.Scene} scene
+     * @param {RAPIER.World} world
+     * @param {EventSystem} eventSystem
+     * @param {number} x - Initial x position
+     * @param {number} y - Initial y position
+     * @param {string} textureKey - Key of the sprite texture to use
+     */
+    constructor(scene, world, eventSystem, x = 512, y = 300, textureKey = 'player') {
         this.scene = scene;
         this.world = world;
         this.eventSystem = eventSystem;
+        this.textureKey = textureKey;
         
         // Player physics objects
         this.body = null;
@@ -64,12 +74,12 @@ export class PlayerController {
             const playerHeight = 32;
             
             // Create a visual representation of the player
-            if (this.scene.textures.exists('player')) {
-                console.log('[PlayerController] Using player sprite texture');
-                this.sprite = this.scene.add.sprite(x, y, 'player', 0);
+            if (this.scene.textures.exists(this.textureKey)) {
+                console.log('[PlayerController] Using texture:', this.textureKey);
+                this.sprite = this.scene.add.sprite(x, y, this.textureKey);
                 this.sprite.setDisplaySize(playerWidth, playerHeight);
             } else {
-                console.log('[PlayerController] Player texture not found, using rectangle');
+                console.log('[PlayerController] Texture not found, using rectangle');
                 this.sprite = this.scene.add.rectangle(
                     x, y, playerWidth, playerHeight, 0x0000ff
                 );
@@ -105,25 +115,27 @@ export class PlayerController {
      * Set up keyboard controls
      */
     setupControls() {
-        try {
-            // Set up arrow keys
+        // Acquire input keys from InputManager if available
+        if (this.scene.inputManager && this.scene.inputManager.keys) {
+            const keys = this.scene.inputManager.keys;
+            this.cursors = keys.cursors;
+            this.wasd = {
+                up: keys.W,
+                down: keys.S,
+                left: keys.A,
+                right: keys.D
+            };
+            this.spaceKey = keys.SPACE;
+        } else {
+            // Fallback to direct keyboard polling
             this.cursors = this.scene.input.keyboard.createCursorKeys();
-            console.log('[PlayerController] Arrow keys set up');
-            
-            // Set up WASD keys
             this.wasd = {
                 up: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W),
                 down: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S),
                 left: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A),
                 right: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D)
             };
-            console.log('[PlayerController] WASD keys set up');
-
-            // Add space key separately for jump
             this.spaceKey = this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
-            console.log('[PlayerController] Space key set up');
-        } catch (error) {
-            console.error('[PlayerController] Error in setupControls:', error);
         }
     }
     
@@ -224,12 +236,9 @@ export class PlayerController {
     shutdown() {
         // Clean up controllers
         this.jumpController.shutdown();
-        
-        // Clean up input
-        this.scene.input.keyboard.removeKey(this.spaceKey);
-        this.scene.input.keyboard.removeKey(this.wasd.up);
-        this.scene.input.keyboard.removeKey(this.wasd.down);
-        this.scene.input.keyboard.removeKey(this.wasd.left);
-        this.scene.input.keyboard.removeKey(this.wasd.right);
+        // Clean up input listeners via InputManager
+        if (this.scene.inputManager) {
+            this.scene.inputManager.destroy();
+        }
     }
 }

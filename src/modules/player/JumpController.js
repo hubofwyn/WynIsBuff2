@@ -33,18 +33,18 @@ export class JumpController {
         
         // Jump physics parameters
         this.jumpParams = {
-            baseForce: -45,          // Base jump force
-            releaseMultiplier: 0.5,  // Multiplier when jump key is released early
-            minJumpTime: 100,        // Minimum jump time in ms
-            bufferTime: 150,         // Jump buffer time in ms
-            landingRecoveryTime: 80, // Landing recovery time in ms
-            coyoteTime: 100,         // Coyote time in ms
+            baseForce: -60,          // Base jump force (snappier)
+            releaseMultiplier: 0.6,  // Multiplier when jump key is released early
+            minJumpTime: 80,         // Minimum jump time in ms
+            bufferTime: 120,         // Jump buffer time in ms
+            landingRecoveryTime: 60, // Landing recovery time in ms
+            coyoteTime: 80,          // Coyote time in ms
             
             // Jump forces for each jump
             forces: {
-                1: -45, // First jump
-                2: -50, // Second jump
-                3: -55  // Third jump
+                1: -60, // First jump
+                2: -65, // Second jump
+                3: -70  // Third jump
             },
             
             // Horizontal boost parameters
@@ -56,7 +56,7 @@ export class JumpController {
             // Additional impulse parameters
             additionalImpulse: {
                 x: 0,
-                y: -15
+                y: -20
             }
         };
         

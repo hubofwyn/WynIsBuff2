@@ -67,9 +67,22 @@ export class Preloader extends Scene
         // Load item sprites that might be useful
         this.load.image('coin', 'spritesheets/items/coin.png');
         this.load.image('chest', 'spritesheets/items/chest.png');
+        // Themed collectible icons for level1
+        this.load.image('collectible-protein', 'spritesheets/items/flasks/flasks_2.png');
+        this.load.image('collectible-dumbbell', 'spritesheets/items/chest.png');
         
         // Load torch effect for potential environment enhancement
         this.load.image('torch', 'spritesheets/effects/torch/torch.png');
+        // Buff-themed boss placeholder
+        this.load.image('axelface', 'images/characters/axelface.png');
+        // Secondary character: Wyn face placeholder
+        this.load.image('wynface', 'images/characters/wynface.png');
+        // Buff-themed background for level1
+        this.load.image('buff-bg', 'images/backgrounds/buff-bg.png');
+        // Parallax background layers for level1
+        this.load.image('parallax-sky', 'images/backgrounds/parallax-sky.png');
+        this.load.image('parallax-mountains', 'images/backgrounds/parallax-mountains.png');
+        this.load.image('parallax-foreground', 'images/backgrounds/parallax-foreground.png');
     }
 
     create ()
@@ -80,8 +93,13 @@ export class Preloader extends Scene
         // Define player animations that can be used across scenes
         this.createPlayerAnimations();
 
-        // Move to the MainMenu
-        this.scene.start('MainMenu');
+        // Move to Welcome Screen
+        this.scene.start('Welcome');
+    }
+
+    update (time, delta)
+    {
+        // Placeholder update method for Preloader scene
     }
     
     createPlayerAnimations() {

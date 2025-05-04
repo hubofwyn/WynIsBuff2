@@ -1,9 +1,9 @@
-import RAPIER from '@dimforge/rapier2d-compat';
-import { EventNames } from '../constants/EventNames';
+import { LevelManager as ModularLevelManager } from './level/LevelManager';
 
 /**
- * LevelManager class handles the creation and management of level elements
- * such as ground, platforms, and other static elements.
+ * LevelManager class serves as a wrapper for the modular level system.
+ * This class maintains backward compatibility with the original LevelManager
+ * while delegating to the new modular implementation.
  */
 export class LevelManager {
     /**
@@ -13,156 +13,50 @@ export class LevelManager {
      * @param {EventSystem} eventSystem - The event system for communication
      */
     constructor(scene, world, eventSystem) {
-        this.scene = scene;
-        this.world = world;
-        this.eventSystem = eventSystem;
+        console.log('[LevelManager] Initializing modular level system');
         
-        // Store created platforms for later reference
-        this.platforms = [];
-        this.ground = null;
+        // Create the modular level manager
+        this.levelManager = new ModularLevelManager(scene, world, eventSystem);
         
-        // Mapping to track physics bodies to sprites
-        this.bodyToSprite = new Map();
+        // Set debug mode based on environment
+        this.levelManager.setDebugMode(process.env.NODE_ENV !== 'production');
+        
+        // Load the first level by default
+        this.currentLevelId = 'level1';
     }
     
     /**
-     * Create the ground
+     * Create the ground (for backward compatibility)
      * @param {number} width - Width of the ground
      * @param {number} height - Height of the ground
      * @param {number} y - Y position of the ground
      * @returns {Object} The created ground object
      */
     createGround(width = 1024, height = 50, y = 700) {
-        try {
-            console.log('[LevelManager] Creating ground...');
-            
-            // Create a visual representation of the ground
-            const groundSprite = this.scene.add.rectangle(
-                width / 2, y, width, height, 0x654321
-            );
-            console.log('[LevelManager] Ground sprite created');
-            
-            // Create a fixed (static) rigid body for the ground
-            const groundBodyDesc = RAPIER.RigidBodyDesc.fixed()
-                .setTranslation(width / 2, y);
-            
-            const groundBody = this.world.createRigidBody(groundBodyDesc);
-            console.log('[LevelManager] Ground body created');
-            
-            // Store the association between body and sprite
-            this.bodyToSprite.set(groundBody.handle, groundSprite);
-            
-            // Create a collider (hitbox) for the ground
-            const groundColliderDesc = RAPIER.ColliderDesc
-                .cuboid(width / 2, height / 2)
-                .setRestitution(0.0); // No bounce
-                
-            const groundCollider = this.world.createCollider(groundColliderDesc, groundBody);
-            console.log('[LevelManager] Ground collider created');
-            
-            // Store ground info
-            this.ground = {
-                body: groundBody,
-                sprite: groundSprite,
-                collider: groundCollider
-            };
-            
-            // Emit event
-            if (this.eventSystem) {
-                this.eventSystem.emit(EventNames.custom('level', 'groundCreated'), {
-                    position: { x: width / 2, y },
-                    dimensions: { width, height }
-                });
-            }
-            
-            return this.ground;
-        } catch (error) {
-            console.error('[LevelManager] Error in createGround:', error);
-            return null;
+        console.log('[LevelManager] Creating ground using modular system');
+        
+        // If no level is loaded yet, load the first level
+        if (!this.levelManager.getCurrentLevelId()) {
+            this.levelManager.loadLevel(this.currentLevelId);
         }
+        
+        return this.levelManager.getGround();
     }
     
     /**
-     * Create platforms at specified positions
+     * Create platforms at specified positions (for backward compatibility)
      * @param {Array} platformConfigs - Array of platform configurations
      * @returns {Array} Array of created platform objects
      */
     createPlatforms(platformConfigs = []) {
-        try {
-            console.log('[LevelManager] Creating platforms...');
-            
-            // Use default platforms if none provided
-            if (platformConfigs.length === 0) {
-                platformConfigs = [
-                    { x: 200, y: 500, width: 200, height: 20, color: 0x00AA00 },  // Green platform
-                    { x: 600, y: 400, width: 200, height: 20, color: 0xAA00AA },  // Purple platform
-                    { x: 400, y: 300, width: 200, height: 20, color: 0xAAAA00 }   // Yellow platform
-                ];
-            }
-            
-            // Clear existing platforms
-            this.platforms = [];
-            
-            // Create each platform
-            platformConfigs.forEach((platform, index) => {
-                try {
-                    console.log(`[LevelManager] Creating platform ${index+1}`);
-                    
-                    // Create a visual representation
-                    const platformSprite = this.scene.add.rectangle(
-                        platform.x, platform.y,
-                        platform.width, platform.height,
-                        platform.color
-                    );
-                    
-                    // Create a fixed rigid body for the platform
-                    const platformBodyDesc = RAPIER.RigidBodyDesc.fixed()
-                        .setTranslation(platform.x, platform.y);
-                    
-                    const platformBody = this.world.createRigidBody(platformBodyDesc);
-                    
-                    // Store the association between body and sprite
-                    this.bodyToSprite.set(platformBody.handle, platformSprite);
-                    
-                    // Create a collider for the platform
-                    const platformColliderDesc = RAPIER.ColliderDesc
-                        .cuboid(platform.width / 2, platform.height / 2)
-                        .setRestitution(0.0);
-                        
-                    const platformCollider = this.world.createCollider(
-                        platformColliderDesc, 
-                        platformBody
-                    );
-                    
-                    // Store platform info
-                    this.platforms.push({
-                        body: platformBody,
-                        sprite: platformSprite,
-                        collider: platformCollider,
-                        config: platform
-                    });
-                    
-                    console.log(`[LevelManager] Platform ${index+1} created successfully`);
-                    
-                    // Emit event for each platform
-                    if (this.eventSystem) {
-                        this.eventSystem.emit(EventNames.custom('level', 'platformCreated'), {
-                            index,
-                            position: { x: platform.x, y: platform.y },
-                            dimensions: { width: platform.width, height: platform.height },
-                            color: platform.color
-                        });
-                    }
-                } catch (error) {
-                    console.error(`[LevelManager] Error creating platform ${index+1}:`, error);
-                }
-            });
-            
-            return this.platforms;
-        } catch (error) {
-            console.error('[LevelManager] Error in createPlatforms:', error);
-            return [];
+        console.log('[LevelManager] Creating platforms using modular system');
+        
+        // If no level is loaded yet, load the first level
+        if (!this.levelManager.getCurrentLevelId()) {
+            this.levelManager.loadLevel(this.currentLevelId);
         }
+        
+        return this.levelManager.getPlatforms();
     }
     
     /**
@@ -170,7 +64,7 @@ export class LevelManager {
      * @returns {Array} Array of platform objects
      */
     getPlatforms() {
-        return this.platforms;
+        return this.levelManager.getPlatforms();
     }
     
     /**
@@ -178,7 +72,7 @@ export class LevelManager {
      * @returns {Object} The ground object
      */
     getGround() {
-        return this.ground;
+        return this.levelManager.getGround();
     }
     
     /**
@@ -186,13 +80,64 @@ export class LevelManager {
      * @returns {Map} Map of body handles to sprites
      */
     getBodyToSpriteMap() {
-        return this.bodyToSprite;
+        return this.levelManager.getBodyToSpriteMap();
+    }
+    
+    /**
+     * Load a specific level
+     * @param {string} levelId - The ID of the level to load
+     * @returns {boolean} Whether the level was loaded successfully
+     */
+    loadLevel(levelId) {
+        this.currentLevelId = levelId;
+        return this.levelManager.loadLevel(levelId);
+    }
+    
+    /**
+     * Load the next level
+     * @returns {boolean} Whether the next level was loaded successfully
+     */
+    nextLevel() {
+        return this.levelManager.nextLevel();
+    }
+    
+    /**
+     * Reset the current level
+     * @returns {boolean} Whether the level was reset successfully
+     */
+    resetLevel() {
+        return this.levelManager.resetLevel();
     }
     
     /**
      * Update method called every frame
+     * @param {number} delta - Time elapsed since last update
      */
-    update() {
-        // Currently empty, but could be used for moving platforms or other dynamic level elements
+    update(delta) {
+        this.levelManager.update(delta);
+    }
+
+    /**
+     * Get the current level ID
+     * @returns {string} The current level ID
+     */
+    getCurrentLevelId() {
+        return this.levelManager.getCurrentLevelId();
+    }
+
+    /**
+     * Get the current level configuration
+     * @returns {Object} The current level configuration
+     */
+    getCurrentLevelConfig() {
+        return this.levelManager.getCurrentLevelConfig();
+    }
+    
+    /**
+     * Check if a level is currently being loaded or in transition
+     * @returns {boolean} Whether a level operation is in progress
+     */
+    isLevelOperationInProgress() {
+        return this.levelManager.isLevelOperationInProgress();
     }
 }

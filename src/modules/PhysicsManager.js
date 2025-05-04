@@ -1,5 +1,6 @@
 import RAPIER from '@dimforge/rapier2d-compat';
 import { EventNames } from '../constants/EventNames';
+import { PhysicsConfig } from '../constants/PhysicsConfig';
 
 /**
  * PhysicsManager class handles the Rapier physics world and synchronization
@@ -17,6 +18,9 @@ export class PhysicsManager {
         this.world = null;
         this.initialized = false;
         this.bodyToSprite = new Map();
+        
+        // Collision event handlers
+        this.collisionHandlers = new Map();
     }
     
     /**
@@ -25,7 +29,12 @@ export class PhysicsManager {
      * @param {number} gravityY - Vertical gravity
      * @returns {Promise<boolean>} Promise that resolves to true if initialization was successful
      */
-    async initialize(gravityX = 0.0, gravityY = 20.0) {
+    /**
+     * Initialize the Rapier physics engine with configurable gravity.
+     * @param {number} [gravityX=PhysicsConfig.gravityX] - Horizontal gravity
+     * @param {number} [gravityY=PhysicsConfig.gravityY] - Vertical gravity
+     */
+    async initialize(gravityX = PhysicsConfig.gravityX, gravityY = PhysicsConfig.gravityY) {
         try {
             console.log('[PhysicsManager] Initializing Rapier...');
             await RAPIER.init();
@@ -34,6 +43,9 @@ export class PhysicsManager {
             // Create physics world with gravity
             this.world = new RAPIER.World(new RAPIER.Vector2(gravityX, gravityY));
             console.log('[PhysicsManager] Rapier world created with gravity:', gravityX, gravityY);
+            
+            // Set up collision event handling
+            this.setupCollisionEvents();
             
             this.initialized = true;
             
@@ -49,6 +61,91 @@ export class PhysicsManager {
             console.error('[PhysicsManager] Error initializing physics:', error);
             return false;
         }
+    }
+    
+    /**
+     * Set up collision event handling
+     */
+    setupCollisionEvents() {
+        if (!this.world) {
+            return;
+        }
+        
+        // Check if contactPairEvents is available
+        if (this.world.contactPairEvents) {
+            this.world.contactPairEvents.on('begin', (event) => {
+                // Extract the body handles from the event
+                const bodyHandleA = event.collider1.parent().handle;
+                const bodyHandleB = event.collider2.parent().handle;
+                
+                // Get the positions of the colliding bodies
+                const bodyA = this.world.getBodyByHandle(bodyHandleA);
+                const bodyB = this.world.getBodyByHandle(bodyHandleB);
+                
+                if (!bodyA || !bodyB) {
+                    return;
+                }
+                
+                const positionA = bodyA.translation();
+                const positionB = bodyB.translation();
+                
+                // Emit collision event
+                if (this.eventSystem) {
+                    this.eventSystem.emit(EventNames.COLLISION_START, {
+                        bodyHandleA,
+                        bodyHandleB,
+                        positionA: { x: positionA.x, y: positionA.y },
+                        positionB: { x: positionB.x, y: positionB.y }
+                    });
+                }
+                
+                // Call any registered collision handlers
+                this.handleCollision(bodyHandleA, bodyHandleB);
+            });
+        } else {
+            // Fallback for collision event handling if contactPairEvents is not available
+            console.warn('[PhysicsManager] contactPairEvents is not available, using fallback collision detection.');
+            this.world.bodies.forEach(body => {
+                // Implement fallback collision detection logic here
+            });
+        }
+        
+        console.log('[PhysicsManager] Collision events set up');
+    }
+    
+    /**
+     * Register a collision handler
+     * @param {string} key - Unique identifier for the handler
+     * @param {Function} handler - Function to call when a collision occurs
+     */
+    registerCollisionHandler(key, handler) {
+        if (typeof handler === 'function') {
+            this.collisionHandlers.set(key, handler);
+        }
+    }
+    
+    /**
+     * Unregister a collision handler
+     * @param {string} key - Unique identifier for the handler
+     */
+    unregisterCollisionHandler(key) {
+        this.collisionHandlers.delete(key);
+    }
+    
+    /**
+     * Handle a collision between two bodies
+     * @param {number} bodyHandleA - Handle of the first body
+     * @param {number} bodyHandleB - Handle of the second body
+     */
+    handleCollision(bodyHandleA, bodyHandleB) {
+        // Call all registered collision handlers
+        this.collisionHandlers.forEach((handler) => {
+            try {
+                handler(bodyHandleA, bodyHandleB);
+            } catch (error) {
+                console.error('[PhysicsManager] Error in collision handler:', error);
+            }
+        });
     }
     
     /**
@@ -139,5 +236,25 @@ export class PhysicsManager {
      */
     getBodyToSpriteMap() {
         return this.bodyToSprite;
+    }
+    
+    /**
+     * Clean up resources when the scene is shut down
+     */
+    shutdown() {
+        // Clear collision handlers
+        this.collisionHandlers.clear();
+        
+        // Clear body-sprite mapping
+        this.bodyToSprite.clear();
+        
+        // Destroy the physics world
+        if (this.world) {
+            // Note: Rapier doesn't have a direct destroy method,
+            // but we can help garbage collection by removing references
+            this.world = null;
+        }
+        
+        this.initialized = false;
     }
 }

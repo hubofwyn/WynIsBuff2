@@ -19,4 +19,9 @@ export class Boot extends Scene
     {
         this.scene.start('Preloader');
     }
+    
+    update (time, delta)
+    {
+        // Placeholder update method for Boot scene
+    }
 }

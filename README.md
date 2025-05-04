@@ -146,3 +146,43 @@ By playing **WynIsBuff2**, you accept that:
 - Your keyboard MAY develop VISIBLE ABS from the intense workout it's getting!
 
 NO REFUNDS. NO MERCY. ONLY EXTREME, UNADULTERATED, PURE BUFFNESS! 💪🔥💥
+---
+
+## AI-Assisted Development with Codex CLI
+
+This project integrates the Codex CLI for AI-assisted coding. Follow these steps to start a session:
+
+1. Install Codex CLI (if needed):
+   ```bash
+   npm install -g @openai/codex-cli
+   ```
+2. From the project root, load the Codex environment and role:
+   ```bash
+   source .codex/run-codex.sh phaser-coder
+   ```
+3. Launch an interactive session:
+   ```bash
+   codex --project-doc codex-setup.md
+   ```
+   Codex will load the baseline, active goals, open READY tasks, and display a session plan.
+
+### Common Commands
+- codex --help — Show usage information.
+- codex -q "<prompt>" — Non-interactive mode.
+- codex --approval-mode auto-edit — Automatically approve file edits.
+
+### Defining New Tasks
+Add a task under .codex/tasks/ with Status: READY:
+```markdown
+Status: READY
+Owner: phaser-coder
+Scope: feature
+Estimate: 3
+
+# Brief task title
+
+Describe the task here.
+```
+Codex will pick up READY tasks in the next session.
+
+For more details, see codex-setup.md.

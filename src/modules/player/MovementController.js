@@ -45,10 +45,10 @@ export class MovementController {
         
         // Falling parameters
         this.fallingParams = {
-            accelerationCurve: true, // Whether to use a curve for falling acceleration
-            baseAcceleration: 1.05,  // Base acceleration factor (5% per frame)
-            maxAcceleration: 1.2,    // Maximum acceleration factor
-            maxFallSpeed: 40         // Maximum fall speed
+            accelerationCurve: true, // Curve-based falling acceleration
+            baseAcceleration: 1.1,    // Base acceleration factor (10% per frame)
+            maxAcceleration: 1.4,     // Maximum acceleration factor
+            maxFallSpeed: 60          // Maximum fall speed
         };
         
         // Self-balancing parameters
