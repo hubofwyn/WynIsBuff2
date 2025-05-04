@@ -1,0 +1,31 @@
+invariants:
+  - id: INV-001
+    statement: "Dev server runs on port 8080"
+    source: "vite/config.dev.mjs:15"
+  - id: INV-002
+    statement: "Production build minification uses terser with 2 passes"
+    source: "vite/config.prod.mjs:10"
+  - id: INV-003
+    statement: "Rollup manual chunk 'phaser' for Phaser imports"
+    source: "vite/config.dev.mjs:8"
+  - id: INV-004
+    statement: "Game resolution is 1024×768"
+    source: "src/main.js:11-12"
+  - id: INV-005
+    statement: "Default background color is '#028af8'"
+    source: "src/main.js:14"
+  - id: INV-006
+    statement: "Phaser version is ^3.88.0"
+    source: "package.json:dependencies.phaser"
+  - id: INV-007
+    statement: "Rapier version is ^0.14.0"
+    source: "package.json:dependencies.@dimforge/rapier2d-compat"
+  - id: INV-008
+    statement: "Module hierarchy rooted at src/modules and src/scenes"
+    source: "Project directory structure"
+  - id: INV-009
+    statement: "Scale mode is FIT and autoCenter is CENTER_BOTH"
+    source: "src/main.js:16-17"
+  - id: INV-010
+    statement: "Control mapping: WASD/Arrows for movement, SPACE for jump, ESC to pause"
+    source: "README.md: Controls of Ultimate Buffness"

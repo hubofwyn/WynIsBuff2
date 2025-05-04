@@ -1,0 +1,17 @@
+.codex/tasks/007-jump-physics-tuning.md
+.codex/tasks/008-movement-physics-tuning.md
+.codex/tasks/009-collision-physics-tuning.md
+.codex/tasks/013-enemy-theme.md
+.codex/tasks/015-character-select-scene.md
+.codex/tasks/016-integrate-character-select.md
+.codex/tasks/017-game-state-selection.md
+.codex/tasks/018-playercontroller-selection.md
+.codex/tasks/019-welcome-screen.md
+.codex/tasks/020-integrate-welcome-screen.md
+.codex/tasks/021-ui-mainmenu-polish.md
+.codex/tasks/022-level-count-adjust.md
+.codex/tasks/025-export-additional-character-assets.md
+.codex/tasks/026-preload-new-characters.md
+.codex/tasks/027-update-character-select-options.md
+.codex/tasks/023-update-title-logo.md
+.codex/tasks/024-common-theme-styles.md
