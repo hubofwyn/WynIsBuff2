@@ -1,4 +1,4 @@
-Status: READY
+Status: DONE
 Owner: phaser-coder
 Scope: feature
 Estimate: 4
@@ -13,3 +13,6 @@ Task: Create a branded Welcome Screen to kick off the game.
       • update(): listen for SPACE (or click/tap) to transition to 'CharacterSelect'
   - Use `GameStateManager` to reset any previous state if needed.
   - Apply WynIsBuff2 branding: bold fonts, neon glow, theme colors defined in UIConfig.
+  
+## Change Log
+* WelcomeScene implemented and wired: displays title, prompt, and transitions to CharacterSelect on SPACE or click.
