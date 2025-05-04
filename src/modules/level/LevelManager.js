@@ -60,7 +60,7 @@ export class LevelManager {
         // Create level transition controller
         this.transitionController = new LevelTransitionController(this.scene, this.eventSystem);
         
-        // Create level loader
+        // Create level loader, passing world for enemy physics
         this.levelLoader = new LevelLoader(
             this.scene,
             this.eventSystem,
@@ -69,7 +69,8 @@ export class LevelManager {
                 platformFactory: this.platformFactory,
                 movingPlatformController: this.movingPlatformController,
                 collectibleManager: this.collectibleManager,
-                completionManager: this.completionManager
+                completionManager: this.completionManager,
+                world: this.world
             }
         );
     }

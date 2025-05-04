@@ -22,6 +22,8 @@ export class LevelLoader {
         this.scene = scene;
         this.eventSystem = eventSystem;
         this.managers = managers;
+        // Capture physics world for enemy spawning
+        this.world = managers.world;
         
         // Current level data
         this.currentLevelId = null;

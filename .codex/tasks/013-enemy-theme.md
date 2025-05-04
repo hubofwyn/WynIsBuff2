@@ -1,14 +1,24 @@
-Status: IN-PROG
+Status: READY
 Owner: phaser-coder
 Scope: feature
 Estimate: 4
 
 # Buff-Themed Enemies
 
-Task: Introduce or reskin enemy characters to match the “Wyn is Buff” motif in level1.
-  - Review `Enemy_Animations_Set` assets under `assets/Enemy_Animations_Set/`.
-  - In `src/modules/level/LevelLoader.js`, define enemy spawn points in level1 config.
-  - Use Phaser’s `load.atlas()` or `load.spritesheet()` to import buffed enemy animations.
-  - Create enemy game objects with custom controllers or reuse existing NPC logic.
-  - Set up simple patrol or follow behavior, emit `COLLISION_START` with player to test interactions.
-  - Ensure enemy sprites reflect buff theme (e.g., extra muscles, bold colors).
+Task: Implement buff-themed enemy spawning and behavior for level1.
+  - Preload enemy assets in `Preloader`: `axelface`, `wynface` images or atlases.
+  - In `LevelManager.initializeComponents`, pass `world` into `LevelLoader`.
+  - Extend `LevelLoader` constructor to capture `managers.world` and use it when spawning.
+  - Update `LevelLoader.initializeLevel` to create `EnemyController(scene, world, eventSystem, x, y, key)`.
+  - In `EnemyController.create()`:
+    * Create a kinematic Rapier body and collider sized to the sprite (64×64).
+    * Register body–sprite pair via `scene.physicsManager.registerBodySprite`.
+    * Configure patrol parameters (`startX`, `patrolRange=100`, `patrolSpeed=50`, `patrolDir`).
+  - In `EnemyController.update(time, delta)`:
+    * Apply horizontal velocity (`patrolSpeed*patrolDir`).
+    * Reverse `patrolDir` when reaching `startX±patrolRange`.
+  - Ensure `GameScene.update` calls `enemy.update(time, delta)` for each enemy.
+  - Verify collisions emit `COLLISION_START` and the buff enemy animates/patrols correctly.
+
+## Change Log
+* Refine Task breakdown for precise implementation of buff enemies in level1.
