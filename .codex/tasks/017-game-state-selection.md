@@ -1,4 +1,4 @@
-Status: READY
+Status: DONE
 Owner: phaser-coder
 Scope: feature
 Estimate: 2
