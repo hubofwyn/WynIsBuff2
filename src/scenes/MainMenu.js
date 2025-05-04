@@ -1,5 +1,6 @@
 import { Scene } from 'phaser';
 import { GameStateManager } from '../modules/GameStateManager';
+import { UIConfig } from '../constants/UIConfig';
 
 export class MainMenu extends Scene {
     constructor() {
@@ -12,6 +13,8 @@ export class MainMenu extends Scene {
     create() {
         // Initialize game state manager
         this.gameStateManager = new GameStateManager();
+        // Fade in camera
+        this.cameras.main.fadeIn(UIConfig.animations.fadeInDuration);
         
         // Set background
         this.add.image(512, 384, 'background');
@@ -29,9 +32,18 @@ export class MainMenu extends Scene {
             align: 'center'
         }).setOrigin(0.5);
         
+        // Create background panel
+        const panelCfg = UIConfig.panel;
+        this.add.rectangle(
+            512,
+            500,
+            400,
+            300,
+            panelCfg.backgroundColor,
+            panelCfg.backgroundAlpha
+        ).setOrigin(0.5);
         // Create level selection UI
         this.createLevelSelection();
-        
         // Add reset progress button
         this.createResetButton();
     }
@@ -71,18 +83,30 @@ export class MainMenu extends Scene {
                 buttonText += ` (${progress.collectiblesCollected}/${progress.totalCollectibles})`;
             }
             
-            // Create button with appropriate style
+            // Create button with UIConfig styles
+            const btnCfg = UIConfig.menuButton;
             const buttonStyle = {
-                fontFamily: 'Arial',
-                fontSize: 24,
-                color: isUnlocked ? '#ffffff' : '#888888',
-                stroke: '#000000',
-                strokeThickness: 4,
-                align: 'center'
+                fontFamily: btnCfg.fontFamily,
+                fontSize: btnCfg.fontSize,
+                color: isUnlocked ? btnCfg.color : btnCfg.disabledColor,
+                stroke: btnCfg.stroke,
+                strokeThickness: btnCfg.strokeThickness,
+                align: btnCfg.align
             };
-            
             const button = this.add.text(level.x, level.y, buttonText, buttonStyle)
-                .setOrigin(0.5);
+                .setOrigin(0.5)
+                // start small and transparent for animation
+                .setScale(UIConfig.animations.scaleIn.start)
+                .setAlpha(0);
+            // Animate button entrance
+            this.tweens.add({
+                targets: button,
+                alpha: 1,
+                scale: UIConfig.animations.scaleIn.end,
+                ease: 'Power2',
+                duration: UIConfig.animations.scaleIn.duration,
+                delay: index * 100
+            });
             
             // Add completed indicator if level is completed
             if (completedLevels.includes(level.id)) {
@@ -95,21 +119,12 @@ export class MainMenu extends Scene {
                 }).setOrigin(0.5);
             }
             
-            // Make button interactive if level is unlocked
+            // Make button interactive if unlocked
             if (isUnlocked) {
-                button.setInteractive();
-                
-                button.on('pointerover', () => {
-                    button.setTint(0xffff00);
-                });
-                
-                button.on('pointerout', () => {
-                    button.clearTint();
-                });
-                
-                button.on('pointerdown', () => {
-                    this.scene.start('Game', { levelId: level.id });
-                });
+                button.setInteractive({ useHandCursor: true });
+                button.on('pointerover', () => button.setTint(btnCfg.hoverTint));
+                button.on('pointerout', () => button.clearTint());
+                button.on('pointerdown', () => this.scene.start('Game', { levelId: level.id }));
             }
         });
     }
