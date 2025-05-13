@@ -1,6 +1,8 @@
 import { Boot } from './scenes/Boot';
 import { Game } from './scenes/Game';
 import { GameOver } from './scenes/GameOver';
+import { PauseScene } from './scenes/PauseScene';
+import { SettingsScene } from './scenes/SettingsScene';
 import { MainMenu } from './scenes/MainMenu';
 import { Preloader } from './scenes/Preloader';
 import { CharacterSelect } from './scenes/CharacterSelect';
@@ -25,6 +27,8 @@ const config = {
         CharacterSelect,
         MainMenu,
         Game,
+        PauseScene,
+        SettingsScene,
         GameOver
     ]
 };

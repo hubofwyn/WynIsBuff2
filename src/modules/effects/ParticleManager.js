@@ -341,4 +341,13 @@ export class ParticleManager {
         
         this.emitters.clear();
     }
+    /**
+     * Set graphics quality for particle effects
+     * @param {string} level - 'Low', 'Medium', or 'High'
+     */
+    setQuality(level) {
+        this.quality = level;
+        console.log(`[ParticleManager] Quality set to ${level}`);
+        // Future: adjust particle config density or disable effects for 'Low'
+    }
 }

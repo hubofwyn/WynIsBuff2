@@ -46,7 +46,8 @@ export class UIManager {
             element: textElement,
             type: 'text',
             responsive: responsive,
-            originalPosition: { x, y }
+            originalPosition: { x, y },
+            originalStyle: Object.assign({}, style)
         });
         return textElement;
     }
@@ -299,5 +300,43 @@ export class UIManager {
         }
         
         this.scene.scale.off('resize', this.handleResize, this);
+    }
+    /**
+     * Apply or remove high-contrast UI styling
+     * @param {boolean} enabled
+     */
+    applyHighContrast(enabled) {
+        console.log(`[UIManager] High contrast mode: ${enabled}`);
+        // Apply CSS contrast filter to game canvas
+        const canvas = this.scene.sys.game.canvas;
+        if (canvas && canvas.style) {
+            canvas.style.filter = enabled ? 'contrast(150%)' : 'contrast(100%)';
+        }
+        // Iterate over text elements and adjust styles
+        this.elements.forEach((data) => {
+            const el = data.element;
+            if (data.type === 'text' && data.originalStyle && el.setStyle) {
+                if (enabled) {
+                    // Increase font size and stroke thickness
+                    const base = data.originalStyle;
+                    const size = parseInt(base.fontSize, 10) || 16;
+                    el.setStyle({
+                        fontSize: `${size + 4}px`,
+                        strokeThickness: (base.strokeThickness || 0) + 2
+                    });
+                } else {
+                    // Revert to original style
+                    el.setStyle(data.originalStyle);
+                }
+            }
+        });
+    }
+    /**
+     * Show or hide subtitle captions in the UI
+     * @param {boolean} enabled
+     */
+    showSubtitles(enabled) {
+        console.log(`[UIManager] Subtitles enabled: ${enabled}`);
+        // TODO: Display subtitle text elements when sound events occur
     }
 }

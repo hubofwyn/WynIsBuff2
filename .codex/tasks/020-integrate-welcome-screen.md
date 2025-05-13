@@ -1,4 +1,4 @@
-Status: READY
+Status: DONE
 Owner: phaser-coder
 Scope: chore
 Estimate: 2
@@ -10,3 +10,6 @@ Task: Wire the new `WelcomeScene` into the game flow:
   - Modify `Preloader` to call `this.scene.start('Welcome')` instead of 'CharacterSelect'.
   - Ensure seamless transition: Boot → Preloader → Welcome → CharacterSelect → MainMenu → Game.
   - Verify no assets or input handlers conflict across scenes.
+  
+## Change Log
+- Integrated WelcomeScene into game flow: updated scene order in `src/main.js` and modified `Preloader.create()` to start `Welcome`.

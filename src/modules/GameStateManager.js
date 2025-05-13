@@ -6,13 +6,17 @@ export class GameStateManager {
     /**
      * Create a new GameStateManager
      */
+    // Current settings schema version
+    static SETTINGS_SCHEMA_VERSION = 1;
+
     constructor() {
         this.storageKey = 'wynIsBuff2Progress';
         this.charKey = 'wynIsBuff2SelectedCharacter';
+        this.settingsKey = 'wynIsBuff2Settings';
         this.initialized = false;
-        
-        // Initialize storage
+        // Initialize storage and load persisted data
         this.initialize();
+        this.settings = this.loadSettings();
     }
     
     /**
@@ -228,7 +232,86 @@ export class GameStateManager {
     getSelectedCharacter() {
         return this.selectedCharacter || 'axelface';
     }
+    /**
+     * Save settings object to localStorage with schema version
+     * @param {Object} settings - Settings payload to persist
+     * @returns {boolean} Whether save succeeded
+     */
+    saveSettings(settings) {
+        if (!this.initialized) {
+            return false;
+        }
+        try {
+            const payload = {
+                schemaVersion: GameStateManager.SETTINGS_SCHEMA_VERSION,
+                settings
+            };
+            localStorage.setItem(this.settingsKey, JSON.stringify(payload));
+            this.settings = settings;
+            return true;
+        } catch (error) {
+            console.error('[GameStateManager] Error saving settings:', error);
+            return false;
+        }
+    }
+    /**
+     * Load settings object from localStorage
+     * @returns {Object} Persisted settings, or defaults if none
+     */
+    loadSettings() {
+        const defaults = {
+            volumes: { master: 0.8, music: 0.7, sfx: 0.9 },
+            keybindings: { jump: 'SPACE', left: 'A', right: 'D', pause: 'ESC' },
+            graphicsQuality: 'Medium',
+            accessibility: { palette: 'Off', highContrast: false, subtitles: false }
+        };
+        if (!this.initialized) {
+            return defaults;
+        }
+        try {
+            const raw = localStorage.getItem(this.settingsKey);
+            if (!raw) {
+                return defaults;
+            }
+            const parsed = JSON.parse(raw);
+            // Versioned payload
+            if (parsed.schemaVersion !== undefined) {
+                if (parsed.schemaVersion === GameStateManager.SETTINGS_SCHEMA_VERSION) {
+                    return parsed.settings;
+                }
+                // Migrate or reset on version mismatch
+                console.warn(`[GameStateManager] Settings schema mismatch: found ${parsed.schemaVersion}, expected ${GameStateManager.SETTINGS_SCHEMA_VERSION}. Resetting to defaults.`);
+                this.resetSettings();
+                return defaults;
+            }
+            // Legacy unversioned settings
+            console.info('[GameStateManager] Loading legacy settings, upgrading schema');
+            this.saveSettings(parsed);
+            return parsed;
+        } catch (error) {
+            console.error('[GameStateManager] Error loading settings:', error);
+            return defaults;
+        }
+    }
     
+    /**
+     * Reset all persisted settings to defaults
+     * @returns {boolean} Whether the reset was successful
+     */
+    resetSettings() {
+        if (!this.initialized) {
+            return false;
+        }
+        try {
+            localStorage.removeItem(this.settingsKey);
+            this.settings = this.loadSettings();
+            console.log('[GameStateManager] Settings reset to defaults');
+            return true;
+        } catch (error) {
+            console.error('[GameStateManager] Error resetting settings:', error);
+            return false;
+        }
+    }
     /**
      * Check if the game state manager is initialized
      * @returns {boolean} Whether the game state manager is initialized

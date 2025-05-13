@@ -345,4 +345,29 @@ export class ColorManager {
         });
         this.activeTransitions.clear();
     }
+    /**
+     * Apply a color-blind palette to the scene
+     * @param {string} palette - One of 'Off', 'Deuteranopia', 'Protanopia', 'Tritanopia'
+     */
+    applyPalette(palette) {
+        this.currentPalette = palette;
+        console.log(`[ColorManager] Applying palette: ${palette}`);
+        // Apply CSS-based filter on game canvas as a simple palette simulation
+        const canvas = this.scene.sys.game.canvas;
+        if (canvas && canvas.style) {
+            switch (palette) {
+                case 'Deuteranopia':
+                    canvas.style.filter = 'grayscale(100%)';
+                    break;
+                case 'Protanopia':
+                    canvas.style.filter = 'sepia(60%)';
+                    break;
+                case 'Tritanopia':
+                    canvas.style.filter = 'hue-rotate(90deg)';
+                    break;
+                default:
+                    canvas.style.filter = 'none';
+            }
+        }
+    }
 }

@@ -1,4 +1,5 @@
 import { Scene } from 'phaser';
+import { AudioManager } from '../modules/AudioManager';
 
 export class Preloader extends Scene
 {
@@ -32,8 +33,9 @@ export class Preloader extends Scene
         //  Load the assets for the game
         this.load.setPath('assets');
 
-        // Load the logo for the main menu
-        this.load.image('logo', 'logo.png');
+        // Load the custom game logo
+        // Points to assets/images/ui/wynisbuff2-logo.png
+        this.load.image('logo', 'images/ui/wynisbuff2-logo.png');
         
         // Load player character sprite
         // IMPORTANT: For character animations, we need to load as a spritesheet
@@ -77,8 +79,34 @@ export class Preloader extends Scene
         this.load.image('axelface', 'images/characters/axelface.png');
         // Secondary character: Wyn face placeholder
         this.load.image('wynface', 'images/characters/wynface.png');
+        // Preload additional character sprites
+        this.load.image('ila_sprite', 'images/characters/ila_sprite.png');
+        this.load.image('axel_sprite', 'images/characters/axel_sprite.png');
+        this.load.image('wyn_sprite', 'images/characters/wyn_sprite.png');
         // Buff-themed background for level1
         this.load.image('buff-bg', 'images/backgrounds/buff-bg.png');
+        // Load audio assets (MP3 only; OGG fallback later)
+        this.load.audio('proteinPixelAnthem', ['sounds/opener/protein-pixel-anthem.mp3']);
+        this.load.audio('hyperBuffBlitz', ['sounds/background/hyper-buff-blitz.mp3']);
+        // Land effects variants
+        this.load.audio('sfxLand1', ['sounds/land-effects/land1.mp3']);
+        this.load.audio('sfxLand2', ['sounds/land-effects/land2.mp3']);
+        this.load.audio('sfxLand3', ['sounds/land-effects/land3.mp3']);
+        this.load.audio('sfxLand4', ['sounds/land-effects/land4.mp3']);
+        // Pickup effects variants
+        this.load.audio('sfxPickup1', ['sounds/pickup-effects/pickup1.mp3']);
+        this.load.audio('sfxPickup2', ['sounds/pickup-effects/pickup2.mp3']);
+        this.load.audio('sfxPickup3', ['sounds/pickup-effects/pickup3.mp3']);
+        this.load.audio('sfxPickup4', ['sounds/pickup-effects/pickup4.mp3']);
+        // UI click / hover variants
+        this.load.audio('sfxClick1', ['sounds/primary-click/click1.mp3']);
+        this.load.audio('sfxClick2', ['sounds/primary-click/click2.mp3']);
+        this.load.audio('sfxClick3', ['sounds/primary-click/click3.mp3']);
+        this.load.audio('sfxClick4', ['sounds/primary-click/click4.mp3']);
+        this.load.audio('sfxHover1', ['sounds/ui-hover/hover1.mp3']);
+        this.load.audio('sfxHover2', ['sounds/ui-hover/hover2.mp3']);
+        this.load.audio('sfxHover3', ['sounds/ui-hover/hover3.mp3']);
+        this.load.audio('sfxHover4', ['sounds/ui-hover/hover4.mp3']);
         // Parallax background layers for level1
         this.load.image('parallax-sky', 'images/backgrounds/parallax-sky.png');
         this.load.image('parallax-mountains', 'images/backgrounds/parallax-mountains.png');
@@ -92,7 +120,19 @@ export class Preloader extends Scene
         
         // Define player animations that can be used across scenes
         this.createPlayerAnimations();
-
+        
+        // Initialize AudioManager (loads Howler sounds) and apply persisted audio settings
+        const audio = AudioManager.getInstance();
+        // Load persisted settings and apply volumes
+        const { GameStateManager } = require('../modules/GameStateManager');
+        const gs = new GameStateManager();
+        const settings = gs.settings || {};
+        if (settings.volumes) {
+            audio.setMasterVolume(settings.volumes.master);
+            audio.setMusicVolume(settings.volumes.music);
+            audio.setSFXVolume(settings.volumes.sfx);
+        }
+        console.log('[Preloader] AudioManager initialized with persisted settings', settings.volumes);
         // Move to Welcome Screen
         this.scene.start('Welcome');
     }

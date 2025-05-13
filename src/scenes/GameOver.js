@@ -1,5 +1,7 @@
 import { Scene } from 'phaser';
 import { GameStateManager } from '../modules/GameStateManager';
+import { AudioManager } from '../modules/AudioManager';
+import { UIConfig } from '../constants/UIConfig';
 
 export class GameOver extends Scene {
     constructor() {
@@ -24,16 +26,17 @@ export class GameOver extends Scene {
         
         // Add game completion overlay
         this.add.rectangle(512, 384, 1024, 768, 0x000000, 0.7);
+
+        // Add game logo if available
+        if (this.textures.exists('logo')) {
+            this.add.image(512, 120, 'logo')
+                .setOrigin(0.5)
+                .setScale(0.5);
+        }
         
         // Add title
-        this.add.text(512, 200, 'Game Complete!', {
-            fontFamily: 'Arial Black',
-            fontSize: 64,
-            color: '#ffffff',
-            stroke: '#000000',
-            strokeThickness: 8,
-            align: 'center'
-        }).setOrigin(0.5);
+        this.add.text(512, 200, 'Game Complete!', UIConfig.text.title)
+            .setOrigin(0.5);
         
         // Show game stats
         this.showGameStats();
@@ -52,30 +55,19 @@ export class GameOver extends Scene {
         // Get completed levels
         const completedLevels = this.gameStateManager.getCompletedLevels();
         
-        // Create stats text
-        const statsStyle = {
-            fontFamily: 'Arial',
-            fontSize: 32,
-            color: '#ffffff',
-            stroke: '#000000',
-            strokeThickness: 4,
-            align: 'center'
-        };
-        
         // Show levels completed
-        this.add.text(512, 300, `Levels Completed: ${completedLevels.length} / 5`, statsStyle)
+        this.add.text(512, 300, `Levels Completed: ${completedLevels.length} / 5`, UIConfig.text.stats)
             .setOrigin(0.5);
         
         // Show collectibles collected
-        this.add.text(512, 350, `Collectibles: ${collectibles.collected} / ${collectibles.total}`, statsStyle)
+        this.add.text(512, 350, `Collectibles: ${collectibles.collected} / ${collectibles.total}`, UIConfig.text.stats)
             .setOrigin(0.5);
         
         // Show completion percentage
         const completionPercentage = Math.round(
             (completedLevels.length / 5 + collectibles.collected / collectibles.total) * 50
         );
-        
-        this.add.text(512, 400, `Completion: ${completionPercentage}%`, statsStyle)
+        this.add.text(512, 400, `Completion: ${completionPercentage}%`, UIConfig.text.stats)
             .setOrigin(0.5);
         
         // Add congratulatory message
@@ -91,36 +83,22 @@ export class GameOver extends Scene {
             message = 'Perfect! You found everything!';
         }
         
-        this.add.text(512, 470, message, {
-            fontFamily: 'Arial',
-            fontSize: 24,
-            color: '#ffff00',
-            stroke: '#000000',
-            strokeThickness: 3,
-            align: 'center'
-        }).setOrigin(0.5);
+        this.add.text(512, 470, message, UIConfig.text.message)
+            .setOrigin(0.5);
     }
     
     /**
      * Create navigation buttons
      */
     createButtons() {
-        const buttonStyle = {
-            fontFamily: 'Arial',
-            fontSize: 32,
-            color: '#ffffff',
-            stroke: '#000000',
-            strokeThickness: 4,
-            align: 'center'
-        };
-        
         // Create main menu button
-        const menuButton = this.add.text(512, 550, 'Main Menu', buttonStyle)
+        const menuButton = this.add.text(512, 550, 'Main Menu', UIConfig.text.button)
             .setOrigin(0.5)
             .setInteractive();
         
         menuButton.on('pointerover', () => {
             menuButton.setTint(0xffff00);
+            AudioManager.getInstance().playSFX('hover');
         });
         
         menuButton.on('pointerout', () => {
@@ -128,16 +106,18 @@ export class GameOver extends Scene {
         });
         
         menuButton.on('pointerdown', () => {
+            AudioManager.getInstance().playSFX('click');
             this.scene.start('MainMenu');
         });
         
         // Create play again button
-        const playAgainButton = this.add.text(512, 620, 'Play Again', buttonStyle)
+        const playAgainButton = this.add.text(512, 620, 'Play Again', UIConfig.text.button)
             .setOrigin(0.5)
             .setInteractive();
         
         playAgainButton.on('pointerover', () => {
             playAgainButton.setTint(0xffff00);
+            AudioManager.getInstance().playSFX('hover');
         });
         
         playAgainButton.on('pointerout', () => {
@@ -145,6 +125,7 @@ export class GameOver extends Scene {
         });
         
         playAgainButton.on('pointerdown', () => {
+            AudioManager.getInstance().playSFX('click');
             this.scene.start('Game', { levelId: 'level1' });
         });
     }

@@ -1,5 +1,6 @@
 import { Scene } from 'phaser';
 import { GameStateManager } from '../modules/GameStateManager';
+import { AudioManager } from '../modules/AudioManager';
 import { UIConfig } from '../constants/UIConfig';
 
 export class MainMenu extends Scene {
@@ -13,24 +14,23 @@ export class MainMenu extends Scene {
     create() {
         // Initialize game state manager
         this.gameStateManager = new GameStateManager();
+        // Play title screen music
+        AudioManager.getInstance().playMusic('proteinPixelAnthem');
         // Fade in camera
         this.cameras.main.fadeIn(UIConfig.animations.fadeInDuration);
         
         // Set background
         this.add.image(512, 384, 'background');
         
-        // Add logo
-        this.add.image(512, 200, 'logo');
+        // Add logo if available
+        if (this.textures.exists('logo')) {
+            this.add.image(512, 200, 'logo')
+                .setOrigin(0.5);
+        }
         
         // Add title
-        this.add.text(512, 300, 'WynIsBuff2', {
-            fontFamily: 'Arial Black',
-            fontSize: 48,
-            color: '#ffffff',
-            stroke: '#000000',
-            strokeThickness: 8,
-            align: 'center'
-        }).setOrigin(0.5);
+        this.add.text(512, 300, 'WynIsBuff2', UIConfig.text.heading)
+            .setOrigin(0.5);
         
         // Create background panel
         const panelCfg = UIConfig.panel;
@@ -60,9 +60,7 @@ export class MainMenu extends Scene {
         const levels = [
             { id: 'level1', name: 'First Steps', x: 512, y: 400 },
             { id: 'level2', name: 'Double Trouble', x: 512, y: 450 },
-            { id: 'level3', name: 'Triple Threat', x: 512, y: 500 },
-            { id: 'level4', name: 'Momentum Master', x: 512, y: 550 },
-            { id: 'level5', name: 'The Gauntlet', x: 512, y: 600 }
+            { id: 'level3', name: 'Triple Threat', x: 512, y: 500 }
         ];
         
         // Get completed levels
@@ -122,9 +120,15 @@ export class MainMenu extends Scene {
             // Make button interactive if unlocked
             if (isUnlocked) {
                 button.setInteractive({ useHandCursor: true });
-                button.on('pointerover', () => button.setTint(btnCfg.hoverTint));
+                button.on('pointerover', () => {
+                    button.setTint(btnCfg.hoverTint);
+                    AudioManager.getInstance().playSFX('hover');
+                });
                 button.on('pointerout', () => button.clearTint());
-                button.on('pointerdown', () => this.scene.start('Game', { levelId: level.id }));
+                button.on('pointerdown', () => {
+                    AudioManager.getInstance().playSFX('click');
+                    this.scene.start('Game', { levelId: level.id });
+                });
             }
         });
     }
@@ -144,6 +148,7 @@ export class MainMenu extends Scene {
         
         resetButton.on('pointerover', () => {
             resetButton.setTint(0xffff00);
+            AudioManager.getInstance().playSFX('hover');
         });
         
         resetButton.on('pointerout', () => {
@@ -151,6 +156,7 @@ export class MainMenu extends Scene {
         });
         
         resetButton.on('pointerdown', () => {
+            AudioManager.getInstance().playSFX('click');
             // Create confirmation dialog
             const confirmBg = this.add.rectangle(512, 384, 400, 200, 0x000000, 0.8);
             
@@ -176,17 +182,25 @@ export class MainMenu extends Scene {
             }).setOrigin(0.5).setInteractive();
             
             // Yes button
-            yesButton.on('pointerover', () => yesButton.setTint(0xffff00));
+            yesButton.on('pointerover', () => {
+                yesButton.setTint(0xffff00);
+                AudioManager.getInstance().playSFX('hover');
+            });
             yesButton.on('pointerout', () => yesButton.clearTint());
             yesButton.on('pointerdown', () => {
+                AudioManager.getInstance().playSFX('click');
                 this.gameStateManager.resetProgress();
                 this.scene.restart();
             });
             
             // No button
-            noButton.on('pointerover', () => noButton.setTint(0xffff00));
+            noButton.on('pointerover', () => {
+                noButton.setTint(0xffff00);
+                AudioManager.getInstance().playSFX('hover');
+            });
             noButton.on('pointerout', () => noButton.clearTint());
             noButton.on('pointerdown', () => {
+                AudioManager.getInstance().playSFX('click');
                 confirmBg.destroy();
                 confirmText.destroy();
                 yesButton.destroy();

@@ -10,6 +10,7 @@ import { ParticleManager } from '../modules/effects/ParticleManager';
 import { CameraManager } from '../modules/effects/CameraManager';
 import { ColorManager } from '../modules/effects/ColorManager';
 import { GameStateManager } from '../modules/GameStateManager';
+import { AudioManager } from '../modules/AudioManager';
 
 export class Game extends Scene {
     constructor() {
@@ -47,7 +48,11 @@ export class Game extends Scene {
     }
 
     async create() {
-        console.log('[Game] Create method started');
+            console.log('[Game] Create method started');
+            // Play in-level music
+            const audio = AudioManager.getInstance();
+            audio.stopMusic('proteinPixelAnthem');
+            audio.playMusic('hyperBuffBlitz');
         
         try {
             // Initialize event system
@@ -83,6 +88,24 @@ export class Game extends Scene {
             this.cameraManager = new CameraManager(this, this.eventSystem);
             this.colorManager = new ColorManager(this, this.eventSystem);
             console.log('[Game] Effect managers initialized');
+            // Apply persisted graphics and accessibility settings
+            const settings = this.gameStateManager.settings || {};
+            // Graphics quality
+            if (settings.graphicsQuality) {
+                this.particleManager.setQuality(settings.graphicsQuality);
+                this.cameraManager.setQuality(settings.graphicsQuality);
+            }
+            // Accessibility settings
+            const acc = settings.accessibility || {};
+            if (acc.palette) {
+                this.colorManager.applyPalette(acc.palette);
+            }
+            if (acc.highContrast && this.uiManager) {
+                this.uiManager.applyHighContrast(acc.highContrast);
+            }
+            if (acc.subtitles && this.uiManager) {
+                this.uiManager.showSubtitles(acc.subtitles);
+            }
             
             // Create level manager and load the specified level
             this.levelManager = new LevelManager(this, this.physicsManager.getWorld(), this.eventSystem);
@@ -113,8 +136,10 @@ export class Game extends Scene {
             
             // Listen for Pause events via InputManager (ESC key)
             this.eventSystem.on(EventNames.PAUSE, () => {
-                console.log('[Game] Pause event received, transitioning to MainMenu scene');
-                this.scene.start('MainMenu');
+                console.log('[Game] Pause event received, launching PauseScene');
+                // Pause the game and show pause overlay
+                this.scene.launch('PauseScene');
+                this.scene.pause();
             });
             // Listen for Level Reset events via InputManager (R key)
             this.eventSystem.on(EventNames.LEVEL_RESET, () => {
@@ -259,11 +284,13 @@ export class Game extends Scene {
         ).setOrigin(0.5).setInteractive();
         
         continueButton.on('pointerdown', () => {
+            AudioManager.getInstance().playSFX('click');
             this.levelManager.nextLevel();
         });
         
         continueButton.on('pointerover', () => {
             continueButton.setTint(0xffff00);
+            AudioManager.getInstance().playSFX('hover');
         });
         
         continueButton.on('pointerout', () => {
@@ -283,20 +310,24 @@ export class Game extends Scene {
         this.eventSystem.on(EventNames.PLAYER_LAND, (data) => {
             // Screen shake is now handled by CameraManager
             if (this.cameraManager) {
-                // The CameraManager listens for these events directly
                 console.log('[Game] Player landed, CameraManager handling effects');
             }
+            // Play landing sound
+            AudioManager.getInstance().playSFX('land');
         });
         
         // Listen for player jump events
         this.eventSystem.on(EventNames.PLAYER_JUMP, (data) => {
             console.log('[Game] Player jumped, effect managers handling feedback');
-            // Visual and audio feedback is handled by the effect managers
+            // Play jump sound effect
+            AudioManager.getInstance().playSFX('jump');
         });
         
         // Listen for collectible collected events
         this.eventSystem.on(EventNames.COLLECTIBLE_COLLECTED, (data) => {
             console.log('[Game] Collectible collected:', data);
+            // Play pickup sound effect
+            AudioManager.getInstance().playSFX('pickup');
             
             // Update collectibles counter
             this.uiManager.updateText(

@@ -1,4 +1,4 @@
-Status: READY
+Status: DONE
 Owner: phaser-coder
 Scope: chore
 Estimate: 1
@@ -10,3 +10,8 @@ Task: Replace any default 'Phaser' branding and text with game-specific assets/t
   - Import and preload a custom logo image (e.g., `assets/images/ui/wynisbuff2-logo.png`).
   - Update scene code to display this logo instead of the Phaser logo or default text.
   - Verify scaling, positioning, and legibility across scenes.
+  
+## Change Log
+- Preloader loads custom WynIsBuff2 logo from `assets/images/ui/wynisbuff2-logo.png` under key `logo`.
+- WelcomeScene and MainMenu now use `logo` image for branding.
+- GameOver scene displays the logo above the 'Game Complete!' title when available.

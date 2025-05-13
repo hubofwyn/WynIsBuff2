@@ -1,7 +1,9 @@
 import { Scene } from 'phaser';
 import { GameStateManager } from '../modules/GameStateManager';
 import { EventSystem } from '../modules/EventSystem';
+import { AudioManager } from '../modules/AudioManager';
 import { EventNames } from '../constants/EventNames';
+import { UIConfig } from '../constants/UIConfig';
 
 /**
  * CharacterSelectScene allows the player to choose their character before gameplay.
@@ -21,18 +23,14 @@ export class CharacterSelect extends Scene {
     create() {
         const { width, height } = this.cameras.main;
         // Title
-        this.add.text(width / 2, 100, 'Select Your Champion', {
-            fontFamily: 'Arial Black',
-            fontSize: '48px',
-            color: '#ffffff',
-            stroke: '#000000',
-            strokeThickness: 8
-        }).setOrigin(0.5);
+        this.add.text(width / 2, 100, 'Select Your Champion', UIConfig.text.heading)
+            .setOrigin(0.5);
 
         // Character options
         const options = [
-            { key: 'axelface', label: 'Axel Face' },
-            { key: 'wynface', label: 'Wyn Face' }
+            { key: 'ila_sprite', label: 'Favorite Sister' },
+            { key: 'axel_sprite', label: 'Not Buff Axel' },
+            { key: 'wyn_sprite', label: 'Wyn the Buff' }
         ];
 
         options.forEach((opt, idx) => {
@@ -49,22 +47,19 @@ export class CharacterSelect extends Scene {
             sprite.setInteractive({ useHandCursor: true });
 
             // Label
-            this.add.text(x, y + 80, opt.label, {
-                fontFamily: 'Arial',
-                fontSize: '24px',
-                color: '#ffffff',
-                stroke: '#000000',
-                strokeThickness: 4
-            }).setOrigin(0.5);
+            this.add.text(x, y + 80, opt.label, UIConfig.text.label)
+                .setOrigin(0.5);
 
             // Pointer events
             sprite.on('pointerover', () => {
                 sprite.setScale(1.2);
+                AudioManager.getInstance().playSFX('hover');
             });
             sprite.on('pointerout', () => {
                 sprite.setScale(1);
             });
             sprite.on('pointerdown', () => {
+                AudioManager.getInstance().playSFX('click');
                 this.selection = opt.key;
                 this.gameState.setSelectedCharacter(opt.key);
                 this.eventSystem.emit(EventNames.SELECT_CHARACTER, { key: opt.key });

@@ -1,4 +1,4 @@
-Status: READY
+Status: DONE
 Owner: phaser-coder
 Scope: chore
 Estimate: 1
@@ -12,8 +12,12 @@ Task: Ensure the following character sprite assets are exported and available un
   - `axelface.png` (Boss placeholder)
   
 Steps:
-  • Export from corresponding `.aseprite` files using Aseprite CLI or editor:
-      aseprite -b ila_sprite.aseprite --save-as ila_sprite.png
-      aseprite -b axel_sprite.aseprite --save-as axel_sprite.png
-      aseprite -b wyn_sprite.aseprite --save-as wyn_sprite.png
-  • Optimize PNGs (e.g., pngquant) and copy to `assets/images/characters/`.
+  • Assets already present in `assets/images/characters/`:
+      - ila_sprite.png
+      - axel_sprite.png
+      - wyn_sprite.png
+      - axelface.png
+  • No further export needed.
+  
+## Change Log
+- Confirmed additional character sprite PNGs are present under `assets/images/characters/`.

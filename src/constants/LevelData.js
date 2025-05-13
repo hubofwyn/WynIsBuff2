@@ -299,7 +299,7 @@ export const LevelData = {
  * @returns {Array} Array of level IDs
  */
 export function getLevelIds() {
-    return ['level1', 'level2', 'level3', 'level4', 'level5'];
+    return ['level1', 'level2', 'level3'];
 }
 
 /**

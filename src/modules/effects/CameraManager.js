@@ -185,4 +185,14 @@ export class CameraManager {
             this.shakeTimer = null;
         }
     }
+    /**
+     * Set graphics quality for camera effects
+     * @param {string} level - 'Low', 'Medium', or 'High'
+     */
+    setQuality(level) {
+        this.quality = level;
+        // Disable effects on 'Low'
+        this.effectsEnabled = level !== 'Low';
+        console.log(`[CameraManager] Quality set to ${level}, effectsEnabled=${this.effectsEnabled}`);
+    }
 }

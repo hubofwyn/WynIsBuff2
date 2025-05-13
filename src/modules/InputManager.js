@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import { EventNames } from '../constants/EventNames';
+import { GameStateManager } from './GameStateManager';
 
 /**
  * InputManager handles mapping of keyboard inputs to game events.
@@ -23,14 +24,6 @@ export class InputManager {
         const { keyboard } = this.scene.input;
         // Arrow keys
         this.keys.cursors = keyboard.createCursorKeys();
-        // WASD
-        this.keys.W = keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
-        this.keys.A = keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
-        this.keys.S = keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
-        this.keys.D = keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
-        // Space and Escape
-        this.keys.SPACE = keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
-        this.keys.ESC = keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ESC);
         // Reset key (R)
         this.keys.R = keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.R);
 
@@ -39,14 +32,25 @@ export class InputManager {
         this.keys.cursors.right.on('down', () => this.eventSystem.emit(EventNames.MOVE_RIGHT));
         this.keys.cursors.up.on('down', () => this.eventSystem.emit(EventNames.MOVE_UP));
         this.keys.cursors.down.on('down', () => this.eventSystem.emit(EventNames.MOVE_DOWN));
-        // WASD key events
-        this.keys.A.on('down', () => this.eventSystem.emit(EventNames.MOVE_LEFT));
-        this.keys.D.on('down', () => this.eventSystem.emit(EventNames.MOVE_RIGHT));
-        this.keys.W.on('down', () => this.eventSystem.emit(EventNames.MOVE_UP));
-        this.keys.S.on('down', () => this.eventSystem.emit(EventNames.MOVE_DOWN));
-        // Jump and pause
-        this.keys.SPACE.on('down', () => this.eventSystem.emit(EventNames.JUMP));
-        this.keys.ESC.on('down', () => this.eventSystem.emit(EventNames.PAUSE));
+        // Dynamic keybindings (Jump, Move Left/Right, Pause)
+        const gs = new GameStateManager();
+        const bindings = gs.settings.keybindings;
+        const actionMap = {
+            jump: EventNames.JUMP,
+            left: EventNames.MOVE_LEFT,
+            right: EventNames.MOVE_RIGHT,
+            pause: EventNames.PAUSE
+        };
+        Object.entries(actionMap).forEach(([action, eventName]) => {
+            const keyName = bindings[action];
+            const keyCode = Phaser.Input.Keyboard.KeyCodes[keyName];
+            if (keyCode) {
+                const keyObj = keyboard.addKey(keyCode);
+                keyObj.on('down', () => this.eventSystem.emit(eventName));
+                this.keys[action] = keyObj;
+            }
+        });
+        // Reset key (R)
         this.keys.R.on('down', () => this.eventSystem.emit(EventNames.LEVEL_RESET));
     }
 
