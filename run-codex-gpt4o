@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+#
+# run-codex-gpt4o: Launcher for Codex CLI with gpt-4o model
+# Usage: ./run-codex-gpt4o [arguments]
+
+# This script uses gpt-4o which should support functions
+
+PROJECT_DOC="./CODEX.md"
+
+echo "Starting Codex with model: gpt-4o"
+echo "Project doc: $PROJECT_DOC"
+
+# Run codex with gpt-4o model and project document
+codex -m gpt-4o --project-doc "$PROJECT_DOC" "$@"

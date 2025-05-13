@@ -11,7 +11,7 @@ PROJECT_ROOT="$( dirname "$SCRIPT_DIR" )"
 export CODEX_ROLE="${1:-phaser-coder}"
 
 # Define project-specific paths
-export CODEX_PROJECT_DOC="$PROJECT_ROOT/codex-setup.md"
+export CODEX_PROJECT_DOC="$PROJECT_ROOT/CODEX.md"
 export CODEX_BASELINE_DIR="$PROJECT_ROOT/.codex/baseline"
 export CODEX_GOALS_FILE="$PROJECT_ROOT/.codex/goals/active-goals.txt"
 export CODEX_TASKS_DIR="$PROJECT_ROOT/.codex/tasks"

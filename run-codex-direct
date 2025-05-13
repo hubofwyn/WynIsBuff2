@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+#
+# run-codex-direct: Direct launcher for Codex CLI with specific model
+# Usage: ./run-codex-direct [arguments]
+
+# This script bypasses the config file and directly specifies the model
+
+# Use gpt-4o model directly
+MODEL="gpt-4o"
+PROJECT_DOC="./CODEX.md"
+
+echo "Starting Codex with model: $MODEL"
+echo "Project doc: $PROJECT_DOC"
+
+# Run codex with the specified model and project document
+codex --model "$MODEL" --project-doc "$PROJECT_DOC" "$@"

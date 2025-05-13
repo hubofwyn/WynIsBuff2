@@ -1,5 +1,6 @@
 import { Scene } from 'phaser';
 import { AudioManager } from '../modules/AudioManager';
+import { GameStateManager } from '../modules/GameStateManager';
 
 export class Preloader extends Scene
 {
@@ -124,7 +125,7 @@ export class Preloader extends Scene
         // Initialize AudioManager (loads Howler sounds) and apply persisted audio settings
         const audio = AudioManager.getInstance();
         // Load persisted settings and apply volumes
-        const { GameStateManager } = require('../modules/GameStateManager');
+        // Initialize and apply persisted settings via GameStateManager
         const gs = new GameStateManager();
         const settings = gs.settings || {};
         if (settings.volumes) {

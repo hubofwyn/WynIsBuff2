@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+#
+# run-codex-allowed: Launcher for Codex CLI with allowed models
+# Usage: ./run-codex-allowed [model] [arguments]
+
+# Default to chatgpt-4o-latest which is in the allowed list
+MODEL="${1:-chatgpt-4o-latest}"
+shift 2>/dev/null || true  # Shift if there are arguments, ignore error if not
+
+PROJECT_DOC="./CODEX.md"
+
+echo "Starting Codex with model: $MODEL"
+echo "Project doc: $PROJECT_DOC"
+
+# Run codex with the specified model and project document
+codex --model "$MODEL" --project-doc "$PROJECT_DOC" "$@"

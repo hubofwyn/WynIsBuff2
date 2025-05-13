@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+#
+# run-codex: Simple launcher for Codex CLI
+# Usage: ./run-codex [options]
+
+# Project document to use
+PROJECT_DOC="./CODEX.md"
+
+# Parse command line arguments
+ARGS=()
+VERBOSE=false
+
+while [[ $# -gt 0 ]]; do
+  case $1 in
+    -v|--verbose)
+      VERBOSE=true
+      shift
+      ;;
+    -h|--help)
+      echo "Usage: ./run-codex [options]"
+      echo ""
+      echo "Options:"
+      echo "  -v, --verbose        Show verbose output"
+      echo "  -h, --help           Show this help message"
+      echo ""
+      echo "Any additional arguments will be passed directly to the codex CLI."
+      exit 0
+      ;;
+    *)
+      # Pass all other arguments directly to codex
+      ARGS+=("$1")
+      shift
+      ;;
+  esac
+done
+
+# Display info if verbose
+if [ "$VERBOSE" = true ]; then
+  echo "Starting Codex with:"
+  echo "  Project doc:  $PROJECT_DOC"
+  echo "  Arguments:    ${ARGS[@]}"
+fi
+
+# Run codex with the project document
+codex --project-doc "$PROJECT_DOC" "${ARGS[@]}"

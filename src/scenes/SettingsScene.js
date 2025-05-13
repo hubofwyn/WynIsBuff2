@@ -336,8 +336,8 @@ export class SettingsScene extends Scene {
       this.scene.resume('PauseScene');
     });
     // --- Input & Navigation Support (031-8) ---
-    // Collect all focusable interactive elements in visual order
-    const focusables = [];
+    // Collect all focusable interactive elements in visual order (resetting existing list)
+    focusables.length = 0;
     // Volume controls focus handled via explicit pushes above
     // Keybinding text elements
     actions.forEach(action => focusables.push(keyTexts[action]));
