@@ -24,6 +24,10 @@ export class InputManager {
         const { keyboard } = this.scene.input;
         // Arrow keys
         this.keys.cursors = keyboard.createCursorKeys();
+        // WASD and SPACE keys for movement and jumping
+        ['W', 'A', 'S', 'D', 'SPACE'].forEach(keyName => {
+            this.keys[keyName] = keyboard.addKey(Phaser.Input.Keyboard.KeyCodes[keyName]);
+        });
         // Reset key (R)
         this.keys.R = keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.R);
 
@@ -50,7 +54,7 @@ export class InputManager {
                 this.keys[action] = keyObj;
             }
         });
-        // Reset key (R)
+        // Level reset (R)
         this.keys.R.on('down', () => this.eventSystem.emit(EventNames.LEVEL_RESET));
     }
 

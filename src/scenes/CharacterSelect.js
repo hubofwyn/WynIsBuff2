@@ -33,8 +33,10 @@ export class CharacterSelect extends Scene {
             { key: 'wyn_sprite', label: 'Wyn the Buff' }
         ];
 
+        // Evenly distribute character options across the screen
+        const gap = width / (options.length + 1);
         options.forEach((opt, idx) => {
-            const x = width * (0.3 + idx * 0.4);
+            const x = gap * (idx + 1);
             const y = height / 2;
 
             // Display sprite
