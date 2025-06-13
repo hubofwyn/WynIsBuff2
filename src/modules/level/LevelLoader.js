@@ -1,7 +1,7 @@
 import { EventNames } from '../../constants/EventNames';
 import { getLevelById } from '../../constants/LevelData';
 // Enemy controller for spawning buff-themed enemies
-import { EnemyController } from '../enemy/EnemyController';
+import { EnemyController } from '@features/enemy';
 
 /**
  * LevelLoader class is responsible for loading level data and initializing level elements
@@ -155,6 +155,33 @@ export class LevelLoader {
                     console.error('[LevelLoader] Error spawning enemy:', error);
                 }
             });
+        }
+        
+        // Spawn boss for this level if configured
+        if (levelConfig.boss && levelConfig.boss.active) {
+            try {
+                // Import BossController dynamically to avoid circular dependencies
+                import('../enemy/BossController.js').then(module => {
+                    const { BossController } = module;
+                    const boss = new BossController(
+                        this.scene,
+                        this.world,
+                        this.eventSystem,
+                        levelConfig.boss.x,
+                        levelConfig.boss.y,
+                        levelConfig.boss.key
+                    );
+                    
+                    // Store boss reference for updates and cleanup
+                    this.scene.boss = boss;
+                    
+                    console.log('[LevelLoader] Boss spawned at', levelConfig.boss.x, levelConfig.boss.y);
+                }).catch(error => {
+                    console.error('[LevelLoader] Error importing BossController:', error);
+                });
+            } catch (error) {
+                console.error('[LevelLoader] Error spawning boss:', error);
+            }
         }
     }
     

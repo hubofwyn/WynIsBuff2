@@ -1,12 +1,13 @@
 import { Scene } from 'phaser';
-import { AudioManager } from '../modules/AudioManager';
-import { GameStateManager } from '../modules/GameStateManager';
+import { AudioManager, GameStateManager } from '@features/core';
+import { SceneKeys } from '../constants/SceneKeys.js';
+import { ImageAssets, ImagePaths, AudioAssets, AudioPaths, SpritesheetConfigs } from '../constants/Assets.js';
 
 export class Preloader extends Scene
 {
     constructor ()
     {
-        super('Preloader');
+        super(SceneKeys.PRELOADER);
     }
 
     init ()
@@ -35,21 +36,15 @@ export class Preloader extends Scene
         this.load.setPath('assets');
 
         // Load the custom game logo
-        // Points to assets/images/ui/wynisbuff2-logo.png
-        this.load.image('logo', 'images/ui/wynisbuff2-logo.png');
+        this.load.image(ImageAssets.LOGO, ImagePaths.LOGO);
         
         // Load player character sprite
         // IMPORTANT: For character animations, we need to load as a spritesheet
         // For single frame use, we'll still load the full image
-        this.load.image('player-full', '2D Pixel Dungeon Asset Pack v2.0/2D Pixel Dungeon Asset Pack/character and tileset/Dungeon_Character.png');
+        this.load.image(ImageAssets.PLAYER_FULL, ImagePaths.PLAYER_FULL);
         
         // Load character sprite for animation - we'll extract frames from it
-        this.load.spritesheet('player', '2D Pixel Dungeon Asset Pack v2.0/2D Pixel Dungeon Asset Pack/character and tileset/Dungeon_Character.png', {
-            frameWidth: 16,  // Adjust these values based on the actual sprite dimensions
-            frameHeight: 16,
-            margin: 0,
-            spacing: 0
-        });
+        this.load.spritesheet(ImageAssets.PLAYER, ImagePaths.PLAYER, SpritesheetConfigs.PLAYER);
         
         // If you have separate animation frames in your spritesheets directory, load those instead
         // Example for player idle animation (adjust path as needed):
@@ -59,59 +54,59 @@ export class Preloader extends Scene
         // });
         
         // Load tileset for potential use in level design
-        this.load.image('dungeon-tiles', 'images/tilesets/Dungeon_Tileset.png');
+        this.load.image(ImageAssets.DUNGEON_TILES, ImagePaths.DUNGEON_TILES);
         
         // Load UI elements
-        this.load.image('arrow-1', 'images/ui/interface/arrow_1.png');
-        this.load.image('arrow-2', 'images/ui/interface/arrow_2.png');
-        this.load.image('arrow-3', 'images/ui/interface/arrow_3.png');
-        this.load.image('arrow-4', 'images/ui/interface/arrow_4.png');
+        this.load.image(ImageAssets.ARROW1, ImagePaths.ARROW1);
+        this.load.image(ImageAssets.ARROW2, ImagePaths.ARROW2);
+        this.load.image(ImageAssets.ARROW3, ImagePaths.ARROW3);
+        this.load.image(ImageAssets.ARROW4, ImagePaths.ARROW4);
         
         // Load item sprites that might be useful
-        this.load.image('coin', 'spritesheets/items/coin.png');
-        this.load.image('chest', 'spritesheets/items/chest.png');
+        this.load.image(ImageAssets.COIN, ImagePaths.COIN);
+        this.load.image(ImageAssets.CHEST, ImagePaths.CHEST);
         // Themed collectible icons for level1
-        this.load.image('collectible-protein', 'spritesheets/items/flasks/flasks_2.png');
-        this.load.image('collectible-dumbbell', 'spritesheets/items/chest.png');
+        this.load.image(ImageAssets.COLLECTIBLE_PROTEIN, ImagePaths.COLLECTIBLE_PROTEIN);
+        this.load.image(ImageAssets.COLLECTIBLE_DUMBBELL, ImagePaths.COLLECTIBLE_DUMBBELL);
         
         // Load torch effect for potential environment enhancement
-        this.load.image('torch', 'spritesheets/effects/torch/torch.png');
+        this.load.image(ImageAssets.TORCH, ImagePaths.TORCH);
         // Buff-themed boss placeholder
-        this.load.image('axelface', 'images/characters/axelface.png');
+        this.load.image(ImageAssets.AXELFACE, ImagePaths.AXELFACE);
         // Secondary character: Wyn face placeholder
-        this.load.image('wynface', 'images/characters/wynface.png');
+        this.load.image(ImageAssets.WYNFACE, ImagePaths.WYNFACE);
         // Preload additional character sprites
-        this.load.image('ila_sprite', 'images/characters/ila_sprite.png');
-        this.load.image('axel_sprite', 'images/characters/axel_sprite.png');
-        this.load.image('wyn_sprite', 'images/characters/wyn_sprite.png');
+        this.load.image(ImageAssets.ILA_SPRITE, ImagePaths.ILA_SPRITE);
+        this.load.image(ImageAssets.AXEL_SPRITE, ImagePaths.AXEL_SPRITE);
+        this.load.image(ImageAssets.WYN_SPRITE, ImagePaths.WYN_SPRITE);
         // Buff-themed background for level1
-        this.load.image('buff-bg', 'images/backgrounds/buff-bg.png');
+        this.load.image(ImageAssets.BUFF_BG, ImagePaths.BUFF_BG);
         // Load audio assets (MP3 only; OGG fallback later)
-        this.load.audio('proteinPixelAnthem', ['sounds/opener/protein-pixel-anthem.mp3']);
-        this.load.audio('hyperBuffBlitz', ['sounds/background/hyper-buff-blitz.mp3']);
+        this.load.audio(AudioAssets.PROTEIN_PIXEL_ANTHEM, [AudioPaths.PROTEIN_PIXEL_ANTHEM]);
+        this.load.audio(AudioAssets.HYPER_BUFF_BLITZ, [AudioPaths.HYPER_BUFF_BLITZ]);
         // Land effects variants
-        this.load.audio('sfxLand1', ['sounds/land-effects/land1.mp3']);
-        this.load.audio('sfxLand2', ['sounds/land-effects/land2.mp3']);
-        this.load.audio('sfxLand3', ['sounds/land-effects/land3.mp3']);
-        this.load.audio('sfxLand4', ['sounds/land-effects/land4.mp3']);
+        this.load.audio(AudioAssets.SFX_LAND1, [AudioPaths.SFX_LAND1]);
+        this.load.audio(AudioAssets.SFX_LAND2, [AudioPaths.SFX_LAND2]);
+        this.load.audio(AudioAssets.SFX_LAND3, [AudioPaths.SFX_LAND3]);
+        this.load.audio(AudioAssets.SFX_LAND4, [AudioPaths.SFX_LAND4]);
         // Pickup effects variants
-        this.load.audio('sfxPickup1', ['sounds/pickup-effects/pickup1.mp3']);
-        this.load.audio('sfxPickup2', ['sounds/pickup-effects/pickup2.mp3']);
-        this.load.audio('sfxPickup3', ['sounds/pickup-effects/pickup3.mp3']);
-        this.load.audio('sfxPickup4', ['sounds/pickup-effects/pickup4.mp3']);
+        this.load.audio(AudioAssets.SFX_PICKUP1, [AudioPaths.SFX_PICKUP1]);
+        this.load.audio(AudioAssets.SFX_PICKUP2, [AudioPaths.SFX_PICKUP2]);
+        this.load.audio(AudioAssets.SFX_PICKUP3, [AudioPaths.SFX_PICKUP3]);
+        this.load.audio(AudioAssets.SFX_PICKUP4, [AudioPaths.SFX_PICKUP4]);
         // UI click / hover variants
-        this.load.audio('sfxClick1', ['sounds/primary-click/click1.mp3']);
-        this.load.audio('sfxClick2', ['sounds/primary-click/click2.mp3']);
-        this.load.audio('sfxClick3', ['sounds/primary-click/click3.mp3']);
-        this.load.audio('sfxClick4', ['sounds/primary-click/click4.mp3']);
-        this.load.audio('sfxHover1', ['sounds/ui-hover/hover1.mp3']);
-        this.load.audio('sfxHover2', ['sounds/ui-hover/hover2.mp3']);
-        this.load.audio('sfxHover3', ['sounds/ui-hover/hover3.mp3']);
-        this.load.audio('sfxHover4', ['sounds/ui-hover/hover4.mp3']);
+        this.load.audio(AudioAssets.SFX_CLICK1, [AudioPaths.SFX_CLICK1]);
+        this.load.audio(AudioAssets.SFX_CLICK2, [AudioPaths.SFX_CLICK2]);
+        this.load.audio(AudioAssets.SFX_CLICK3, [AudioPaths.SFX_CLICK3]);
+        this.load.audio(AudioAssets.SFX_CLICK4, [AudioPaths.SFX_CLICK4]);
+        this.load.audio(AudioAssets.SFX_HOVER1, [AudioPaths.SFX_HOVER1]);
+        this.load.audio(AudioAssets.SFX_HOVER2, [AudioPaths.SFX_HOVER2]);
+        this.load.audio(AudioAssets.SFX_HOVER3, [AudioPaths.SFX_HOVER3]);
+        this.load.audio(AudioAssets.SFX_HOVER4, [AudioPaths.SFX_HOVER4]);
         // Parallax background layers for level1
-        this.load.image('parallax-sky', 'images/backgrounds/parallax-sky.png');
-        this.load.image('parallax-mountains', 'images/backgrounds/parallax-mountains.png');
-        this.load.image('parallax-foreground', 'images/backgrounds/parallax-foreground.png');
+        this.load.image(ImageAssets.PARALLAX_SKY, ImagePaths.PARALLAX_SKY);
+        this.load.image(ImageAssets.PARALLAX_MOUNTAINS, ImagePaths.PARALLAX_MOUNTAINS);
+        this.load.image(ImageAssets.PARALLAX_FOREGROUND, ImagePaths.PARALLAX_FOREGROUND);
     }
 
     create ()
@@ -135,7 +130,7 @@ export class Preloader extends Scene
         }
         console.log('[Preloader] AudioManager initialized with persisted settings', settings.volumes);
         // Move to Welcome Screen
-        this.scene.start('Welcome');
+        this.scene.start(SceneKeys.WELCOME);
     }
 
     update (time, delta)

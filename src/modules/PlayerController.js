@@ -1,9 +1,13 @@
+// LEGACY MONOLITHIC IMPLEMENTATION - DEPRECATED
+// Use @features/player instead for new code which provides modular PlayerController
 import RAPIER from '@dimforge/rapier2d-compat';
 import { EventNames } from '../constants/EventNames';
 
 /**
  * PlayerController class handles all player-related functionality including
  * movement, jumping, and physics interactions.
+ * 
+ * @deprecated Use the modular PlayerController from @features/player instead
  */
 export class PlayerController {
     /**

@@ -1,14 +1,14 @@
 import Phaser, { Scene } from 'phaser';
 import { UIConfig } from '../constants/UIConfig';
-import { AudioManager } from '../modules/AudioManager';
-import { GameStateManager } from '../modules/GameStateManager';
+import { AudioManager, GameStateManager } from '@features/core';
+import { SceneKeys } from '../constants/SceneKeys.js';
 
 /**
  * SettingsScene: placeholder scene for game settings UI.
  */
 export class SettingsScene extends Scene {
   constructor() {
-    super('Settings');
+    super(SceneKeys.SETTINGS);
   }
 
   /**
@@ -195,7 +195,7 @@ export class SettingsScene extends Scene {
       currentQuality = qualityOptions[qualityIndex];
       qualityText.setText(currentQuality);
       // Apply to managers
-      const gameScene = this.scene.get('Game');
+      const gameScene = this.scene.get(SceneKeys.GAME);
       if (gameScene && gameScene.particleManager) {
         gameScene.particleManager.setQuality(currentQuality);
       }
@@ -258,7 +258,7 @@ export class SettingsScene extends Scene {
       const newPal = paletteOptions[paletteIndex];
       palText.setText(newPal);
       // Apply via ColorManager
-      const gameScene = this.scene.get('Game');
+      const gameScene = this.scene.get(SceneKeys.GAME);
       if (gameScene && gameScene.colorManager) {
         gameScene.colorManager.applyPalette(newPal);
       }
@@ -284,7 +284,7 @@ export class SettingsScene extends Scene {
       acc.highContrast = !acc.highContrast;
       hcText.setText(acc.highContrast ? 'On' : 'Off');
       // Apply via UIManager
-      const gm = this.scene.get('Game');
+      const gm = this.scene.get(SceneKeys.GAME);
       if (gm && gm.uiManager) gm.uiManager.applyHighContrast(acc.highContrast);
       // Persist
       gameState.saveSettings(Object.assign({}, settings, { accessibility: acc }));
@@ -302,7 +302,7 @@ export class SettingsScene extends Scene {
       acc.subtitles = !acc.subtitles;
       subText.setText(acc.subtitles ? 'On' : 'Off');
       // Apply via UIManager
-      const gm2 = this.scene.get('Game');
+      const gm2 = this.scene.get(SceneKeys.GAME);
       if (gm2 && gm2.uiManager) gm2.uiManager.showSubtitles(acc.subtitles);
       // Persist
       gameState.saveSettings(Object.assign({}, settings, { accessibility: acc }));
@@ -327,13 +327,13 @@ export class SettingsScene extends Scene {
       AudioManager.getInstance().playSFX('click');
       // Return to pause overlay
       this.scene.stop();
-      this.scene.resume('PauseScene');
+      this.scene.resume(SceneKeys.PAUSE);
     });
     // ESC key to go back
     this.input.keyboard.once('keydown-ESC', () => {
       AudioManager.getInstance().playSFX('click');
       this.scene.stop();
-      this.scene.resume('PauseScene');
+      this.scene.resume(SceneKeys.PAUSE);
     });
     // --- Input & Navigation Support (031-8) ---
     // Collect all focusable interactive elements in visual order (resetting existing list)

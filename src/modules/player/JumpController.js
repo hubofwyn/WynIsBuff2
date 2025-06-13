@@ -33,27 +33,27 @@ export class JumpController {
         
         // Jump physics parameters (EXTREME BUFFNESS)
         this.jumpParams = {
-            baseForce: -75,          // Stronger initial pop
-            // Jump forces for each jump
+            baseForce: -55,          // Classic platformer jump force
+            // Jump forces for each jump - classic multi-jump progression
             forces: {
-                1: -75,  // First jump
-                2: -90,  // Second jump
-                3: -120  // Third jump (massive)
+                1: -55,  // First jump - standard height
+                2: -65,  // Second jump - slightly higher
+                3: -80   // Third jump - significant but not crazy
             },
-            releaseMultiplier: 0.5,  // Tap jumps quicker; hold for max height
-            minJumpTime: 60,         // Quicker minimum jump time
-            bufferTime: 120,         // Generous buffer for frustration reduction
-            coyoteTime: 100,         // More forgiving off-ledge jumps
-            landingRecoveryTime: 30,  // Very short recovery for frantic re-jumps
+            releaseMultiplier: 0.4,  // Variable jump height control
+            minJumpTime: 80,         // Classic minimum jump duration
+            bufferTime: 150,         // Forgiving input buffer
+            coyoteTime: 120,         // Classic coyote time
+            landingRecoveryTime: 100, // Natural landing recovery
             // Horizontal boost parameters
             horizontalBoost: {
-                threshold: 0.5,
-                multiplier: 1.5
+                threshold: 0.3,
+                multiplier: 1.2
             },
-            // Additional impulse parameters
+            // Additional impulse parameters - classic feel
             additionalImpulse: {
                 x: 0,
-                y: -30  // More initial upward kick
+                y: -10  // Minimal additional impulse for natural feel
             }
         };
         
@@ -306,8 +306,8 @@ export class JumpController {
             y: this.jumpParams.additionalImpulse.y
         }, true);
         
-        // Apply a stretch effect
-        this.applySquashEffect(sprite, 0.8, 1.2, 100);
+        // Apply a buff effect (wider, slightly shorter)
+        this.applySquashEffect(sprite, 1.2, 0.8, 100);
         
         // Update jump state
         this.jumpsUsed = jumpNumber;

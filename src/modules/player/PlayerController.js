@@ -78,11 +78,15 @@ export class PlayerController {
                 console.log('[PlayerController] Using texture:', this.textureKey);
                 this.sprite = this.scene.add.sprite(x, y, this.textureKey);
                 this.sprite.setDisplaySize(playerWidth, playerHeight);
+                // Ensure sprite is visible and on top
+                this.sprite.setDepth(100);
+                this.sprite.setVisible(true);
             } else {
-                console.log('[PlayerController] Texture not found, using rectangle');
+                console.log('[PlayerController] Texture not found:', this.textureKey, 'using rectangle');
                 this.sprite = this.scene.add.rectangle(
                     x, y, playerWidth, playerHeight, 0x0000ff
                 );
+                this.sprite.setDepth(100);
             }
             
             // Create a dynamic rigid body for the player

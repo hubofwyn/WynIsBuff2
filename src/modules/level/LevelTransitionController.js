@@ -1,5 +1,6 @@
 import { EventNames } from '../../constants/EventNames';
 import { getNextLevelId } from '../../constants/LevelData';
+import { SceneKeys } from '../../constants/SceneKeys.js';
 
 /**
  * LevelTransitionController class is responsible for managing level transitions
@@ -104,7 +105,7 @@ export class LevelTransitionController {
         // Perform fade out
         this.fadeOut(() => {
             // Switch to GameOver scene
-            this.scene.scene.start('GameOver');
+            this.scene.scene.start(SceneKeys.GAME_OVER);
             
             // Reset transition state
             this.isTransitioning = false;

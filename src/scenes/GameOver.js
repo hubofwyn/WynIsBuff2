@@ -1,11 +1,11 @@
 import { Scene } from 'phaser';
-import { GameStateManager } from '../modules/GameStateManager';
-import { AudioManager } from '../modules/AudioManager';
+import { GameStateManager, AudioManager } from '@features/core';
 import { UIConfig } from '../constants/UIConfig';
+import { SceneKeys } from '../constants/SceneKeys.js';
 
 export class GameOver extends Scene {
     constructor() {
-        super('GameOver');
+        super(SceneKeys.GAME_OVER);
         
         // Game state manager for level progress
         this.gameStateManager = null;
@@ -107,7 +107,7 @@ export class GameOver extends Scene {
         
         menuButton.on('pointerdown', () => {
             AudioManager.getInstance().playSFX('click');
-            this.scene.start('MainMenu');
+            this.scene.start(SceneKeys.MAIN_MENU);
         });
         
         // Create play again button
@@ -126,7 +126,7 @@ export class GameOver extends Scene {
         
         playAgainButton.on('pointerdown', () => {
             AudioManager.getInstance().playSFX('click');
-            this.scene.start('Game', { levelId: 'level1' });
+            this.scene.start(SceneKeys.GAME, { levelId: 'level1' });
         });
     }
 

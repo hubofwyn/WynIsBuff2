@@ -1,8 +1,10 @@
+import { BaseManager } from './BaseManager.js';
+
 /**
  * GameStateManager class handles game state persistence,
  * including level progress, collectibles, and settings.
  */
-export class GameStateManager {
+export class GameStateManager extends BaseManager {
     /**
      * Create a new GameStateManager
      */
@@ -10,6 +12,13 @@ export class GameStateManager {
     static SETTINGS_SCHEMA_VERSION = 1;
 
     constructor() {
+        super();
+        
+        // Return early if already initialized (singleton pattern)
+        if (this.isInitialized()) {
+            return;
+        }
+        
         this.storageKey = 'wynIsBuff2Progress';
         this.charKey = 'wynIsBuff2SelectedCharacter';
         this.settingsKey = 'wynIsBuff2Settings';
@@ -28,8 +37,9 @@ export class GameStateManager {
             if (typeof localStorage === 'undefined') {
                 console.warn('[GameStateManager] localStorage is not available, progress will not be saved');
                 this.initialized = false;
-            // Default character selection
-            this.selectedCharacter = 'axelface';
+                this._initialized = false;
+                // Default character selection
+                this.selectedCharacter = 'axelSprite';
                 return;
             }
             
@@ -38,12 +48,14 @@ export class GameStateManager {
             
             console.log('[GameStateManager] Initialized successfully');
             this.initialized = true;
+            this._initialized = true;
             // Load selected character if present
             const stored = localStorage.getItem(this.charKey);
-            this.selectedCharacter = stored || 'axelface';
+            this.selectedCharacter = stored || 'axelSprite';
         } catch (error) {
             console.error('[GameStateManager] Error initializing:', error);
             this.initialized = false;
+            this._initialized = false;
         }
     }
     
@@ -230,7 +242,7 @@ export class GameStateManager {
      * @returns {string} The selected character key
      */
     getSelectedCharacter() {
-        return this.selectedCharacter || 'axelface';
+        return this.selectedCharacter || 'axelSprite';
     }
     /**
      * Save settings object to localStorage with schema version

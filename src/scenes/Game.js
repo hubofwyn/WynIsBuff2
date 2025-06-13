@@ -1,20 +1,13 @@
 import { Scene } from 'phaser';
-import { PlayerController } from '../modules/player/PlayerController';
-import { LevelManager } from '../modules/LevelManager';
-import { PhysicsManager } from '../modules/PhysicsManager';
-import { EventSystem } from '../modules/EventSystem';
+import { PlayerController } from '@features/player';
+import { ParticleManager, CameraManager, ColorManager } from '@features/effects';
+import { LevelManager, PhysicsManager, EventSystem, InputManager, UIManager, GameStateManager, AudioManager } from '@features/core';
 import { EventNames } from '../constants/EventNames';
-import { InputManager } from '../modules/InputManager';
-import { UIManager } from '../modules/UIManager';
-import { ParticleManager } from '../modules/effects/ParticleManager';
-import { CameraManager } from '../modules/effects/CameraManager';
-import { ColorManager } from '../modules/effects/ColorManager';
-import { GameStateManager } from '../modules/GameStateManager';
-import { AudioManager } from '../modules/AudioManager';
+import { SceneKeys } from '../constants/SceneKeys.js';
 
 export class Game extends Scene {
     constructor() {
-        super('Game');
+        super(SceneKeys.GAME);
         console.log('[Game] Constructor called');
         
         // Game managers
@@ -69,9 +62,9 @@ export class Game extends Scene {
             this.inputManager = new InputManager(this, this.eventSystem);
             this.inputManager.init();
             
-            // Initialize physics
+            // Initialize physics with classic action game feel (like Mario/Sonic)
             this.physicsManager = new PhysicsManager(this, this.eventSystem);
-            const physicsInitialized = await this.physicsManager.initialize(0.0, 20.0);
+            const physicsInitialized = await this.physicsManager.initialize(0.0, 35.0);
             
             if (!physicsInitialized) {
                 throw new Error('Failed to initialize physics');
@@ -119,6 +112,8 @@ export class Game extends Scene {
             const startX = levelConfig && levelConfig.playerStart ? levelConfig.playerStart.x : 512;
             const startY = levelConfig && levelConfig.playerStart ? levelConfig.playerStart.y : 300;
             const selectedKey = this.gameStateManager.getSelectedCharacter();
+            console.log('[Game] Creating player with character key:', selectedKey);
+            console.log('[Game] Available textures:', Object.keys(this.textures.list));
             this.playerController = new PlayerController(
                 this,
                 this.physicsManager.getWorld(),
@@ -138,7 +133,7 @@ export class Game extends Scene {
             this.eventSystem.on(EventNames.PAUSE, () => {
                 console.log('[Game] Pause event received, launching PauseScene');
                 // Pause the game and show pause overlay
-                this.scene.launch('PauseScene');
+                this.scene.launch(SceneKeys.PAUSE);
                 this.scene.pause();
             });
             // Listen for Level Reset events via InputManager (R key)
@@ -435,6 +430,15 @@ export class Game extends Scene {
                         console.error('[Game] Error updating enemy:', err);
                     }
                 });
+            }
+            
+            // Update boss
+            if (this.boss) {
+                try {
+                    this.boss.update(time, delta);
+                } catch (err) {
+                    console.error('[Game] Error updating boss:', err);
+                }
             }
         } catch (error) {
             console.error('[Game] Error in update:', error);

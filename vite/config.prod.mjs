@@ -1,4 +1,7 @@
 import { defineConfig } from 'vite';
+import { fileURLToPath, URL } from 'url';
+
+const pathFromRoot = (rel) => fileURLToPath(new URL(rel, import.meta.url));
 
 const phasermsg = () => {
     return {
@@ -18,6 +21,13 @@ const phasermsg = () => {
 
 export default defineConfig({
     base: './',
+    resolve: {
+        alias: {
+            '@core': pathFromRoot('../src/core'),
+            '@features': pathFromRoot('../src/features'),
+            '@scenes': pathFromRoot('../src/scenes')
+        }
+    },
     logLevel: 'warning',
     build: {
         rollupOptions: {

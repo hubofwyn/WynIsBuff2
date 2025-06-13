@@ -1,4 +1,6 @@
 import { Howl, Howler } from 'howler';
+// Using the new path alias introduced in Step 2
+import { BaseManager } from './BaseManager.js';
 
 // Background music sources
 const bgmList = {
@@ -37,13 +39,17 @@ const sfxList = {
 /**
  * AudioManager: central Howler.js wrapper for BGM and SFX
  */
-export class AudioManager {
+export class AudioManager extends BaseManager {
     /**
      * @private
      */
     constructor() {
-        if (AudioManager._instance) {
-            return AudioManager._instance;
+        super();
+        // The BaseManager constructor guarantees the singleton, so if the
+        // current instance is already initialised we can early-return.
+        if (this.isInitialized()) {
+            // eslint-disable-next-line no-constructor-return
+            return AudioManager.getInstance();
         }
         this.music = {};
         this.sfx = {};
@@ -56,18 +62,22 @@ export class AudioManager {
         Howler.volume(this.settings.masterVolume);
         this._initSounds();
         console.log('[AudioManager] Initialized with settings', this.settings);
-        AudioManager._instance = this;
+        // Mark as initialised for BaseManager consumers
+        this._initialized = true;
     }
 
     /**
      * Get singleton instance
      * @returns {AudioManager}
      */
+    // AudioManager inherits static getInstance from BaseManager – keep old
+    // method for backward compatibility, delegating to the base implementation.
+    /**
+     * @deprecated – use BaseManager.getInstance inherited by AudioManager.
+     */
     static getInstance() {
-        if (!AudioManager._instance) {
-            new AudioManager();
-        }
-        return AudioManager._instance;
+        // eslint-disable-next-line no-useless-call
+        return super.getInstance.call(this);
     }
 
     /**

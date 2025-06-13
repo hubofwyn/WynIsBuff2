@@ -9,7 +9,7 @@ class LocalStorageMock {
 }
 global.localStorage = new LocalStorageMock();
 
-const { GameStateManager } = require('../src/modules/GameStateManager');
+const { GameStateManager } = require('../src/core/GameStateManager');
 
 console.log('Running GameStateManager tests...');
 

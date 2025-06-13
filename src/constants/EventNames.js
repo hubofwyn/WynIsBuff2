@@ -29,6 +29,11 @@ export const EventNames = {
     // Physics events
     COLLISION_START: 'physics:collisionStart',
     
+    // Boss events
+    BOSS_JUMP: 'boss:jump',
+    BOSS_LAND: 'boss:land',
+    BOSS_DEFEATED: 'boss:defeated',
+    
     // UI events
     UI_UPDATE: 'ui:update',
     
@@ -53,3 +58,25 @@ export const EventNames = {
     // Helper function for custom events
     custom: (category, action) => `${category}:${action}`
 };
+
+// Backwards compatibility adapter for deprecated event names
+// Maps old event strings to new EventNames constants
+export const DeprecatedEventNames = Object.freeze({
+    // Legacy event names that might exist in older code
+    'gameInit': EventNames.GAME_INIT,
+    'gameStart': EventNames.GAME_START,
+    'levelLoad': EventNames.LEVEL_LOAD,
+    'levelComplete': EventNames.LEVEL_COMPLETE,
+    'playerJump': EventNames.PLAYER_JUMP,
+    'playerLand': EventNames.PLAYER_LAND,
+    'collectibleCollected': EventNames.COLLECTIBLE_COLLECTED,
+    
+    // Helper function to get new event name from deprecated one
+    get: (deprecatedName) => {
+        const newName = DeprecatedEventNames[deprecatedName];
+        if (newName && process.env.NODE_ENV !== 'production') {
+            console.warn(`[EventNames] Deprecated event name "${deprecatedName}" used. Please use EventNames.${Object.keys(EventNames).find(key => EventNames[key] === newName)} instead.`);
+        }
+        return newName || deprecatedName;
+    }
+});

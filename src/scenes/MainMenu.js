@@ -1,11 +1,12 @@
 import { Scene } from 'phaser';
-import { GameStateManager } from '../modules/GameStateManager';
-import { AudioManager } from '../modules/AudioManager';
+import { GameStateManager, AudioManager } from '@features/core';
 import { UIConfig } from '../constants/UIConfig';
+import { SceneKeys } from '../constants/SceneKeys.js';
+import { ImageAssets } from '../constants/Assets.js';
 
 export class MainMenu extends Scene {
     constructor() {
-        super('MainMenu');
+        super(SceneKeys.MAIN_MENU);
         
         // Game state manager for level progress
         this.gameStateManager = null;
@@ -20,11 +21,11 @@ export class MainMenu extends Scene {
         this.cameras.main.fadeIn(UIConfig.animations.fadeInDuration);
         
         // Set background
-        this.add.image(512, 384, 'background');
+        this.add.image(512, 384, ImageAssets.BACKGROUND);
         
         // Add logo if available
-        if (this.textures.exists('logo')) {
-            this.add.image(512, 200, 'logo')
+        if (this.textures.exists(ImageAssets.LOGO)) {
+            this.add.image(512, 200, ImageAssets.LOGO)
                 .setOrigin(0.5);
         }
         
@@ -127,7 +128,7 @@ export class MainMenu extends Scene {
                 button.on('pointerout', () => button.clearTint());
                 button.on('pointerdown', () => {
                     AudioManager.getInstance().playSFX('click');
-                    this.scene.start('Game', { levelId: level.id });
+                    this.scene.start(SceneKeys.GAME, { levelId: level.id });
                 });
             }
         });

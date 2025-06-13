@@ -1,0 +1,249 @@
+{
+  "version": "1.0.0",
+  "description": "Asset manifest for WynIsBuff2 game",
+  "assets": {
+    "images": {
+      "background": {
+        "type": "image",
+        "path": "images/characters/mainlogo.png",
+        "description": "Main background image used in Boot scene"
+      },
+      "logo": {
+        "type": "image", 
+        "path": "images/characters/mainlogo.png",
+        "description": "Game logo"
+      },
+      "playerFull": {
+        "type": "image",
+        "path": "2D Pixel Dungeon Asset Pack v2.0/2D Pixel Dungeon Asset Pack/character and tileset/Dungeon_Character.png",
+        "description": "Full player character image"
+      },
+      "player": {
+        "type": "spritesheet",
+        "path": "2D Pixel Dungeon Asset Pack v2.0/2D Pixel Dungeon Asset Pack/character and tileset/Dungeon_Character.png",
+        "frameWidth": 16,
+        "frameHeight": 16,
+        "margin": 0,
+        "spacing": 0,
+        "description": "Player character spritesheet for animations"
+      },
+      "dungeonTiles": {
+        "type": "image",
+        "path": "images/tilesets/Dungeon_Tileset.png",
+        "description": "Tileset for level design"
+      },
+      "arrow1": {
+        "type": "image",
+        "path": "images/ui/interface/arrow_1.png",
+        "description": "UI arrow element 1"
+      },
+      "arrow2": {
+        "type": "image", 
+        "path": "images/ui/interface/arrow_2.png",
+        "description": "UI arrow element 2"
+      },
+      "arrow3": {
+        "type": "image",
+        "path": "images/ui/interface/arrow_3.png", 
+        "description": "UI arrow element 3"
+      },
+      "arrow4": {
+        "type": "image",
+        "path": "images/ui/interface/arrow_4.png",
+        "description": "UI arrow element 4"
+      },
+      "coin": {
+        "type": "image",
+        "path": "spritesheets/items/coin.png",
+        "description": "Coin collectible"
+      },
+      "chest": {
+        "type": "image", 
+        "path": "spritesheets/items/chest.png",
+        "description": "Chest item"
+      },
+      "collectibleProtein": {
+        "type": "image",
+        "path": "spritesheets/items/flasks/flasks_2.png",
+        "description": "Protein collectible for level1"
+      },
+      "collectibleDumbbell": {
+        "type": "image",
+        "path": "spritesheets/items/chest.png", 
+        "description": "Dumbbell collectible for level1"
+      },
+      "torch": {
+        "type": "image",
+        "path": "spritesheets/effects/torch/torch.png",
+        "description": "Torch effect for environment"
+      },
+      "axelface": {
+        "type": "image",
+        "path": "images/characters/axelface.png",
+        "description": "Axel character face"
+      },
+      "wynface": {
+        "type": "image",
+        "path": "images/characters/wynface.png", 
+        "description": "Wyn character face"
+      },
+      "ilaSprite": {
+        "type": "image",
+        "path": "images/characters/ila_sprite.png",
+        "description": "Ila character sprite"
+      },
+      "axelSprite": {
+        "type": "image",
+        "path": "images/characters/axel_sprite.png",
+        "description": "Axel character sprite"
+      },
+      "wynSprite": {
+        "type": "image", 
+        "path": "images/characters/wyn_sprite.png",
+        "description": "Wyn character sprite"
+      },
+      "buffBg": {
+        "type": "image",
+        "path": "images/characters/mainlogo.png",
+        "description": "Buff-themed background for level1 - using logo as placeholder"
+      },
+      "parallaxSky": {
+        "type": "image",
+        "path": "images/characters/mainlogo.png",
+        "description": "Parallax background layer - sky - using logo as placeholder"
+      },
+      "parallaxMountains": {
+        "type": "image",
+        "path": "images/characters/mainlogo.png",
+        "description": "Parallax background layer - mountains - using logo as placeholder"
+      },
+      "parallaxForeground": {
+        "type": "image",
+        "path": "images/characters/mainlogo.png",
+        "description": "Parallax background layer - foreground - using logo as placeholder"
+      }
+    },
+    "audio": {
+      "music": {
+        "proteinPixelAnthem": {
+          "type": "audio",
+          "path": "sounds/opener/protein-pixel-anthem.mp3",
+          "description": "Title screen music"
+        },
+        "hyperBuffBlitz": {
+          "type": "audio", 
+          "path": "sounds/background/hyper-buff-blitz.mp3",
+          "description": "In-level background music"
+        }
+      },
+      "sfx": {
+        "land": [
+          {
+            "key": "sfxLand1",
+            "type": "audio",
+            "path": "sounds/land-effects/land1.mp3",
+            "description": "Landing sound effect variant 1"
+          },
+          {
+            "key": "sfxLand2", 
+            "type": "audio",
+            "path": "sounds/land-effects/land2.mp3",
+            "description": "Landing sound effect variant 2"
+          },
+          {
+            "key": "sfxLand3",
+            "type": "audio", 
+            "path": "sounds/land-effects/land3.mp3",
+            "description": "Landing sound effect variant 3"
+          },
+          {
+            "key": "sfxLand4",
+            "type": "audio",
+            "path": "sounds/land-effects/land4.mp3",
+            "description": "Landing sound effect variant 4"
+          }
+        ],
+        "pickup": [
+          {
+            "key": "sfxPickup1",
+            "type": "audio",
+            "path": "sounds/pickup-effects/pickup1.mp3",
+            "description": "Pickup sound effect variant 1"
+          },
+          {
+            "key": "sfxPickup2",
+            "type": "audio",
+            "path": "sounds/pickup-effects/pickup2.mp3", 
+            "description": "Pickup sound effect variant 2"
+          },
+          {
+            "key": "sfxPickup3",
+            "type": "audio",
+            "path": "sounds/pickup-effects/pickup3.mp3",
+            "description": "Pickup sound effect variant 3"
+          },
+          {
+            "key": "sfxPickup4",
+            "type": "audio",
+            "path": "sounds/pickup-effects/pickup4.mp3",
+            "description": "Pickup sound effect variant 4"
+          }
+        ],
+        "ui": {
+          "click": [
+            {
+              "key": "sfxClick1",
+              "type": "audio",
+              "path": "sounds/primary-click/click1.mp3",
+              "description": "UI click sound variant 1"
+            },
+            {
+              "key": "sfxClick2",
+              "type": "audio",
+              "path": "sounds/primary-click/click2.mp3",
+              "description": "UI click sound variant 2"
+            },
+            {
+              "key": "sfxClick3", 
+              "type": "audio",
+              "path": "sounds/primary-click/click3.mp3",
+              "description": "UI click sound variant 3"
+            },
+            {
+              "key": "sfxClick4",
+              "type": "audio",
+              "path": "sounds/primary-click/click4.mp3",
+              "description": "UI click sound variant 4"
+            }
+          ],
+          "hover": [
+            {
+              "key": "sfxHover1",
+              "type": "audio",
+              "path": "sounds/ui-hover/hover1.mp3",
+              "description": "UI hover sound variant 1"
+            },
+            {
+              "key": "sfxHover2",
+              "type": "audio",
+              "path": "sounds/ui-hover/hover2.mp3",
+              "description": "UI hover sound variant 2"
+            },
+            {
+              "key": "sfxHover3",
+              "type": "audio",
+              "path": "sounds/ui-hover/hover3.mp3",
+              "description": "UI hover sound variant 3"
+            },
+            {
+              "key": "sfxHover4",
+              "type": "audio", 
+              "path": "sounds/ui-hover/hover4.mp3",
+              "description": "UI hover sound variant 4"
+            }
+          ]
+        }
+      }
+    }
+  }
+}

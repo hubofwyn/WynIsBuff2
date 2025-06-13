@@ -36,9 +36,9 @@ export const LevelData = {
             { x: 950, y: 420, type: 'dumbbell', value: 50 },  // Special collectible at the end
         ],
         
-        // Level completion trigger
+        // Level completion trigger - moved past the boss
         completionTrigger: {
-            x: 950, y: 420, width: 50, height: 50,
+            x: 1100, y: 400, width: 60, height: 100,
             requireAllCollectibles: false
         },
         
@@ -62,10 +62,17 @@ export const LevelData = {
         environment: {
             theme: 'wyn-is-buff'
         },
-        // Placeholder enemies for this level
-        enemies: [
-            { x: 900, y: 400, key: 'axelface' }  // Buff boss placeholder at end platform
-        ]
+        // Boss enemy - jumping boss at the top of the level
+        boss: {
+            x: 900,              // X position near the end platforms
+            y: 350,              // Y position - higher up, at "top" of level
+            key: 'axelface',     // Sprite key for the boss
+            type: 'jumping',     // Boss behavior type
+            active: true         // Boss is active in this level
+        },
+        
+        // Regular enemies (none for level 1 - boss is the main challenge)
+        enemies: []
     },
     
     // Level 2: "Double Trouble" - Introducing double jump

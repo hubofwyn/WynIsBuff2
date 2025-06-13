@@ -1,13 +1,14 @@
 import { Scene } from 'phaser';
-import { AudioManager } from '../modules/AudioManager';
+import { AudioManager } from '@features/core';
 import { UIConfig } from '../constants/UIConfig';
+import { SceneKeys } from '../constants/SceneKeys.js';
 
 /**
  * PauseScene: overlays the game with a pause menu.
  */
 export class PauseScene extends Scene {
     constructor() {
-        super('PauseScene');
+        super(SceneKeys.PAUSE);
     }
 
     create() {
@@ -66,16 +67,16 @@ export class PauseScene extends Scene {
                     // Restore music volume
                     audio.setMusicVolume(audio._prePauseMusicVolume);
                     this.scene.stop();
-                    this.scene.resume('Game');
+                    this.scene.resume(SceneKeys.GAME);
                 } else if (btnCfg.key === 'mainMenu') {
                     // Restore music volume
                     audio.setMusicVolume(audio._prePauseMusicVolume);
-                    this.scene.stop('Game');
-                    this.scene.start('MainMenu');
+                    this.scene.stop(SceneKeys.GAME);
+                    this.scene.start(SceneKeys.MAIN_MENU);
                     this.scene.stop();
                 } else if (btnCfg.key === 'settings') {
                     // Launch Settings scene and pause this scene
-                    this.scene.launch('Settings');
+                    this.scene.launch(SceneKeys.SETTINGS);
                     this.scene.pause();
                 }
             });
@@ -86,7 +87,7 @@ export class PauseScene extends Scene {
             AudioManager.getInstance().playSFX('click');
             audio.setMusicVolume(audio._prePauseMusicVolume);
             this.scene.stop();
-            this.scene.resume('Game');
+            this.scene.resume(SceneKeys.GAME);
         });
     }
 }

@@ -19,22 +19,22 @@ export class MovementController {
         this.isOnGround = false;
         this._isInLandingRecovery = false;
         
-        // Movement parameters
+        // Movement parameters - Classic action game feel
         this.groundParams = {
-            moveSpeed: 20,         // Increased ground speed for BUFF movement
-            snapFactor: 0.9,       // Faster snappiness to target velocity
-            stopSnapFactor: 0.9,   // How quickly to stop (0-1)
-            directionChangeFactor: 1.5, // Multiplier for direction changes
-            startBoostFactor: 0.6  // Immediate boost when starting to move
+            moveSpeed: 35,         // Balanced ground speed like classic platformers
+            snapFactor: 0.85,      // Quick but not instant acceleration
+            stopSnapFactor: 0.8,   // Quick stopping but with slight slide
+            directionChangeFactor: 1.2, // Responsive direction changes
+            startBoostFactor: 0.3  // Gradual acceleration start
         };
         
-        // Air control parameters
+        // Air control parameters - Classic platformer air physics
         this.airParams = {
-            moveSpeed: 30,         // Max speed in air
-            snapFactor: 0.8,       // More responsive acceleration in air
-            stopSnapFactor: 0.05,  // Much slower stopping in air
-            directionChangeFactor: 0.8, // Strong air control but weighty
-            startBoostFactor: 0.4  // Smaller immediate boost in air
+            moveSpeed: 40,         // Slightly faster than ground for momentum conservation
+            snapFactor: 0.6,       // Moderate air acceleration
+            stopSnapFactor: 0.1,   // Limited air braking (realistic)
+            directionChangeFactor: 0.7, // Good air control but not overpowered
+            startBoostFactor: 0.2  // Minimal air acceleration from stop
         };
         
         // Landing recovery parameters
@@ -43,12 +43,12 @@ export class MovementController {
             snapFactorMultiplier: 0.8 // 80% of normal acceleration
         };
         
-        // Falling parameters
+        // Falling parameters - Natural feeling fall physics
         this.fallingParams = {
-            accelerationCurve: true,   // Curve-based falling acceleration
-            baseAcceleration: 1.3,     // Accelerate downwards faster
-            maxAcceleration: 2.0,      // Stronger effect during falls
-            maxFallSpeed: 90           // Higher terminal velocity
+            accelerationCurve: false,  // Linear falling for predictable physics
+            baseAcceleration: 1.0,     // Natural fall acceleration
+            maxAcceleration: 1.0,      // Consistent fall rate
+            maxFallSpeed: 80           // Reasonable terminal velocity
         };
         
         // Self-balancing parameters

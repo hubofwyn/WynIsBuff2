@@ -1,3 +1,5 @@
+// LEGACY COMPATIBILITY WRAPPER - DEPRECATED
+// Use @features/level instead for new code
 import { LevelManager as ModularLevelManager } from './level/LevelManager';
 
 /**
