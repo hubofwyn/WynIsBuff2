@@ -208,23 +208,25 @@ export class PulsatingBoss {
             targets: successText,
             scale: 1,
             duration: 500,
-            ease: 'Back.Out',
-            onComplete: () => {
-                this.scene.time.delayedCall(2000, () => {
-                    this.scene.tweens.add({
-                        targets: successText,
-                        alpha: 0,
-                        duration: 500,
-                        onComplete: () => successText.destroy()
-                    });
-                });
-            }
+            ease: 'Back.Out'
         });
         
         // Boss becomes friendly
         this.face.setText('😊');
         this.warningText.setText('WELL DONE!');
         this.warningText.setColor('#00ff00');
+        
+        // Trigger scene transition after a moment
+        this.scene.time.delayedCall(1500, () => {
+            // Emit scene transition event
+            if (this.eventSystem) {
+                this.eventSystem.emit(EventNames.SCENE_TRANSITION, {
+                    fromScene: 'level1',
+                    toScene: 'level1_scene2',
+                    transition: 'fade'
+                });
+            }
+        });
         
         // Emit success event
         if (this.eventSystem) {

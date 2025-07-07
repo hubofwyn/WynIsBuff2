@@ -17,12 +17,8 @@ export class WelcomeScene extends Scene {
         // Play title screen music
         const audio = AudioManager.getInstance();
         audio.playMusic(AudioAssets.PROTEIN_PIXEL_ANTHEM);
-        // Background
-        if (this.textures.exists(ImageAssets.BUFF_BG)) {
-            this.add.image(0, 0, ImageAssets.BUFF_BG).setOrigin(0, 0).setScrollFactor(0);
-        } else {
-            this.cameras.main.setBackgroundColor('#000000');
-        }
+        // Background - use gradient instead of missing image
+        this.cameras.main.setBackgroundColor('#1a1a2e');
         // Logo or title
         if (this.textures.exists(ImageAssets.LOGO)) {
             this.add.image(width / 2, height * 0.25, ImageAssets.LOGO)
