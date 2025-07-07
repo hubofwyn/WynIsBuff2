@@ -13,6 +13,7 @@ export const EventNames = {
     COLLECTIBLE_COLLECTED: 'level:collectibleCollected',
     COLLECTIBLE_EFFECT: 'level:collectibleEffect',
     PLATFORM_MOVE: 'level:platformMove',
+    SCENE_TRANSITION: 'scene:transition',
     
     // Player events
     PLAYER_SPAWN: 'player:spawn',

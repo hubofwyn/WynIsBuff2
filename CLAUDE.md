@@ -22,6 +22,13 @@ This is a Phaser 3 game built with a feature-based architecture and strong conve
 3. **Singleton Managers**: All managers extend BaseManager for consistent singleton pattern
 4. **No Magic Strings**: Everything uses generated constants - assets, scenes, events
 
+### Recent Enhancements (Latest)
+
+- **Scene Transition System**: Old-school scene changes triggered by events (e.g., passing boss in level 1)
+- **Visual Effects**: Player glow, atmospheric particles, vignette, gradient backgrounds
+- **Refined Jump Mechanics**: Subtle scaling (1.0x → 1.05x → 1.1x) with improved squash/stretch
+- **Duck Mechanic**: C key rotates player 90° with physics collider adjustment
+
 ### Project Structure
 
 ```

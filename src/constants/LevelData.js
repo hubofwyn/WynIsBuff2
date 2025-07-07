@@ -124,6 +124,104 @@ export const LevelData = {
         enemies: []
     },
     
+    // Level 1 Scene 2: "Victory Lap" - After defeating the boss
+    level1_scene2: {
+        id: 'level1_scene2',
+        name: 'Victory Lap',
+        description: 'You dodged the boss! Time for a victory lap!',
+        
+        // Player starting position - left side of new scene
+        playerStart: { x: 100, y: 580 },
+        
+        // Ground configuration
+        ground: { width: 1600, height: 50, y: 700 },
+        
+        // Victory platforms - celebratory layout
+        platforms: [
+            // Stairway to victory
+            { x: 250, y: 620, width: 120, height: 20, color: 0xFFD700 },  // Gold platform
+            { x: 450, y: 540, width: 120, height: 20, color: 0xFFD700 },
+            { x: 650, y: 460, width: 120, height: 20, color: 0xFFD700 },
+            { x: 850, y: 380, width: 120, height: 20, color: 0xFFD700 },
+            
+            // Victory dance floor
+            { x: 1100, y: 300, width: 300, height: 20, color: 0xFF69B4 }, // Pink party platform
+            
+            // Bonus collectible platforms
+            { x: 300, y: 420, width: 80, height: 20, color: 0x00FFFF },
+            { x: 500, y: 340, width: 80, height: 20, color: 0x00FFFF },
+            { x: 700, y: 260, width: 80, height: 20, color: 0x00FFFF },
+        ],
+        
+        // Celebratory moving platforms
+        movingPlatforms: [
+            {
+                x: 950, y: 500, width: 100, height: 20, color: 0xFFFFFF,
+                movement: { type: 'vertical', distance: 150, speed: 60 }
+            }
+        ],
+        
+        // Victory collectibles
+        collectibles: [
+            // Main path rewards
+            { x: 250, y: 590, type: 'dumbbell', value: 50 },
+            { x: 450, y: 510, type: 'dumbbell', value: 50 },
+            { x: 650, y: 430, type: 'dumbbell', value: 50 },
+            { x: 850, y: 350, type: 'dumbbell', value: 50 },
+            
+            // Bonus collectibles
+            { x: 300, y: 390, type: 'protein', value: 100 },
+            { x: 500, y: 310, type: 'protein', value: 100 },
+            { x: 700, y: 230, type: 'protein', value: 100 },
+            
+            // Grand prize on victory platform
+            { x: 1250, y: 250, type: 'dumbbell', value: 500 },
+        ],
+        
+        // Celebratory decorations
+        decorations: [
+            // Victory messages
+            { x: 512, y: 200, type: 'text', text: 'AWESOME DODGE!', style: { fontSize: '48px', color: '#FFD700' } },
+            { x: 512, y: 250, type: 'text', text: 'Wyn is getting BUFF!', style: { fontSize: '32px', color: '#00FF00' } },
+            
+            // Celebration emojis
+            { x: 200, y: 500, type: 'emoji', emoji: '🎉', scale: 2 },
+            { x: 400, y: 400, type: 'emoji', emoji: '🏆', scale: 2 },
+            { x: 600, y: 300, type: 'emoji', emoji: '💪', scale: 3 },
+            { x: 800, y: 200, type: 'emoji', emoji: '🎊', scale: 2 },
+            { x: 1000, y: 400, type: 'emoji', emoji: '🥳', scale: 2 },
+            { x: 1200, y: 200, type: 'emoji', emoji: '🏅', scale: 3 },
+            
+            // Confetti effect (rectangles)
+            { x: 300, y: 100, type: 'rect', width: 10, height: 20, color: 0xFF0000 },
+            { x: 500, y: 150, type: 'rect', width: 10, height: 20, color: 0x00FF00 },
+            { x: 700, y: 100, type: 'rect', width: 10, height: 20, color: 0x0000FF },
+            { x: 900, y: 150, type: 'rect', width: 10, height: 20, color: 0xFFFF00 },
+        ],
+        
+        // Level completion trigger
+        completionTrigger: {
+            x: 1400, y: 300, width: 100, height: 100,
+            requireAllCollectibles: false
+        },
+        
+        // Festive background
+        background: {
+            color: 0x1E90FF,  // Bright blue sky
+            elements: []
+        },
+        
+        // Victory UI
+        ui: {
+            instructionText: 'Celebrate your victory! Collect all the prizes!',
+            themeColor: 0xFFD700
+        },
+        
+        // No enemies or boss - this is a victory lap!
+        enemies: [],
+        boss: null
+    },
+    
     // Level 2: "Double Trouble" - Introducing double jump
     level2: {
         id: 'level2',
@@ -355,7 +453,7 @@ export const LevelData = {
  * @returns {Array} Array of level IDs
  */
 export function getLevelIds() {
-    return ['level1', 'level2', 'level3'];
+    return ['level1', 'level1_scene2', 'level2', 'level3'];
 }
 
 /**
@@ -373,6 +471,12 @@ export function getLevelById(levelId) {
  * @returns {string|null} The next level ID or null if there is no next level
  */
 export function getNextLevelId(currentLevelId) {
+    // Handle special scene transitions
+    if (currentLevelId === 'level1') {
+        // This is handled by the SCENE_TRANSITION event
+        return 'level1_scene2';
+    }
+    
     const levelIds = getLevelIds();
     const currentIndex = levelIds.indexOf(currentLevelId);
     
