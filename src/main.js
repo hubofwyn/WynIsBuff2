@@ -28,6 +28,20 @@ const config = {
             debug: false
         }
     },
+    // Performance optimizations
+    fps: {
+        target: 60,
+        forceSetTimeOut: false,
+        smoothStep: false
+    },
+    render: {
+        antialias: true,
+        pixelArt: false,
+        roundPixels: false,
+        transparent: false,
+        clearBeforeRender: true,
+        powerPreference: 'default' // 'high-performance', 'low-power', or 'default'
+    },
     scene: [
         Boot,
         Preloader,

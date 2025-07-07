@@ -419,7 +419,7 @@ export class Game extends Scene {
         
         try {
             // Update physics (steps the world and updates sprites)
-            this.physicsManager.update();
+            this.physicsManager.update(delta);
             
             // Update level elements with delta time
             if (this.levelManager) {
