@@ -157,7 +157,7 @@ export class CharacterSelect extends Scene {
             if (opt.key === this.selection) {
                 selectedCard = cardContainer;
                 drawCard(Phaser.Display.Color.HexStringToColor(opt.color).color, cardConfig.selectedBorderWidth, 1);
-                cardContainer.setScale(cardConfig.selectedScale);
+                // Don't scale the selected card anymore
                 glow.setVisible(true);
                 
                 // Show description for selected character
@@ -170,6 +170,46 @@ export class CharacterSelect extends Scene {
                         duration: 300,
                         ease: 'Power2.easeOut'
                     });
+                });
+            }
+            
+            // Add "BEST" indicator for Wyn
+            if (opt.key === 'wynSprite') {
+                // Create BEST text
+                const bestText = this.add.text(0, -cardConfig.cardHeight/2 - 60, 'BEST', {
+                    fontFamily: 'Impact, Arial Black',
+                    fontSize: '36px',
+                    color: '#FFD700',
+                    stroke: '#FF0000',
+                    strokeThickness: 4
+                }).setOrigin(0.5);
+                
+                // Create pointing hand emoji
+                const pointer = this.add.text(0, -cardConfig.cardHeight/2 - 30, '👇', {
+                    fontSize: '32px'
+                }).setOrigin(0.5);
+                
+                // Add them to the container
+                cardContainer.add([bestText, pointer]);
+                
+                // Animate the BEST text
+                this.tweens.add({
+                    targets: bestText,
+                    scale: { from: 0.9, to: 1.1 },
+                    duration: 1000,
+                    ease: 'Sine.InOut',
+                    repeat: -1,
+                    yoyo: true
+                });
+                
+                // Animate the pointer
+                this.tweens.add({
+                    targets: pointer,
+                    y: `-=${10}`,
+                    duration: 500,
+                    ease: 'Sine.InOut',
+                    repeat: -1,
+                    yoyo: true
                 });
             }
 
@@ -272,15 +312,7 @@ export class CharacterSelect extends Scene {
                     ease: UIConfig.animations.buttonPress.ease,
                     yoyo: true,
                     onComplete: () => {
-                        // Apply selected state
-                        this.tweens.add({
-                            targets: cardContainer,
-                            scaleX: cardConfig.selectedScale,
-                            scaleY: cardConfig.selectedScale,
-                            duration: UIConfig.animations.buttonPress.duration * 2,
-                            ease: UIConfig.animations.buttonPress.ease
-                        });
-                        
+                        // Apply selected state without scaling
                         drawCard(Phaser.Display.Color.HexStringToColor(opt.color).color, cardConfig.selectedBorderWidth, 1);
                         glow.setVisible(true);
                         

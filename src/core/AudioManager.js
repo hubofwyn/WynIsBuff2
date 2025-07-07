@@ -6,7 +6,8 @@ import { AudioAssets, AudioPaths } from '../constants/Assets.js';
 // Background music sources
 const bgmList = {
     [AudioAssets.PROTEIN_PIXEL_ANTHEM]: AudioPaths.PROTEIN_PIXEL_ANTHEM,
-    [AudioAssets.HYPER_BUFF_BLITZ]: AudioPaths.HYPER_BUFF_BLITZ
+    [AudioAssets.HYPER_BUFF_BLITZ]: AudioPaths.HYPER_BUFF_BLITZ,
+    [AudioAssets.BIRTHDAY_SONG]: AudioPaths.BIRTHDAY_SONG
 };
 
 // Sound effect sources (multiple variants)
@@ -34,6 +35,9 @@ const sfxList = {
         AudioPaths.SFX_HOVER2,
         AudioPaths.SFX_HOVER3,
         AudioPaths.SFX_HOVER4
+    ],
+    fart: [
+        AudioPaths.SFX_FART
     ]
 };
 
@@ -88,17 +92,20 @@ export class AudioManager extends BaseManager {
     _initSounds() {
         // Setup background music
         Object.entries(bgmList).forEach(([key, src]) => {
+            console.log(`[AudioManager] Loading music: ${key} from ${src}`);
             this.music[key] = new Howl({
-                src: [src],
+                src: [`assets/${src}`],
                 html5: true,
                 loop: true,
-                volume: this.settings.musicVolume
+                volume: this.settings.musicVolume,
+                onload: () => console.log(`[AudioManager] Successfully loaded: ${key}`),
+                onloaderror: (id, err) => console.error(`[AudioManager] Failed to load ${key}:`, err)
             });
         });
         // Setup sound effects
         Object.entries(sfxList).forEach(([key, list]) => {
             this.sfx[key] = list.map((src) => new Howl({
-                src: [src],
+                src: [`assets/${src}`],
                 volume: this.settings.sfxVolume,
                 preload: true
             }));
@@ -111,8 +118,16 @@ export class AudioManager extends BaseManager {
      */
     playMusic(key) {
         const track = this.music[key];
-        if (track && !track.playing()) {
-            track.play();
+        console.log(`[AudioManager] playMusic called for: ${key}`, track);
+        if (track) {
+            if (!track.playing()) {
+                console.log(`[AudioManager] Starting playback of: ${key}`);
+                track.play();
+            } else {
+                console.log(`[AudioManager] ${key} is already playing`);
+            }
+        } else {
+            console.error(`[AudioManager] Track not found: ${key}`);
         }
     }
 

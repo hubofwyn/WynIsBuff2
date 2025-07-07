@@ -49,6 +49,8 @@ export class MainMenu extends Scene {
         
         // Create level selection UI
         this.createLevelSelection();
+        // Add birthday minigame button - special for Wyn's 9th!
+        this.createBirthdayButton();
         // Add reset progress button
         this.createResetButton();
     }
@@ -253,6 +255,135 @@ export class MainMenu extends Scene {
                 });
             }
         });
+    }
+    
+    /**
+     * Create special birthday minigame button
+     */
+    createBirthdayButton() {
+        // Birthday button with special animation - positioned above the level cards
+        const birthdayContainer = this.add.container(512, 620);
+        
+        // Glowing background
+        const buttonBg = this.add.rectangle(0, 0, 300, 80, 0xFFD700)
+            .setStrokeStyle(4, 0xFF00FF);
+        
+        // Birthday text
+        const birthdayText = this.add.text(0, -10, '🎂 WYN\'S 9TH BIRTHDAY RUSH! 🎂', {
+            fontFamily: 'Impact',
+            fontSize: '22px',
+            color: '#000000',
+            stroke: '#FFFFFF',
+            strokeThickness: 3,
+            align: 'center'
+        }).setOrigin(0.5);
+        
+        const subText = this.add.text(0, 15, 'Special Birthday Minigame!', {
+            fontFamily: 'Arial',
+            fontSize: '14px',
+            color: '#FFFFFF',
+            stroke: '#000000',
+            strokeThickness: 2,
+            align: 'center'
+        }).setOrigin(0.5);
+        
+        birthdayContainer.add([buttonBg, birthdayText, subText]);
+        
+        // Make it interactive
+        buttonBg.setInteractive({ useHandCursor: true });
+        
+        // Constant celebration animation
+        this.tweens.add({
+            targets: birthdayContainer,
+            scale: { from: 0.95, to: 1.05 },
+            duration: 1000,
+            repeat: -1,
+            yoyo: true,
+            ease: 'Sine.InOut'
+        });
+        
+        // Rainbow color animation
+        let hue = 0;
+        this.time.addEvent({
+            delay: 100,
+            callback: () => {
+                hue = (hue + 10) % 360;
+                const color = Phaser.Display.Color.HSVToRGB(hue / 360, 1, 1);
+                buttonBg.setFillStyle(color.color);
+            },
+            loop: true
+        });
+        
+        // Hover effects
+        buttonBg.on('pointerover', () => {
+            AudioManager.getInstance().playSFX('hover');
+            this.tweens.add({
+                targets: birthdayContainer,
+                scale: 1.15,
+                duration: 200,
+                ease: 'Power2.easeOut'
+            });
+        });
+        
+        buttonBg.on('pointerout', () => {
+            this.tweens.add({
+                targets: birthdayContainer,
+                scale: 1,
+                duration: 200,
+                ease: 'Power2.easeOut'
+            });
+        });
+        
+        buttonBg.on('pointerdown', () => {
+            // Unlock audio on click (browser autoplay policy)
+            if (this.sound.context && this.sound.context.state === 'suspended') {
+                this.sound.context.resume();
+            }
+            if (window.Howler && window.Howler.ctx && window.Howler.ctx.state === 'suspended') {
+                window.Howler.ctx.resume();
+            }
+            
+            AudioManager.getInstance().playSFX('click');
+            // Add click animation
+            this.tweens.add({
+                targets: birthdayContainer,
+                scale: 0.9,
+                duration: 100,
+                yoyo: true,
+                onComplete: () => {
+                    // Fade out and start the birthday minigame
+                    this.cameras.main.fadeOut(300);
+                    this.time.delayedCall(300, () => {
+                        this.scene.start(SceneKeys.BIRTHDAY_MINIGAME);
+                    });
+                }
+            });
+        });
+        
+        // Add floating 9s around the button
+        for (let i = 0; i < 3; i++) {
+            const floatingNine = this.add.text(
+                512 + Phaser.Math.Between(-200, 200),
+                620 + Phaser.Math.Between(-60, 60),
+                '9',
+                {
+                    fontSize: '24px',
+                    color: '#FFD700',
+                    fontFamily: 'Impact',
+                    alpha: 0.3
+                }
+            );
+            
+            this.tweens.add({
+                targets: floatingNine,
+                y: '-=30',
+                alpha: 0,
+                duration: 3000,
+                delay: i * 1000,
+                repeat: -1,
+                ease: 'Sine.Out'
+            });
+        }
     }
     
     /**

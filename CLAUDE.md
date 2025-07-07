@@ -147,3 +147,25 @@ Focus areas for tests:
 2. **Testability**: Design for unit testing with dependency injection where needed
 3. **Performance**: Use singleton patterns, efficient event dispatch
 4. **Developer Experience**: Clean imports, consistent patterns, no magic strings
+
+## Recent Major Changes
+
+- Migrated to modern modular architecture (features-based)
+- Refactored all managers to extend BaseManager
+- Consolidated event systems (EventSystem wraps EventBus)
+- Replaced magic strings with generated constants
+- Improved UI/UX for character selection
+- Enhanced physics and jump effects for better game feel
+- Added level selector with card-based design
+- **NEW: Wyn's 9th Birthday Minigame!** Special "Shake Shake" delivery rush game celebrating Wyn's birthday
+
+## Birthday Minigame Details
+
+The birthday minigame (`BirthdayMinigame.js`) is a special lane-based runner game where players:
+- Control Wyn sprite delivering special "Shake Shakes" (S²)
+- Navigate 5 lanes avoiding obstacles
+- Collect power-ups including special birthday power-ups
+- Must deliver exactly 9 Shake Shakes to win (for Wyn's 9th birthday)
+- Features enhanced particle effects and birthday-themed celebrations
+
+Access from the main menu via the animated rainbow birthday button!

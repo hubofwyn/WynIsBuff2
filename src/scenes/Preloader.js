@@ -84,6 +84,7 @@ export class Preloader extends Scene
         // Load audio assets (MP3 only; OGG fallback later)
         this.load.audio(AudioAssets.PROTEIN_PIXEL_ANTHEM, [AudioPaths.PROTEIN_PIXEL_ANTHEM]);
         this.load.audio(AudioAssets.HYPER_BUFF_BLITZ, [AudioPaths.HYPER_BUFF_BLITZ]);
+        this.load.audio(AudioAssets.BIRTHDAY_SONG, [AudioPaths.BIRTHDAY_SONG]);
         // Land effects variants
         this.load.audio(AudioAssets.SFX_LAND1, [AudioPaths.SFX_LAND1]);
         this.load.audio(AudioAssets.SFX_LAND2, [AudioPaths.SFX_LAND2]);

@@ -14,6 +14,7 @@ export const SceneKeys = Object.freeze({
   PAUSE: 'PauseScene',
   SETTINGS: 'Settings',
   GAME_OVER: 'GameOver',
+  BIRTHDAY_MINIGAME: 'BirthdayMinigame',
 });
 
 // Optional: backwards-compat map so legacy code using literal strings can turn

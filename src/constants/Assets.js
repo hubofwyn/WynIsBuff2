@@ -105,6 +105,7 @@ export const AudioAssets = Object.freeze({
   // Music
   PROTEIN_PIXEL_ANTHEM: 'proteinPixelAnthem',
   HYPER_BUFF_BLITZ: 'hyperBuffBlitz',
+  BIRTHDAY_SONG: 'birthdaySong',
 
   // Sound Effects
   SFX_LAND1: 'sfxLand1',
@@ -123,11 +124,13 @@ export const AudioAssets = Object.freeze({
   SFX_HOVER2: 'sfxHover2',
   SFX_HOVER3: 'sfxHover3',
   SFX_HOVER4: 'sfxHover4',
+  SFX_FART: 'sfxFart',
 });
 
 export const AudioPaths = Object.freeze({
   PROTEIN_PIXEL_ANTHEM: 'sounds/opener/protein-pixel-anthem.mp3',
   HYPER_BUFF_BLITZ: 'sounds/background/hyper-buff-blitz.mp3',
+  BIRTHDAY_SONG: 'audio/music/birthday-song.wav',
   SFX_LAND1: 'sounds/land-effects/land1.mp3',
   SFX_LAND2: 'sounds/land-effects/land2.mp3',
   SFX_LAND3: 'sounds/land-effects/land3.mp3',
@@ -144,6 +147,7 @@ export const AudioPaths = Object.freeze({
   SFX_HOVER2: 'sounds/ui-hover/hover2.mp3',
   SFX_HOVER3: 'sounds/ui-hover/hover3.mp3',
   SFX_HOVER4: 'sounds/ui-hover/hover4.mp3',
+  SFX_FART: 'sounds/land-effects/land4.mp3', // Using land4 as fart sound placeholder
 });
 
 export const SpritesheetConfigs = Object.freeze({
