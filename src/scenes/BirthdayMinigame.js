@@ -49,6 +49,9 @@ export class BirthdayMinigame extends Scene {
         this.deliveryTimer = 0;
         this.maxDeliveryTime = 10000; // 10 seconds
         this.difficultyLevel = 1;
+        this.highScore = parseInt(localStorage.getItem('birthdayHighScore') || '0');
+        this.perfectDeliveries = 0;
+        this.speedBonus = 0;
         
         // Objects
         this.player = null;
@@ -95,17 +98,15 @@ export class BirthdayMinigame extends Scene {
         this.obstacles = this.physics.add.group();
         this.powerUps = this.physics.add.group();
         
-        // Setup smooth camera follow with deadzone
-        this.cameras.main.startFollow(this.playerContainer, true, 0.08, 0.08);
-        this.cameras.main.setDeadzone(200, 100);
+        // Fixed camera - no scrolling, show entire play area
+        this.cameras.main.setBackgroundColor('#2C3E50');
+        this.cameras.main.setBounds(0, 0, 1024, 768);
+        this.cameras.main.setZoom(1);
         
         // Set up input - both arrow keys and WASD
         this.cursors = this.input.keyboard.createCursorKeys();
         this.wasd = this.input.keyboard.addKeys('W,A,S,D');
         this.spaceKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
-        
-        // Set up camera - fixed view, no scrolling
-        this.cameras.main.setBackgroundColor('#2C3E50');
         
         // Create UI
         this.createUI();
@@ -127,40 +128,30 @@ export class BirthdayMinigame extends Scene {
     }
     
     createBackground() {
-        // Create moving city background effect
+        // Create static gradient background
         const graphics = this.add.graphics();
         
-        // Draw gradient
-        for (let i = 0; i < 20; i++) {
+        // Draw gradient background
+        for (let i = 0; i < 16; i++) {
             const color = Phaser.Display.Color.Interpolate.ColorWithColor(
                 { r: 44, g: 62, b: 80 },
                 { r: 52, g: 73, b: 94 },
-                20,
+                16,
                 i
             );
             graphics.fillStyle(Phaser.Display.Color.GetColor(color.r, color.g, color.b));
-            graphics.fillRect(0, i * 50 - 1000, 800, 50);
+            graphics.fillRect(0, i * 50, 1024, 50);
         }
         
-        // Add some building silhouettes
-        for (let i = 0; i < 10; i++) {
-            const x = Phaser.Math.Between(0, 700);
-            const width = Phaser.Math.Between(80, 150);
-            const height = Phaser.Math.Between(200, 400);
-            const y = -i * 300 - height;
-            
-            graphics.fillStyle(0x1a252f, 0.8);
-            graphics.fillRect(x, y, width, height);
-            
-            // Windows
-            for (let w = 0; w < 5; w++) {
-                for (let h = 0; h < 10; h++) {
-                    if (Phaser.Math.Between(0, 100) < 70) {
-                        graphics.fillStyle(0xffff00, 0.3);
-                        graphics.fillRect(x + 10 + w * 25, y + 20 + h * 35, 15, 20);
-                    }
-                }
-            }
+        // Add subtle grid pattern for depth
+        graphics.lineStyle(1, 0xFFFFFF, 0.05);
+        for (let x = 0; x < 1024; x += 50) {
+            graphics.moveTo(x, 0);
+            graphics.lineTo(x, 768);
+        }
+        for (let y = 0; y < 768; y += 50) {
+            graphics.moveTo(0, y);
+            graphics.lineTo(1024, y);
         }
     }
     
@@ -240,22 +231,29 @@ export class BirthdayMinigame extends Scene {
     }
     
     spawnParcel() {
-        // Spawn a parcel on a random lane
+        // Spawn parcels from the left side, moving right
         const lane = Phaser.Math.Between(0, this.numLanes - 1);
         const y = 300 + lane * this.laneHeight + this.laneHeight / 2;
-        const x = Phaser.Math.Between(200, 700);
+        const x = -50; // Start off-screen left
         
         // Create parcel container
         const parcelContainer = this.add.container(x, y);
         
+        // Background circle for better visibility
+        const bgCircle = this.add.circle(0, 0, 35, 0x000000, 0.5);
+        bgCircle.setStrokeStyle(3, 0xFFD700);
+        
         // Dynamite emoji is the main visual
         const dynamiteEmoji = this.add.text(0, 0, '🧨', {
-            fontSize: '32px'
+            fontSize: '40px'
         }).setOrigin(0.5);
         
-        // S² label above
-        const label = this.add.text(0, -25, 'S²', {
-            fontSize: '16px',
+        // S² Shake label with better visibility
+        const labelBg = this.add.rectangle(0, -35, 80, 25, 0x000000, 0.8);
+        labelBg.setStrokeStyle(2, 0xFFD700);
+        
+        const label = this.add.text(0, -35, 'S² SHAKE', {
+            fontSize: '14px',
             color: '#FFD700',
             fontFamily: 'Arial Black',
             fontStyle: 'bold',
@@ -264,39 +262,121 @@ export class BirthdayMinigame extends Scene {
         }).setOrigin(0.5);
         
         // Add glow effect
-        const glow = this.add.circle(0, 0, 25, 0xFFD700, 0.3);
+        const glow = this.add.circle(0, 0, 40, 0xFFD700, 0.3);
         
-        parcelContainer.add([glow, dynamiteEmoji, label]);
+        // Add pickup arrow indicator
+        const arrow = this.add.text(0, 35, '⬆ PICKUP', {
+            fontSize: '12px',
+            color: '#FFFFFF',
+            fontFamily: 'Arial Black',
+            stroke: '#000000',
+            strokeThickness: 2
+        }).setOrigin(0.5);
+        
+        parcelContainer.add([glow, bgCircle, dynamiteEmoji, labelBg, label, arrow]);
         
         // Add physics
         this.physics.add.existing(parcelContainer);
-        parcelContainer.body.setSize(50, 50);
+        parcelContainer.body.setSize(70, 70);
+        parcelContainer.body.velocity.x = 100; // Move right slowly
         this.parcels.add(parcelContainer);
+        
+        // Entrance animation
+        parcelContainer.setScale(0);
+        this.tweens.add({
+            targets: parcelContainer,
+            scale: 1,
+            duration: 300,
+            ease: 'Back.Out'
+        });
         
         // Pulse effect
         this.tweens.add({
-            targets: parcelContainer,
-            scale: { from: 0.9, to: 1.1 },
+            targets: [glow, arrow],
+            alpha: { from: 0.3, to: 0.8 },
             duration: 800,
             yoyo: true,
             repeat: -1
         });
+        
+        // Auto-destroy if not picked up after crossing screen
+        this.time.delayedCall(15000, () => {
+            if (parcelContainer.active) {
+                this.tweens.add({
+                    targets: parcelContainer,
+                    alpha: 0,
+                    scale: 0,
+                    duration: 300,
+                    onComplete: () => parcelContainer.destroy()
+                });
+            }
+        });
     }
     
     createDeliveryZone() {
-        // Create the delivery zone at the right side of screen
-        this.deliveryZone = this.add.rectangle(950, 400, 100, 600, 0x00FF00, 0.3);
+        // Create the delivery zone at the right side of screen with better visibility
+        const zoneWidth = 120;
+        const zoneX = 1024 - zoneWidth/2 - 20;
+        
+        // Pulsing green zone background
+        this.deliveryZoneBg = this.add.rectangle(zoneX, 400, zoneWidth, 500, 0x00FF00, 0.2);
+        this.deliveryZone = this.add.rectangle(zoneX, 400, zoneWidth, 500, 0x00FF00, 0.3);
+        this.deliveryZone.setStrokeStyle(4, 0x00FF00);
         this.physics.add.existing(this.deliveryZone, true);
         
-        // Add "DELIVERY ZONE" text
-        this.add.text(950, 100, 'DELIVERY\nZONE', {
+        // Pulse animation for zone
+        this.tweens.add({
+            targets: this.deliveryZoneBg,
+            alpha: { from: 0.2, to: 0.5 },
+            scale: { from: 1, to: 1.05 },
+            duration: 1000,
+            yoyo: true,
+            repeat: -1,
+            ease: 'Sine.InOut'
+        });
+        
+        // Add clear "DELIVERY ZONE" text with icon
+        const zoneLabel = this.add.container(zoneX, 100);
+        
+        // Background for text
+        const textBg = this.add.rectangle(0, 0, 140, 80, 0x000000, 0.7);
+        textBg.setStrokeStyle(3, 0x00FF00);
+        
+        const deliveryText = this.add.text(0, -15, 'DELIVERY', {
             fontSize: '24px',
             color: '#00FF00',
             fontFamily: 'Impact',
-            stroke: '#003300',
-            strokeThickness: 4,
+            stroke: '#000000',
+            strokeThickness: 3,
             align: 'center'
         }).setOrigin(0.5);
+        
+        const zoneText = this.add.text(0, 10, 'ZONE', {
+            fontSize: '28px',
+            color: '#00FF00',
+            fontFamily: 'Impact',
+            stroke: '#000000',
+            strokeThickness: 3,
+            align: 'center'
+        }).setOrigin(0.5);
+        
+        // Add arrow pointing down
+        const arrow = this.add.text(0, 35, '⬇', {
+            fontSize: '32px',
+            color: '#00FF00'
+        }).setOrigin(0.5);
+        
+        zoneLabel.add([textBg, deliveryText, zoneText, arrow]);
+        
+        // Animate the arrow
+        this.tweens.add({
+            targets: arrow,
+            y: '+=10',
+            duration: 500,
+            yoyo: true,
+            repeat: -1,
+            ease: 'Sine.InOut'
+        });
     }
     
     createUI() {

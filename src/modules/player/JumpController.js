@@ -1,4 +1,5 @@
 import { EventNames } from '../../constants/EventNames';
+import { SceneKeys } from '../../constants/SceneKeys';
 
 /**
  * JumpController class handles all jump-related functionality for the player
@@ -30,6 +31,12 @@ export class JumpController {
         this._isInLandingRecovery = false;
         this._coyoteTimer = null;
         this._lastOnGround = false;
+        
+        // Triple jump cooldown tracking
+        this.tripleJumpCooldown = false;
+        this.cooldownTimer = null;
+        this.cooldownDuration = 2000; // 2 seconds cooldown after triple jump
+        this.explosionTriggered = false;
         
         // Jump physics parameters (EXTREME BUFFNESS)
         this.jumpParams = {
@@ -293,6 +300,17 @@ export class JumpController {
         // Determine which jump this is (first, second, or third)
         const jumpNumber = this.isOnGround ? 1 : this.jumpsUsed + 1;
         
+        // Check for fourth jump attempt during cooldown
+        if (jumpNumber > 3 && this.tripleJumpCooldown && !this.explosionTriggered) {
+            this.triggerExplosion(body, sprite);
+            return;
+        }
+        
+        // Prevent jumping beyond triple jump
+        if (jumpNumber > 3) {
+            return;
+        }
+        
         // Get the appropriate jump force
         let jumpForce = this.jumpParams.forces[jumpNumber] || this.jumpParams.baseForce;
         
@@ -312,9 +330,15 @@ export class JumpController {
             y: this.jumpParams.additionalImpulse.y
         }, true);
         
-        // Apply jump-specific squash effect
+        // Apply jump-specific squash effect and scaling
         const squashParams = this.jumpParams.squashStretch[jumpNumber] || this.jumpParams.squashStretch[1];
+        this.applyJumpScaling(sprite, jumpNumber);
         this.applySquashEffect(sprite, squashParams.squashX, squashParams.squashY, squashParams.duration);
+        
+        // Start cooldown after triple jump
+        if (jumpNumber === 3) {
+            this.startTripleJumpCooldown();
+        }
         
         // Update jump state
         this.jumpsUsed = jumpNumber;
@@ -458,6 +482,147 @@ export class JumpController {
     }
     
     /**
+     * Apply progressive scaling based on jump number
+     * @param {Phaser.GameObjects.Sprite|Phaser.GameObjects.Rectangle} sprite - The sprite
+     * @param {number} jumpNumber - Which jump (1, 2, or 3)
+     */
+    applyJumpScaling(sprite, jumpNumber) {
+        if (!sprite) return;
+        
+        // Progressive scaling for each jump
+        const scales = {
+            1: 1.0,   // Normal size
+            2: 1.3,   // 30% bigger
+            3: 1.6    // 60% bigger
+        };
+        
+        const targetScale = scales[jumpNumber] || 1.0;
+        
+        // Animate the scaling
+        this.scene.tweens.add({
+            targets: sprite,
+            scaleX: targetScale,
+            scaleY: targetScale,
+            duration: 300,
+            ease: 'Power2'
+        });
+    }
+    
+    /**
+     * Start the cooldown timer after triple jump
+     */
+    startTripleJumpCooldown() {
+        this.tripleJumpCooldown = true;
+        
+        // Clear any existing timer
+        if (this.cooldownTimer) {
+            this.cooldownTimer.remove();
+        }
+        
+        // Visual indicator - pulsing effect during cooldown
+        if (this.scene.playerController && this.scene.playerController.sprite) {
+            const sprite = this.scene.playerController.sprite;
+            
+            // Add pulsing tint effect
+            this.scene.tweens.add({
+                targets: sprite,
+                tint: { from: 0xffffff, to: 0xff9999 },
+                duration: 500,
+                yoyo: true,
+                repeat: 3,
+                ease: 'Sine.InOut'
+            });
+        }
+        
+        // Start cooldown timer
+        this.cooldownTimer = this.scene.time.delayedCall(this.cooldownDuration, () => {
+            this.tripleJumpCooldown = false;
+            this.cooldownTimer = null;
+            
+            // Reset sprite to normal size
+            if (this.scene.playerController && this.scene.playerController.sprite) {
+                this.scene.tweens.add({
+                    targets: this.scene.playerController.sprite,
+                    scaleX: 1,
+                    scaleY: 1,
+                    duration: 500,
+                    ease: 'Power2'
+                });
+            }
+        });
+    }
+    
+    /**
+     * Trigger dramatic explosion when attempting fourth jump
+     * @param {RAPIER.RigidBody} body - The player's physics body
+     * @param {Phaser.GameObjects.Sprite|Phaser.GameObjects.Rectangle} sprite - The player's sprite
+     */
+    triggerExplosion(body, sprite) {
+        if (this.explosionTriggered) return;
+        
+        this.explosionTriggered = true;
+        
+        // Get explosion position
+        const pos = body.translation();
+        
+        // Create dramatic explosion effect
+        if (this.eventSystem) {
+            this.eventSystem.emit(EventNames.PLAYER_EXPLODE, {
+                position: { x: pos.x, y: pos.y },
+                sprite: sprite
+            });
+        }
+        
+        // Massive screen shake
+        if (this.scene.cameras && this.scene.cameras.main) {
+            this.scene.cameras.main.shake(1000, 0.05);
+        }
+        
+        // Create explosion particles
+        for (let i = 0; i < 50; i++) {
+            const particle = this.scene.add.circle(
+                pos.x + Phaser.Math.Between(-20, 20),
+                pos.y + Phaser.Math.Between(-20, 20),
+                Phaser.Math.Between(5, 15),
+                Phaser.Math.Between(0xff0000, 0xffff00)
+            );
+            
+            // Explode particles outward
+            this.scene.tweens.add({
+                targets: particle,
+                x: pos.x + Phaser.Math.Between(-200, 200),
+                y: pos.y + Phaser.Math.Between(-200, 200),
+                alpha: 0,
+                scale: 0,
+                duration: 1000,
+                ease: 'Power2',
+                onComplete: () => particle.destroy()
+            });
+        }
+        
+        // Hide sprite with dramatic effect
+        this.scene.tweens.add({
+            targets: sprite,
+            scaleX: 3,
+            scaleY: 3,
+            alpha: 0,
+            angle: 720,
+            duration: 500,
+            ease: 'Power2',
+            onComplete: () => {
+                // Trigger game over
+                this.scene.time.delayedCall(500, () => {
+                    this.scene.scene.start(SceneKeys.GAME_OVER, { dramatic: true });
+                });
+            }
+        });
+        
+        // Stop physics body
+        body.setLinvel({ x: 0, y: 0 }, true);
+        body.setEnabled(false);
+    }
+    
+    /**
      * Clean up resources when scene is shut down
      */
     shutdown() {
@@ -475,6 +640,11 @@ export class JumpController {
         if (this._coyoteTimer) {
             this._coyoteTimer.remove();
             this._coyoteTimer = null;
+        }
+        
+        if (this.cooldownTimer) {
+            this.cooldownTimer.remove();
+            this.cooldownTimer = null;
         }
     }
 }

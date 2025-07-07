@@ -19,6 +19,7 @@ export const EventNames = {
     PLAYER_JUMP: 'player:jump',
     PLAYER_LAND: 'player:land',
     PLAYER_MOVE: 'player:move',
+    PLAYER_EXPLODE: 'player:explode',
     
     // Jump state events
     PLAYER_JUMP_START: 'player:jumpStart',
