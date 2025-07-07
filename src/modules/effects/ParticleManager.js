@@ -28,57 +28,68 @@ export class ParticleManager {
      * Initialize particle configurations for different effect types
      */
     initializeParticleConfigs() {
-        // Jump particles configuration
+        // Jump particles configuration - BUFF EDITION
         this.jumpParticleConfigs = {
             // First jump (dust cloud)
             1: {
                 frame: ['white'], // Default particle texture
-                lifespan: 600,
-                speed: { min: 50, max: 100 },
-                scale: { start: 0.1, end: 0 },
-                quantity: 10,
-                gravityY: 300,
-                alpha: { start: 0.6, end: 0 },
-                tint: 0xcccccc, // Light gray dust
-                emitCallback: this.emitJumpParticles.bind(this)
-            },
-            // Second jump (energy particles)
-            2: {
-                frame: ['white'],
-                lifespan: 800,
-                speed: { min: 80, max: 120 },
+                lifespan: 700,
+                speed: { min: 60, max: 120 },
                 scale: { start: 0.15, end: 0 },
                 quantity: 15,
-                gravityY: 100, // Less gravity for floating effect
-                alpha: { start: 0.8, end: 0 },
-                tint: 0xffff00, // Yellow energy
-                emitCallback: this.emitJumpParticles.bind(this)
+                gravityY: 350,
+                alpha: { start: 0.7, end: 0 },
+                tint: 0xdddddd, // Light gray dust
+                emitCallback: this.emitJumpParticles.bind(this),
+                angle: { min: -30, max: 210 }, // Spread particles in jump arc
+                blendMode: 'ADD'
             },
-            // Third jump (burst effect)
-            3: {
+            // Second jump (energy burst)
+            2: {
                 frame: ['white'],
-                lifespan: 1000,
-                speed: { min: 100, max: 200 },
+                lifespan: 900,
+                speed: { min: 100, max: 180 },
                 scale: { start: 0.2, end: 0 },
                 quantity: 25,
-                gravityY: 50, // Even less gravity for dramatic effect
+                gravityY: 50, // Floaty energy particles
+                alpha: { start: 0.9, end: 0 },
+                tint: 0xffff00, // Yellow energy
+                emitCallback: this.emitJumpParticles.bind(this),
+                angle: { min: -45, max: 225 }, // Wider spread
+                blendMode: 'ADD',
+                rotate: { start: 0, end: 360 } // Spinning particles
+            },
+            // Third jump (MEGA BUFF EXPLOSION)
+            3: {
+                frame: ['white'],
+                lifespan: 1200,
+                speed: { min: 150, max: 300 },
+                scale: { start: 0.3, end: 0 },
+                quantity: 40,
+                gravityY: -50, // Particles float up for epic effect
                 alpha: { start: 1, end: 0 },
-                tint: 0xff0000, // Red burst
-                emitCallback: this.emitJumpParticles.bind(this)
+                tint: [0xff0000, 0xffff00, 0xff00ff], // Multi-color burst
+                emitCallback: this.emitJumpParticles.bind(this),
+                angle: { min: 0, max: 360 }, // Full circle explosion
+                blendMode: 'ADD',
+                rotate: { start: 0, end: 720 }, // Fast spinning
+                frequency: 50 // Emit over time for trail effect
             }
         };
         
-        // Landing particles configuration
+        // Landing particles configuration - BUFF IMPACT
         this.landParticleConfig = {
             frame: ['white'],
-            lifespan: 800,
-            speed: { min: 60, max: 120 },
-            scale: { start: 0.15, end: 0 },
-            quantity: 15,
-            gravityY: 200,
-            alpha: { start: 0.7, end: 0 },
-            tint: 0xcccccc, // Light gray dust
-            emitCallback: this.emitLandParticles.bind(this)
+            lifespan: 900,
+            speed: { min: 80, max: 160 },
+            scale: { start: 0.2, end: 0 },
+            quantity: 20,
+            gravityY: 250,
+            alpha: { start: 0.8, end: 0 },
+            tint: [0xcccccc, 0xffffff], // Mixed dust colors
+            emitCallback: this.emitLandParticles.bind(this),
+            angle: { min: -60, max: 240 }, // Upward spray pattern
+            blendMode: 'ADD'
         };
         
         // Movement particles configuration

@@ -6,6 +6,7 @@ import { LevelManager } from '@features/level';
 import { EventNames } from '../constants/EventNames';
 import { SceneKeys } from '../constants/SceneKeys.js';
 import { AudioAssets } from '../constants/Assets.js';
+import { PhysicsConfig } from '../constants/PhysicsConfig.js';
 
 export class Game extends Scene {
     constructor() {
@@ -64,9 +65,14 @@ export class Game extends Scene {
             this.inputManager = InputManager.getInstance();
             this.inputManager.init(this, this.eventSystem);
             
-            // Initialize physics with classic action game feel (like Mario/Sonic)
+            // Initialize physics with BUFF action game feel
             this.physicsManager = PhysicsManager.getInstance();
-            const physicsInitialized = await this.physicsManager.init(this, this.eventSystem, 0.0, 35.0);
+            const physicsInitialized = await this.physicsManager.init(
+                this, 
+                this.eventSystem, 
+                PhysicsConfig.gravityX, 
+                PhysicsConfig.gravityY
+            );
             
             if (!physicsInitialized) {
                 throw new Error('Failed to initialize physics');
