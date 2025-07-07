@@ -201,7 +201,7 @@ export class Game extends Scene {
         this.uiManager.createText(
             'instructions',
             512, 100,
-            'WASD or Arrows to Move, SPACE to Jump (Triple Jump!)',
+            'WASD/Arrows: Move | SPACE: Triple Jump! | C: Duck',
             instructionsStyle,
             true
         ).setOrigin(0.5);
@@ -409,6 +409,23 @@ export class Game extends Scene {
         this.eventSystem.on(EventNames.COLLISION_START, (data) => {
             // Handled by the level manager
         });
+        
+        // Listen for player explode events
+        this.eventSystem.on(EventNames.PLAYER_EXPLODE, (data) => {
+            console.log('[Game] Player exploded:', data);
+            
+            // Stop all gameplay
+            this.scene.pause();
+            
+            // Trigger dramatic game over
+            this.time.delayedCall(1000, () => {
+                this.scene.stop();
+                this.scene.start(SceneKeys.GAME_OVER, { 
+                    dramatic: true,
+                    reason: data.reason || 'You exploded!'
+                });
+            });
+        });
     }
 
     update(time, delta) {
@@ -419,7 +436,7 @@ export class Game extends Scene {
         
         try {
             // Update physics (steps the world and updates sprites)
-            this.physicsManager.update();
+            this.physicsManager.update(delta);
             
             // Update level elements with delta time
             if (this.levelManager) {
@@ -447,6 +464,23 @@ export class Game extends Scene {
                     this.boss.update(time, delta);
                 } catch (err) {
                     console.error('[Game] Error updating boss:', err);
+                }
+            }
+            
+            // Update pulsating boss
+            if (this.pulsatingBoss) {
+                try {
+                    this.pulsatingBoss.update();
+                    
+                    // Check collision with player
+                    if (this.playerController) {
+                        const playerBody = this.playerController.getBody();
+                        if (this.pulsatingBoss.checkPlayerContact(playerBody)) {
+                            this.pulsatingBoss.onPlayerHit();
+                        }
+                    }
+                } catch (err) {
+                    console.error('[Game] Error updating pulsating boss:', err);
                 }
             }
         } catch (error) {

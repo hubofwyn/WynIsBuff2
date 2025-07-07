@@ -23,6 +23,9 @@ export class PhysicsManager extends BaseManager {
         
         // Collision event handlers
         this.collisionHandlers = new Map();
+        
+        // Fixed timestep accumulator
+        this.accumulator = 0;
     }
     
     /**
@@ -178,18 +181,61 @@ export class PhysicsManager extends BaseManager {
     
     /**
      * Step the physics simulation and update sprites
+     * @param {number} delta - Time since last frame in milliseconds
      */
-    update() {
+    update(delta) {
         if (!this._initialized || !this.world) {
             return;
         }
         
         try {
-            // Step the physics world
-            this.world.step();
+            // Convert delta from milliseconds to seconds
+            const deltaSeconds = delta ? delta / 1000 : 1/60;
             
-            // Update all sprites based on their physics bodies
-            this.updateGameObjects();
+            // Cap delta to prevent spiral of death (max 1/30 second = ~33ms)
+            const cappedDelta = Math.min(deltaSeconds, 1/30);
+            
+            // Fixed timestep for deterministic physics
+            const fixedTimeStep = 1/60; // 60 Hz physics
+            this.accumulator += cappedDelta;
+            
+            // Limit max steps per frame to prevent freezing on slow systems
+            const maxStepsPerFrame = 3;
+            let steps = 0;
+            
+            // Track physics timing for performance monitoring
+            const startTime = performance.now();
+            
+            // Step physics with fixed timestep
+            while (this.accumulator >= fixedTimeStep && steps < maxStepsPerFrame) {
+                this.world.step();
+                this.accumulator -= fixedTimeStep;
+                steps++;
+            }
+            
+            // Record physics metrics
+            const physicsTime = performance.now() - startTime;
+            
+            // Emit performance metrics if we have the event system
+            if (this.eventSystem && steps > 0) {
+                this.eventSystem.emit('physics:performance', {
+                    steps: steps,
+                    time: physicsTime,
+                    accumulator: this.accumulator
+                });
+            }
+            
+            // If we hit max steps, reset accumulator to prevent permanent lag
+            if (steps >= maxStepsPerFrame) {
+                this.accumulator = 0;
+                console.warn('[PhysicsManager] Frame budget exceeded, resetting accumulator');
+            }
+            
+            // Calculate interpolation factor for smooth rendering
+            const interpolation = this.accumulator / fixedTimeStep;
+            
+            // Update all sprites based on their physics bodies with interpolation
+            this.updateGameObjects(interpolation);
         } catch (error) {
             console.error('[PhysicsManager] Error in update:', error);
         }
@@ -197,8 +243,9 @@ export class PhysicsManager extends BaseManager {
     
     /**
      * Update all game objects based on their physics bodies
+     * @param {number} interpolation - Interpolation factor for smooth rendering (0-1)
      */
-    updateGameObjects() {
+    updateGameObjects(interpolation = 0) {
         try {
             // Update all sprites based on their physics bodies
             this.world.bodies.forEach(body => {
@@ -208,9 +255,29 @@ export class PhysicsManager extends BaseManager {
                     const position = body.translation();
                     const rotation = body.rotation();
                     
-                    sprite.x = position.x;
-                    sprite.y = position.y;
-                    sprite.rotation = rotation;
+                    // Store previous position if not exists
+                    if (!sprite.prevX) {
+                        sprite.prevX = position.x;
+                        sprite.prevY = position.y;
+                        sprite.prevRotation = rotation;
+                    }
+                    
+                    // Interpolate between previous and current position for smooth rendering
+                    if (interpolation > 0 && interpolation < 1) {
+                        sprite.x = sprite.prevX + (position.x - sprite.prevX) * interpolation;
+                        sprite.y = sprite.prevY + (position.y - sprite.prevY) * interpolation;
+                        sprite.rotation = sprite.prevRotation + (rotation - sprite.prevRotation) * interpolation;
+                    } else {
+                        // Direct assignment when no interpolation
+                        sprite.x = position.x;
+                        sprite.y = position.y;
+                        sprite.rotation = rotation;
+                        
+                        // Update previous values for next frame
+                        sprite.prevX = position.x;
+                        sprite.prevY = position.y;
+                        sprite.prevRotation = rotation;
+                    }
                 }
             });
         } catch (error) {

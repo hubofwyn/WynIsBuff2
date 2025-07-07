@@ -69,9 +69,9 @@ export class PlayerController {
         try {
             console.log('[PlayerController] Creating player...');
             
-            // Player dimensions
-            const playerWidth = 32;
-            const playerHeight = 32;
+            // Player dimensions - doubled for better visibility
+            const playerWidth = 64;
+            const playerHeight = 64;
             
             // Create a visual representation of the player
             if (this.scene.textures.exists(this.textureKey)) {
@@ -131,6 +131,7 @@ export class PlayerController {
                 right: keys.D
             };
             this.spaceKey = keys.SPACE;
+            this.duckKey = keys.C;
         } else {
             // Fallback to direct keyboard polling
             this.cursors = this.scene.input.keyboard.createCursorKeys();
@@ -141,7 +142,11 @@ export class PlayerController {
                 right: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D)
             };
             this.spaceKey = this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
+            this.duckKey = this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.C);
         }
+        
+        // Track ducking state
+        this.isDucking = false;
     }
     
     /**
@@ -161,6 +166,9 @@ export class PlayerController {
             // Get landing recovery state from jump controller
             const jumpState = this.jumpController.getJumpState();
             
+            // Handle ducking
+            this.handleDucking();
+            
             // Update movement controller
             this.movementController.update(
                 this.body, 
@@ -170,12 +178,14 @@ export class PlayerController {
                 jumpState.isInLandingRecovery
             );
             
-            // Update jump controller
-            this.jumpController.update(
-                this.body, 
-                this.sprite, 
-                { cursors: this.cursors, wasd: this.wasd, spaceKey: this.spaceKey }
-            );
+            // Update jump controller (disable jumping while ducking)
+            if (!this.isDucking) {
+                this.jumpController.update(
+                    this.body, 
+                    this.sprite, 
+                    { cursors: this.cursors, wasd: this.wasd, spaceKey: this.spaceKey }
+                );
+            }
             
             // Update sprite position to match physics body
             this.updateSpritePosition();
@@ -192,7 +202,67 @@ export class PlayerController {
         
         const position = this.body.translation();
         this.sprite.setPosition(position.x, position.y);
-        this.sprite.setRotation(this.body.rotation());
+        
+        // Don't update rotation from physics if ducking
+        if (!this.isDucking) {
+            this.sprite.setRotation(this.body.rotation());
+        }
+    }
+    
+    /**
+     * Handle ducking mechanics
+     */
+    handleDucking() {
+        if (!this.sprite || !this.body || !this.collider) return;
+        
+        const wasDucking = this.isDucking;
+        this.isDucking = this.duckKey.isDown;
+        
+        // Apply duck transformation
+        if (this.isDucking && !wasDucking) {
+            // Start ducking - rotate 90 degrees clockwise
+            this.sprite.setRotation(Math.PI / 2);
+            
+            // Update physics collider to match ducked shape
+            // Remove old collider
+            this.world.removeCollider(this.collider);
+            
+            // Create new horizontal collider
+            const playerColliderDesc = RAPIER.ColliderDesc
+                .cuboid(32, 32) // Swapped dimensions for horizontal shape
+                .setFriction(0.1)
+                .setDensity(2.0)
+                .setRestitution(0.15);
+                
+            this.collider = this.world.createCollider(
+                playerColliderDesc,
+                this.body
+            );
+            
+            // Emit duck event
+            if (this.eventSystem) {
+                this.eventSystem.emit(EventNames.PLAYER_DUCK, {
+                    position: this.body.translation()
+                });
+            }
+        } else if (!this.isDucking && wasDucking) {
+            // Stop ducking - return to normal
+            this.sprite.setRotation(0);
+            
+            // Restore original collider
+            this.world.removeCollider(this.collider);
+            
+            const playerColliderDesc = RAPIER.ColliderDesc
+                .cuboid(32, 32) // Original square dimensions
+                .setFriction(0.1)
+                .setDensity(2.0)
+                .setRestitution(0.15);
+                
+            this.collider = this.world.createCollider(
+                playerColliderDesc,
+                this.body
+            );
+        }
     }
     
     /**

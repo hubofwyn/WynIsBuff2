@@ -9,8 +9,8 @@ export const LevelData = {
         name: 'First Steps',
         description: 'Learn basic movement and single jumps',
         
-        // Player starting position
-        playerStart: { x: 100, y: 600 },
+        // Player starting position - adjusted for larger sprite
+        playerStart: { x: 100, y: 580 },
         
         // Ground configuration
         ground: { width: 1024, height: 50, y: 700 },
@@ -32,6 +32,10 @@ export const LevelData = {
             // Bonus platforms for collectibles
             { x: 300, y: 500, width: 60, height: 15, color: 0x44AA44 },   // Optional collectible platform
             { x: 850, y: 550, width: 60, height: 15, color: 0x44AA44 },   // Another optional
+            
+            // Additional challenge platforms
+            { x: 1250, y: 450, width: 80, height: 20, color: 0x00FFFF },  // Post-boss bonus area
+            { x: 1400, y: 400, width: 100, height: 20, color: 0x00FFFF }, // Final stretch
         ],
         
         // No moving platforms in level 1
@@ -54,9 +58,36 @@ export const LevelData = {
             { x: 950, y: 250, type: 'dumbbell', value: 100 },    // Secret high jump reward
         ],
         
+        // Boss configuration
+        boss: {
+            type: 'pulsating',
+            x: 900,
+            y: 370,  // Just above the boss platform
+            size: 80
+        },
+        
+        // Decorative elements to make level more interesting
+        decorations: [
+            // Motivational signs
+            { x: 150, y: 550, type: 'text', text: 'GET BUFF!', style: { fontSize: '24px', color: '#FFD700' } },
+            { x: 500, y: 450, type: 'text', text: 'KEEP GOING!', style: { fontSize: '20px', color: '#00FF00' } },
+            { x: 800, y: 350, type: 'text', text: 'DANGER AHEAD!', style: { fontSize: '20px', color: '#FF0000' } },
+            { x: 1200, y: 350, type: 'text', text: 'VICTORY!', style: { fontSize: '32px', color: '#FFD700' } },
+            
+            // Workout equipment decorations
+            { x: 250, y: 650, type: 'emoji', emoji: '🏋️', scale: 1.5 },
+            { x: 450, y: 650, type: 'emoji', emoji: '💪', scale: 1.5 },
+            { x: 650, y: 650, type: 'emoji', emoji: '🥤', scale: 1.5 }, // Protein shake
+            { x: 1300, y: 350, type: 'emoji', emoji: '🏆', scale: 2 }, // Trophy
+            
+            // Background gym equipment
+            { x: 100, y: 650, type: 'rect', width: 30, height: 60, color: 0x666666 }, // Weight rack
+            { x: 350, y: 650, type: 'rect', width: 40, height: 40, color: 0x888888 }, // Bench
+        ],
+        
         // Level completion trigger - moved past the boss
         completionTrigger: {
-            x: 1100, y: 400, width: 60, height: 100,
+            x: 1150, y: 400, width: 60, height: 100,
             requireAllCollectibles: false
         },
         

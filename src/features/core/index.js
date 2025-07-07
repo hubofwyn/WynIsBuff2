@@ -6,3 +6,4 @@ export { GameStateManager } from '../../core/GameStateManager.js';
 export { InputManager } from '../../core/InputManager.js';
 export { PhysicsManager } from '../../core/PhysicsManager.js';
 export { UIManager } from '../../core/UIManager.js';
+export { PerformanceMonitor } from '../../core/PerformanceMonitor.js';

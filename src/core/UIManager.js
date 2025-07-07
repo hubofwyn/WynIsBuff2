@@ -20,6 +20,13 @@ export class UIManager extends BaseManager {
         this.groups = new Map();
         this.screenWidth = 0;
         this.screenHeight = 0;
+        
+        // Subtitle system
+        this.subtitlesEnabled = false;
+        this.subtitleContainer = null;
+        this.subtitleText = null;
+        this.subtitleQueue = [];
+        this.currentSubtitle = null;
     }
     
     /**
@@ -235,6 +242,23 @@ export class UIManager extends BaseManager {
                 this.updateResponsivePosition(data);
             }
         });
+        
+        // Update subtitle position if exists
+        if (this.subtitleContainer && this.subtitleText) {
+            const subtitleY = this.screenHeight - 100;
+            
+            // Update background
+            const bg = this.subtitleContainer.list[0];
+            if (bg && bg.clear) {
+                bg.clear();
+                bg.fillStyle(0x000000, 0.8);
+                bg.fillRoundedRect(this.screenWidth * 0.1, subtitleY - 30, this.screenWidth * 0.8, 60, 10);
+            }
+            
+            // Update text position
+            this.subtitleText.setPosition(this.screenWidth / 2, subtitleY);
+            this.subtitleText.setWordWrapWidth(this.screenWidth * 0.7);
+        }
     }
     
     /**
@@ -328,6 +352,15 @@ export class UIManager extends BaseManager {
             this.scene.scale.off('resize', this.handleResize, this);
         }
         
+        // Clean up subtitle system
+        if (this.currentSubtitle && this.scene) {
+            this.scene.time.removeEvent(this.currentSubtitle);
+            this.currentSubtitle = null;
+        }
+        this.subtitleQueue = [];
+        this.subtitleContainer = null;
+        this.subtitleText = null;
+        
         this.elements.clear();
         this.groups.clear();
         this.scene = null;
@@ -372,6 +405,105 @@ export class UIManager extends BaseManager {
      */
     showSubtitles(enabled) {
         console.log(`[UIManager] Subtitles enabled: ${enabled}`);
-        // TODO: Display subtitle text elements when sound events occur
+        this.subtitlesEnabled = enabled;
+        
+        if (!this.scene) return;
+        
+        if (enabled && !this.subtitleContainer) {
+            // Create subtitle container
+            this.createSubtitleUI();
+        } else if (!enabled && this.subtitleContainer) {
+            // Hide subtitles
+            this.subtitleContainer.setVisible(false);
+            if (this.currentSubtitle) {
+                this.scene.time.removeEvent(this.currentSubtitle);
+                this.currentSubtitle = null;
+            }
+        }
+    }
+    
+    /**
+     * Create the subtitle UI elements
+     */
+    createSubtitleUI() {
+        // Create container for subtitles at bottom of screen
+        const subtitleY = this.screenHeight - 100;
+        
+        // Background panel
+        const bg = this.scene.add.graphics();
+        bg.fillStyle(0x000000, 0.8);
+        bg.fillRoundedRect(this.screenWidth * 0.1, subtitleY - 30, this.screenWidth * 0.8, 60, 10);
+        
+        // Subtitle text
+        this.subtitleText = this.scene.add.text(this.screenWidth / 2, subtitleY, '', {
+            fontFamily: 'Arial',
+            fontSize: '20px',
+            color: '#ffffff',
+            align: 'center',
+            wordWrap: {
+                width: this.screenWidth * 0.7
+            }
+        }).setOrigin(0.5);
+        
+        // Create container
+        this.subtitleContainer = this.scene.add.container(0, 0, [bg, this.subtitleText]);
+        this.subtitleContainer.setDepth(9999); // Always on top
+        this.subtitleContainer.setScrollFactor(0); // Fixed to camera
+        this.subtitleContainer.setVisible(false);
+        
+        // Store in elements for management
+        this.elements.set('subtitleContainer', {
+            element: this.subtitleContainer,
+            type: 'container',
+            responsive: false
+        });
+    }
+    
+    /**
+     * Display a subtitle message
+     * @param {string} text - The subtitle text to display
+     * @param {number} duration - How long to display the subtitle (ms)
+     */
+    displaySubtitle(text, duration = 3000) {
+        if (!this.subtitlesEnabled || !this.subtitleContainer) return;
+        
+        // Clear any existing subtitle timer
+        if (this.currentSubtitle) {
+            this.scene.time.removeEvent(this.currentSubtitle);
+            this.currentSubtitle = null;
+        }
+        
+        // Show subtitle
+        this.subtitleText.setText(text);
+        this.subtitleContainer.setVisible(true);
+        
+        // Hide after duration
+        this.currentSubtitle = this.scene.time.delayedCall(duration, () => {
+            this.subtitleContainer.setVisible(false);
+            this.currentSubtitle = null;
+            
+            // Process next subtitle in queue if any
+            if (this.subtitleQueue.length > 0) {
+                const next = this.subtitleQueue.shift();
+                this.displaySubtitle(next.text, next.duration);
+            }
+        });
+    }
+    
+    /**
+     * Queue a subtitle to be displayed
+     * @param {string} text - The subtitle text
+     * @param {number} duration - Display duration
+     */
+    queueSubtitle(text, duration = 3000) {
+        if (!this.subtitlesEnabled) return;
+        
+        if (!this.currentSubtitle) {
+            // No subtitle currently showing, display immediately
+            this.displaySubtitle(text, duration);
+        } else {
+            // Add to queue
+            this.subtitleQueue.push({ text, duration });
+        }
     }
 }
