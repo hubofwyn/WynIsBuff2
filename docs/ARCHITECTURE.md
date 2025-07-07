@@ -17,7 +17,8 @@ WynIsBuff2 implements a **feature-based architecture** with **barrel exports** t
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │                        Scenes Layer                         │
-│  (Boot, Preloader, Game, MainMenu, PauseScene, etc.)      │
+│  (Boot, Preloader, Game, MainMenu, PauseScene,            │
+│   BirthdayMinigame, GameOver, etc.)                       │
 └─────────────────────────────────────────────────────────────┘
                                 │
 ┌─────────────────────────────────────────────────────────────┐
