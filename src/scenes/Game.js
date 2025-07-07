@@ -90,6 +90,9 @@ export class Game extends Scene {
             this.cameraManager = new CameraManager(this, this.eventSystem);
             this.colorManager = new ColorManager(this, this.eventSystem);
             console.log('[Game] Effect managers initialized');
+            
+            // Add visual enhancements
+            this.createVisualEnhancements();
             // Apply persisted graphics and accessibility settings
             const settings = this.gameStateManager.settings || {};
             // Graphics quality
@@ -165,6 +168,59 @@ export class Game extends Scene {
                 fontFamily: 'Arial', fontSize: 16, color: '#ff0000',
                 align: 'center'
             }).setOrigin(0.5);
+        }
+    }
+    
+    /**
+     * Create visual enhancements for better game feel
+     */
+    createVisualEnhancements() {
+        // Add gradient background overlay
+        const graphics = this.add.graphics();
+        
+        // Create a subtle gradient from top to bottom
+        const colors = [0x1a1a2e, 0x16213e, 0x0f3460];
+        const alphas = [0.3, 0.2, 0.1];
+        
+        for (let i = 0; i < 3; i++) {
+            graphics.fillStyle(colors[i], alphas[i]);
+            graphics.fillRect(0, i * 250, 1024, 250);
+        }
+        
+        // Add animated background particles for atmosphere
+        this.time.addEvent({
+            delay: 2000,
+            callback: () => {
+                if (this.particleManager) {
+                    const x = Phaser.Math.Between(0, 1024);
+                    const particle = this.add.circle(x, -10, 3, 0xffffff, 0.2);
+                    
+                    this.tweens.add({
+                        targets: particle,
+                        y: 768,
+                        x: x + Phaser.Math.Between(-50, 50),
+                        alpha: 0,
+                        duration: 8000,
+                        onComplete: () => particle.destroy()
+                    });
+                }
+            },
+            loop: true
+        });
+        
+        // Add subtle vignette effect
+        const vignette = this.add.graphics();
+        vignette.fillStyle(0x000000, 0);
+        vignette.fillRect(0, 0, 1024, 768);
+        vignette.setBlendMode(Phaser.BlendModes.MULTIPLY);
+        vignette.setDepth(999);
+        
+        // Create radial gradient for vignette
+        const radius = 512;
+        for (let i = 0; i < 20; i++) {
+            const alpha = i / 20 * 0.3;
+            vignette.lineStyle(20, 0x000000, alpha);
+            vignette.strokeCircle(512, 384, radius + i * 30);
         }
     }
     
@@ -423,6 +479,24 @@ export class Game extends Scene {
                 this.scene.start(SceneKeys.GAME_OVER, { 
                     dramatic: true,
                     reason: data.reason || 'You exploded!'
+                });
+            });
+        });
+        
+        // Listen for scene transition events
+        this.eventSystem.on(EventNames.SCENE_TRANSITION, (data) => {
+            console.log('[Game] Scene transition event:', data);
+            
+            // Fade out current scene
+            this.cameras.main.fadeOut(500, 0, 0, 0);
+            
+            this.cameras.main.once('camerafadeoutcomplete', () => {
+                // Stop current scene
+                this.scene.stop();
+                
+                // Start new scene
+                this.scene.start(SceneKeys.GAME, {
+                    levelId: data.toScene
                 });
             });
         });

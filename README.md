@@ -13,6 +13,10 @@ Do you have what it takes to **witness pure, unfiltered, RAW BUFFNESS**? Can you
 - **PARTICLE EXPLOSIONS** – Jump effects so intense they might trigger your smoke alarm! (Not legally responsible if they actually do)
 - **SCREEN SHAKE** – Camera effects that will make your neighbors think there's an earthquake of BUFFNESS!
 - **COLOR TRANSITIONS** – Visual feedback so smooth it's like watching a rainbow bench press the sun!
+- **SCENE TRANSITIONS** – Old-school level progression that hits harder than a protein shake after leg day!
+- **PULSATING BOSS** – A menacing obstacle that pulsates with the rhythm of a thousand gym beats!
+- **PLAYER GLOW EFFECTS** – Your character radiates pure BUFF ENERGY with a pulsing green aura of GAINS!
+- **ATMOSPHERIC PARTICLES** – Background effects that float like protein powder in the wind of VICTORY!
 
 ## 🚀💻 TECHNICAL STACK OF POWER
 - **Phaser 3.88.0** – HTML5 game framework so buffed it makes other frameworks look like they're still in TUTORIAL MODE!
@@ -24,6 +28,7 @@ Do you have what it takes to **witness pure, unfiltered, RAW BUFFNESS**? Can you
 ## 🎮🔥 CONTROLS OF ULTIMATE BUFFNESS
 - **WASD or Arrow Keys** - Move with such MAXIMUM BUFFNESS your keyboard might need a gym membership!
 - **Space Bar** - TRIPLE JUMP with increasing power so intense it might launch your character INTO ORBIT!
+- **C** - DUCK under obstacles with the grace of a BUFF NINJA doing limbo at the gym!
 - **ESC** - Pause the buffness (but WHY WOULD YOU? Are you AFRAID OF THE GAINS?!)
 
 ## 🛠️💪 INSTALLATION & DEVELOPMENT OF EXTREME BUFFNESS

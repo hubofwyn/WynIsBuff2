@@ -89,6 +89,9 @@ export class PlayerController {
                 this.sprite.setDepth(100);
             }
             
+            // Add glow effect to player
+            this.createGlowEffect();
+            
             // Create a dynamic rigid body for the player
             const playerBodyDesc = RAPIER.RigidBodyDesc.dynamic()
                 .setTranslation(x, y)
@@ -207,6 +210,11 @@ export class PlayerController {
         if (!this.isDucking) {
             this.sprite.setRotation(this.body.rotation());
         }
+        
+        // Update glow position
+        if (this.glowGraphics) {
+            this.updateGlow(0.4); // Use current intensity from tween
+        }
     }
     
     /**
@@ -303,6 +311,54 @@ export class PlayerController {
      */
     getCollisionController() {
         return this.collisionController;
+    }
+    
+    /**
+     * Create a glow effect around the player
+     */
+    createGlowEffect() {
+        if (!this.sprite) return;
+        
+        // Create glow graphics behind the sprite
+        this.glowGraphics = this.scene.add.graphics();
+        this.glowGraphics.setDepth(99); // Just below the sprite
+        
+        // Create pulsing glow animation
+        this.scene.tweens.add({
+            targets: { intensity: 0.3 },
+            intensity: 0.6,
+            duration: 1500,
+            yoyo: true,
+            repeat: -1,
+            ease: 'Sine.InOut',
+            onUpdate: (tween) => {
+                const intensity = tween.getValue();
+                this.updateGlow(intensity);
+            }
+        });
+    }
+    
+    /**
+     * Update the glow effect
+     * @param {number} intensity - Glow intensity
+     */
+    updateGlow(intensity) {
+        if (!this.glowGraphics || !this.sprite) return;
+        
+        this.glowGraphics.clear();
+        
+        // Create multiple circles for soft glow
+        const colors = [0x00ff00, 0x44ff44, 0x88ff88];
+        const sizes = [40, 30, 20];
+        
+        colors.forEach((color, i) => {
+            this.glowGraphics.fillStyle(color, intensity * (0.3 - i * 0.1));
+            this.glowGraphics.fillCircle(
+                this.sprite.x,
+                this.sprite.y,
+                sizes[i]
+            );
+        });
     }
     
     /**
