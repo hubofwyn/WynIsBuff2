@@ -54,8 +54,6 @@ src/
 │   ├── effects/index.js      # Re-exports from src/modules/effects/
 │   └── enemy/index.js        # Re-exports from src/modules/enemy/
 ├── modules/                  # 🔧 Implementation details
-│   ├── LevelManager.js       # ⚠️ Legacy wrapper (deprecated)
-│   ├── PlayerController.js   # ⚠️ Legacy monolithic (deprecated)
 │   ├── effects/              # Visual effect managers
 │   ├── enemy/                # Enemy-related controllers
 │   ├── level/                # Level system components
