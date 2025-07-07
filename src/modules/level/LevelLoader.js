@@ -158,30 +158,56 @@ export class LevelLoader {
         }
         
         // Spawn boss for this level if configured
-        if (levelConfig.boss && levelConfig.boss.active) {
+        if (levelConfig.boss) {
             try {
-                // Import BossController dynamically to avoid circular dependencies
-                import('../enemy/BossController.js').then(module => {
-                    const { BossController } = module;
-                    const boss = new BossController(
-                        this.scene,
-                        this.world,
-                        this.eventSystem,
-                        levelConfig.boss.x,
-                        levelConfig.boss.y,
-                        levelConfig.boss.key
-                    );
-                    
-                    // Store boss reference for updates and cleanup
-                    this.scene.boss = boss;
-                    
-                    console.log('[LevelLoader] Boss spawned at', levelConfig.boss.x, levelConfig.boss.y);
-                }).catch(error => {
-                    console.error('[LevelLoader] Error importing BossController:', error);
-                });
+                if (levelConfig.boss.type === 'pulsating') {
+                    // Import PulsatingBoss for level 1
+                    import('../enemy/PulsatingBoss.js').then(module => {
+                        const { PulsatingBoss } = module;
+                        const boss = new PulsatingBoss(
+                            this.scene,
+                            this.world,
+                            levelConfig.boss.x,
+                            levelConfig.boss.y,
+                            this.eventSystem
+                        );
+                        
+                        // Store boss reference for updates and cleanup
+                        this.scene.pulsatingBoss = boss;
+                        
+                        console.log('[LevelLoader] Pulsating boss spawned at', levelConfig.boss.x, levelConfig.boss.y);
+                    }).catch(error => {
+                        console.error('[LevelLoader] Error importing PulsatingBoss:', error);
+                    });
+                } else if (levelConfig.boss.active) {
+                    // Original boss logic for other levels
+                    import('../enemy/BossController.js').then(module => {
+                        const { BossController } = module;
+                        const boss = new BossController(
+                            this.scene,
+                            this.world,
+                            this.eventSystem,
+                            levelConfig.boss.x,
+                            levelConfig.boss.y,
+                            levelConfig.boss.key
+                        );
+                        
+                        // Store boss reference for updates and cleanup
+                        this.scene.boss = boss;
+                        
+                        console.log('[LevelLoader] Boss spawned at', levelConfig.boss.x, levelConfig.boss.y);
+                    }).catch(error => {
+                        console.error('[LevelLoader] Error importing BossController:', error);
+                    });
+                }
             } catch (error) {
                 console.error('[LevelLoader] Error spawning boss:', error);
             }
+        }
+        
+        // Create decorations if configured
+        if (levelConfig.decorations) {
+            this.createDecorations(levelConfig.decorations);
         }
     }
     
@@ -267,6 +293,51 @@ export class LevelLoader {
                 levelId: this.currentLevelId
             });
         }
+    }
+    
+    /**
+     * Create decorative elements for the level
+     * @param {Array} decorations - Array of decoration configurations
+     */
+    createDecorations(decorations) {
+        if (!decorations || !Array.isArray(decorations)) return;
+        
+        decorations.forEach(deco => {
+            try {
+                switch (deco.type) {
+                    case 'text':
+                        const textStyle = {
+                            fontFamily: 'Arial Black',
+                            fontSize: deco.style.fontSize || '20px',
+                            color: deco.style.color || '#ffffff',
+                            stroke: '#000000',
+                            strokeThickness: 3
+                        };
+                        const text = this.scene.add.text(deco.x, deco.y, deco.text, textStyle)
+                            .setOrigin(0.5)
+                            .setDepth(10);
+                        break;
+                        
+                    case 'emoji':
+                        const emoji = this.scene.add.text(deco.x, deco.y, deco.emoji, {
+                            fontSize: `${32 * (deco.scale || 1)}px`
+                        }).setOrigin(0.5).setDepth(10);
+                        break;
+                        
+                    case 'rect':
+                        const rect = this.scene.add.rectangle(
+                            deco.x, 
+                            deco.y, 
+                            deco.width, 
+                            deco.height, 
+                            deco.color
+                        ).setDepth(5);
+                        break;
+                }
+            } catch (error) {
+                console.error('[LevelLoader] Error creating decoration:', error);
+            }
+        });
     }
     
     /**

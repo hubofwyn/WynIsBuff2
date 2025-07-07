@@ -69,9 +69,9 @@ export class PlayerController {
         try {
             console.log('[PlayerController] Creating player...');
             
-            // Player dimensions
-            const playerWidth = 32;
-            const playerHeight = 32;
+            // Player dimensions - doubled for better visibility
+            const playerWidth = 64;
+            const playerHeight = 64;
             
             // Create a visual representation of the player
             if (this.scene.textures.exists(this.textureKey)) {
@@ -88,6 +88,9 @@ export class PlayerController {
                 );
                 this.sprite.setDepth(100);
             }
+            
+            // Add glow effect to player
+            this.createGlowEffect();
             
             // Create a dynamic rigid body for the player
             const playerBodyDesc = RAPIER.RigidBodyDesc.dynamic()
@@ -131,6 +134,7 @@ export class PlayerController {
                 right: keys.D
             };
             this.spaceKey = keys.SPACE;
+            this.duckKey = keys.C;
         } else {
             // Fallback to direct keyboard polling
             this.cursors = this.scene.input.keyboard.createCursorKeys();
@@ -141,7 +145,11 @@ export class PlayerController {
                 right: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D)
             };
             this.spaceKey = this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
+            this.duckKey = this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.C);
         }
+        
+        // Track ducking state
+        this.isDucking = false;
     }
     
     /**
@@ -161,6 +169,9 @@ export class PlayerController {
             // Get landing recovery state from jump controller
             const jumpState = this.jumpController.getJumpState();
             
+            // Handle ducking
+            this.handleDucking();
+            
             // Update movement controller
             this.movementController.update(
                 this.body, 
@@ -170,12 +181,14 @@ export class PlayerController {
                 jumpState.isInLandingRecovery
             );
             
-            // Update jump controller
-            this.jumpController.update(
-                this.body, 
-                this.sprite, 
-                { cursors: this.cursors, wasd: this.wasd, spaceKey: this.spaceKey }
-            );
+            // Update jump controller (disable jumping while ducking)
+            if (!this.isDucking) {
+                this.jumpController.update(
+                    this.body, 
+                    this.sprite, 
+                    { cursors: this.cursors, wasd: this.wasd, spaceKey: this.spaceKey }
+                );
+            }
             
             // Update sprite position to match physics body
             this.updateSpritePosition();
@@ -192,7 +205,72 @@ export class PlayerController {
         
         const position = this.body.translation();
         this.sprite.setPosition(position.x, position.y);
-        this.sprite.setRotation(this.body.rotation());
+        
+        // Don't update rotation from physics if ducking
+        if (!this.isDucking) {
+            this.sprite.setRotation(this.body.rotation());
+        }
+        
+        // Update glow position
+        if (this.glowGraphics) {
+            this.updateGlow(0.4); // Use current intensity from tween
+        }
+    }
+    
+    /**
+     * Handle ducking mechanics
+     */
+    handleDucking() {
+        if (!this.sprite || !this.body || !this.collider) return;
+        
+        const wasDucking = this.isDucking;
+        this.isDucking = this.duckKey.isDown;
+        
+        // Apply duck transformation
+        if (this.isDucking && !wasDucking) {
+            // Start ducking - rotate 90 degrees clockwise
+            this.sprite.setRotation(Math.PI / 2);
+            
+            // Update physics collider to match ducked shape
+            // Remove old collider
+            this.world.removeCollider(this.collider);
+            
+            // Create new horizontal collider
+            const playerColliderDesc = RAPIER.ColliderDesc
+                .cuboid(32, 32) // Swapped dimensions for horizontal shape
+                .setFriction(0.1)
+                .setDensity(2.0)
+                .setRestitution(0.15);
+                
+            this.collider = this.world.createCollider(
+                playerColliderDesc,
+                this.body
+            );
+            
+            // Emit duck event
+            if (this.eventSystem) {
+                this.eventSystem.emit(EventNames.PLAYER_DUCK, {
+                    position: this.body.translation()
+                });
+            }
+        } else if (!this.isDucking && wasDucking) {
+            // Stop ducking - return to normal
+            this.sprite.setRotation(0);
+            
+            // Restore original collider
+            this.world.removeCollider(this.collider);
+            
+            const playerColliderDesc = RAPIER.ColliderDesc
+                .cuboid(32, 32) // Original square dimensions
+                .setFriction(0.1)
+                .setDensity(2.0)
+                .setRestitution(0.15);
+                
+            this.collider = this.world.createCollider(
+                playerColliderDesc,
+                this.body
+            );
+        }
     }
     
     /**
@@ -233,6 +311,54 @@ export class PlayerController {
      */
     getCollisionController() {
         return this.collisionController;
+    }
+    
+    /**
+     * Create a glow effect around the player
+     */
+    createGlowEffect() {
+        if (!this.sprite) return;
+        
+        // Create glow graphics behind the sprite
+        this.glowGraphics = this.scene.add.graphics();
+        this.glowGraphics.setDepth(99); // Just below the sprite
+        
+        // Create pulsing glow animation
+        this.scene.tweens.add({
+            targets: { intensity: 0.3 },
+            intensity: 0.6,
+            duration: 1500,
+            yoyo: true,
+            repeat: -1,
+            ease: 'Sine.InOut',
+            onUpdate: (tween) => {
+                const intensity = tween.getValue();
+                this.updateGlow(intensity);
+            }
+        });
+    }
+    
+    /**
+     * Update the glow effect
+     * @param {number} intensity - Glow intensity
+     */
+    updateGlow(intensity) {
+        if (!this.glowGraphics || !this.sprite) return;
+        
+        this.glowGraphics.clear();
+        
+        // Create multiple circles for soft glow
+        const colors = [0x00ff00, 0x44ff44, 0x88ff88];
+        const sizes = [40, 30, 20];
+        
+        colors.forEach((color, i) => {
+            this.glowGraphics.fillStyle(color, intensity * (0.3 - i * 0.1));
+            this.glowGraphics.fillCircle(
+                this.sprite.x,
+                this.sprite.y,
+                sizes[i]
+            );
+        });
     }
     
     /**
