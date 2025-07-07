@@ -1,19 +1,19 @@
 {
-    "name": "template-rapier",
-    "description": "A Phaser 3 template using Rapier physics.",
-    "version": "1.0.1",
+    "name": "wynisbuff2",
+    "description": "WynIsBuff2 - An extreme buff adventure game with triple jump mechanics and maximum gaming power!",
+    "version": "2.0.0",
     "type": "module",
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/phaserjs/template-rapier.git"
+        "url": "git+https://github.com/verlyn13/WynIsBuff2.git"
     },
-    "author": "Phaser Studio <support@phaser.io> (https://phaser.io/)",
+    "author": "WynIsBuff2 Team",
     "license": "MIT",
     "licenseUrl": "http://www.opensource.org/licenses/mit-license.php",
     "bugs": {
-        "url": "https://github.com/phaserjs/template-rapier/issues"
+        "url": "https://github.com/verlyn13/WynIsBuff2/issues"
     },
-    "homepage": "https://github.com/phaserjs/template-rapier#readme",
+    "homepage": "https://github.com/verlyn13/WynIsBuff2#readme",
     "scripts": {
         "dev": "node log.js dev & vite --config vite/config.dev.mjs",
         "build": "node log.js build & vite build --config vite/config.prod.mjs",
