@@ -1,7 +1,8 @@
 import { Scene } from 'phaser';
 import { PlayerController } from '@features/player';
 import { ParticleManager, CameraManager, ColorManager } from '@features/effects';
-import { LevelManager, PhysicsManager, EventSystem, InputManager, UIManager, GameStateManager, AudioManager } from '@features/core';
+import { PhysicsManager, EventSystem, InputManager, UIManager, GameStateManager, AudioManager } from '@features/core';
+import { LevelManager } from '@features/level';
 import { EventNames } from '../constants/EventNames';
 import { SceneKeys } from '../constants/SceneKeys.js';
 import { AudioAssets } from '../constants/Assets.js';
