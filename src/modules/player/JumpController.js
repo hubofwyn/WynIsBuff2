@@ -62,11 +62,11 @@ export class JumpController {
                 x: 0,
                 y: -15  // Extra pop for satisfying jumps
             },
-            // Squash and stretch parameters for each jump
+            // Squash and stretch parameters for each jump - very subtle
             squashStretch: {
-                1: { squashX: 1.15, squashY: 0.85, duration: 120 },
-                2: { squashX: 1.25, squashY: 0.75, duration: 150 },
-                3: { squashX: 1.4, squashY: 0.6, duration: 200 }
+                1: { squashX: 1.05, squashY: 0.95, duration: 120 },
+                2: { squashX: 1.08, squashY: 0.92, duration: 150 },
+                3: { squashX: 1.12, squashY: 0.88, duration: 200 }
             }
         };
         
@@ -489,11 +489,11 @@ export class JumpController {
     applyJumpScaling(sprite, jumpNumber) {
         if (!sprite) return;
         
-        // Progressive scaling for each jump
+        // Progressive scaling for each jump - very subtle
         const scales = {
             1: 1.0,   // Normal size
-            2: 1.3,   // 30% bigger
-            3: 1.6    // 60% bigger
+            2: 1.05,  // 5% bigger
+            3: 1.1    // 10% bigger
         };
         
         const targetScale = scales[jumpNumber] || 1.0;
