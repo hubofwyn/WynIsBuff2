@@ -53,6 +53,9 @@ export class BirthdayMinigame extends Scene {
         this.perfectDeliveries = 0;
         this.speedBonus = 0;
         
+        // Leaderboard
+        this.leaderboard = this.loadLeaderboard();
+        
         // Objects
         this.player = null;
         this.parcel = null;
@@ -116,9 +119,6 @@ export class BirthdayMinigame extends Scene {
         
         // Set up collisions
         this.setupCollisions();
-        
-        // Spawn first parcel
-        this.spawnParcel();
         
         // Grace period
         this.setInvulnerable(1500);
@@ -380,26 +380,47 @@ export class BirthdayMinigame extends Scene {
     }
     
     createUI() {
-        // Deliveries count (main objective)
-        this.scoreText = this.add.text(20, 20, 'Deliveries: 0/9', {
-            fontSize: '32px',
+        // UI Panel background for better visibility
+        const uiPanel = this.add.graphics();
+        uiPanel.fillStyle(0x000000, 0.7);
+        uiPanel.fillRoundedRect(10, 10, 350, 180, 10);
+        uiPanel.lineStyle(3, 0xFFD700);
+        uiPanel.strokeRoundedRect(10, 10, 350, 180, 10);
+        
+        // Deliveries count (main objective) with icon
+        this.scoreText = this.add.text(70, 30, 'Deliveries: 0/9', {
+            fontSize: '28px',
             color: '#FFD700',
             fontFamily: 'Impact',
             stroke: '#000000',
             strokeThickness: 4
         }).setScrollFactor(0);
         
-        // Points display
-        this.pointsText = this.add.text(20, 60, 'Points: 0', {
-            fontSize: '24px',
+        // Add dynamite icon next to deliveries
+        this.add.text(35, 30, '🧨', {
+            fontSize: '24px'
+        }).setOrigin(0.5).setScrollFactor(0);
+        
+        // Points display with high score
+        this.pointsText = this.add.text(35, 65, 'Points: 0', {
+            fontSize: '22px',
             color: '#FFFFFF',
             fontFamily: 'Arial Black',
             stroke: '#000000',
             strokeThickness: 3
         }).setScrollFactor(0);
         
+        // High score display
+        this.highScoreText = this.add.text(35, 90, `High Score: ${this.highScore}`, {
+            fontSize: '18px',
+            color: '#FFD700',
+            fontFamily: 'Arial',
+            stroke: '#000000',
+            strokeThickness: 2
+        }).setScrollFactor(0);
+        
         // Combo display
-        this.comboText = this.add.text(20, 95, '', {
+        this.comboText = this.add.text(35, 115, '', {
             fontSize: '20px',
             color: '#00FF00',
             fontFamily: 'Arial Black',
@@ -407,23 +428,70 @@ export class BirthdayMinigame extends Scene {
             strokeThickness: 3
         }).setScrollFactor(0);
         
-        // Timer
-        this.timerText = this.add.text(512, 20, 'Time: 10.0s', {
+        // Speed bonus indicator
+        this.speedBonusText = this.add.text(35, 140, '', {
+            fontSize: '18px',
+            color: '#00FFFF',
+            fontFamily: 'Arial Black',
+            stroke: '#000000',
+            strokeThickness: 2
+        }).setScrollFactor(0);
+        
+        // Timer with better visibility
+        const timerBg = this.add.rectangle(512, 45, 200, 50, 0x000000, 0.7);
+        timerBg.setStrokeStyle(3, 0xFFFFFF).setScrollFactor(0);
+        
+        this.timerText = this.add.text(512, 45, 'Find S² Shake!', {
             fontSize: '24px',
+            color: '#00FF00',
+            fontFamily: 'Arial Black',
+            stroke: '#000000',
+            strokeThickness: 3
+        }).setOrigin(0.5).setScrollFactor(0);
+        
+        // Lives/Misses display with hearts
+        this.livesContainer = this.add.container(900, 30).setScrollFactor(0);
+        this.updateLivesDisplay();
+        
+        // Perfect delivery streak
+        this.perfectStreakText = this.add.text(35, 165, '', {
+            fontSize: '16px',
+            color: '#FFD700',
+            fontFamily: 'Arial Black',
+            stroke: '#000000',
+            strokeThickness: 2
+        }).setScrollFactor(0);
+        
+        // Instructions hint at bottom
+        this.add.text(512, 740, 'W/S: Change Lanes | A/D: Move | SPACE: Dash', {
+            fontSize: '16px',
+            color: '#FFFFFF',
+            fontFamily: 'Arial',
+            stroke: '#000000',
+            strokeThickness: 2,
+            alpha: 0.7
+        }).setOrigin(0.5).setScrollFactor(0);
+    }
+    
+    updateLivesDisplay() {
+        this.livesContainer.removeAll(true);
+        
+        const livesText = this.add.text(0, 0, 'Lives: ', {
+            fontSize: '20px',
             color: '#FFFFFF',
             fontFamily: 'Arial Black',
             stroke: '#000000',
-            strokeThickness: 3
-        }).setOrigin(0.5, 0).setScrollFactor(0);
+            strokeThickness: 2
+        });
+        this.livesContainer.add(livesText);
         
-        // Miss streak warning
-        this.streakText = this.add.text(1000, 20, '', {
-            fontSize: '24px',
-            color: '#FF0000',
-            fontFamily: 'Arial Black',
-            stroke: '#000000',
-            strokeThickness: 3
-        }).setOrigin(1, 0).setScrollFactor(0);
+        // Show hearts for remaining lives
+        for (let i = 0; i < 3; i++) {
+            const heart = this.add.text(60 + i * 25, 0, i < (3 - this.missStreak) ? '❤️' : '💔', {
+                fontSize: '20px'
+            }).setOrigin(0.5);
+            this.livesContainer.add(heart);
+        }
     }
     
     showInstructions() {
@@ -664,26 +732,26 @@ export class BirthdayMinigame extends Scene {
     startObstacleSpawning() {
         // Dynamic spawn rates based on difficulty
         this.time.addEvent({
-            delay: () => Math.max(1200, 2000 - (this.difficultyLevel * 100)),
+            delay: () => Math.max(1500, 2500 - (this.difficultyLevel * 150)),
             callback: () => this.spawnObstacle(0), // Poop
             loop: true
         });
         
         this.time.addEvent({
-            delay: () => Math.max(1000, 1500 - (this.difficultyLevel * 75)),
+            delay: () => Math.max(1200, 2000 - (this.difficultyLevel * 100)),
             callback: () => this.spawnObstacle(1), // Traffic cones
             loop: true
         });
         
         this.time.addEvent({
-            delay: () => Math.max(2000, 3000 - (this.difficultyLevel * 150)),
+            delay: () => Math.max(2500, 3500 - (this.difficultyLevel * 200)),
             callback: () => this.spawnObstacle(2), // Ducks
             loop: true
         });
         
         // Spawn power-ups more frequently
         this.time.addEvent({
-            delay: 3000,
+            delay: 4000,
             callback: () => this.spawnPowerUp(),
             loop: true
         });
@@ -697,8 +765,19 @@ export class BirthdayMinigame extends Scene {
         
         // Easter egg spawns
         this.time.addEvent({
-            delay: 15000,
+            delay: 12000,
             callback: () => this.spawnEasterEgg(),
+            loop: true
+        });
+        
+        // Continuous parcel spawning
+        this.time.addEvent({
+            delay: () => Math.max(3000, 5000 - (this.difficultyLevel * 300)),
+            callback: () => {
+                if (this.parcels.countActive() < 3 && !this.gameOver) {
+                    this.spawnParcel();
+                }
+            },
             loop: true
         });
     }
@@ -1001,18 +1080,31 @@ export class BirthdayMinigame extends Scene {
     update(time, delta) {
         if (this.gameOver) return;
         
-        // Update timer display - only show when carrying
+        // Update timer display with urgency indicators
         if (this.isCarrying) {
             const timeLeft = Math.max(0, this.deliveryTimer / 1000);
             this.timerText.setText(`Time: ${timeLeft.toFixed(1)}s`);
+            
+            // Color-coded urgency
             if (timeLeft < 3) {
                 this.timerText.setColor('#FF0000');
+                // Flash timer when critical
+                if (Math.floor(time / 200) % 2 === 0) {
+                    this.timerText.setScale(1.1);
+                } else {
+                    this.timerText.setScale(1);
+                }
+            } else if (timeLeft < 5) {
+                this.timerText.setColor('#FFFF00');
+                this.timerText.setScale(1);
             } else {
-                this.timerText.setColor('#FFFFFF');
+                this.timerText.setColor('#00FF00');
+                this.timerText.setScale(1);
             }
         } else {
             this.timerText.setText('Find S² Shake Shake!');
             this.timerText.setColor('#00FF00');
+            this.timerText.setScale(1);
         }
         
         // Handle input
@@ -1022,19 +1114,38 @@ export class BirthdayMinigame extends Scene {
         if (this.playerContainer.x < 50) {
             this.playerContainer.x = 50;
             this.playerContainer.body.velocity.x = 0;
-        } else if (this.playerContainer.x > 974) {
-            this.playerContainer.x = 974;
+        } else if (this.playerContainer.x > 850) {
+            this.playerContainer.x = 850;
             this.playerContainer.body.velocity.x = 0;
         }
         
         // Update obstacles
         this.updateObstacles();
         
-        // No need to move delivery zone anymore
+        // Update parcels - remove if they go off screen
+        this.parcels.children.entries.forEach(parcel => {
+            if (parcel.x > 1100) {
+                parcel.destroy();
+            }
+        });
         
-        // Check if we need more parcels on the field
-        if (this.parcels.countActive() === 0 && !this.isCarrying) {
-            this.spawnParcel();
+        // Visual feedback when approaching delivery zone
+        if (this.isCarrying && this.playerContainer.x > 700) {
+            if (!this.deliveryZoneBg.glowing) {
+                this.deliveryZoneBg.glowing = true;
+                this.tweens.add({
+                    targets: this.deliveryZoneBg,
+                    alpha: 0.8,
+                    scale: 1.1,
+                    duration: 300,
+                    yoyo: true,
+                    repeat: -1
+                });
+            }
+        } else if (this.deliveryZoneBg.glowing) {
+            this.deliveryZoneBg.glowing = false;
+            this.tweens.killTweensOf(this.deliveryZoneBg);
+            this.deliveryZoneBg.setAlpha(0.2).setScale(1);
         }
     }
     
@@ -1280,6 +1391,9 @@ export class BirthdayMinigame extends Scene {
             
             AudioManager.getInstance().playSFX('land');
         }
+        
+        // Screen shake on hit
+        this.cameras.main.shake(100, 0.01);
     }
     
     pickupParcel(parcel) {
@@ -1290,14 +1404,52 @@ export class BirthdayMinigame extends Scene {
         // Reset timer when picking up
         this.deliveryTimer = this.maxDeliveryTime;
         
-        // Show carrying indicator - dynamite!
-        const indicator = this.add.text(0, -40, '🧨', {
+        // Show carrying indicator - dynamite with urgency!
+        const indicatorContainer = this.add.container(0, -40);
+        
+        // Background glow
+        const glow = this.add.circle(0, 0, 20, 0xFFD700, 0.5);
+        indicatorContainer.add(glow);
+        
+        // Dynamite emoji
+        const indicator = this.add.text(0, 0, '🧨', {
             fontSize: '24px'
         }).setOrigin(0.5);
-        this.playerContainer.add(indicator);
-        this.carryIndicator = indicator;
+        indicatorContainer.add(indicator);
         
+        // Urgency pulse
+        this.tweens.add({
+            targets: glow,
+            scale: { from: 1, to: 1.3 },
+            alpha: { from: 0.5, to: 0.2 },
+            duration: 500,
+            yoyo: true,
+            repeat: -1
+        });
+        
+        this.playerContainer.add(indicatorContainer);
+        this.carryIndicator = indicatorContainer;
+        
+        // Satisfying pickup feedback
+        this.cameras.main.flash(100, 255, 255, 0, true);
         AudioManager.getInstance().playSFX('pickup');
+        
+        // Show pickup message
+        const pickupText = this.add.text(this.playerContainer.x, this.playerContainer.y - 80, 'GO GO GO!', {
+            fontSize: '24px',
+            color: '#00FF00',
+            fontFamily: 'Arial Black',
+            stroke: '#000000',
+            strokeThickness: 3
+        }).setOrigin(0.5);
+        
+        this.tweens.add({
+            targets: pickupText,
+            y: '-=20',
+            alpha: 0,
+            duration: 800,
+            onComplete: () => pickupText.destroy()
+        });
     }
     
     dropParcel() {
@@ -1309,6 +1461,11 @@ export class BirthdayMinigame extends Scene {
             this.carryIndicator = null;
         }
         
+        // Reset combo and perfect streak
+        this.combo = 0;
+        this.perfectDeliveries = 0;
+        this.updateComboDisplay();
+        
         // Spawn new parcel at random location
         this.time.delayedCall(1000, () => {
             this.spawnParcel();
@@ -1319,11 +1476,30 @@ export class BirthdayMinigame extends Scene {
     
     missParcel() {
         this.missStreak++;
-        this.streakText.setText(`Misses: ${this.missStreak}/3`);
+        this.updateLivesDisplay();
         
-        // Reset combo on miss
+        // Reset combo and perfect streak on miss
         this.combo = 0;
-        this.comboText.setText('');
+        this.perfectDeliveries = 0;
+        this.updateComboDisplay();
+        this.perfectStreakText.setText('');
+        
+        // Show miss message
+        const missText = this.add.text(512, 300, 'DELIVERY MISSED!', {
+            fontSize: '36px',
+            color: '#FF0000',
+            fontFamily: 'Impact',
+            stroke: '#000000',
+            strokeThickness: 4
+        }).setOrigin(0.5).setScrollFactor(0);
+        
+        this.tweens.add({
+            targets: missText,
+            scale: 1.5,
+            alpha: 0,
+            duration: 1000,
+            onComplete: () => missText.destroy()
+        });
         
         if (this.missStreak >= 3) {
             this.endGame();
@@ -1360,25 +1536,60 @@ export class BirthdayMinigame extends Scene {
         this.score++;
         this.scoreText.setText(`Deliveries: ${this.score}/9`);
         this.missStreak = 0;
-        this.streakText.setText('');
+        this.updateLivesDisplay();
         
-        // Calculate points with combo bonus
+        // Calculate time left for speed bonus
+        const timeLeft = this.deliveryTimer / 1000;
+        const speedBonusMultiplier = timeLeft > 7 ? 3 : timeLeft > 5 ? 2 : 1;
+        this.speedBonus = speedBonusMultiplier;
+        
+        // Perfect delivery tracking
+        if (timeLeft > 7) {
+            this.perfectDeliveries++;
+            if (this.perfectDeliveries > 2) {
+                this.perfectStreakText.setText(`Perfect Streak: ${this.perfectDeliveries}!`);
+            }
+        }
+        
+        // Calculate points with enhanced system
         this.combo++;
         const basePoints = 100;
-        const timeBonus = Math.floor((this.deliveryTimer / 1000) * 10); // 10 points per second left
-        const comboBonus = (this.combo - 1) * 50;
-        const earnedPoints = basePoints + timeBonus + comboBonus;
+        const timeBonus = Math.floor(timeLeft * 20); // 20 points per second left
+        const comboBonus = Math.pow(this.combo, 1.5) * 50; // Exponential combo growth
+        const perfectBonus = this.perfectDeliveries > 2 ? this.perfectDeliveries * 100 : 0;
+        const speedBonusPoints = (speedBonusMultiplier - 1) * 50;
+        const earnedPoints = Math.floor(basePoints + timeBonus + comboBonus + perfectBonus + speedBonusPoints);
         this.totalPoints += earnedPoints;
         
         // Update UI
         this.pointsText.setText(`Points: ${this.totalPoints}`);
-        if (this.combo > 1) {
-            this.comboText.setText(`${this.combo}x COMBO!`);
-            this.comboText.setColor('#00FF00');
+        this.updateComboDisplay();
+        
+        // Check for new high score
+        if (this.totalPoints > this.highScore) {
+            this.highScore = this.totalPoints;
+            localStorage.setItem('birthdayHighScore', this.highScore.toString());
+            this.highScoreText.setText(`High Score: ${this.highScore}`);
+            this.highScoreText.setColor('#00FF00');
+            
+            // Flash high score
+            this.tweens.add({
+                targets: this.highScoreText,
+                scale: 1.2,
+                duration: 200,
+                yoyo: true,
+                repeat: 2
+            });
         }
         
-        // Show points popup
-        this.showPointsPopup(earnedPoints, this.deliveryZone.x - 50, this.deliveryZone.y);
+        // Show detailed points popup
+        this.showDetailedPointsPopup(earnedPoints, {
+            base: basePoints,
+            time: timeBonus,
+            combo: Math.floor(comboBonus),
+            perfect: perfectBonus,
+            speed: speedBonusPoints
+        });
         
         // Remove the carrying indicator
         this.isCarrying = false;
@@ -1391,17 +1602,17 @@ export class BirthdayMinigame extends Scene {
         this.speedMultiplier += 0.05;
         this.difficultyLevel = Math.min(5, Math.floor(this.score / 2) + 1);
         
-        // Success effect with special message as we approach 9
-        let deliveryMessage = '+1 SHAKE SHAKE!';
+        // Success effect with speed indicator
+        let deliveryMessage = speedBonusMultiplier > 1 ? `FAST DELIVERY! x${speedBonusMultiplier}` : '+1 SHAKE SHAKE!';
         if (this.score === 9) {
             deliveryMessage = '9TH SHAKE SHAKE! 🎉';
         } else if (this.score > 5) {
             deliveryMessage = `${this.score}/9 SHAKE SHAKES!`;
         }
         
-        const successText = this.add.text(400, 200, deliveryMessage, {
+        const successText = this.add.text(512, 200, deliveryMessage, {
             fontSize: '48px',
-            color: this.score === 9 ? '#FFD700' : '#00FF00',
+            color: speedBonusMultiplier > 2 ? '#FFD700' : speedBonusMultiplier > 1 ? '#00FFFF' : '#00FF00',
             fontFamily: 'Impact',
             stroke: '#000000',
             strokeThickness: 4
@@ -1416,7 +1627,13 @@ export class BirthdayMinigame extends Scene {
             onComplete: () => successText.destroy()
         });
         
-        AudioManager.getInstance().playSFX('pickup');
+        // Play different sounds based on performance
+        if (speedBonusMultiplier > 2) {
+            AudioManager.getInstance().playSFX('pickup');
+            AudioManager.getInstance().playSFX('click');
+        } else {
+            AudioManager.getInstance().playSFX('pickup');
+        }
         
         // Check for birthday surprise - special 9th birthday at 9 deliveries!
         if (this.score >= 9) {
@@ -1426,6 +1643,96 @@ export class BirthdayMinigame extends Scene {
             this.spawnParcel();
             this.respawn();
         }
+    }
+    
+    updateComboDisplay() {
+        if (this.combo > 1) {
+            this.comboText.setText(`${this.combo}x COMBO!`);
+            const color = this.combo > 5 ? '#FFD700' : this.combo > 3 ? '#00FFFF' : '#00FF00';
+            this.comboText.setColor(color);
+            
+            // Animate combo text
+            this.tweens.add({
+                targets: this.comboText,
+                scale: { from: 1.2, to: 1 },
+                duration: 300,
+                ease: 'Back.Out'
+            });
+        } else {
+            this.comboText.setText('');
+        }
+        
+        // Update speed bonus display
+        if (this.speedBonus > 1) {
+            this.speedBonusText.setText(`Speed Bonus: x${this.speedBonus}`);
+            this.speedBonusText.setAlpha(1);
+            this.tweens.add({
+                targets: this.speedBonusText,
+                alpha: 0,
+                duration: 2000,
+                delay: 1000
+            });
+        }
+    }
+    
+    showDetailedPointsPopup(total, breakdown) {
+        const popupContainer = this.add.container(this.deliveryZone.x - 100, 400);
+        
+        // Background
+        const bg = this.add.rectangle(0, 0, 200, 150, 0x000000, 0.8);
+        bg.setStrokeStyle(3, 0xFFD700);
+        popupContainer.add(bg);
+        
+        // Total points at top
+        const totalText = this.add.text(0, -60, `+${total}`, {
+            fontSize: '36px',
+            color: '#FFD700',
+            fontFamily: 'Impact',
+            stroke: '#000000',
+            strokeThickness: 3
+        }).setOrigin(0.5);
+        popupContainer.add(totalText);
+        
+        // Breakdown
+        let y = -20;
+        const addLine = (label, value, color = '#FFFFFF') => {
+            if (value > 0) {
+                const text = this.add.text(0, y, `${label}: +${value}`, {
+                    fontSize: '16px',
+                    color: color,
+                    fontFamily: 'Arial',
+                    stroke: '#000000',
+                    strokeThickness: 2
+                }).setOrigin(0.5);
+                popupContainer.add(text);
+                y += 20;
+            }
+        };
+        
+        addLine('Base', breakdown.base);
+        addLine('Time', breakdown.time, '#00FFFF');
+        if (breakdown.combo > 0) addLine('Combo', breakdown.combo, '#00FF00');
+        if (breakdown.perfect > 0) addLine('Perfect!', breakdown.perfect, '#FFD700');
+        if (breakdown.speed > 0) addLine('Speed', breakdown.speed, '#FF00FF');
+        
+        // Animate popup
+        popupContainer.setScale(0);
+        this.tweens.add({
+            targets: popupContainer,
+            scale: 1,
+            duration: 300,
+            ease: 'Back.Out',
+            onComplete: () => {
+                this.tweens.add({
+                    targets: popupContainer,
+                    y: '-=100',
+                    alpha: 0,
+                    duration: 1500,
+                    delay: 500,
+                    onComplete: () => popupContainer.destroy()
+                });
+            }
+        });
     }
     
     // Remove createNewParcel as parcels are now spawned on the field
@@ -1717,12 +2024,15 @@ export class BirthdayMinigame extends Scene {
         // Stop all physics
         this.physics.pause();
         
+        // Save to leaderboard
+        this.saveToLeaderboard();
+        
         // Birthday celebration - enhanced for Wyn's 9th!
-        const surpriseBg = this.add.rectangle(400, 300, 800, 600, 0x000000, 0.9)
+        const surpriseBg = this.add.rectangle(512, 384, 1024, 768, 0x000000, 0.9)
             .setScrollFactor(0);
         
         // Giant animated 9 in the background
-        const bigNine = this.add.text(400, 300, '9', {
+        const bigNine = this.add.text(512, 384, '9', {
             fontSize: '400px',
             color: '#FFD700',
             fontFamily: 'Impact',
@@ -1740,7 +2050,7 @@ export class BirthdayMinigame extends Scene {
         });
         
         // Animated cake with 9 candles!
-        const cakeContainer = this.add.container(400, 200).setScrollFactor(0);
+        const cakeContainer = this.add.container(512, 250).setScrollFactor(0);
         const cake = this.add.text(0, 0, '🎂', {
             fontSize: '128px'
         }).setOrigin(0.5);
@@ -1779,12 +2089,12 @@ export class BirthdayMinigame extends Scene {
         });
         
         // Special birthday message
-        const message = this.add.text(400, 380, 
+        const message = this.add.text(512, 450, 
             '🎉 HAPPY 9TH BIRTHDAY WYN! 🎉\n\n' +
             `You delivered all 9 SHAKE SHAKES!\n` +
-            'You\'re the BUFFEST 9-year-old champion!\n' +
-            'Your special power grows stronger!\n\n' +
-            'Press ENTER to unlock birthday rewards!',
+            `Final Score: ${this.totalPoints} points\n` +
+            'You\'re the BUFFEST 9-year-old champion!\n\n' +
+            'Press ENTER to see the leaderboard!',
             {
                 fontSize: '28px',
                 color: '#FFD700',
@@ -1873,10 +2183,14 @@ export class BirthdayMinigame extends Scene {
         this.gameOver = true;
         this.physics.pause();
         
-        const gameOverBg = this.add.rectangle(400, 300, 600, 300, 0x000000, 0.8)
-            .setScrollFactor(0);
+        // Save to leaderboard
+        this.saveToLeaderboard();
         
-        const gameOverText = this.add.text(400, 250, 'DELIVERY FAILED!', {
+        const gameOverBg = this.add.rectangle(512, 384, 700, 600, 0x000000, 0.9)
+            .setScrollFactor(0);
+        gameOverBg.setStrokeStyle(4, 0xFF0000);
+        
+        const gameOverText = this.add.text(512, 150, 'DELIVERY FAILED!', {
             fontSize: '48px',
             color: '#FF0000',
             fontFamily: 'Impact',
@@ -1884,33 +2198,31 @@ export class BirthdayMinigame extends Scene {
             strokeThickness: 4
         }).setOrigin(0.5).setScrollFactor(0);
         
-        const finalScore = this.add.text(400, 320, `Deliveries: ${this.score}/9`, {
+        const finalScore = this.add.text(512, 220, `Deliveries: ${this.score}/9`, {
             fontSize: '32px',
             color: '#FFFFFF',
             fontFamily: 'Arial Black'
         }).setOrigin(0.5).setScrollFactor(0);
         
-        const finalPoints = this.add.text(400, 360, `Total Points: ${this.totalPoints}`, {
+        const finalPoints = this.add.text(512, 260, `Total Points: ${this.totalPoints}`, {
             fontSize: '28px',
             color: '#FFD700',
             fontFamily: 'Arial Black'
         }).setOrigin(0.5).setScrollFactor(0);
         
-        const restartText = this.add.text(400, 420, 'Press ENTER to return', {
-            fontSize: '24px',
-            color: '#FFD700',
-            fontFamily: 'Arial'
-        }).setOrigin(0.5).setScrollFactor(0);
-        
-        // Save high score
-        const highScore = localStorage.getItem('buffDeliveryHighScore') || 0;
-        if (this.score > highScore) {
-            localStorage.setItem('buffDeliveryHighScore', this.score);
+        // Check for new high score
+        let isNewHighScore = false;
+        if (this.totalPoints > this.highScore) {
+            isNewHighScore = true;
+            this.highScore = this.totalPoints;
+            localStorage.setItem('birthdayHighScore', this.highScore.toString());
             
-            const newHighScore = this.add.text(400, 420, 'NEW HIGH SCORE!', {
-                fontSize: '28px',
+            const newHighScore = this.add.text(512, 300, 'NEW HIGH SCORE!', {
+                fontSize: '36px',
                 color: '#00FF00',
-                fontFamily: 'Impact'
+                fontFamily: 'Impact',
+                stroke: '#000000',
+                strokeThickness: 4
             }).setOrigin(0.5).setScrollFactor(0);
             
             this.tweens.add({
@@ -1922,9 +2234,106 @@ export class BirthdayMinigame extends Scene {
             });
         }
         
+        // Show leaderboard
+        this.showLeaderboard(isNewHighScore ? 350 : 320);
+        
+        const restartText = this.add.text(512, 660, 'Press ENTER to return', {
+            fontSize: '24px',
+            color: '#FFD700',
+            fontFamily: 'Arial',
+            stroke: '#000000',
+            strokeThickness: 2
+        }).setOrigin(0.5).setScrollFactor(0);
+        
+        // Pulse restart text
+        this.tweens.add({
+            targets: restartText,
+            alpha: { from: 0.7, to: 1 },
+            duration: 800,
+            yoyo: true,
+            repeat: -1
+        });
+        
         this.input.keyboard.once('keydown-ENTER', () => {
             AudioManager.getInstance().stopMusic(AudioAssets.BIRTHDAY_SONG);
             this.scene.start(SceneKeys.MAIN_MENU);
+        });
+    }
+    
+    loadLeaderboard() {
+        const saved = localStorage.getItem('birthdayLeaderboard');
+        if (saved) {
+            return JSON.parse(saved);
+        }
+        return [];
+    }
+    
+    saveToLeaderboard() {
+        const entry = {
+            score: this.totalPoints,
+            deliveries: this.score,
+            combo: this.combo,
+            date: new Date().toLocaleDateString()
+        };
+        
+        this.leaderboard.push(entry);
+        this.leaderboard.sort((a, b) => b.score - a.score);
+        this.leaderboard = this.leaderboard.slice(0, 10); // Keep top 10
+        
+        localStorage.setItem('birthdayLeaderboard', JSON.stringify(this.leaderboard));
+    }
+    
+    showLeaderboard(startY) {
+        const leaderboardTitle = this.add.text(512, startY, 'LEADERBOARD', {
+            fontSize: '24px',
+            color: '#FFD700',
+            fontFamily: 'Impact',
+            stroke: '#000000',
+            strokeThickness: 3
+        }).setOrigin(0.5).setScrollFactor(0);
+        
+        // Leaderboard background
+        const lbBg = this.add.rectangle(512, startY + 130, 600, 250, 0x000000, 0.5);
+        lbBg.setStrokeStyle(2, 0xFFD700).setScrollFactor(0);
+        
+        // Show top 5 entries
+        const topEntries = this.leaderboard.slice(0, 5);
+        topEntries.forEach((entry, index) => {
+            const y = startY + 50 + (index * 35);
+            const rank = index + 1;
+            const color = rank === 1 ? '#FFD700' : rank === 2 ? '#C0C0C0' : rank === 3 ? '#CD7F32' : '#FFFFFF';
+            
+            // Rank
+            this.add.text(280, y, `${rank}.`, {
+                fontSize: '20px',
+                color: color,
+                fontFamily: 'Arial Black',
+                stroke: '#000000',
+                strokeThickness: 2
+            }).setScrollFactor(0);
+            
+            // Score
+            this.add.text(320, y, `${entry.score} pts`, {
+                fontSize: '20px',
+                color: color,
+                fontFamily: 'Arial',
+                stroke: '#000000',
+                strokeThickness: 2
+            }).setScrollFactor(0);
+            
+            // Deliveries
+            this.add.text(450, y, `${entry.deliveries}/9`, {
+                fontSize: '18px',
+                color: '#AAAAAA',
+                fontFamily: 'Arial'
+            }).setScrollFactor(0);
+            
+            // Date
+            this.add.text(550, y, entry.date, {
+                fontSize: '16px',
+                color: '#888888',
+                fontFamily: 'Arial'
+            }).setScrollFactor(0);
         });
     }
 }

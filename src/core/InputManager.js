@@ -37,6 +37,8 @@ export class InputManager extends BaseManager {
         });
         // Reset key (R)
         this.keys.R = keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.R);
+        // Duck key (C)
+        this.keys.C = keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.C);
 
         // Arrow key events
         this.keys.cursors.left.on('down', () => this.eventSystem.emit(EventNames.MOVE_LEFT));
