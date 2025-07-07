@@ -13,12 +13,15 @@ export const EventNames = {
     COLLECTIBLE_COLLECTED: 'level:collectibleCollected',
     COLLECTIBLE_EFFECT: 'level:collectibleEffect',
     PLATFORM_MOVE: 'level:platformMove',
+    SCENE_TRANSITION: 'scene:transition',
     
     // Player events
     PLAYER_SPAWN: 'player:spawn',
     PLAYER_JUMP: 'player:jump',
     PLAYER_LAND: 'player:land',
     PLAYER_MOVE: 'player:move',
+    PLAYER_EXPLODE: 'player:explode',
+    PLAYER_DUCK: 'player:duck',
     
     // Jump state events
     PLAYER_JUMP_START: 'player:jumpStart',

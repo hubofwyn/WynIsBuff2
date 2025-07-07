@@ -13,42 +13,36 @@ export class BirthdayMinigame extends Scene {
     constructor() {
         super(SceneKeys.BIRTHDAY_MINIGAME);
         
-        // Game config
-        this.laneHeight = 80;
-        this.numLanes = 5;
-        this.slideSpeed = 280;
-        this.dashSpeed = 600;
-        this.baseObstacleSpeed = 150;
+        // Game config - simplified 3-lane system
+        this.laneHeight = 120;
+        this.numLanes = 3;
+        this.runSpeed = 250; // Constant forward movement
+        this.laneChangeSpeed = 200; // Quick lane changes
+        this.baseScrollSpeed = 300;
         this.speedMultiplier = 1.0;
         
-        // Movement feel
-        this.acceleration = 1800;
-        this.deceleration = 2400;
-        this.maxSpeed = 320;
-        this.targetVelocityX = 0;
-        
-        // Player state
-        this.currentLane = 2;
-        this.isHopping = false;
-        this.isCarrying = false; // Start without carrying anything
-        this.isInvulnerable = false;
-        this.canDash = true;
-        this.isStunned = false;
+        // Player state - simplified
+        this.currentLane = 1; // Middle lane (0, 1, 2)
+        this.isChangingLanes = false;
+        this.isCarrying = false;
         this.carryIndicator = null;
+        this.playerX = 200; // Fixed X position on screen
         
-        // Movement smoothing
-        this.movementTween = null;
-        this.bobTween = null;
+        // Streak system
+        this.deliveryStreak = 0;
+        this.nearMissStreak = 0;
         
-        // Game state
+        // Game state - simplified scoring
         this.score = 0;
-        this.totalPoints = 0;
-        this.combo = 0;
-        this.missStreak = 0;
+        this.deliveries = 0;
+        this.lives = 3;
         this.gameOver = false;
-        this.deliveryTimer = 0;
-        this.maxDeliveryTime = 10000; // 10 seconds
-        this.difficultyLevel = 1;
+        this.speedLevel = 1;
+        this.highScore = parseInt(localStorage.getItem('birthdayHighScore') || '0');
+        
+        // Timing windows
+        this.perfectWindow = 2000; // 2 seconds for perfect delivery
+        this.goodWindow = 5000; // 5 seconds for good delivery
         
         // Objects
         this.player = null;
@@ -85,27 +79,25 @@ export class BirthdayMinigame extends Scene {
         // Create player
         this.createPlayer();
         
-        // Create parcel spawning system
-        this.parcels = this.physics.add.group();
+        // Initialize game state
+        this.speedLevel = 1;
+        this.speedMultiplier = 1.0;
         
         // Create delivery zone
         this.createDeliveryZone();
         
-        // Create obstacle groups
-        this.obstacles = this.physics.add.group();
-        this.powerUps = this.physics.add.group();
+        // Create object groups
+        this.obstacles = this.add.group();
+        this.scrollingObjects = this.add.group();
         
-        // Setup smooth camera follow with deadzone
-        this.cameras.main.startFollow(this.playerContainer, true, 0.08, 0.08);
-        this.cameras.main.setDeadzone(200, 100);
-        
-        // Set up input - both arrow keys and WASD
-        this.cursors = this.input.keyboard.createCursorKeys();
-        this.wasd = this.input.keyboard.addKeys('W,A,S,D');
-        this.spaceKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
-        
-        // Set up camera - fixed view, no scrolling
+        // Fixed camera - no scrolling, show entire play area
         this.cameras.main.setBackgroundColor('#2C3E50');
+        this.cameras.main.setBounds(0, 0, 1024, 768);
+        this.cameras.main.setZoom(1);
+        
+        // Simplified input - just up/down
+        this.cursors = this.input.keyboard.createCursorKeys();
+        this.wasd = this.input.keyboard.addKeys('W,S');
         
         // Create UI
         this.createUI();
@@ -116,146 +108,132 @@ export class BirthdayMinigame extends Scene {
         // Set up collisions
         this.setupCollisions();
         
-        // Spawn first parcel
-        this.spawnParcel();
-        
-        // Grace period
-        this.setInvulnerable(1500);
-        
         // Show instructions (music will start after user presses SPACE)
         this.showInstructions();
     }
     
     createBackground() {
-        // Create moving city background effect
+        // Create static gradient background
         const graphics = this.add.graphics();
         
-        // Draw gradient
-        for (let i = 0; i < 20; i++) {
+        // Draw gradient background
+        for (let i = 0; i < 16; i++) {
             const color = Phaser.Display.Color.Interpolate.ColorWithColor(
                 { r: 44, g: 62, b: 80 },
                 { r: 52, g: 73, b: 94 },
-                20,
+                16,
                 i
             );
             graphics.fillStyle(Phaser.Display.Color.GetColor(color.r, color.g, color.b));
-            graphics.fillRect(0, i * 50 - 1000, 800, 50);
+            graphics.fillRect(0, i * 50, 1024, 50);
         }
         
-        // Add some building silhouettes
-        for (let i = 0; i < 10; i++) {
-            const x = Phaser.Math.Between(0, 700);
-            const width = Phaser.Math.Between(80, 150);
-            const height = Phaser.Math.Between(200, 400);
-            const y = -i * 300 - height;
-            
-            graphics.fillStyle(0x1a252f, 0.8);
-            graphics.fillRect(x, y, width, height);
-            
-            // Windows
-            for (let w = 0; w < 5; w++) {
-                for (let h = 0; h < 10; h++) {
-                    if (Phaser.Math.Between(0, 100) < 70) {
-                        graphics.fillStyle(0xffff00, 0.3);
-                        graphics.fillRect(x + 10 + w * 25, y + 20 + h * 35, 15, 20);
-                    }
-                }
-            }
+        // Add subtle grid pattern for depth
+        graphics.lineStyle(1, 0xFFFFFF, 0.05);
+        for (let x = 0; x < 1024; x += 50) {
+            graphics.moveTo(x, 0);
+            graphics.lineTo(x, 768);
+        }
+        for (let y = 0; y < 768; y += 50) {
+            graphics.moveTo(0, y);
+            graphics.lineTo(1024, y);
         }
     }
     
     createLanes() {
-        // Visual lane indicators - make them clear and visible
+        // 3-lane highway design
         const laneGraphics = this.add.graphics();
+        const startY = 350;
         
-        // Draw lane backgrounds alternating colors
-        for (let i = 0; i < this.numLanes; i++) {
-            const y = 300 + i * this.laneHeight;
-            const color = i % 2 === 0 ? 0x3E5266 : 0x2C3E50;
-            
-            // Draw lane background
-            laneGraphics.fillStyle(color, 0.3);
-            laneGraphics.fillRect(0, y, 1024, this.laneHeight);
+        // Road background
+        laneGraphics.fillStyle(0x333333, 1);
+        laneGraphics.fillRect(0, startY, 1024, this.laneHeight * 3);
+        
+        // Lane dividers (dashed lines)
+        laneGraphics.lineStyle(4, 0xFFFFFF, 0.8);
+        for (let i = 1; i < this.numLanes; i++) {
+            const y = startY + i * this.laneHeight;
+            // Dashed line effect
+            for (let x = 0; x < 1024; x += 40) {
+                laneGraphics.moveTo(x, y);
+                laneGraphics.lineTo(x + 20, y);
+            }
         }
         
-        // Draw lane divider lines
-        laneGraphics.lineStyle(3, 0xFFFFFF, 0.3);
-        for (let i = 0; i <= this.numLanes; i++) {
-            const y = 300 + i * this.laneHeight;
-            laneGraphics.moveTo(0, y);
-            laneGraphics.lineTo(1024, y);
-        }
+        // Road edges
+        laneGraphics.lineStyle(6, 0xFFD700, 1);
+        laneGraphics.moveTo(0, startY);
+        laneGraphics.lineTo(1024, startY);
+        laneGraphics.moveTo(0, startY + this.laneHeight * 3);
+        laneGraphics.lineTo(1024, startY + this.laneHeight * 3);
         
-        // Add lane numbers on the left
+        // Store lane positions for reference
+        this.lanePositions = [];
         for (let i = 0; i < this.numLanes; i++) {
-            const y = 300 + i * this.laneHeight + this.laneHeight / 2;
-            this.add.text(30, y, `${i + 1}`, {
-                fontSize: '24px',
-                color: '#FFFFFF',
-                fontFamily: 'Arial Black',
-                stroke: '#000000',
-                strokeThickness: 3,
-                alpha: 0.5
-            }).setOrigin(0.5);
+            this.lanePositions[i] = startY + i * this.laneHeight + this.laneHeight / 2;
         }
     }
     
     createPlayer() {
-        // Create Wyn sprite as the delivery courier
-        const startY = 300 + this.currentLane * this.laneHeight + this.laneHeight / 2;
+        // Fixed position player
+        const startY = this.lanePositions[this.currentLane];
         
         // Use the correct Wyn sprite key
         const wynTexture = 'wynSprite';
         
         if (this.textures.exists(wynTexture)) {
             this.player = this.add.sprite(0, 0, wynTexture);
-            this.player.setScale(0.2); // Even smaller scale
+            this.player.setScale(0.25);
         } else {
             // Fallback: create a simple Wyn representation
             console.warn('[BirthdayMinigame] wynSprite texture not found, using fallback');
-            this.player = this.add.rectangle(0, 0, 30, 40, 0xFFD700);
+            this.player = this.add.rectangle(0, 0, 40, 50, 0xFFD700);
         }
         
-        // Create player container at correct position
-        this.playerContainer = this.add.container(400, startY);
+        // Create player container at fixed X position
+        this.playerContainer = this.add.container(this.playerX, startY);
         this.playerContainer.add(this.player);
         
-        // Add physics with smaller hitbox to match smaller sprite
-        this.physics.add.existing(this.playerContainer);
-        this.playerContainer.body.setSize(30, 40);
-        this.playerContainer.body.setCollideWorldBounds(true);
-        this.playerContainer.body.setDrag(100, 0); // Add some drag for smoother stops
+        // Add shadow for depth
+        const shadow = this.add.ellipse(0, 25, 30, 10, 0x000000, 0.3);
+        this.playerContainer.addAt(shadow, 0);
         
-        // Add idle breathing animation
-        if (this.player.type === 'Sprite') {
-            this.tweens.add({
-                targets: this.player,
-                scaleY: 0.19,
-                duration: 2000,
-                yoyo: true,
-                repeat: -1,
-                ease: 'Sine.InOut'
-            });
-        }
+        // Running animation
+        this.tweens.add({
+            targets: this.player,
+            scaleY: this.player.scaleY * 0.9,
+            y: '-=5',
+            duration: 200,
+            yoyo: true,
+            repeat: -1,
+            ease: 'Sine.InOut'
+        });
     }
     
     spawnParcel() {
-        // Spawn a parcel on a random lane
+        // Spawn parcels ahead on the road
         const lane = Phaser.Math.Between(0, this.numLanes - 1);
-        const y = 300 + lane * this.laneHeight + this.laneHeight / 2;
-        const x = Phaser.Math.Between(200, 700);
+        const y = this.lanePositions[lane];
+        const x = 1024 + 100; // Start off-screen right
         
         // Create parcel container
         const parcelContainer = this.add.container(x, y);
         
+        // Background circle for better visibility
+        const bgCircle = this.add.circle(0, 0, 35, 0x000000, 0.5);
+        bgCircle.setStrokeStyle(3, 0xFFD700);
+        
         // Dynamite emoji is the main visual
         const dynamiteEmoji = this.add.text(0, 0, '🧨', {
-            fontSize: '32px'
+            fontSize: '40px'
         }).setOrigin(0.5);
         
-        // S² label above
-        const label = this.add.text(0, -25, 'S²', {
-            fontSize: '16px',
+        // S² Shake label with better visibility
+        const labelBg = this.add.rectangle(0, -35, 80, 25, 0x000000, 0.8);
+        labelBg.setStrokeStyle(2, 0xFFD700);
+        
+        const label = this.add.text(0, -35, 'S² SHAKE', {
+            fontSize: '14px',
             color: '#FFD700',
             fontFamily: 'Arial Black',
             fontStyle: 'bold',
@@ -264,62 +242,154 @@ export class BirthdayMinigame extends Scene {
         }).setOrigin(0.5);
         
         // Add glow effect
-        const glow = this.add.circle(0, 0, 25, 0xFFD700, 0.3);
+        const glow = this.add.circle(0, 0, 40, 0xFFD700, 0.3);
         
-        parcelContainer.add([glow, dynamiteEmoji, label]);
+        // Add pickup arrow indicator
+        const arrow = this.add.text(0, 35, '⬆ PICKUP', {
+            fontSize: '12px',
+            color: '#FFFFFF',
+            fontFamily: 'Arial Black',
+            stroke: '#000000',
+            strokeThickness: 2
+        }).setOrigin(0.5);
         
-        // Add physics
-        this.physics.add.existing(parcelContainer);
-        parcelContainer.body.setSize(50, 50);
+        parcelContainer.add([glow, bgCircle, dynamiteEmoji, labelBg, label, arrow]);
+        
+        // Track parcel data
+        parcelContainer.lane = lane;
+        parcelContainer.isParcel = true;
+        parcelContainer.spawnTime = this.time.now;
         this.parcels.add(parcelContainer);
+        this.scrollingObjects.add(parcelContainer);
+        
+        // Entrance animation
+        parcelContainer.setScale(0);
+        this.tweens.add({
+            targets: parcelContainer,
+            scale: 1,
+            duration: 300,
+            ease: 'Back.Out'
+        });
         
         // Pulse effect
         this.tweens.add({
-            targets: parcelContainer,
-            scale: { from: 0.9, to: 1.1 },
+            targets: [glow, arrow],
+            alpha: { from: 0.3, to: 0.8 },
             duration: 800,
             yoyo: true,
             repeat: -1
         });
+        
+        // Mark pickup zone for timing
+        parcelContainer.pickupZoneX = this.playerX + 50; // Slightly ahead of player
     }
     
     createDeliveryZone() {
-        // Create the delivery zone at the right side of screen
-        this.deliveryZone = this.add.rectangle(950, 400, 100, 600, 0x00FF00, 0.3);
+        // Create the delivery zone at the right side of screen with better visibility
+        const zoneWidth = 120;
+        const zoneX = 1024 - zoneWidth/2 - 20;
+        
+        // Pulsing green zone background
+        this.deliveryZoneBg = this.add.rectangle(zoneX, 400, zoneWidth, 500, 0x00FF00, 0.2);
+        this.deliveryZone = this.add.rectangle(zoneX, 400, zoneWidth, 500, 0x00FF00, 0.3);
+        this.deliveryZone.setStrokeStyle(4, 0x00FF00);
         this.physics.add.existing(this.deliveryZone, true);
         
-        // Add "DELIVERY ZONE" text
-        this.add.text(950, 100, 'DELIVERY\nZONE', {
+        // Pulse animation for zone
+        this.tweens.add({
+            targets: this.deliveryZoneBg,
+            alpha: { from: 0.2, to: 0.5 },
+            scale: { from: 1, to: 1.05 },
+            duration: 1000,
+            yoyo: true,
+            repeat: -1,
+            ease: 'Sine.InOut'
+        });
+        
+        // Add clear "DELIVERY ZONE" text with icon
+        const zoneLabel = this.add.container(zoneX, 100);
+        
+        // Background for text
+        const textBg = this.add.rectangle(0, 0, 140, 80, 0x000000, 0.7);
+        textBg.setStrokeStyle(3, 0x00FF00);
+        
+        const deliveryText = this.add.text(0, -15, 'DELIVERY', {
             fontSize: '24px',
             color: '#00FF00',
             fontFamily: 'Impact',
-            stroke: '#003300',
-            strokeThickness: 4,
+            stroke: '#000000',
+            strokeThickness: 3,
             align: 'center'
         }).setOrigin(0.5);
+        
+        const zoneText = this.add.text(0, 10, 'ZONE', {
+            fontSize: '28px',
+            color: '#00FF00',
+            fontFamily: 'Impact',
+            stroke: '#000000',
+            strokeThickness: 3,
+            align: 'center'
+        }).setOrigin(0.5);
+        
+        // Add arrow pointing down
+        const arrow = this.add.text(0, 35, '⬇', {
+            fontSize: '32px',
+            color: '#00FF00'
+        }).setOrigin(0.5);
+        
+        zoneLabel.add([textBg, deliveryText, zoneText, arrow]);
+        
+        // Animate the arrow
+        this.tweens.add({
+            targets: arrow,
+            y: '+=10',
+            duration: 500,
+            yoyo: true,
+            repeat: -1,
+            ease: 'Sine.InOut'
+        });
     }
     
     createUI() {
-        // Deliveries count (main objective)
-        this.scoreText = this.add.text(20, 20, 'Deliveries: 0/9', {
-            fontSize: '32px',
+        // Clean, minimal UI
+        const uiPanel = this.add.graphics();
+        uiPanel.fillStyle(0x000000, 0.8);
+        uiPanel.fillRoundedRect(10, 10, 300, 120, 10);
+        
+        // Deliveries count (main objective) with icon
+        this.scoreText = this.add.text(70, 30, 'Deliveries: 0/9', {
+            fontSize: '28px',
             color: '#FFD700',
             fontFamily: 'Impact',
             stroke: '#000000',
             strokeThickness: 4
         }).setScrollFactor(0);
         
-        // Points display
-        this.pointsText = this.add.text(20, 60, 'Points: 0', {
-            fontSize: '24px',
+        // Add dynamite icon next to deliveries
+        this.add.text(35, 30, '🧨', {
+            fontSize: '24px'
+        }).setOrigin(0.5).setScrollFactor(0);
+        
+        // Points display with high score
+        this.pointsText = this.add.text(35, 65, 'Points: 0', {
+            fontSize: '22px',
             color: '#FFFFFF',
             fontFamily: 'Arial Black',
             stroke: '#000000',
             strokeThickness: 3
         }).setScrollFactor(0);
         
+        // High score display
+        this.highScoreText = this.add.text(35, 90, `High Score: ${this.highScore}`, {
+            fontSize: '18px',
+            color: '#FFD700',
+            fontFamily: 'Arial',
+            stroke: '#000000',
+            strokeThickness: 2
+        }).setScrollFactor(0);
+        
         // Combo display
-        this.comboText = this.add.text(20, 95, '', {
+        this.comboText = this.add.text(35, 115, '', {
             fontSize: '20px',
             color: '#00FF00',
             fontFamily: 'Arial Black',
@@ -327,23 +397,69 @@ export class BirthdayMinigame extends Scene {
             strokeThickness: 3
         }).setScrollFactor(0);
         
-        // Timer
-        this.timerText = this.add.text(512, 20, 'Time: 10.0s', {
+        // Speed bonus indicator
+        this.speedBonusText = this.add.text(35, 140, '', {
+            fontSize: '18px',
+            color: '#00FFFF',
+            fontFamily: 'Arial Black',
+            stroke: '#000000',
+            strokeThickness: 2
+        }).setScrollFactor(0);
+        
+        // Timer with better visibility
+        const timerBg = this.add.rectangle(512, 45, 200, 50, 0x000000, 0.7);
+        timerBg.setStrokeStyle(3, 0xFFFFFF).setScrollFactor(0);
+        
+        this.timerText = this.add.text(512, 45, 'Find S² Shake!', {
             fontSize: '24px',
+            color: '#00FF00',
+            fontFamily: 'Arial Black',
+            stroke: '#000000',
+            strokeThickness: 3
+        }).setOrigin(0.5).setScrollFactor(0);
+        
+        // Lives/Misses display with hearts
+        this.livesContainer = this.add.container(900, 30).setScrollFactor(0);
+        this.updateLivesDisplay();
+        
+        // Perfect delivery streak
+        this.perfectStreakText = this.add.text(35, 165, '', {
+            fontSize: '16px',
+            color: '#FFD700',
+            fontFamily: 'Arial Black',
+            stroke: '#000000',
+            strokeThickness: 2
+        }).setScrollFactor(0);
+        
+        // Instructions hint at bottom
+        this.add.text(512, 740, '↑/↓ or W/S: Change Lanes', {
+            fontSize: '18px',
             color: '#FFFFFF',
             fontFamily: 'Arial Black',
             stroke: '#000000',
-            strokeThickness: 3
-        }).setOrigin(0.5, 0).setScrollFactor(0);
+            strokeThickness: 2
+        }).setOrigin(0.5).setScrollFactor(0);
+    }
+    
+    updateLivesDisplay() {
+        this.livesContainer.removeAll(true);
         
-        // Miss streak warning
-        this.streakText = this.add.text(1000, 20, '', {
-            fontSize: '24px',
-            color: '#FF0000',
+        const livesText = this.add.text(0, 0, 'Lives: ', {
+            fontSize: '20px',
+            color: '#FFFFFF',
             fontFamily: 'Arial Black',
             stroke: '#000000',
-            strokeThickness: 3
-        }).setOrigin(1, 0).setScrollFactor(0);
+            strokeThickness: 2
+        });
+        this.livesContainer.add(livesText);
+        
+        // Show hearts for remaining lives
+        for (let i = 0; i < 3; i++) {
+            const heart = this.add.text(60 + i * 25, 0, i < this.lives ? '❤️' : '💔', {
+                fontSize: '20px'
+            }).setOrigin(0.5);
+            this.livesContainer.add(heart);
+        }
     }
     
     showInstructions() {
@@ -448,11 +564,11 @@ export class BirthdayMinigame extends Scene {
         instructionElements.push(rulesTitle);
         
         const rules = [
-            '💩 Poop = Instant Respawn + Fart Sound!',
-            '🧨 Pick up S² Dynamite Parcels',
-            '✅ Deliver to Green Zone',
-            '❌ 3 Drops = Game Over',
-            '🌟 Collect Easter Eggs for Bonus Points!'
+            '💩 Poop = Lose a Life + Fart Sound!',
+            '🧨 Pick up S² Shake Parcels',
+            '✅ Deliver to Green Zone Quickly',
+            '❤️ 3 Lives Total',
+            '⚡ Speed Matters - Faster = More Points!'
         ];
         
         rules.forEach((rule, i) => {
@@ -582,45 +698,8 @@ export class BirthdayMinigame extends Scene {
     }
     
     startObstacleSpawning() {
-        // Dynamic spawn rates based on difficulty
-        this.time.addEvent({
-            delay: () => Math.max(1200, 2000 - (this.difficultyLevel * 100)),
-            callback: () => this.spawnObstacle(0), // Poop
-            loop: true
-        });
-        
-        this.time.addEvent({
-            delay: () => Math.max(1000, 1500 - (this.difficultyLevel * 75)),
-            callback: () => this.spawnObstacle(1), // Traffic cones
-            loop: true
-        });
-        
-        this.time.addEvent({
-            delay: () => Math.max(2000, 3000 - (this.difficultyLevel * 150)),
-            callback: () => this.spawnObstacle(2), // Ducks
-            loop: true
-        });
-        
-        // Spawn power-ups more frequently
-        this.time.addEvent({
-            delay: 3000,
-            callback: () => this.spawnPowerUp(),
-            loop: true
-        });
-        
-        // Special birthday power-ups every 9 seconds
-        this.time.addEvent({
-            delay: 9000,
-            callback: () => this.spawnBirthdayPowerUp(),
-            loop: true
-        });
-        
-        // Easter egg spawns
-        this.time.addEvent({
-            delay: 15000,
-            callback: () => this.spawnEasterEgg(),
-            loop: true
-        });
+        // Rhythmic spawning handled in update loop
+        this.lastSpawnTime = 0;
     }
     
     spawnObstacle(type) {
@@ -705,435 +784,172 @@ export class BirthdayMinigame extends Scene {
         this.obstacles.add(obstacleContainer);
     }
     
-    spawnPowerUp() {
-        if (this.gameOver || Phaser.Math.Between(0, 100) > 40) return;
-        
-        const types = ['magnet', 'slowmo', 'jetpack', 'shield'];
-        const type = Phaser.Utils.Array.GetRandom(types);
-        const lane = Phaser.Math.Between(0, this.numLanes - 1);
-        const y = 300 + lane * this.laneHeight + this.laneHeight / 2;
-        const x = Phaser.Math.Between(200, 800);
-        
-        const powerUpContainer = this.add.container(x, y);
-        
-        // Glowing background circle
-        const glow = this.add.circle(0, 0, 30, 0xFFFF00, 0.3);
-        const ring = this.add.circle(0, 0, 25, 0xFFFF00);
-        ring.setStrokeStyle(3, 0xFFFF00);
-        
-        const icon = this.add.text(0, 0, 
-            type === 'magnet' ? '🧲' : type === 'slowmo' ? '⏱️' : type === 'jetpack' ? '🚀' : '🛡️',
-            { fontSize: '28px' }
-        ).setOrigin(0.5);
-        
-        powerUpContainer.add([glow, ring, icon]);
-        powerUpContainer.type = type;
-        
-        this.physics.add.existing(powerUpContainer);
-        powerUpContainer.body.setSize(50, 50);
-        this.powerUps.add(powerUpContainer);
-        
-        // Pulse and rotate effect
-        this.tweens.add({
-            targets: powerUpContainer,
-            scale: { from: 0.9, to: 1.1 },
-            duration: 600,
-            yoyo: true,
-            repeat: -1
-        });
-        
-        this.tweens.add({
-            targets: glow,
-            scale: { from: 1, to: 1.3 },
-            alpha: { from: 0.3, to: 0.1 },
-            duration: 800,
-            yoyo: true,
-            repeat: -1
-        });
-        
-        // Auto-destroy after 5 seconds
-        this.time.delayedCall(5000, () => {
-            powerUpContainer.destroy();
-        });
-    }
+    // Removed complex powerups - focusing on core gameplay
     
-    spawnBirthdayPowerUp() {
-        if (this.gameOver) return;
-        
-        const lane = 2; // Middle lane for special power-up
-        const y = 300 + lane * this.laneHeight + this.laneHeight / 2;
-        const x = Phaser.Math.Between(300, 700);
-        
-        const birthdayContainer = this.add.container(x, y);
-        
-        // Special star shape
-        const birthdayPowerUp = this.add.star(0, 0, 8, 20, 30, 0xFFD700);
-        birthdayPowerUp.setStrokeStyle(3, 0xFF00FF);
-        
-        // Birthday cake emoji in center
-        const icon = this.add.text(0, 0, '🎂', {
-            fontSize: '24px'
-        }).setOrigin(0.5);
-        
-        // 9 text
-        const nineText = this.add.text(0, -40, '9', {
-            fontSize: '20px',
-            fontFamily: 'Impact',
-            color: '#FFD700',
-            stroke: '#000000',
-            strokeThickness: 2
-        }).setOrigin(0.5);
-        
-        birthdayContainer.add([birthdayPowerUp, icon, nineText]);
-        birthdayContainer.type = 'birthday';
-        
-        this.physics.add.existing(birthdayContainer);
-        birthdayContainer.body.setSize(60, 60);
-        this.powerUps.add(birthdayContainer);
-        
-        // Special rainbow effect
-        this.tweens.add({
-            targets: birthdayContainer,
-            scale: { from: 1, to: 1.3 },
-            rotation: Math.PI * 2,
-            duration: 1500,
-            repeat: -1
-        });
-        
-        // Rainbow color animation
-        let hue = 0;
-        this.time.addEvent({
-            delay: 100,
-            callback: () => {
-                hue = (hue + 20) % 360;
-                const color = Phaser.Display.Color.HSVToRGB(hue / 360, 1, 1);
-                birthdayPowerUp.setFillStyle(color.color);
-            },
-            loop: true
-        });
-        
-        // Auto-destroy after 9 seconds
-        this.time.delayedCall(9000, () => {
-            birthdayContainer.destroy();
-        });
-    }
+    // Removed birthday powerup - keeping game simple
     
-    spawnEasterEgg() {
-        if (this.gameOver || Phaser.Math.Between(0, 100) > 30) return;
-        
-        const easterEggs = [
-            { emoji: '🦄', name: 'Unicorn Power', points: 500, effect: 'rainbow' },
-            { emoji: '💎', name: 'Diamond Rush', points: 1000, effect: 'sparkle' },
-            { emoji: '🌟', name: 'Star Power', points: 300, effect: 'invincible' },
-            { emoji: '🍕', name: 'Pizza Time', points: 200, effect: 'slowmo' },
-            { emoji: '🚀', name: 'Rocket Boost', points: 400, effect: 'speed' }
-        ];
-        
-        const egg = Phaser.Utils.Array.GetRandom(easterEggs);
-        const lane = Phaser.Math.Between(0, this.numLanes - 1);
-        const y = 300 + lane * this.laneHeight + this.laneHeight / 2;
-        const x = Phaser.Math.Between(200, 800);
-        
-        const eggContainer = this.add.container(x, y);
-        
-        // Easter egg emoji
-        const eggEmoji = this.add.text(0, 0, egg.emoji, {
-            fontSize: '40px'
-        }).setOrigin(0.5);
-        
-        // Sparkle effect
-        const sparkle = this.add.star(0, 0, 6, 15, 25, 0xFFFFFF, 0.6);
-        
-        // Name label
-        const label = this.add.text(0, 30, egg.name, {
-            fontSize: '14px',
-            color: '#FFD700',
-            fontFamily: 'Arial Black',
-            stroke: '#000000',
-            strokeThickness: 2
-        }).setOrigin(0.5);
-        
-        eggContainer.add([sparkle, eggEmoji, label]);
-        eggContainer.easterEgg = egg;
-        
-        this.physics.add.existing(eggContainer);
-        eggContainer.body.setSize(60, 60);
-        this.powerUps.add(eggContainer);
-        
-        // Floating animation
-        this.tweens.add({
-            targets: eggContainer,
-            y: '-=20',
-            duration: 1000,
-            yoyo: true,
-            repeat: -1,
-            ease: 'Sine.InOut'
-        });
-        
-        // Sparkle rotation
-        this.tweens.add({
-            targets: sparkle,
-            rotation: Math.PI * 2,
-            duration: 3000,
-            repeat: -1
-        });
-        
-        // Auto-destroy after 7 seconds
-        this.time.delayedCall(7000, () => {
-            this.tweens.add({
-                targets: eggContainer,
-                alpha: 0,
-                scale: 0,
-                duration: 500,
-                onComplete: () => eggContainer.destroy()
-            });
-        });
-    }
+    // Removed easter eggs - focusing on core mechanics
     
     setupCollisions() {
-        // Player vs Obstacles
-        this.physics.add.overlap(this.playerContainer, this.obstacles, (player, obstacle) => {
-            if (!this.isInvulnerable && !this.gameOver) {
-                this.hitObstacle(obstacle);
-            }
-        });
-        
-        // Player vs Parcels (pickup)
-        this.physics.add.overlap(this.playerContainer, this.parcels, (player, parcel) => {
-            if (!this.isCarrying && !this.gameOver) {
-                this.pickupParcel(parcel);
-            }
-        });
-        
-        // Player vs Delivery Zone
-        this.physics.add.overlap(this.playerContainer, this.deliveryZone, () => {
-            if (this.isCarrying && !this.gameOver) {
-                this.makeDelivery();
-            }
-        });
-        
-        // Player vs Power-ups
-        this.physics.add.overlap(this.playerContainer, this.powerUps, (player, powerUp) => {
-            this.collectPowerUp(powerUp);
-        });
+        // Simplified collision system handled in update loop
     }
     
     update(time, delta) {
         if (this.gameOver) return;
         
-        // Update timer display - only show when carrying
-        if (this.isCarrying) {
-            const timeLeft = Math.max(0, this.deliveryTimer / 1000);
-            this.timerText.setText(`Time: ${timeLeft.toFixed(1)}s`);
-            if (timeLeft < 3) {
-                this.timerText.setColor('#FF0000');
-            } else {
-                this.timerText.setColor('#FFFFFF');
-            }
-        } else {
-            this.timerText.setText('Find S² Shake Shake!');
-            this.timerText.setColor('#00FF00');
-        }
-        
         // Handle input
         this.handleInput();
         
-        // Safety check: Ensure player stays within bounds
-        if (this.playerContainer.x < 50) {
-            this.playerContainer.x = 50;
-            this.playerContainer.body.velocity.x = 0;
-        } else if (this.playerContainer.x > 974) {
-            this.playerContainer.x = 974;
-            this.playerContainer.body.velocity.x = 0;
+        // Scroll all objects
+        this.updateScrolling(delta);
+        
+        // Check collisions
+        this.checkCollisions();
+        
+        // Update UI
+        this.updateUI();
+        
+        // Spawn rhythm
+        this.updateSpawning();
+    }
+    
+    updateScrolling(delta) {
+        const scrollSpeed = this.baseScrollSpeed * this.speedMultiplier * (delta / 16.67);
+        
+        this.scrollingObjects.children.entries.forEach(obj => {
+            obj.x -= scrollSpeed;
+            
+            // Remove if off screen
+            if (obj.x < -100) {
+                obj.destroy();
+            }
+        });
+    }
+    
+    checkCollisions() {
+        const playerLane = this.currentLane;
+        const collisionX = this.playerX;
+        const collisionThreshold = 50;
+        
+        this.scrollingObjects.children.entries.forEach(obj => {
+            if (Math.abs(obj.x - collisionX) < collisionThreshold) {
+                if (obj.lane === playerLane) {
+                    if (obj.isParcel && !this.isCarrying) {
+                        this.pickupParcel(obj);
+                    } else if (obj.isObstacle) {
+                        this.hitObstacle(obj);
+                    }
+                } else if (Math.abs(obj.x - collisionX) < 30) {
+                    // Near miss!
+                    if (obj.isObstacle && !obj.nearMissed) {
+                        obj.nearMissed = true;
+                        this.registerNearMiss();
+                    }
+                }
+            }
+        });
+        
+        // Check delivery zone
+        if (this.isCarrying && this.playerContainer.x > 800) {
+            const timeCarried = this.time.now - this.pickupTime;
+            if (timeCarried < this.perfectWindow) {
+                this.makeDelivery('perfect');
+            } else if (timeCarried < this.goodWindow) {
+                this.makeDelivery('good');
+            } else {
+                this.makeDelivery('normal');
+            }
+        }
+    }
+    
+    updateUI() {
+        // Simplified UI updates
+        this.scoreText.setText(`Deliveries: ${this.deliveries}/9`);
+        this.pointsText.setText(`Score: ${this.score}`);
+        
+        if (this.deliveryStreak > 2) {
+            this.comboText.setText(`${this.deliveryStreak}x Streak!`);
+            this.comboText.setColor('#FFD700');
+        } else {
+            this.comboText.setText('');
         }
         
-        // Update obstacles
-        this.updateObstacles();
+        // Update lives display
+        this.updateLivesDisplay();
+    }
+    
+    updateSpawning() {
+        // Rhythmic spawning based on speed level
+        const now = this.time.now;
+        if (!this.lastSpawnTime) this.lastSpawnTime = now;
         
-        // No need to move delivery zone anymore
+        const spawnInterval = Math.max(1500, 3000 - (this.speedLevel * 200));
         
-        // Check if we need more parcels on the field
-        if (this.parcels.countActive() === 0 && !this.isCarrying) {
-            this.spawnParcel();
+        if (now - this.lastSpawnTime > spawnInterval) {
+            this.lastSpawnTime = now;
+            
+            // Spawn pattern
+            const pattern = Phaser.Math.Between(0, 100);
+            if (pattern < 30) {
+                // Obstacle
+                this.spawnObstacle();
+            } else if (pattern < 60 && !this.isCarrying) {
+                // Parcel
+                this.spawnParcel();
+            }
         }
     }
     
     handleInput() {
-        if (this.isStunned) return;
-        
-        // Smooth horizontal movement with acceleration
-        const leftPressed = this.cursors.left.isDown || this.wasd.A.isDown;
-        const rightPressed = this.cursors.right.isDown || this.wasd.D.isDown;
-        
-        if (leftPressed) {
-            this.targetVelocityX = -this.maxSpeed;
-            // Flip Wyn sprite to face left
-            if (this.player && this.player.setFlipX) this.player.setFlipX(true);
-            this.addMovementEffects();
-        } else if (rightPressed) {
-            this.targetVelocityX = this.maxSpeed;
-            // Face right (normal)
-            if (this.player && this.player.setFlipX) this.player.setFlipX(false);
-            this.addMovementEffects();
-        } else {
-            this.targetVelocityX = 0;
-            this.removeMovementEffects();
-        }
-        
-        // Apply acceleration/deceleration
-        const currentVelX = this.playerContainer.body.velocity.x;
-        const velDiff = this.targetVelocityX - currentVelX;
-        const acceleration = this.targetVelocityX === 0 ? this.deceleration : this.acceleration;
-        
-        if (Math.abs(velDiff) > 5) {
-            const deltaVel = Math.sign(velDiff) * acceleration * (1/60); // Assuming 60 FPS
-            const newVelX = currentVelX + deltaVel;
-            
-            // Clamp to target velocity
-            if (this.targetVelocityX === 0) {
-                this.playerContainer.body.velocity.x = Math.abs(newVelX) < 5 ? 0 : newVelX;
-            } else {
-                this.playerContainer.body.velocity.x = Math.sign(velDiff) === Math.sign(newVelX - this.targetVelocityX) 
-                    ? this.targetVelocityX 
-                    : newVelX;
-            }
-        }
-        
-        // Lane hopping (W/S or Up/Down)
-        if ((Phaser.Input.Keyboard.JustDown(this.cursors.up) || Phaser.Input.Keyboard.JustDown(this.wasd.W)) && !this.isHopping) {
-            this.hopLane(-1); // Move up
-        } else if ((Phaser.Input.Keyboard.JustDown(this.cursors.down) || Phaser.Input.Keyboard.JustDown(this.wasd.S)) && !this.isHopping) {
-            this.hopLane(1); // Move down
-        }
-        
-        // Dash (Space)
-        if (Phaser.Input.Keyboard.JustDown(this.spaceKey) && this.canDash) {
-            this.dash();
+        // Simple up/down lane switching
+        if ((Phaser.Input.Keyboard.JustDown(this.cursors.up) || Phaser.Input.Keyboard.JustDown(this.wasd.W)) && !this.isChangingLanes) {
+            this.changeLane(-1); // Move up
+        } else if ((Phaser.Input.Keyboard.JustDown(this.cursors.down) || Phaser.Input.Keyboard.JustDown(this.wasd.S)) && !this.isChangingLanes) {
+            this.changeLane(1); // Move down
         }
     }
     
-    hopLane(direction) {
+    changeLane(direction) {
         const newLane = this.currentLane + direction;
         
-        // Check bounds (0 to numLanes-1)
+        // Check bounds
         if (newLane >= 0 && newLane < this.numLanes) {
-            this.isHopping = true;
+            this.isChangingLanes = true;
             this.currentLane = newLane;
             
-            const oldY = this.playerContainer.y;
-            const newY = 300 + this.currentLane * this.laneHeight + this.laneHeight / 2;
+            const newY = this.lanePositions[this.currentLane];
             
-            // Add jump squash/stretch effect
-            this.tweens.add({
-                targets: this.player,
-                scaleY: 0.7,
-                scaleX: 1.3,
-                duration: 60,
-                yoyo: true,
-                ease: 'Power2.Out'
-            });
-            
-            // Smooth lane transition with a slight arc
+            // Quick snappy lane change
             this.tweens.add({
                 targets: this.playerContainer,
                 y: newY,
-                duration: 150,
-                ease: 'Back.Out',
-                onUpdate: (tween) => {
-                    // Add slight arc motion
-                    const progress = tween.progress;
-                    const arcHeight = 10;
-                    const arc = Math.sin(progress * Math.PI) * arcHeight;
-                    this.playerContainer.setScale(1 + arc * 0.01);
-                },
+                duration: this.laneChangeSpeed,
+                ease: 'Power2.Out',
                 onComplete: () => {
-                    this.isHopping = false;
-                    this.playerContainer.setScale(1);
+                    this.isChangingLanes = false;
                 }
             });
             
-            // Add dust particles
-            this.createDustParticles(this.playerContainer.x, oldY);
+            // Tilt effect
+            this.tweens.add({
+                targets: this.player,
+                angle: direction * -15,
+                duration: 100,
+                yoyo: true,
+                ease: 'Sine.InOut'
+            });
             
             AudioManager.getInstance().playSFX('click');
         }
     }
     
-    dash() {
-        this.canDash = false;
-        this.setInvulnerable(200);
-        
-        // Determine dash direction
-        const dashDir = this.playerContainer.body.velocity.x > 0 ? 1 : 
-                       this.playerContainer.body.velocity.x < 0 ? -1 : 
-                       this.player.flipX ? -1 : 1; // Use facing direction if stationary
-        
-        // Create multiple afterimages
-        for (let i = 0; i < 3; i++) {
-            this.time.delayedCall(i * 50, () => {
-                const afterimage = this.add.sprite(
-                    this.playerContainer.x - (i * 30 * dashDir),
-                    this.playerContainer.y,
-                    'wynSprite'
-                );
-                afterimage.setScale(0.2);
-                afterimage.setAlpha(0.5 - i * 0.15);
-                afterimage.setTint(0xFFD700);
-                afterimage.setFlipX(this.player.flipX);
-                
-                this.tweens.add({
-                    targets: afterimage,
-                    alpha: 0,
-                    scaleX: 0.3,
-                    duration: 400,
-                    onComplete: () => afterimage.destroy()
-                });
-            });
-        }
-        
-        // Screen shake on dash
-        this.cameras.main.shake(100, 0.005);
-        
-        // Dash movement with burst effect
-        this.playerContainer.body.velocity.x = this.dashSpeed * dashDir;
-        
-        // Add dash trail particles
-        this.createDashTrail(dashDir);
-        
-        // Smooth deceleration after dash
-        this.time.delayedCall(200, () => {
-            this.tweens.add({
-                targets: this.playerContainer.body.velocity,
-                x: this.targetVelocityX,
-                duration: 300,
-                ease: 'Power2.Out'
-            });
-        });
-        
-        // Visual feedback - flash effect
-        this.player.setTint(0xFFFFFF);
-        this.time.delayedCall(100, () => {
-            this.player.clearTint();
-        });
-        
-        // Cooldown with visual indicator
-        this.time.delayedCall(3000, () => {
-            this.canDash = true;
-            // Flash to indicate dash ready
-            this.player.setTint(0x00FF00);
-            this.time.delayedCall(100, () => {
-                this.player.clearTint();
-            });
-        });
-        
-        AudioManager.getInstance().playSFX('pickup');
-    }
+    // Removed dash function - simplifying gameplay
     
     hitObstacle(obstacle) {
         this.dropParcel();
         
         // Check if it's a poop obstacle
-        if (obstacle.isPoop) {
+        if (obstacle.obstacleType === '💩') {
             // Play fart sound for poop
             AudioManager.getInstance().playSFX('fart');
             
@@ -1200,6 +1016,9 @@ export class BirthdayMinigame extends Scene {
             
             AudioManager.getInstance().playSFX('land');
         }
+        
+        // Screen shake on hit
+        this.cameras.main.shake(100, 0.01);
     }
     
     pickupParcel(parcel) {
@@ -1210,14 +1029,52 @@ export class BirthdayMinigame extends Scene {
         // Reset timer when picking up
         this.deliveryTimer = this.maxDeliveryTime;
         
-        // Show carrying indicator - dynamite!
-        const indicator = this.add.text(0, -40, '🧨', {
+        // Show carrying indicator - dynamite with urgency!
+        const indicatorContainer = this.add.container(0, -40);
+        
+        // Background glow
+        const glow = this.add.circle(0, 0, 20, 0xFFD700, 0.5);
+        indicatorContainer.add(glow);
+        
+        // Dynamite emoji
+        const indicator = this.add.text(0, 0, '🧨', {
             fontSize: '24px'
         }).setOrigin(0.5);
-        this.playerContainer.add(indicator);
-        this.carryIndicator = indicator;
+        indicatorContainer.add(indicator);
         
+        // Urgency pulse
+        this.tweens.add({
+            targets: glow,
+            scale: { from: 1, to: 1.3 },
+            alpha: { from: 0.5, to: 0.2 },
+            duration: 500,
+            yoyo: true,
+            repeat: -1
+        });
+        
+        this.playerContainer.add(indicatorContainer);
+        this.carryIndicator = indicatorContainer;
+        
+        // Satisfying pickup feedback
+        this.cameras.main.flash(100, 255, 255, 0, true);
         AudioManager.getInstance().playSFX('pickup');
+        
+        // Show pickup message
+        const pickupText = this.add.text(this.playerContainer.x, this.playerContainer.y - 80, 'GO GO GO!', {
+            fontSize: '24px',
+            color: '#00FF00',
+            fontFamily: 'Arial Black',
+            stroke: '#000000',
+            strokeThickness: 3
+        }).setOrigin(0.5);
+        
+        this.tweens.add({
+            targets: pickupText,
+            y: '-=20',
+            alpha: 0,
+            duration: 800,
+            onComplete: () => pickupText.destroy()
+        });
     }
     
     dropParcel() {
@@ -1229,21 +1086,47 @@ export class BirthdayMinigame extends Scene {
             this.carryIndicator = null;
         }
         
-        // Spawn new parcel at random location
-        this.time.delayedCall(1000, () => {
-            this.spawnParcel();
-        });
+        // Reset streaks
+        this.deliveryStreak = 0;
+        this.nearMissStreak = 0;
+        
+        // Lose a life
+        this.lives--;
+        this.updateLivesDisplay();
+        
+        if (this.lives <= 0) {
+            this.endGame();
+        }
     }
     
     // Remove old recoverParcel function as we don't need it anymore
     
     missParcel() {
         this.missStreak++;
-        this.streakText.setText(`Misses: ${this.missStreak}/3`);
+        this.updateLivesDisplay();
         
-        // Reset combo on miss
+        // Reset combo and perfect streak on miss
         this.combo = 0;
-        this.comboText.setText('');
+        this.perfectDeliveries = 0;
+        this.updateComboDisplay();
+        this.perfectStreakText.setText('');
+        
+        // Show miss message
+        const missText = this.add.text(512, 300, 'DELIVERY MISSED!', {
+            fontSize: '36px',
+            color: '#FF0000',
+            fontFamily: 'Impact',
+            stroke: '#000000',
+            strokeThickness: 4
+        }).setOrigin(0.5).setScrollFactor(0);
+        
+        this.tweens.add({
+            targets: missText,
+            scale: 1.5,
+            alpha: 0,
+            duration: 1000,
+            onComplete: () => missText.destroy()
+        });
         
         if (this.missStreak >= 3) {
             this.endGame();
@@ -1273,32 +1156,65 @@ export class BirthdayMinigame extends Scene {
         });
     }
     
-    makeDelivery() {
+    makeDelivery(quality) {
         // Only count if actually carrying a parcel
         if (!this.isCarrying) return;
         
         this.score++;
-        this.scoreText.setText(`Deliveries: ${this.score}/9`);
-        this.missStreak = 0;
-        this.streakText.setText('');
+        this.scoreText.setText(`Deliveries: ${this.deliveries}/9`);
         
-        // Calculate points with combo bonus
+        // Calculate time left for speed bonus
+        const timeLeft = this.deliveryTimer / 1000;
+        const speedBonusMultiplier = timeLeft > 7 ? 3 : timeLeft > 5 ? 2 : 1;
+        this.speedBonus = speedBonusMultiplier;
+        
+        // Perfect delivery tracking
+        if (timeLeft > 7) {
+            this.perfectDeliveries++;
+            if (this.perfectDeliveries > 2) {
+                this.perfectStreakText.setText(`Perfect Streak: ${this.perfectDeliveries}!`);
+            }
+        }
+        
+        // Calculate points with enhanced system
         this.combo++;
         const basePoints = 100;
-        const timeBonus = Math.floor((this.deliveryTimer / 1000) * 10); // 10 points per second left
-        const comboBonus = (this.combo - 1) * 50;
-        const earnedPoints = basePoints + timeBonus + comboBonus;
+        const timeBonus = Math.floor(timeLeft * 20); // 20 points per second left
+        const comboBonus = Math.pow(this.combo, 1.5) * 50; // Exponential combo growth
+        const perfectBonus = this.perfectDeliveries > 2 ? this.perfectDeliveries * 100 : 0;
+        const speedBonusPoints = (speedBonusMultiplier - 1) * 50;
+        const earnedPoints = Math.floor(basePoints + timeBonus + comboBonus + perfectBonus + speedBonusPoints);
         this.totalPoints += earnedPoints;
         
         // Update UI
         this.pointsText.setText(`Points: ${this.totalPoints}`);
-        if (this.combo > 1) {
-            this.comboText.setText(`${this.combo}x COMBO!`);
-            this.comboText.setColor('#00FF00');
+        this.updateComboDisplay();
+        
+        // Check for new high score
+        if (this.totalPoints > this.highScore) {
+            this.highScore = this.totalPoints;
+            localStorage.setItem('birthdayHighScore', this.highScore.toString());
+            this.highScoreText.setText(`High Score: ${this.highScore}`);
+            this.highScoreText.setColor('#00FF00');
+            
+            // Flash high score
+            this.tweens.add({
+                targets: this.highScoreText,
+                scale: 1.2,
+                duration: 200,
+                yoyo: true,
+                repeat: 2
+            });
         }
         
-        // Show points popup
-        this.showPointsPopup(earnedPoints, this.deliveryZone.x - 50, this.deliveryZone.y);
+        // Show detailed points popup
+        this.showDetailedPointsPopup(earnedPoints, {
+            base: basePoints,
+            time: timeBonus,
+            combo: Math.floor(comboBonus),
+            perfect: perfectBonus,
+            speed: speedBonusPoints
+        });
         
         // Remove the carrying indicator
         this.isCarrying = false;
@@ -1311,17 +1227,17 @@ export class BirthdayMinigame extends Scene {
         this.speedMultiplier += 0.05;
         this.difficultyLevel = Math.min(5, Math.floor(this.score / 2) + 1);
         
-        // Success effect with special message as we approach 9
-        let deliveryMessage = '+1 SHAKE SHAKE!';
+        // Success effect with speed indicator
+        let deliveryMessage = speedBonusMultiplier > 1 ? `FAST DELIVERY! x${speedBonusMultiplier}` : '+1 SHAKE SHAKE!';
         if (this.score === 9) {
             deliveryMessage = '9TH SHAKE SHAKE! 🎉';
         } else if (this.score > 5) {
             deliveryMessage = `${this.score}/9 SHAKE SHAKES!`;
         }
         
-        const successText = this.add.text(400, 200, deliveryMessage, {
+        const successText = this.add.text(512, 200, deliveryMessage, {
             fontSize: '48px',
-            color: this.score === 9 ? '#FFD700' : '#00FF00',
+            color: speedBonusMultiplier > 2 ? '#FFD700' : speedBonusMultiplier > 1 ? '#00FFFF' : '#00FF00',
             fontFamily: 'Impact',
             stroke: '#000000',
             strokeThickness: 4
@@ -1336,7 +1252,13 @@ export class BirthdayMinigame extends Scene {
             onComplete: () => successText.destroy()
         });
         
-        AudioManager.getInstance().playSFX('pickup');
+        // Play different sounds based on performance
+        if (speedBonusMultiplier > 2) {
+            AudioManager.getInstance().playSFX('pickup');
+            AudioManager.getInstance().playSFX('click');
+        } else {
+            AudioManager.getInstance().playSFX('pickup');
+        }
         
         // Check for birthday surprise - special 9th birthday at 9 deliveries!
         if (this.score >= 9) {
@@ -1346,6 +1268,96 @@ export class BirthdayMinigame extends Scene {
             this.spawnParcel();
             this.respawn();
         }
+    }
+    
+    updateComboDisplay() {
+        if (this.combo > 1) {
+            this.comboText.setText(`${this.combo}x COMBO!`);
+            const color = this.combo > 5 ? '#FFD700' : this.combo > 3 ? '#00FFFF' : '#00FF00';
+            this.comboText.setColor(color);
+            
+            // Animate combo text
+            this.tweens.add({
+                targets: this.comboText,
+                scale: { from: 1.2, to: 1 },
+                duration: 300,
+                ease: 'Back.Out'
+            });
+        } else {
+            this.comboText.setText('');
+        }
+        
+        // Update speed bonus display
+        if (this.speedBonus > 1) {
+            this.speedBonusText.setText(`Speed Bonus: x${this.speedBonus}`);
+            this.speedBonusText.setAlpha(1);
+            this.tweens.add({
+                targets: this.speedBonusText,
+                alpha: 0,
+                duration: 2000,
+                delay: 1000
+            });
+        }
+    }
+    
+    showDetailedPointsPopup(total, breakdown) {
+        const popupContainer = this.add.container(this.deliveryZone.x - 100, 400);
+        
+        // Background
+        const bg = this.add.rectangle(0, 0, 200, 150, 0x000000, 0.8);
+        bg.setStrokeStyle(3, 0xFFD700);
+        popupContainer.add(bg);
+        
+        // Total points at top
+        const totalText = this.add.text(0, -60, `+${total}`, {
+            fontSize: '36px',
+            color: '#FFD700',
+            fontFamily: 'Impact',
+            stroke: '#000000',
+            strokeThickness: 3
+        }).setOrigin(0.5);
+        popupContainer.add(totalText);
+        
+        // Breakdown
+        let y = -20;
+        const addLine = (label, value, color = '#FFFFFF') => {
+            if (value > 0) {
+                const text = this.add.text(0, y, `${label}: +${value}`, {
+                    fontSize: '16px',
+                    color: color,
+                    fontFamily: 'Arial',
+                    stroke: '#000000',
+                    strokeThickness: 2
+                }).setOrigin(0.5);
+                popupContainer.add(text);
+                y += 20;
+            }
+        };
+        
+        addLine('Base', breakdown.base);
+        addLine('Time', breakdown.time, '#00FFFF');
+        if (breakdown.combo > 0) addLine('Combo', breakdown.combo, '#00FF00');
+        if (breakdown.perfect > 0) addLine('Perfect!', breakdown.perfect, '#FFD700');
+        if (breakdown.speed > 0) addLine('Speed', breakdown.speed, '#FF00FF');
+        
+        // Animate popup
+        popupContainer.setScale(0);
+        this.tweens.add({
+            targets: popupContainer,
+            scale: 1,
+            duration: 300,
+            ease: 'Back.Out',
+            onComplete: () => {
+                this.tweens.add({
+                    targets: popupContainer,
+                    y: '-=100',
+                    alpha: 0,
+                    duration: 1500,
+                    delay: 500,
+                    onComplete: () => popupContainer.destroy()
+                });
+            }
+        });
     }
     
     // Remove createNewParcel as parcels are now spawned on the field
@@ -1367,179 +1379,11 @@ export class BirthdayMinigame extends Scene {
         this.setInvulnerable(1000);
     }
     
-    collectPowerUp(powerUp) {
-        // Check if it's an easter egg
-        if (powerUp.easterEgg) {
-            const egg = powerUp.easterEgg;
-            this.totalPoints += egg.points;
-            this.pointsText.setText(`Points: ${this.totalPoints}`);
-            this.showPointsPopup(egg.points, powerUp.x, powerUp.y);
-            
-            // Show easter egg message
-            const eggText = this.add.text(512, 150, `${egg.emoji} ${egg.name}!`, {
-                fontSize: '36px',
-                color: '#FFD700',
-                fontFamily: 'Impact',
-                stroke: '#000000',
-                strokeThickness: 4
-            }).setOrigin(0.5).setScrollFactor(0);
-            
-            this.tweens.add({
-                targets: eggText,
-                scale: 2,
-                alpha: 0,
-                duration: 1500,
-                onComplete: () => eggText.destroy()
-            });
-            
-            // Apply easter egg effect
-            this.applyEasterEggEffect(egg.effect);
-            powerUp.destroy();
-            AudioManager.getInstance().playSFX('pickup');
-            return;
-        }
-        
-        const type = powerUp.type;
-        powerUp.destroy();
-        
-        switch(type) {
-            case 'magnet':
-                // Attract parcel effect
-                if (!this.isCarrying && this.parcel) {
-                    this.tweens.add({
-                        targets: this.parcel,
-                        x: this.playerContainer.x,
-                        y: this.playerContainer.y - 30,
-                        duration: 500,
-                        onComplete: () => this.recoverParcel()
-                    });
-                }
-                break;
-                
-            case 'slowmo':
-                // Slow down time
-                this.speedMultiplier *= 0.6;
-                this.time.delayedCall(5000, () => {
-                    this.speedMultiplier /= 0.6;
-                });
-                break;
-                
-            case 'jetpack':
-                // Super jump boost
-                this.setInvulnerable(1000);
-                this.playerContainer.body.velocity.y = -300;
-                
-                // Reset Y velocity after jump
-                this.time.delayedCall(500, () => {
-                    this.playerContainer.body.velocity.y = 0;
-                });
-                break;
-                
-            case 'shield':
-                // Longer invulnerability
-                this.setInvulnerable(3000);
-                break;
-                
-            case 'birthday':
-                // Birthday power - clear all obstacles and gain speed!
-                this.obstacles.clear(true, true);
-                this.speedMultiplier *= 0.5;
-                this.setInvulnerable(2000);
-                
-                // Birthday message
-                const birthdayText = this.add.text(400, 250, 'BIRTHDAY POWER!', {
-                    fontSize: '36px',
-                    color: '#FFD700',
-                    fontFamily: 'Impact',
-                    stroke: '#000000',
-                    strokeThickness: 4
-                }).setOrigin(0.5).setScrollFactor(0);
-                
-                this.tweens.add({
-                    targets: birthdayText,
-                    scale: 2,
-                    alpha: 0,
-                    duration: 1500,
-                    onComplete: () => birthdayText.destroy()
-                });
-                break;
-        }
-        
-        AudioManager.getInstance().playSFX('pickup');
-    }
+    // Removed collectPowerUp - focusing on core mechanics
     
-    applyEasterEggEffect(effect) {
-        switch(effect) {
-            case 'rainbow':
-                // Rainbow trail effect
-                for (let i = 0; i < 7; i++) {
-                    this.time.delayedCall(i * 100, () => {
-                        const rainbow = this.add.rectangle(
-                            this.playerContainer.x - i * 20,
-                            this.playerContainer.y,
-                            15, 40,
-                            Phaser.Display.Color.HSVToRGB(i / 7, 1, 1).color
-                        );
-                        this.tweens.add({
-                            targets: rainbow,
-                            alpha: 0,
-                            duration: 1000,
-                            onComplete: () => rainbow.destroy()
-                        });
-                    });
-                }
-                this.setInvulnerable(3000);
-                break;
-                
-            case 'sparkle':
-                // Create sparkles around player
-                for (let i = 0; i < 10; i++) {
-                    const sparkle = this.add.star(
-                        this.playerContainer.x + Phaser.Math.Between(-50, 50),
-                        this.playerContainer.y + Phaser.Math.Between(-50, 50),
-                        4, 3, 6, 0xFFFFFF
-                    );
-                    this.tweens.add({
-                        targets: sparkle,
-                        scale: { from: 0, to: 1.5 },
-                        alpha: { from: 1, to: 0 },
-                        duration: 1000,
-                        onComplete: () => sparkle.destroy()
-                    });
-                }
-                break;
-                
-            case 'invincible':
-                this.setInvulnerable(5000);
-                break;
-                
-            case 'slowmo':
-                this.speedMultiplier *= 0.5;
-                this.time.delayedCall(5000, () => {
-                    this.speedMultiplier /= 0.5;
-                });
-                break;
-                
-            case 'speed':
-                this.slideSpeed *= 1.5;
-                this.dashSpeed *= 1.5;
-                this.time.delayedCall(5000, () => {
-                    this.slideSpeed /= 1.5;
-                    this.dashSpeed /= 1.5;
-                });
-                break;
-        }
-    }
+    // Removed easter egg effects - keeping it simple
     
-    setInvulnerable(duration) {
-        this.isInvulnerable = true;
-        this.playerContainer.setAlpha(0.5);
-        
-        this.time.delayedCall(duration, () => {
-            this.isInvulnerable = false;
-            this.playerContainer.setAlpha(1);
-        });
-    }
+    // Removed invulnerability - keeping consequences clear
     
     addMovementEffects() {
         // Add running bob effect
@@ -1637,12 +1481,15 @@ export class BirthdayMinigame extends Scene {
         // Stop all physics
         this.physics.pause();
         
+        // Save to leaderboard
+        this.saveToLeaderboard();
+        
         // Birthday celebration - enhanced for Wyn's 9th!
-        const surpriseBg = this.add.rectangle(400, 300, 800, 600, 0x000000, 0.9)
+        const surpriseBg = this.add.rectangle(512, 384, 1024, 768, 0x000000, 0.9)
             .setScrollFactor(0);
         
         // Giant animated 9 in the background
-        const bigNine = this.add.text(400, 300, '9', {
+        const bigNine = this.add.text(512, 384, '9', {
             fontSize: '400px',
             color: '#FFD700',
             fontFamily: 'Impact',
@@ -1660,7 +1507,7 @@ export class BirthdayMinigame extends Scene {
         });
         
         // Animated cake with 9 candles!
-        const cakeContainer = this.add.container(400, 200).setScrollFactor(0);
+        const cakeContainer = this.add.container(512, 250).setScrollFactor(0);
         const cake = this.add.text(0, 0, '🎂', {
             fontSize: '128px'
         }).setOrigin(0.5);
@@ -1699,12 +1546,12 @@ export class BirthdayMinigame extends Scene {
         });
         
         // Special birthday message
-        const message = this.add.text(400, 380, 
+        const message = this.add.text(512, 450, 
             '🎉 HAPPY 9TH BIRTHDAY WYN! 🎉\n\n' +
             `You delivered all 9 SHAKE SHAKES!\n` +
-            'You\'re the BUFFEST 9-year-old champion!\n' +
-            'Your special power grows stronger!\n\n' +
-            'Press ENTER to unlock birthday rewards!',
+            `Final Score: ${this.totalPoints} points\n` +
+            'You\'re the BUFFEST 9-year-old champion!\n\n' +
+            'Press ENTER to see the leaderboard!',
             {
                 fontSize: '28px',
                 color: '#FFD700',
@@ -1793,10 +1640,14 @@ export class BirthdayMinigame extends Scene {
         this.gameOver = true;
         this.physics.pause();
         
-        const gameOverBg = this.add.rectangle(400, 300, 600, 300, 0x000000, 0.8)
-            .setScrollFactor(0);
+        // Save to leaderboard
+        this.saveToLeaderboard();
         
-        const gameOverText = this.add.text(400, 250, 'DELIVERY FAILED!', {
+        const gameOverBg = this.add.rectangle(512, 384, 700, 600, 0x000000, 0.9)
+            .setScrollFactor(0);
+        gameOverBg.setStrokeStyle(4, 0xFF0000);
+        
+        const gameOverText = this.add.text(512, 150, 'DELIVERY FAILED!', {
             fontSize: '48px',
             color: '#FF0000',
             fontFamily: 'Impact',
@@ -1804,33 +1655,31 @@ export class BirthdayMinigame extends Scene {
             strokeThickness: 4
         }).setOrigin(0.5).setScrollFactor(0);
         
-        const finalScore = this.add.text(400, 320, `Deliveries: ${this.score}/9`, {
+        const finalScore = this.add.text(512, 220, `Deliveries: ${this.score}/9`, {
             fontSize: '32px',
             color: '#FFFFFF',
             fontFamily: 'Arial Black'
         }).setOrigin(0.5).setScrollFactor(0);
         
-        const finalPoints = this.add.text(400, 360, `Total Points: ${this.totalPoints}`, {
+        const finalPoints = this.add.text(512, 260, `Total Points: ${this.totalPoints}`, {
             fontSize: '28px',
             color: '#FFD700',
             fontFamily: 'Arial Black'
         }).setOrigin(0.5).setScrollFactor(0);
         
-        const restartText = this.add.text(400, 420, 'Press ENTER to return', {
-            fontSize: '24px',
-            color: '#FFD700',
-            fontFamily: 'Arial'
-        }).setOrigin(0.5).setScrollFactor(0);
-        
-        // Save high score
-        const highScore = localStorage.getItem('buffDeliveryHighScore') || 0;
-        if (this.score > highScore) {
-            localStorage.setItem('buffDeliveryHighScore', this.score);
+        // Check for new high score
+        let isNewHighScore = false;
+        if (this.totalPoints > this.highScore) {
+            isNewHighScore = true;
+            this.highScore = this.totalPoints;
+            localStorage.setItem('birthdayHighScore', this.highScore.toString());
             
-            const newHighScore = this.add.text(400, 420, 'NEW HIGH SCORE!', {
-                fontSize: '28px',
+            const newHighScore = this.add.text(512, 300, 'NEW HIGH SCORE!', {
+                fontSize: '36px',
                 color: '#00FF00',
-                fontFamily: 'Impact'
+                fontFamily: 'Impact',
+                stroke: '#000000',
+                strokeThickness: 4
             }).setOrigin(0.5).setScrollFactor(0);
             
             this.tweens.add({
@@ -1842,9 +1691,133 @@ export class BirthdayMinigame extends Scene {
             });
         }
         
+        // Show leaderboard
+        this.showLeaderboard(isNewHighScore ? 350 : 320);
+        
+        const restartText = this.add.text(512, 660, 'Press ENTER to return', {
+            fontSize: '24px',
+            color: '#FFD700',
+            fontFamily: 'Arial',
+            stroke: '#000000',
+            strokeThickness: 2
+        }).setOrigin(0.5).setScrollFactor(0);
+        
+        // Pulse restart text
+        this.tweens.add({
+            targets: restartText,
+            alpha: { from: 0.7, to: 1 },
+            duration: 800,
+            yoyo: true,
+            repeat: -1
+        });
+        
         this.input.keyboard.once('keydown-ENTER', () => {
             AudioManager.getInstance().stopMusic(AudioAssets.BIRTHDAY_SONG);
             this.scene.start(SceneKeys.MAIN_MENU);
         });
+    }
+    
+    loadLeaderboard() {
+        const saved = localStorage.getItem('birthdayLeaderboard');
+        if (saved) {
+            return JSON.parse(saved);
+        }
+        return [];
+    }
+    
+    saveToLeaderboard() {
+        const entry = {
+            score: this.totalPoints,
+            deliveries: this.score,
+            combo: this.combo,
+            date: new Date().toLocaleDateString()
+        };
+        
+        this.leaderboard.push(entry);
+        this.leaderboard.sort((a, b) => b.score - a.score);
+        this.leaderboard = this.leaderboard.slice(0, 10); // Keep top 10
+        
+        localStorage.setItem('birthdayLeaderboard', JSON.stringify(this.leaderboard));
+    }
+    
+    showLeaderboard(startY) {
+        const leaderboardTitle = this.add.text(512, startY, 'LEADERBOARD', {
+            fontSize: '24px',
+            color: '#FFD700',
+            fontFamily: 'Impact',
+            stroke: '#000000',
+            strokeThickness: 3
+        }).setOrigin(0.5).setScrollFactor(0);
+        
+        // Leaderboard background
+        const lbBg = this.add.rectangle(512, startY + 130, 600, 250, 0x000000, 0.5);
+        lbBg.setStrokeStyle(2, 0xFFD700).setScrollFactor(0);
+        
+        // Show top 5 entries
+        const topEntries = this.leaderboard.slice(0, 5);
+        topEntries.forEach((entry, index) => {
+            const y = startY + 50 + (index * 35);
+            const rank = index + 1;
+            const color = rank === 1 ? '#FFD700' : rank === 2 ? '#C0C0C0' : rank === 3 ? '#CD7F32' : '#FFFFFF';
+            
+            // Rank
+            this.add.text(280, y, `${rank}.`, {
+                fontSize: '20px',
+                color: color,
+                fontFamily: 'Arial Black',
+                stroke: '#000000',
+                strokeThickness: 2
+            }).setScrollFactor(0);
+            
+            // Score
+            this.add.text(320, y, `${entry.score} pts`, {
+                fontSize: '20px',
+                color: color,
+                fontFamily: 'Arial',
+                stroke: '#000000',
+                strokeThickness: 2
+            }).setScrollFactor(0);
+            
+            // Deliveries
+            this.add.text(450, y, `${entry.deliveries}/9`, {
+                fontSize: '18px',
+                color: '#AAAAAA',
+                fontFamily: 'Arial'
+            }).setScrollFactor(0);
+            
+            // Date
+            this.add.text(550, y, entry.date, {
+                fontSize: '16px',
+                color: '#888888',
+                fontFamily: 'Arial'
+            }).setScrollFactor(0);
+        });
+    }
+    
+    registerNearMiss() {
+        this.nearMissStreak++;
+        
+        // Show near miss feedback
+        const nearMissText = this.add.text(this.playerX, this.playerContainer.y - 50, 'CLOSE CALL!', {
+            fontSize: '20px',
+            color: '#FFFF00',
+            fontFamily: 'Arial Black',
+            stroke: '#000000',
+            strokeThickness: 2
+        }).setOrigin(0.5);
+        
+        this.tweens.add({
+            targets: nearMissText,
+            y: '-=20',
+            alpha: 0,
+            duration: 800,
+            onComplete: () => nearMissText.destroy()
+        });
+        
+        // Bonus points for near misses
+        if (this.nearMissStreak >= 3) {
+            this.score += 50 * this.nearMissStreak;
+            this.cameras.main.flash(100, 255, 255, 0);
+        }
     }
 }
