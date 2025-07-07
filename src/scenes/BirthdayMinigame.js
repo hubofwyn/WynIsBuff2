@@ -37,12 +37,27 @@ export class BirthdayMinigame extends Scene {
         this.deliveries = 0;
         this.lives = 3;
         this.gameOver = false;
+        this.gameStarted = false; // Track if game has started
         this.speedLevel = 1;
         this.highScore = parseInt(localStorage.getItem('birthdayHighScore') || '0');
         
         // Timing windows
         this.perfectWindow = 2000; // 2 seconds for perfect delivery
         this.goodWindow = 5000; // 5 seconds for good delivery
+        this.maxDeliveryTime = 10000; // 10 seconds max delivery time
+        
+        // Obstacle spawning
+        this.baseObstacleSpeed = 200;
+        
+        // Additional game state
+        this.totalPoints = 0;
+        this.combo = 0;
+        this.perfectDeliveries = 0;
+        this.speedBonus = 1;
+        this.pickupTime = 0;
+        this.leaderboard = [];
+        this.missStreak = 0;
+        this.difficultyLevel = 1;
         
         // Objects
         this.player = null;
@@ -87,17 +102,23 @@ export class BirthdayMinigame extends Scene {
         this.createDeliveryZone();
         
         // Create object groups
-        this.obstacles = this.add.group();
-        this.scrollingObjects = this.add.group();
+        this.obstacles = this.physics.add.group();
+        this.scrollingObjects = this.physics.add.group();
         
         // Fixed camera - no scrolling, show entire play area
         this.cameras.main.setBackgroundColor('#2C3E50');
         this.cameras.main.setBounds(0, 0, 1024, 768);
         this.cameras.main.setZoom(1);
         
-        // Simplified input - just up/down
+        // Full directional input
         this.cursors = this.input.keyboard.createCursorKeys();
-        this.wasd = this.input.keyboard.addKeys('W,S');
+        this.wasd = this.input.keyboard.addKeys('W,A,S,D');
+        this.spaceKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
+        
+        // Dash cooldown
+        this.canDash = true;
+        this.dashCooldown = 3000; // 3 seconds
+        this.dashSpeed = 500;
         
         // Create UI
         this.createUI();
@@ -198,6 +219,9 @@ export class BirthdayMinigame extends Scene {
         const shadow = this.add.ellipse(0, 25, 30, 10, 0x000000, 0.3);
         this.playerContainer.addAt(shadow, 0);
         
+        // Ensure player container is properly initialized
+        this.playerContainer.setDepth(100);
+        
         // Running animation
         this.tweens.add({
             targets: this.player,
@@ -211,10 +235,10 @@ export class BirthdayMinigame extends Scene {
     }
     
     spawnParcel() {
-        // Spawn parcels ahead on the road
+        // Spawn parcels from the right, scrolling left
         const lane = Phaser.Math.Between(0, this.numLanes - 1);
         const y = this.lanePositions[lane];
-        const x = 1024 + 100; // Start off-screen right
+        const x = 1100; // Start off-screen right
         
         // Create parcel container
         const parcelContainer = this.add.container(x, y);
@@ -256,10 +280,9 @@ export class BirthdayMinigame extends Scene {
         parcelContainer.add([glow, bgCircle, dynamiteEmoji, labelBg, label, arrow]);
         
         // Track parcel data
-        parcelContainer.lane = lane;
         parcelContainer.isParcel = true;
+        parcelContainer.lane = lane;
         parcelContainer.spawnTime = this.time.now;
-        this.parcels.add(parcelContainer);
         this.scrollingObjects.add(parcelContainer);
         
         // Entrance animation
@@ -280,8 +303,10 @@ export class BirthdayMinigame extends Scene {
             repeat: -1
         });
         
-        // Mark pickup zone for timing
-        parcelContainer.pickupZoneX = this.playerX + 50; // Slightly ahead of player
+        // Mark pickup zone for timing – use current player position so it keeps
+        // making sense even if the player has moved horizontally prior to the
+        // first parcel spawning.
+        parcelContainer.pickupZoneX = (this.playerContainer?.x ?? this.playerX) + 50;
     }
     
     createDeliveryZone() {
@@ -496,7 +521,7 @@ export class BirthdayMinigame extends Scene {
         
         // Mission text
         const mission = this.add.text(centerX, centerY - 140, 
-            'Deliver 9 S² Shake Shakes for Wyn\'s Birthday!',
+            'Deliver 9 Shakes (Protein or S²) for Wyn\'s Birthday!',
             {
                 fontSize: '24px',
                 color: '#00FF00',
@@ -554,7 +579,7 @@ export class BirthdayMinigame extends Scene {
         });
         
         // Rules section
-        const rulesTitle = this.add.text(centerX, centerY + 90, 'RULES', {
+        const rulesTitle = this.add.text(centerX, centerY + 80, 'RULES', {
             fontSize: '28px',
             color: '#FFFFFF',
             fontFamily: 'Impact',
@@ -564,15 +589,16 @@ export class BirthdayMinigame extends Scene {
         instructionElements.push(rulesTitle);
         
         const rules = [
+            '🥤 Protein Shakes = 100 points',
+            '✨ S² Shakes (Special) = 500 points!',
+            '🧨 Dynamite + 🎂 Cake = Bonus points!',
             '💩 Poop = Lose a Life + Fart Sound!',
-            '🧨 Pick up S² Shake Parcels',
-            '✅ Deliver to Green Zone Quickly',
-            '❤️ 3 Lives Total',
-            '⚡ Speed Matters - Faster = More Points!'
+            '❤️ 3 Lives - Lose on hit or missed delivery',
+            '⚡ Combo System: Chain deliveries!'
         ];
         
         rules.forEach((rule, i) => {
-            const ruleText = this.add.text(centerX, centerY + 125 + (i * 25), rule, {
+            const ruleText = this.add.text(centerX, centerY + 115 + (i * 25), rule, {
                 fontSize: '18px',
                 color: '#FFFFFF',
                 fontFamily: 'Arial',
@@ -583,12 +609,12 @@ export class BirthdayMinigame extends Scene {
         });
         
         // Start button
-        const startButton = this.add.rectangle(centerX, centerY + 280, 250, 60, 0x00FF00)
+        const startButton = this.add.rectangle(centerX, centerY + 240, 250, 60, 0x00FF00)
             .setStrokeStyle(4, 0xFFFFFF)
             .setScrollFactor(0);
         instructionElements.push(startButton);
             
-        const startText = this.add.text(centerX, centerY + 280, 'PRESS SPACE TO START!', {
+        const startText = this.add.text(centerX, centerY + 240, 'PRESS SPACE TO START!', {
             fontSize: '24px',
             color: '#000000',
             fontFamily: 'Impact'
@@ -624,6 +650,9 @@ export class BirthdayMinigame extends Scene {
     }
     
     startGame() {
+        // Mark game as started
+        this.gameStarted = true;
+        
         // Start music after user interaction
         try {
             const audioManager = AudioManager.getInstance();
@@ -685,11 +714,12 @@ export class BirthdayMinigame extends Scene {
                     this.deliveryTimer -= 100;
                     if (this.deliveryTimer <= 0) {
                         this.dropParcel();
-                        this.missStreak++;
-                        this.streakText.setText(`Misses: ${this.missStreak}/3`);
-                        if (this.missStreak >= 3) {
-                            this.endGame();
-                        }
+                        this.timerText.setText('Time Out! -1 ❤️');
+                        this.timerText.setColor('#FF0000');
+                        this.time.delayedCall(1000, () => {
+                            this.timerText.setText('Find S² Shake!');
+                            this.timerText.setColor('#00FF00');
+                        });
                     }
                 }
             },
@@ -706,11 +736,10 @@ export class BirthdayMinigame extends Scene {
         if (this.gameOver) return;
         
         const lane = Phaser.Math.Between(0, this.numLanes - 1);
-        const y = 300 + lane * this.laneHeight + this.laneHeight / 2;
+        const y = this.lanePositions[lane];
         
-        // Always spawn from left side, moving right for simplicity
-        const x = -80;
-        const direction = 1;
+        // Spawn from right side, scrolling left (consistent with parcels)
+        const x = 1100;
         
         let obstacleContainer = this.add.container(x, y);
         let speed;
@@ -776,12 +805,22 @@ export class BirthdayMinigame extends Scene {
                 break;
         }
         
-        this.physics.add.existing(obstacleContainer);
-        obstacleContainer.body.setSize(50, 40);
-        obstacleContainer.body.velocity.x = speed * direction;
-        obstacleContainer.speed = speed;
-        obstacleContainer.direction = direction;
-        this.obstacles.add(obstacleContainer);
+        // Add to scrolling objects for movement
+        obstacleContainer.isObstacle = true;
+        obstacleContainer.lane = lane;
+        this.scrollingObjects.add(obstacleContainer);
+        
+        // Setup for wobble effect if needed
+        if (obstacleContainer.wobble) {
+            this.tweens.add({
+                targets: obstacleContainer,
+                y: obstacleContainer.y + 10,
+                duration: 500,
+                yoyo: true,
+                repeat: -1,
+                ease: 'Sine.InOut'
+            });
+        }
     }
     
     // Removed complex powerups - focusing on core gameplay
@@ -795,7 +834,7 @@ export class BirthdayMinigame extends Scene {
     }
     
     update(time, delta) {
-        if (this.gameOver) return;
+        if (this.gameOver || !this.gameStarted) return;
         
         // Handle input
         this.handleInput();
@@ -811,32 +850,62 @@ export class BirthdayMinigame extends Scene {
         
         // Spawn rhythm
         this.updateSpawning();
+        
     }
     
     updateScrolling(delta) {
-        const scrollSpeed = this.baseScrollSpeed * this.speedMultiplier * (delta / 16.67);
+        if (!this.scrollingObjects) return;
+        
+        // `delta` is provided in **milliseconds**.  Our `baseScrollSpeed` is
+        // expressed in **pixels per second**, so we have to convert the frame
+        // delta to seconds before applying it.  Using the magic number 16.67
+        // (the ms of a 60 fps frame) accidentally scaled the speed ~60×,
+        // causing objects to zip across the screen in just a few frames and
+        // appear to be invisible.  We convert properly by dividing by 1000.
+
+        const scrollSpeed = this.baseScrollSpeed * this.speedMultiplier * (delta / 1000);
         
         this.scrollingObjects.children.entries.forEach(obj => {
-            obj.x -= scrollSpeed;
-            
-            // Remove if off screen
-            if (obj.x < -100) {
-                obj.destroy();
+            if (obj && obj.active) {
+                obj.x -= scrollSpeed;
+                
+                // Ensure visibility
+                if (obj.visible === false) {
+                    obj.setVisible(true);
+                }
+                
+                // Remove if off screen
+                if (obj.x < -100) {
+                    // Check if it was a parcel that wasn't picked up
+                    if (obj.isParcel && !this.isCarrying) {
+                        this.missParcel();
+                    }
+                    this.scrollingObjects.remove(obj);
+                    obj.destroy();
+                }
             }
         });
     }
     
     checkCollisions() {
+        if (!this.scrollingObjects || !this.playerContainer) return;
+        
         const playerLane = this.currentLane;
-        const collisionX = this.playerX;
+        // Use the *actual* x-position of the player container so that
+        // collisions line-up with what the player sees on screen. Using the
+        // initial fixed `playerX` value caused a perceptible delay when the
+        // player moved horizontally or dashed.
+        const collisionX = this.playerContainer?.x ?? this.playerX;
         const collisionThreshold = 50;
         
         this.scrollingObjects.children.entries.forEach(obj => {
-            if (Math.abs(obj.x - collisionX) < collisionThreshold) {
+            if (obj && obj.active && Math.abs(obj.x - collisionX) < collisionThreshold) {
                 if (obj.lane === playerLane) {
-                    if (obj.isParcel && !this.isCarrying) {
+                    if (obj.isParcel && !this.isCarrying && !obj.pickedUp) {
+                        obj.pickedUp = true;
                         this.pickupParcel(obj);
-                    } else if (obj.isObstacle) {
+                    } else if (obj.isObstacle && !obj.hit) {
+                        obj.hit = true;
                         this.hitObstacle(obj);
                     }
                 } else if (Math.abs(obj.x - collisionX) < 30) {
@@ -849,8 +918,8 @@ export class BirthdayMinigame extends Scene {
             }
         });
         
-        // Check delivery zone
-        if (this.isCarrying && this.playerContainer.x > 800) {
+        // Check delivery zone  
+        if (this.isCarrying && this.playerContainer.x > 900) {
             const timeCarried = this.time.now - this.pickupTime;
             if (timeCarried < this.perfectWindow) {
                 this.makeDelivery('perfect');
@@ -891,8 +960,9 @@ export class BirthdayMinigame extends Scene {
             // Spawn pattern
             const pattern = Phaser.Math.Between(0, 100);
             if (pattern < 30) {
-                // Obstacle
-                this.spawnObstacle();
+                // Obstacle - random type (including cakes)
+                const obstacleType = Phaser.Math.Between(0, 3);
+                this.spawnObstacle(obstacleType);
             } else if (pattern < 60 && !this.isCarrying) {
                 // Parcel
                 this.spawnParcel();
@@ -901,12 +971,91 @@ export class BirthdayMinigame extends Scene {
     }
     
     handleInput() {
-        // Simple up/down lane switching
+        // Lane switching (up/down)
         if ((Phaser.Input.Keyboard.JustDown(this.cursors.up) || Phaser.Input.Keyboard.JustDown(this.wasd.W)) && !this.isChangingLanes) {
             this.changeLane(-1); // Move up
         } else if ((Phaser.Input.Keyboard.JustDown(this.cursors.down) || Phaser.Input.Keyboard.JustDown(this.wasd.S)) && !this.isChangingLanes) {
             this.changeLane(1); // Move down
         }
+        
+        // Horizontal movement (left/right)
+        const moveSpeed = 5;
+        if (this.cursors.left.isDown || this.wasd.A.isDown) {
+            // Move left, but don't go off screen
+            this.playerContainer.x = Math.max(50, this.playerContainer.x - moveSpeed);
+        } else if (this.cursors.right.isDown || this.wasd.D.isDown) {
+            // Move right, but don't go past delivery zone
+            this.playerContainer.x = Math.min(924, this.playerContainer.x + moveSpeed);
+        }
+        
+        // Dash mechanic
+        if (Phaser.Input.Keyboard.JustDown(this.spaceKey) && this.canDash && !this.isChangingLanes) {
+            this.performDash();
+        }
+    }
+    
+    performDash() {
+        if (!this.canDash) return;
+        
+        this.canDash = false;
+        
+        // Visual dash effect
+        const dashGhost = this.add.rectangle(
+            this.playerContainer.x, 
+            this.playerContainer.y, 
+            40, 50, 
+            0xFFD700, 0.5
+        );
+        
+        // Dash forward
+        this.tweens.add({
+            targets: this.playerContainer,
+            x: Math.min(924, this.playerContainer.x + 200),
+            duration: 300,
+            ease: 'Power3.Out'
+        });
+        
+        // Fade out ghost
+        this.tweens.add({
+            targets: dashGhost,
+            alpha: 0,
+            scaleX: 2,
+            duration: 500,
+            onComplete: () => dashGhost.destroy()
+        });
+        
+        // Dash particles
+        for (let i = 0; i < 5; i++) {
+            const particle = this.add.circle(
+                this.playerContainer.x - i * 20,
+                this.playerContainer.y,
+                3,
+                0xFFFFFF
+            );
+            
+            this.tweens.add({
+                targets: particle,
+                alpha: 0,
+                x: particle.x - 50,
+                duration: 500,
+                delay: i * 50,
+                onComplete: () => particle.destroy()
+            });
+        }
+        
+        // Cooldown timer
+        this.time.delayedCall(this.dashCooldown, () => {
+            this.canDash = true;
+            // Visual indicator that dash is ready
+            this.tweens.add({
+                targets: this.playerContainer,
+                scaleX: 1.2,
+                scaleY: 1.2,
+                duration: 100,
+                yoyo: true,
+                ease: 'Power1'
+            });
+        });
     }
     
     changeLane(direction) {
@@ -949,7 +1098,7 @@ export class BirthdayMinigame extends Scene {
         this.dropParcel();
         
         // Check if it's a poop obstacle
-        if (obstacle.obstacleType === '💩') {
+        if (obstacle.isPoop) {
             // Play fart sound for poop
             AudioManager.getInstance().playSFX('fart');
             
@@ -1024,21 +1173,34 @@ export class BirthdayMinigame extends Scene {
     pickupParcel(parcel) {
         this.isCarrying = true;
         this.carriedParcel = parcel;
+        this.carriedType = parcel.itemType;
+        this.carriedPoints = parcel.points;
+        this.pickupTime = this.time.now;
         parcel.destroy();
         
         // Reset timer when picking up
         this.deliveryTimer = this.maxDeliveryTime;
         
-        // Show carrying indicator - dynamite with urgency!
+        // Show carrying indicator based on item type
         const indicatorContainer = this.add.container(0, -40);
         
         // Background glow
-        const glow = this.add.circle(0, 0, 20, 0xFFD700, 0.5);
+        const glowColor = this.carriedType === 'shakeshake' ? 0xFFD700 : 0x00FF00;
+        const glow = this.add.circle(0, 0, 20, glowColor, 0.5);
         indicatorContainer.add(glow);
         
-        // Dynamite emoji
-        const indicator = this.add.text(0, 0, '🧨', {
-            fontSize: '24px'
+        // Show appropriate icon
+        let indicatorText = '';
+        if (this.carriedType === 'shakeshake') {
+            indicatorText = 'S²';
+        } else {
+            indicatorText = '🥤';
+        }
+        
+        const indicator = this.add.text(0, 0, indicatorText, {
+            fontSize: this.carriedType === 'shakeshake' ? '18px' : '24px',
+            fontFamily: this.carriedType === 'shakeshake' ? 'Arial Black' : 'Arial',
+            color: this.carriedType === 'shakeshake' ? '#FFD700' : '#FFFFFF'
         }).setOrigin(0.5);
         indicatorContainer.add(indicator);
         
@@ -1160,7 +1322,7 @@ export class BirthdayMinigame extends Scene {
         // Only count if actually carrying a parcel
         if (!this.isCarrying) return;
         
-        this.score++;
+        this.deliveries++;
         this.scoreText.setText(`Deliveries: ${this.deliveries}/9`);
         
         // Calculate time left for speed bonus
@@ -1178,7 +1340,7 @@ export class BirthdayMinigame extends Scene {
         
         // Calculate points with enhanced system
         this.combo++;
-        const basePoints = 100;
+        const basePoints = this.carriedPoints || 100; // Use carried item's points
         const timeBonus = Math.floor(timeLeft * 20); // 20 points per second left
         const comboBonus = Math.pow(this.combo, 1.5) * 50; // Exponential combo growth
         const perfectBonus = this.perfectDeliveries > 2 ? this.perfectDeliveries * 100 : 0;
@@ -1227,12 +1389,18 @@ export class BirthdayMinigame extends Scene {
         this.speedMultiplier += 0.05;
         this.difficultyLevel = Math.min(5, Math.floor(this.score / 2) + 1);
         
-        // Success effect with speed indicator
-        let deliveryMessage = speedBonusMultiplier > 1 ? `FAST DELIVERY! x${speedBonusMultiplier}` : '+1 SHAKE SHAKE!';
-        if (this.score === 9) {
-            deliveryMessage = '9TH SHAKE SHAKE! 🎉';
-        } else if (this.score > 5) {
-            deliveryMessage = `${this.score}/9 SHAKE SHAKES!`;
+        // Success effect with speed indicator and item type
+        let itemName = this.carriedType === 'shakeshake' ? 'S² SHAKE' : 'PROTEIN SHAKE';
+        let deliveryMessage = speedBonusMultiplier > 1 ? `FAST ${itemName}! x${speedBonusMultiplier}` : `+1 ${itemName}!`;
+        
+        if (this.carriedType === 'shakeshake') {
+            deliveryMessage = '✨ SPECIAL S² SHAKE! ✨';
+        }
+        
+        if (this.deliveries === 9) {
+            deliveryMessage = '9TH DELIVERY! 🎉';
+        } else if (this.deliveries > 5) {
+            deliveryMessage = `${this.deliveries}/9 DELIVERIES!`;
         }
         
         const successText = this.add.text(512, 200, deliveryMessage, {
@@ -1261,7 +1429,7 @@ export class BirthdayMinigame extends Scene {
         }
         
         // Check for birthday surprise - special 9th birthday at 9 deliveries!
-        if (this.score >= 9) {
+        if (this.deliveries >= 9) {
             this.showBirthdaySurprise();
         } else {
             // Spawn a new parcel and respawn
@@ -1364,19 +1532,18 @@ export class BirthdayMinigame extends Scene {
     
     respawn() {
         // Reset position
-        this.currentLane = 2;
-        const newY = 300 + this.currentLane * this.laneHeight + this.laneHeight / 2;
-        this.playerContainer.setPosition(400, newY);
-        
-        // Reset velocity to prevent stuck movement
-        this.playerContainer.body.velocity.x = 0;
-        this.playerContainer.body.velocity.y = 0;
+        this.currentLane = 1; // Middle lane
+        const newY = this.lanePositions[this.currentLane];
+        this.playerContainer.setPosition(this.playerX, newY);
         
         // Reset timer
         this.deliveryTimer = this.maxDeliveryTime;
         
-        // Grace period
-        this.setInvulnerable(1000);
+        // Simple invulnerability period
+        this.playerContainer.alpha = 0.5;
+        this.time.delayedCall(1000, () => {
+            this.playerContainer.alpha = 1;
+        });
     }
     
     // Removed collectPowerUp - focusing on core mechanics
@@ -1655,7 +1822,7 @@ export class BirthdayMinigame extends Scene {
             strokeThickness: 4
         }).setOrigin(0.5).setScrollFactor(0);
         
-        const finalScore = this.add.text(512, 220, `Deliveries: ${this.score}/9`, {
+        const finalScore = this.add.text(512, 220, `Deliveries: ${this.deliveries}/9`, {
             fontSize: '32px',
             color: '#FFFFFF',
             fontFamily: 'Arial Black'
@@ -1728,11 +1895,13 @@ export class BirthdayMinigame extends Scene {
     saveToLeaderboard() {
         const entry = {
             score: this.totalPoints,
-            deliveries: this.score,
+            deliveries: this.deliveries,
             combo: this.combo,
             date: new Date().toLocaleDateString()
         };
         
+        // Load existing leaderboard first
+        this.leaderboard = this.loadLeaderboard();
         this.leaderboard.push(entry);
         this.leaderboard.sort((a, b) => b.score - a.score);
         this.leaderboard = this.leaderboard.slice(0, 10); // Keep top 10
@@ -1819,5 +1988,231 @@ export class BirthdayMinigame extends Scene {
             this.score += 50 * this.nearMissStreak;
             this.cameras.main.flash(100, 255, 255, 0);
         }
+    }
+    
+    pickupDynamite(dynamite) {
+        if (this.hasDynamite) return; // Already have one
+        
+        this.hasDynamite = true;
+        dynamite.destroy();
+        
+        // Show dynamite indicator on player
+        const dynamiteIndicator = this.add.container(20, -30);
+        
+        const bg = this.add.circle(0, 0, 15, 0xFF0000, 0.3);
+        const icon = this.add.text(0, 0, '🧨', {
+            fontSize: '20px'
+        }).setOrigin(0.5);
+        
+        dynamiteIndicator.add([bg, icon]);
+        this.playerContainer.add(dynamiteIndicator);
+        this.dynamiteIndicator = dynamiteIndicator;
+        
+        // Flash effect
+        this.tweens.add({
+            targets: bg,
+            alpha: { from: 0.3, to: 0.7 },
+            duration: 400,
+            repeat: -1,
+            yoyo: true
+        });
+        
+        // Feedback
+        const pickupText = this.add.text(this.playerContainer.x, this.playerContainer.y - 80, 'DYNAMITE!', {
+            fontSize: '24px',
+            color: '#FF0000',
+            fontFamily: 'Arial Black',
+            stroke: '#000000',
+            strokeThickness: 3
+        }).setOrigin(0.5);
+        
+        this.tweens.add({
+            targets: pickupText,
+            y: '-=20',
+            alpha: 0,
+            duration: 800,
+            onComplete: () => pickupText.destroy()
+        });
+        
+        AudioManager.getInstance().playSFX('pickup');
+    }
+    
+    blowUpCake(cake) {
+        // Use dynamite on cake
+        this.hasDynamite = false;
+        if (this.dynamiteIndicator) {
+            this.dynamiteIndicator.destroy();
+            this.dynamiteIndicator = null;
+        }
+        
+        // Create explosion effect
+        const explosion = this.add.container(cake.x, cake.y);
+        
+        // Explosion circles
+        for (let i = 0; i < 3; i++) {
+            const circle = this.add.circle(0, 0, 20 + i * 10, 0xFF6600, 0.8 - i * 0.2);
+            explosion.add(circle);
+            
+            this.tweens.add({
+                targets: circle,
+                scale: 3,
+                alpha: 0,
+                duration: 500 + i * 100,
+                onComplete: () => circle.destroy()
+            });
+        }
+        
+        // Cake pieces flying
+        for (let i = 0; i < 8; i++) {
+            const angle = (i / 8) * Math.PI * 2;
+            const piece = this.add.text(0, 0, '🍰', {
+                fontSize: '20px'
+            }).setOrigin(0.5);
+            explosion.add(piece);
+            
+            this.tweens.add({
+                targets: piece,
+                x: Math.cos(angle) * 100,
+                y: Math.sin(angle) * 100,
+                angle: 360,
+                alpha: 0,
+                duration: 800,
+                onComplete: () => piece.destroy()
+            });
+        }
+        
+        // Bonus points!
+        const bonusPoints = 250;
+        this.totalPoints += bonusPoints;
+        
+        const bonusText = this.add.text(cake.x, cake.y, `+${bonusPoints} CAKE BONUS!`, {
+            fontSize: '28px',
+            color: '#FFD700',
+            fontFamily: 'Impact',
+            stroke: '#000000',
+            strokeThickness: 3
+        }).setOrigin(0.5);
+        
+        this.tweens.add({
+            targets: bonusText,
+            y: cake.y - 60,
+            scale: 1.5,
+            alpha: 0,
+            duration: 1000,
+            onComplete: () => bonusText.destroy()
+        });
+        
+        // Remove the cake
+        this.scrollingObjects.remove(cake);
+        cake.destroy();
+        
+        // Effects
+        this.cameras.main.shake(200, 0.02);
+        this.cameras.main.flash(200, 255, 100, 0);
+        AudioManager.getInstance().playSFX('pickup');
+        
+        // Clean up explosion container after effects
+        this.time.delayedCall(1000, () => explosion.destroy());
+    }
+    
+    createGameplayIndicators() {
+        // Create tutorial arrows and hints
+        const tutorialContainer = this.add.container(512, 600);
+        
+        // Background for tutorial
+        const tutorialBg = this.add.graphics();
+        tutorialBg.fillStyle(0x000000, 0.7);
+        tutorialBg.fillRoundedRect(-300, -40, 600, 80, 10);
+        tutorialContainer.add(tutorialBg);
+        
+        // Gameplay flow visualization
+        const flowText = this.add.text(-250, 0, '1. Pick up 🧨', {
+            fontSize: '20px',
+            color: '#FFD700',
+            fontFamily: 'Arial Black',
+            stroke: '#000000',
+            strokeThickness: 2
+        }).setOrigin(0, 0.5);
+        tutorialContainer.add(flowText);
+        
+        const arrow1 = this.add.text(-100, 0, '→', {
+            fontSize: '24px',
+            color: '#FFFFFF'
+        }).setOrigin(0.5);
+        tutorialContainer.add(arrow1);
+        
+        const flowText2 = this.add.text(-50, 0, '2. Avoid 💩', {
+            fontSize: '20px',
+            color: '#FF6B6B',
+            fontFamily: 'Arial Black',
+            stroke: '#000000',
+            strokeThickness: 2
+        }).setOrigin(0, 0.5);
+        tutorialContainer.add(flowText2);
+        
+        const arrow2 = this.add.text(80, 0, '→', {
+            fontSize: '24px',
+            color: '#FFFFFF'
+        }).setOrigin(0.5);
+        tutorialContainer.add(arrow2);
+        
+        const flowText3 = this.add.text(130, 0, '3. Deliver! 🎯', {
+            fontSize: '20px',
+            color: '#00FF00',
+            fontFamily: 'Arial Black',
+            stroke: '#000000',
+            strokeThickness: 2
+        }).setOrigin(0, 0.5);
+        tutorialContainer.add(flowText3);
+        
+        // Fade out tutorial after 10 seconds
+        this.time.delayedCall(10000, () => {
+            this.tweens.add({
+                targets: tutorialContainer,
+                alpha: 0,
+                duration: 1000,
+                onComplete: () => tutorialContainer.destroy()
+            });
+        });
+        
+        // Add combo indicator
+        const comboIndicator = this.add.container(850, 200);
+        const comboBg = this.add.graphics();
+        comboBg.fillStyle(0x000000, 0.7);
+        comboBg.fillRoundedRect(-80, -30, 160, 60, 10);
+        comboIndicator.add(comboBg);
+        
+        const comboHint = this.add.text(0, -10, 'COMBO TIP:', {
+            fontSize: '16px',
+            color: '#FFD700',
+            fontFamily: 'Arial Black',
+            stroke: '#000000',
+            strokeThickness: 2
+        }).setOrigin(0.5);
+        comboIndicator.add(comboHint);
+        
+        const comboTip = this.add.text(0, 10, 'Chain deliveries!', {
+            fontSize: '14px',
+            color: '#FFFFFF',
+            fontFamily: 'Arial'
+        }).setOrigin(0.5);
+        comboIndicator.add(comboTip);
+        
+        // Pulse the combo indicator
+        this.tweens.add({
+            targets: comboIndicator,
+            scale: { from: 0.9, to: 1.1 },
+            duration: 1000,
+            yoyo: true,
+            repeat: 5,
+            onComplete: () => {
+                this.tweens.add({
+                    targets: comboIndicator,
+                    alpha: 0,
+                    duration: 500,
+                    onComplete: () => comboIndicator.destroy()
+                });
+            }
+        });
     }
 }
