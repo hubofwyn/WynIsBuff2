@@ -9,8 +9,8 @@ export const LevelData = {
         name: 'First Steps',
         description: 'Learn basic movement and single jumps',
         
-        // Player starting position
-        playerStart: { x: 100, y: 600 },
+        // Player starting position - adjusted for larger sprite
+        playerStart: { x: 100, y: 580 },
         
         // Ground configuration
         ground: { width: 1024, height: 50, y: 700 },

@@ -69,9 +69,9 @@ export class PlayerController {
         try {
             console.log('[PlayerController] Creating player...');
             
-            // Player dimensions
-            const playerWidth = 32;
-            const playerHeight = 32;
+            // Player dimensions - doubled for better visibility
+            const playerWidth = 64;
+            const playerHeight = 64;
             
             // Create a visual representation of the player
             if (this.scene.textures.exists(this.textureKey)) {
