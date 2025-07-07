@@ -4,6 +4,7 @@ import { ParticleManager, CameraManager, ColorManager } from '@features/effects'
 import { LevelManager, PhysicsManager, EventSystem, InputManager, UIManager, GameStateManager, AudioManager } from '@features/core';
 import { EventNames } from '../constants/EventNames';
 import { SceneKeys } from '../constants/SceneKeys.js';
+import { AudioAssets } from '../constants/Assets.js';
 
 export class Game extends Scene {
     constructor() {
@@ -44,8 +45,8 @@ export class Game extends Scene {
             console.log('[Game] Create method started');
             // Play in-level music
             const audio = AudioManager.getInstance();
-            audio.stopMusic('proteinPixelAnthem');
-            audio.playMusic('hyperBuffBlitz');
+            audio.stopMusic(AudioAssets.PROTEIN_PIXEL_ANTHEM);
+            audio.playMusic(AudioAssets.HYPER_BUFF_BLITZ);
         
         try {
             // Initialize event system
@@ -53,25 +54,26 @@ export class Game extends Scene {
             this.eventSystem.setDebugMode(true);
             
             // Initialize game state manager
-            this.gameStateManager = new GameStateManager();
+            this.gameStateManager = GameStateManager.getInstance();
             
             // Set up event listeners
             this.setupEventListeners();
             
             // Initialize input manager
-            this.inputManager = new InputManager(this, this.eventSystem);
-            this.inputManager.init();
+            this.inputManager = InputManager.getInstance();
+            this.inputManager.init(this, this.eventSystem);
             
             // Initialize physics with classic action game feel (like Mario/Sonic)
-            this.physicsManager = new PhysicsManager(this, this.eventSystem);
-            const physicsInitialized = await this.physicsManager.initialize(0.0, 35.0);
+            this.physicsManager = PhysicsManager.getInstance();
+            const physicsInitialized = await this.physicsManager.init(this, this.eventSystem, 0.0, 35.0);
             
             if (!physicsInitialized) {
                 throw new Error('Failed to initialize physics');
             }
             
             // Initialize UI Manager
-            this.uiManager = new UIManager(this, this.eventSystem);
+            this.uiManager = UIManager.getInstance();
+            this.uiManager.init(this, this.eventSystem);
             
             // Create UI elements
             this.createUIElements();

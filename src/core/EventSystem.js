@@ -1,46 +1,32 @@
+import { EventBus } from './EventBus.js';
+
+/**
+ * EventSystem provides a debug-enabled wrapper around EventBus
+ * for game-wide event handling with consistent API.
+ */
 export class EventSystem {
     constructor() {
-        this.events = new Map();
+        this.eventBus = EventBus;
         this.debugMode = false;
     }
     
     on(event, callback) {
-        if (!this.events.has(event)) {
-            this.events.set(event, []);
-        }
-        this.events.get(event).push(callback);
-        return () => this.off(event, callback);
+        return this.eventBus.on(event, callback);
     }
     
     off(event, callback) {
-        if (!this.events.has(event)) return;
-        const callbacks = this.events.get(event);
-        this.events.set(event, callbacks.filter(cb => cb !== callback));
-        if (this.events.get(event).length === 0) {
-            this.events.delete(event);
-        }
+        this.eventBus.off(event, callback);
     }
     
     emit(event, data) {
         if (this.debugMode) {
             console.log(`[EventSystem] Event emitted: ${event}`, data);
         }
-        if (!this.events.has(event)) return;
-        this.events.get(event).forEach(callback => {
-            try {
-                callback(data);
-            } catch (error) {
-                console.error(`[EventSystem] Error in event handler for ${event}:`, error);
-            }
-        });
+        this.eventBus.emit(event, data);
     }
     
     once(event, callback) {
-        const onceCallback = (data) => {
-            this.off(event, onceCallback);
-            callback(data);
-        };
-        return this.on(event, onceCallback);
+        return this.eventBus.once(event, callback);
     }
     
     setDebugMode(enabled) {

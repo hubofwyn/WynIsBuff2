@@ -1,38 +1,39 @@
 import { Howl, Howler } from 'howler';
 // Using the new path alias introduced in Step 2
 import { BaseManager } from './BaseManager.js';
+import { AudioAssets, AudioPaths } from '../constants/Assets.js';
 
 // Background music sources
 const bgmList = {
-    proteinPixelAnthem: 'assets/sounds/opener/protein-pixel-anthem.mp3',
-    hyperBuffBlitz: 'assets/sounds/background/hyper-buff-blitz.mp3'
+    [AudioAssets.PROTEIN_PIXEL_ANTHEM]: AudioPaths.PROTEIN_PIXEL_ANTHEM,
+    [AudioAssets.HYPER_BUFF_BLITZ]: AudioPaths.HYPER_BUFF_BLITZ
 };
 
 // Sound effect sources (multiple variants)
 const sfxList = {
     land: [
-        'assets/sounds/land-effects/land1.mp3',
-        'assets/sounds/land-effects/land2.mp3',
-        'assets/sounds/land-effects/land3.mp3',
-        'assets/sounds/land-effects/land4.mp3'
+        AudioPaths.SFX_LAND1,
+        AudioPaths.SFX_LAND2,
+        AudioPaths.SFX_LAND3,
+        AudioPaths.SFX_LAND4
     ],
     pickup: [
-        'assets/sounds/pickup-effects/pickup1.mp3',
-        'assets/sounds/pickup-effects/pickup2.mp3',
-        'assets/sounds/pickup-effects/pickup3.mp3',
-        'assets/sounds/pickup-effects/pickup4.mp3'
+        AudioPaths.SFX_PICKUP1,
+        AudioPaths.SFX_PICKUP2,
+        AudioPaths.SFX_PICKUP3,
+        AudioPaths.SFX_PICKUP4
     ],
     click: [
-        'assets/sounds/primary-click/click1.mp3',
-        'assets/sounds/primary-click/click2.mp3',
-        'assets/sounds/primary-click/click3.mp3',
-        'assets/sounds/primary-click/click4.mp3'
+        AudioPaths.SFX_CLICK1,
+        AudioPaths.SFX_CLICK2,
+        AudioPaths.SFX_CLICK3,
+        AudioPaths.SFX_CLICK4
     ],
     hover: [
-        'assets/sounds/ui-hover/hover1.mp3',
-        'assets/sounds/ui-hover/hover2.mp3',
-        'assets/sounds/ui-hover/hover3.mp3',
-        'assets/sounds/ui-hover/hover4.mp3'
+        AudioPaths.SFX_HOVER1,
+        AudioPaths.SFX_HOVER2,
+        AudioPaths.SFX_HOVER3,
+        AudioPaths.SFX_HOVER4
     ]
 };
 

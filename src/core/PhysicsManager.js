@@ -1,22 +1,24 @@
 import RAPIER from '@dimforge/rapier2d-compat';
 import { EventNames } from '../constants/EventNames';
 import { PhysicsConfig } from '../constants/PhysicsConfig';
+import { BaseManager } from './BaseManager';
 
 /**
  * PhysicsManager class handles the Rapier physics world and synchronization
  * between physics bodies and sprites.
+ * Follows the singleton pattern via BaseManager.
  */
-export class PhysicsManager {
+export class PhysicsManager extends BaseManager {
     /**
-     * Create a new PhysicsManager
-     * @param {Phaser.Scene} scene - The scene this manager belongs to
-     * @param {EventSystem} eventSystem - The event system for communication
+     * Create PhysicsManager as a singleton
      */
-    constructor(scene, eventSystem) {
-        this.scene = scene;
-        this.eventSystem = eventSystem;
+    constructor() {
+        super();
+        if (this.isInitialized()) return;
+        
+        this.scene = null;
+        this.eventSystem = null;
         this.world = null;
-        this.initialized = false;
         this.bodyToSprite = new Map();
         
         // Collision event handlers
@@ -34,7 +36,9 @@ export class PhysicsManager {
      * @param {number} [gravityX=PhysicsConfig.gravityX] - Horizontal gravity
      * @param {number} [gravityY=PhysicsConfig.gravityY] - Vertical gravity
      */
-    async initialize(gravityX = PhysicsConfig.gravityX, gravityY = PhysicsConfig.gravityY) {
+    async init(scene, eventSystem, gravityX = PhysicsConfig.gravityX, gravityY = PhysicsConfig.gravityY) {
+        this.scene = scene;
+        this.eventSystem = eventSystem;
         try {
             console.log('[PhysicsManager] Initializing Rapier...');
             await RAPIER.init();
@@ -47,7 +51,7 @@ export class PhysicsManager {
             // Set up collision event handling
             this.setupCollisionEvents();
             
-            this.initialized = true;
+            this._initialized = true;
             
             if (this.eventSystem) {
                 this.eventSystem.emit(EventNames.GAME_INIT, {
@@ -176,7 +180,7 @@ export class PhysicsManager {
      * Step the physics simulation and update sprites
      */
     update() {
-        if (!this.initialized || !this.world) {
+        if (!this._initialized || !this.world) {
             return;
         }
         
@@ -226,9 +230,7 @@ export class PhysicsManager {
      * Check if physics is initialized
      * @returns {boolean} True if physics is initialized
      */
-    isInitialized() {
-        return this.initialized;
-    }
+    // Inherited from BaseManager
     
     /**
      * Get the body-to-sprite mapping
@@ -255,6 +257,10 @@ export class PhysicsManager {
             this.world = null;
         }
         
-        this.initialized = false;
+        this.scene = null;
+        this.eventSystem = null;
+        
+        // Call parent destroy
+        super.destroy();
     }
 }

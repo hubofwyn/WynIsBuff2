@@ -52,6 +52,106 @@
         "path": "images/ui/interface/arrow_4.png",
         "description": "UI arrow element 4"
       },
+      "squareLeft1": {
+        "type": "image",
+        "path": "images/ui/interface/square_left_1.png",
+        "description": "UI square left element 1"
+      },
+      "squareLeft2": {
+        "type": "image",
+        "path": "images/ui/interface/square_left_2.png",
+        "description": "UI square left element 2"
+      },
+      "squareLeft2_1": {
+        "type": "image",
+        "path": "images/ui/interface/square_left_2_1.png",
+        "description": "UI square left element 2-1"
+      },
+      "squareLeft2_2": {
+        "type": "image",
+        "path": "images/ui/interface/square_left_2_2.png",
+        "description": "UI square left element 2-2"
+      },
+      "squareLeft2_3": {
+        "type": "image",
+        "path": "images/ui/interface/square_left_2_3.png",
+        "description": "UI square left element 2-3"
+      },
+      "squareLeft2_4": {
+        "type": "image",
+        "path": "images/ui/interface/square_left_2_4.png",
+        "description": "UI square left element 2-4"
+      },
+      "squareLeft3": {
+        "type": "image",
+        "path": "images/ui/interface/square_left_3.png",
+        "description": "UI square left element 3"
+      },
+      "squareLeft4": {
+        "type": "image",
+        "path": "images/ui/interface/square_left_4.png",
+        "description": "UI square left element 4"
+      },
+      "squareRight1": {
+        "type": "image",
+        "path": "images/ui/interface/square_right_1.png",
+        "description": "UI square right element 1"
+      },
+      "squareRight2": {
+        "type": "image",
+        "path": "images/ui/interface/square_right_2.png",
+        "description": "UI square right element 2"
+      },
+      "squareRight2_1": {
+        "type": "image",
+        "path": "images/ui/interface/square_right_2_1.png",
+        "description": "UI square right element 2-1"
+      },
+      "squareRight2_2": {
+        "type": "image",
+        "path": "images/ui/interface/square_right_2_2.png",
+        "description": "UI square right element 2-2"
+      },
+      "squareRight2_3": {
+        "type": "image",
+        "path": "images/ui/interface/square_right_2_3.png",
+        "description": "UI square right element 2-3"
+      },
+      "squareRight2_4": {
+        "type": "image",
+        "path": "images/ui/interface/square_right_2_4.png",
+        "description": "UI square right element 2-4"
+      },
+      "squareRight3": {
+        "type": "image",
+        "path": "images/ui/interface/square_right_3.png",
+        "description": "UI square right element 3"
+      },
+      "squareRight4": {
+        "type": "image",
+        "path": "images/ui/interface/square_right_4.png",
+        "description": "UI square right element 4"
+      },
+      "squareUpDown1": {
+        "type": "image",
+        "path": "images/ui/interface/square_up_down_1.png",
+        "description": "UI square up/down element 1"
+      },
+      "squareUpDown2": {
+        "type": "image",
+        "path": "images/ui/interface/square_up_down_2.png",
+        "description": "UI square up/down element 2"
+      },
+      "squareUpDown3": {
+        "type": "image",
+        "path": "images/ui/interface/square_up_down_3.png",
+        "description": "UI square up/down element 3"
+      },
+      "squareUpDown4": {
+        "type": "image",
+        "path": "images/ui/interface/square_up_down_4.png",
+        "description": "UI square up/down element 4"
+      },
       "coin": {
         "type": "image",
         "path": "spritesheets/items/coin.png",
@@ -101,6 +201,11 @@
         "type": "image", 
         "path": "images/characters/wyn_sprite.png",
         "description": "Wyn character sprite"
+      },
+      "theWyn": {
+        "type": "image",
+        "path": "images/characters/thewyn.png",
+        "description": "The Wyn character image"
       },
       "buffBg": {
         "type": "image",

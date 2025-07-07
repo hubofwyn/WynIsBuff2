@@ -2,7 +2,7 @@ import { Scene } from 'phaser';
 import { GameStateManager, AudioManager } from '@features/core';
 import { UIConfig } from '../constants/UIConfig';
 import { SceneKeys } from '../constants/SceneKeys.js';
-import { ImageAssets } from '../constants/Assets.js';
+import { ImageAssets, AudioAssets } from '../constants/Assets.js';
 
 export class MainMenu extends Scene {
     constructor() {
@@ -16,7 +16,7 @@ export class MainMenu extends Scene {
         // Initialize game state manager
         this.gameStateManager = new GameStateManager();
         // Play title screen music
-        AudioManager.getInstance().playMusic('proteinPixelAnthem');
+        AudioManager.getInstance().playMusic(AudioAssets.PROTEIN_PIXEL_ANTHEM);
         // Fade in camera
         this.cameras.main.fadeIn(UIConfig.animations.fadeInDuration);
         
