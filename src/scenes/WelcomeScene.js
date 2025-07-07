@@ -2,7 +2,7 @@ import { Scene } from 'phaser';
 import { UIConfig } from '../constants/UIConfig';
 import { AudioManager } from '@features/core';
 import { SceneKeys } from '../constants/SceneKeys.js';
-import { ImageAssets } from '../constants/Assets.js';
+import { ImageAssets, AudioAssets } from '../constants/Assets.js';
 
 /**
  * WelcomeScene: shows the game title and prompts player to start.
@@ -16,7 +16,7 @@ export class WelcomeScene extends Scene {
         const { width, height } = this.cameras.main;
         // Play title screen music
         const audio = AudioManager.getInstance();
-        audio.playMusic('proteinPixelAnthem');
+        audio.playMusic(AudioAssets.PROTEIN_PIXEL_ANTHEM);
         // Background
         if (this.textures.exists(ImageAssets.BUFF_BG)) {
             this.add.image(0, 0, ImageAssets.BUFF_BG).setOrigin(0, 0).setScrollFactor(0);

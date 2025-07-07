@@ -1,20 +1,35 @@
 import { EventNames } from '../constants/EventNames';
+import { BaseManager } from './BaseManager';
 
 /**
  * UIManager class handles all UI-related functionality including
  * text creation, button handling, positioning, and event-based updates.
+ * Follows the singleton pattern via BaseManager.
  */
-export class UIManager {
+export class UIManager extends BaseManager {
     /**
-     * Create a new UIManager
+     * Create UIManager as a singleton
+     */
+    constructor() {
+        super();
+        if (this.isInitialized()) return;
+        
+        this.scene = null;
+        this.events = null;
+        this.elements = new Map();
+        this.groups = new Map();
+        this.screenWidth = 0;
+        this.screenHeight = 0;
+    }
+    
+    /**
+     * Initialize the UIManager
      * @param {Phaser.Scene} scene - The scene this manager belongs to
      * @param {EventSystem} eventSystem - The event system for communication
      */
-    constructor(scene, eventSystem) {
+    init(scene, eventSystem) {
         this.scene = scene;
         this.events = eventSystem;
-        this.elements = new Map();
-        this.groups = new Map();
         
         // Store screen dimensions for responsive positioning
         this.screenWidth = this.scene.cameras.main.width;
@@ -28,6 +43,9 @@ export class UIManager {
         
         // Listen for resize events to update responsive positioning
         this.scene.scale.on('resize', this.handleResize, this);
+        
+        // Mark as initialized
+        this._initialized = true;
     }
     
     /**
@@ -294,12 +312,29 @@ export class UIManager {
      * Clean up event listeners when scene is shut down
      */
     shutdown() {
+        this.destroy();
+    }
+    
+    /**
+     * Clean up resources
+     */
+    destroy() {
         if (this.events) {
             this.events.off(EventNames.UI_UPDATE, this.handleUIUpdate);
             this.events.off(EventNames.PLAYER_JUMP, this.handlePlayerJump);
         }
         
-        this.scene.scale.off('resize', this.handleResize, this);
+        if (this.scene && this.scene.scale) {
+            this.scene.scale.off('resize', this.handleResize, this);
+        }
+        
+        this.elements.clear();
+        this.groups.clear();
+        this.scene = null;
+        this.events = null;
+        
+        // Call parent destroy
+        super.destroy();
     }
     /**
      * Apply or remove high-contrast UI styling

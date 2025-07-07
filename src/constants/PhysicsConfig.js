@@ -1,43 +1,43 @@
 /**
- * PhysicsConfig: Classic action game physics settings (Mario/Sonic style)
- * Balanced for natural, predictable movement with good game feel
+ * PhysicsConfig: Action-packed physics settings for buff gameplay
+ * Enhanced for dynamic, responsive movement with satisfying feel
  */
 export const PhysicsConfig = {
     /** Default horizontal gravity */
     gravityX: 0.0,
-    /** Default vertical gravity (classic platformer strength) */
-    gravityY: 35.0,
+    /** Default vertical gravity (increased for snappier jumps) */
+    gravityY: 45.0,
     
     /** Physics world timestep settings for smooth, consistent physics */
     timeStep: 1.0 / 60.0,
-    maxVelIterations: 6,
-    maxPosIterations: 2,
+    maxVelIterations: 8,
+    maxPosIterations: 3,
     
-    /** Player physics material properties - classic platformer feel */
+    /** Player physics material properties - buff athletic feel */
     player: {
-        density: 1.5,        // Moderate weight for natural movement
-        friction: 0.2,       // Some friction for control
+        density: 1.2,        // Slightly lighter for more agility
+        friction: 0.3,       // Increased friction for better control
         restitution: 0.0,    // No bounce for predictable landings
-        linearDamping: 0.02, // Minimal damping for smooth movement
-        angularDamping: 5.0  // Prevent unwanted rotation
+        linearDamping: 0.01, // Less damping for momentum preservation
+        angularDamping: 10.0 // Strong rotation prevention
     },
     
     /** Ground/platform physics properties */
     ground: {
         density: 0.0,        // Static bodies
-        friction: 0.6,       // Balanced grip
+        friction: 0.8,       // Higher grip for athletic movements
         restitution: 0.0     // No bounce on platforms
     },
     
-    /** Classic action game physics constants */
+    /** Buff action game physics constants */
     classic: {
-        maxWalkSpeed: 35,    // Maximum walking speed
-        maxRunSpeed: 50,     // Maximum running speed
-        acceleration: 0.8,   // Ground acceleration factor
-        airAcceleration: 0.4, // Air control factor
-        friction: 0.7,       // Ground friction when stopping
-        airFriction: 0.98,   // Air resistance
-        jumpHeight: 55,      // Standard jump force
+        maxWalkSpeed: 45,    // Faster walking (buff characters move with purpose)
+        maxRunSpeed: 65,     // Higher max run speed for action
+        acceleration: 1.2,   // Snappier acceleration
+        airAcceleration: 0.6, // Better air control for skilled play
+        friction: 0.85,      // Quick stops for precise platforming
+        airFriction: 0.99,   // Minimal air resistance
+        jumpHeight: 65,      // Higher base jump for buff characters
         gravityScale: 1.0    // Gravity multiplier
     }
 };

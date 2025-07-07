@@ -1,38 +1,43 @@
 import { Howl, Howler } from 'howler';
 // Using the new path alias introduced in Step 2
 import { BaseManager } from './BaseManager.js';
+import { AudioAssets, AudioPaths } from '../constants/Assets.js';
 
 // Background music sources
 const bgmList = {
-    proteinPixelAnthem: 'assets/sounds/opener/protein-pixel-anthem.mp3',
-    hyperBuffBlitz: 'assets/sounds/background/hyper-buff-blitz.mp3'
+    [AudioAssets.PROTEIN_PIXEL_ANTHEM]: AudioPaths.PROTEIN_PIXEL_ANTHEM,
+    [AudioAssets.HYPER_BUFF_BLITZ]: AudioPaths.HYPER_BUFF_BLITZ,
+    [AudioAssets.BIRTHDAY_SONG]: AudioPaths.BIRTHDAY_SONG
 };
 
 // Sound effect sources (multiple variants)
 const sfxList = {
     land: [
-        'assets/sounds/land-effects/land1.mp3',
-        'assets/sounds/land-effects/land2.mp3',
-        'assets/sounds/land-effects/land3.mp3',
-        'assets/sounds/land-effects/land4.mp3'
+        AudioPaths.SFX_LAND1,
+        AudioPaths.SFX_LAND2,
+        AudioPaths.SFX_LAND3,
+        AudioPaths.SFX_LAND4
     ],
     pickup: [
-        'assets/sounds/pickup-effects/pickup1.mp3',
-        'assets/sounds/pickup-effects/pickup2.mp3',
-        'assets/sounds/pickup-effects/pickup3.mp3',
-        'assets/sounds/pickup-effects/pickup4.mp3'
+        AudioPaths.SFX_PICKUP1,
+        AudioPaths.SFX_PICKUP2,
+        AudioPaths.SFX_PICKUP3,
+        AudioPaths.SFX_PICKUP4
     ],
     click: [
-        'assets/sounds/primary-click/click1.mp3',
-        'assets/sounds/primary-click/click2.mp3',
-        'assets/sounds/primary-click/click3.mp3',
-        'assets/sounds/primary-click/click4.mp3'
+        AudioPaths.SFX_CLICK1,
+        AudioPaths.SFX_CLICK2,
+        AudioPaths.SFX_CLICK3,
+        AudioPaths.SFX_CLICK4
     ],
     hover: [
-        'assets/sounds/ui-hover/hover1.mp3',
-        'assets/sounds/ui-hover/hover2.mp3',
-        'assets/sounds/ui-hover/hover3.mp3',
-        'assets/sounds/ui-hover/hover4.mp3'
+        AudioPaths.SFX_HOVER1,
+        AudioPaths.SFX_HOVER2,
+        AudioPaths.SFX_HOVER3,
+        AudioPaths.SFX_HOVER4
+    ],
+    fart: [
+        AudioPaths.SFX_FART
     ]
 };
 
@@ -87,17 +92,20 @@ export class AudioManager extends BaseManager {
     _initSounds() {
         // Setup background music
         Object.entries(bgmList).forEach(([key, src]) => {
+            console.log(`[AudioManager] Loading music: ${key} from ${src}`);
             this.music[key] = new Howl({
-                src: [src],
+                src: [`assets/${src}`],
                 html5: true,
                 loop: true,
-                volume: this.settings.musicVolume
+                volume: this.settings.musicVolume,
+                onload: () => console.log(`[AudioManager] Successfully loaded: ${key}`),
+                onloaderror: (id, err) => console.error(`[AudioManager] Failed to load ${key}:`, err)
             });
         });
         // Setup sound effects
         Object.entries(sfxList).forEach(([key, list]) => {
             this.sfx[key] = list.map((src) => new Howl({
-                src: [src],
+                src: [`assets/${src}`],
                 volume: this.settings.sfxVolume,
                 preload: true
             }));
@@ -110,8 +118,16 @@ export class AudioManager extends BaseManager {
      */
     playMusic(key) {
         const track = this.music[key];
-        if (track && !track.playing()) {
-            track.play();
+        console.log(`[AudioManager] playMusic called for: ${key}`, track);
+        if (track) {
+            if (!track.playing()) {
+                console.log(`[AudioManager] Starting playback of: ${key}`);
+                track.play();
+            } else {
+                console.log(`[AudioManager] ${key} is already playing`);
+            }
+        } else {
+            console.error(`[AudioManager] Track not found: ${key}`);
         }
     }
 

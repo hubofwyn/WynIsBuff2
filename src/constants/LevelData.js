@@ -15,25 +15,43 @@ export const LevelData = {
         // Ground configuration
         ground: { width: 1024, height: 50, y: 700 },
         
-        // Static platforms - simple ascending platforms requiring single jumps
+        // Static platforms - dynamic layout for action-packed gameplay
         platforms: [
-            { x: 150, y: 650, width: 200, height: 20, color: 0x00AA00 },  // Green - First platform
-            { x: 350, y: 600, width: 200, height: 20, color: 0x00AA00 },  // Green - Second platform
-            { x: 550, y: 550, width: 200, height: 20, color: 0x00AA00 },  // Green - Third platform
-            { x: 750, y: 500, width: 200, height: 20, color: 0x00AA00 },  // Green - Fourth platform
-            { x: 950, y: 450, width: 100, height: 20, color: 0x00AA00 },  // Green - Goal platform
+            // Starting section - basic jumps
+            { x: 200, y: 640, width: 150, height: 20, color: 0x00AA00 },  // First jump
+            { x: 400, y: 580, width: 120, height: 20, color: 0x00AA00 },  // Higher jump
+            
+            // Mid section - requires momentum
+            { x: 600, y: 520, width: 100, height: 20, color: 0x00BB00 },  // Smaller platform
+            { x: 750, y: 460, width: 80, height: 20, color: 0x00CC00 },   // Even smaller
+            
+            // Challenge section - requires skill
+            { x: 900, y: 400, width: 120, height: 20, color: 0x00DD00 },  // Boss platform
+            { x: 1050, y: 350, width: 100, height: 20, color: 0x00FF00 }, // Victory platform
+            
+            // Bonus platforms for collectibles
+            { x: 300, y: 500, width: 60, height: 15, color: 0x44AA44 },   // Optional collectible platform
+            { x: 850, y: 550, width: 60, height: 15, color: 0x44AA44 },   // Another optional
         ],
         
         // No moving platforms in level 1
         movingPlatforms: [],
         
-        // Simple collectibles along the path
+        // Collectibles placed to encourage exploration and skillful jumping
         collectibles: [
-            { x: 150, y: 620, type: 'protein', value: 10 },
-            { x: 350, y: 570, type: 'protein', value: 10 },
-            { x: 550, y: 520, type: 'protein', value: 10 },
-            { x: 750, y: 470, type: 'protein', value: 10 },
-            { x: 950, y: 420, type: 'dumbbell', value: 50 },  // Special collectible at the end
+            // Main path collectibles
+            { x: 200, y: 610, type: 'protein', value: 10 },      // On first platform
+            { x: 400, y: 550, type: 'protein', value: 10 },      // On second platform
+            { x: 600, y: 490, type: 'protein', value: 15 },      // Requires precision
+            { x: 750, y: 430, type: 'protein', value: 15 },      // On small platform
+            
+            // Bonus collectibles on optional platforms
+            { x: 300, y: 470, type: 'protein', value: 25 },      // Bonus platform reward
+            { x: 850, y: 520, type: 'protein', value: 25 },      // Another bonus
+            
+            // Final rewards
+            { x: 1050, y: 320, type: 'dumbbell', value: 50 },    // Victory platform
+            { x: 950, y: 250, type: 'dumbbell', value: 100 },    // Secret high jump reward
         ],
         
         // Level completion trigger - moved past the boss

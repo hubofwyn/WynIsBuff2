@@ -2,7 +2,7 @@ import { Scene } from 'phaser';
 import { GameStateManager, AudioManager } from '@features/core';
 import { UIConfig } from '../constants/UIConfig';
 import { SceneKeys } from '../constants/SceneKeys.js';
-import { ImageAssets } from '../constants/Assets.js';
+import { ImageAssets, AudioAssets } from '../constants/Assets.js';
 
 export class MainMenu extends Scene {
     constructor() {
@@ -16,7 +16,7 @@ export class MainMenu extends Scene {
         // Initialize game state manager
         this.gameStateManager = new GameStateManager();
         // Play title screen music
-        AudioManager.getInstance().playMusic('proteinPixelAnthem');
+        AudioManager.getInstance().playMusic(AudioAssets.PROTEIN_PIXEL_ANTHEM);
         // Fade in camera
         this.cameras.main.fadeIn(UIConfig.animations.fadeInDuration);
         
@@ -33,18 +33,24 @@ export class MainMenu extends Scene {
         this.add.text(512, 300, 'WynIsBuff2', UIConfig.text.heading)
             .setOrigin(0.5);
         
-        // Create background panel
+        // Create a more dynamic background panel with gradient effect
         const panelCfg = UIConfig.panel;
-        this.add.rectangle(
-            512,
-            500,
-            400,
-            300,
-            panelCfg.backgroundColor,
-            panelCfg.backgroundAlpha
-        ).setOrigin(0.5);
+        const levelPanel = this.add.graphics();
+        levelPanel.fillStyle(panelCfg.backgroundColor, panelCfg.backgroundAlpha);
+        levelPanel.fillRoundedRect(262, 350, 500, 350, panelCfg.borderRadius);
+        levelPanel.lineStyle(panelCfg.borderWidth, panelCfg.borderColor);
+        levelPanel.strokeRoundedRect(262, 350, 500, 350, panelCfg.borderRadius);
+        
+        // Add section title
+        this.add.text(512, 380, 'Select Level', {
+            ...UIConfig.text.heading,
+            fontSize: '36px'
+        }).setOrigin(0.5);
+        
         // Create level selection UI
         this.createLevelSelection();
+        // Add birthday minigame button - special for Wyn's 9th!
+        this.createBirthdayButton();
         // Add reset progress button
         this.createResetButton();
     }
@@ -55,83 +61,329 @@ export class MainMenu extends Scene {
     }
     
     /**
-     * Create level selection buttons
+     * Create level selection buttons with improved card-based design
      */
     createLevelSelection() {
         const levels = [
-            { id: 'level1', name: 'First Steps', x: 512, y: 400 },
-            { id: 'level2', name: 'Double Trouble', x: 512, y: 450 },
-            { id: 'level3', name: 'Triple Threat', x: 512, y: 500 }
+            { 
+                id: 'level1', 
+                name: 'First Steps', 
+                description: 'Learn the basics',
+                color: '#4ECDC4',
+                difficulty: 1
+            },
+            { 
+                id: 'level2', 
+                name: 'Double Trouble', 
+                description: 'Master double jumps',
+                color: '#FFE66D',
+                difficulty: 2,
+                locked: true
+            },
+            { 
+                id: 'level3', 
+                name: 'Triple Threat', 
+                description: 'Ultimate challenge',
+                color: '#FF6B9D',
+                difficulty: 3,
+                locked: true
+            }
         ];
         
         // Get completed levels
         const completedLevels = this.gameStateManager.getCompletedLevels();
         
-        // Create a button for each level
+        // Create level cards
+        const cardWidth = 140;
+        const cardHeight = 180;
+        const spacing = 20;
+        const startX = 512 - (levels.length * (cardWidth + spacing) - spacing) / 2 + cardWidth / 2;
+        
         levels.forEach((level, index) => {
+            const x = startX + index * (cardWidth + spacing);
+            const y = 490;
+            
             // Determine if level is unlocked
             const isUnlocked = index === 0 || completedLevels.includes(`level${index}`);
             
-            // Get level progress
-            const progress = this.gameStateManager.getLevelProgress(level.id);
+            // Create card container
+            const cardContainer = this.add.container(x, y);
             
-            // Create button text with completion status
-            let buttonText = level.name;
+            // Card background
+            const cardBg = this.add.graphics();
+            const bgColor = isUnlocked ? Phaser.Display.Color.HexStringToColor(level.color).color : 0x333333;
+            const bgAlpha = isUnlocked ? 0.9 : 0.5;
             
-            if (progress) {
-                buttonText += ` (${progress.collectiblesCollected}/${progress.totalCollectibles})`;
+            cardBg.fillStyle(bgColor, bgAlpha);
+            cardBg.fillRoundedRect(-cardWidth/2, -cardHeight/2, cardWidth, cardHeight, 12);
+            cardBg.lineStyle(3, isUnlocked ? 0xFFFFFF : 0x666666, isUnlocked ? 0.8 : 0.3);
+            cardBg.strokeRoundedRect(-cardWidth/2, -cardHeight/2, cardWidth, cardHeight, 12);
+            
+            // Level number
+            const levelNumber = this.add.text(0, -cardHeight/2 + 25, `${index + 1}`, {
+                fontFamily: 'Impact, Arial Black, sans-serif',
+                fontSize: '48px',
+                color: isUnlocked ? '#FFFFFF' : '#666666',
+                stroke: isUnlocked ? '#000000' : '#333333',
+                strokeThickness: 4
+            }).setOrigin(0.5);
+            
+            // Level name
+            const levelName = this.add.text(0, -10, level.name, {
+                fontFamily: 'Arial, sans-serif',
+                fontSize: '18px',
+                color: isUnlocked ? '#FFFFFF' : '#666666',
+                align: 'center',
+                wordWrap: { width: cardWidth - 20 }
+            }).setOrigin(0.5);
+            
+            // Description
+            const description = this.add.text(0, 25, level.description, {
+                fontFamily: 'Arial, sans-serif',
+                fontSize: '14px',
+                color: isUnlocked ? '#E0E0E0' : '#555555',
+                align: 'center',
+                wordWrap: { width: cardWidth - 20 }
+            }).setOrigin(0.5);
+            
+            // Progress or lock icon
+            if (isUnlocked) {
+                const progress = this.gameStateManager.getLevelProgress(level.id);
+                if (progress) {
+                    // Progress bar
+                    const barWidth = cardWidth - 40;
+                    const barHeight = 8;
+                    const barY = cardHeight/2 - 25;
+                    
+                    // Background bar
+                    cardBg.fillStyle(0x000000, 0.5);
+                    cardBg.fillRoundedRect(-barWidth/2, barY - barHeight/2, barWidth, barHeight, 4);
+                    
+                    // Progress fill
+                    const progressPercent = progress.totalCollectibles > 0 
+                        ? progress.collectiblesCollected / progress.totalCollectibles 
+                        : 0;
+                    if (progressPercent > 0) {
+                        cardBg.fillStyle(0x00FF00, 0.8);
+                        cardBg.fillRoundedRect(-barWidth/2, barY - barHeight/2, barWidth * progressPercent, barHeight, 4);
+                    }
+                    
+                    // Progress text
+                    const progressText = this.add.text(0, barY, 
+                        `${progress.collectiblesCollected}/${progress.totalCollectibles}`, {
+                        fontFamily: 'Arial, sans-serif',
+                        fontSize: '12px',
+                        color: '#FFFFFF'
+                    }).setOrigin(0.5);
+                    cardContainer.add(progressText);
+                }
+            } else {
+                // Lock icon
+                const lockIcon = this.add.text(0, cardHeight/2 - 25, '🔒', {
+                    fontSize: '24px'
+                }).setOrigin(0.5);
+                cardContainer.add(lockIcon);
             }
             
-            // Create button with UIConfig styles
-            const btnCfg = UIConfig.menuButton;
-            const buttonStyle = {
-                fontFamily: btnCfg.fontFamily,
-                fontSize: btnCfg.fontSize,
-                color: isUnlocked ? btnCfg.color : btnCfg.disabledColor,
-                stroke: btnCfg.stroke,
-                strokeThickness: btnCfg.strokeThickness,
-                align: btnCfg.align
-            };
-            const button = this.add.text(level.x, level.y, buttonText, buttonStyle)
-                .setOrigin(0.5)
-                // start small and transparent for animation
-                .setScale(UIConfig.animations.scaleIn.start)
-                .setAlpha(0);
-            // Animate button entrance
+            // Completion checkmark
+            if (completedLevels.includes(level.id)) {
+                const checkmark = this.add.text(cardWidth/2 - 15, -cardHeight/2 + 15, '✓', {
+                    fontFamily: 'Arial',
+                    fontSize: '24px',
+                    color: '#00FF00',
+                    stroke: '#000000',
+                    strokeThickness: 3
+                }).setOrigin(0.5);
+                cardContainer.add(checkmark);
+            }
+            
+            // Add all elements to container
+            cardContainer.add([cardBg, levelNumber, levelName, description]);
+            
+            // Interactive hitbox
+            const hitArea = this.add.rectangle(0, 0, cardWidth, cardHeight, 0x000000, 0)
+                .setInteractive({ useHandCursor: isUnlocked });
+            cardContainer.add(hitArea);
+            
+            // Animate entrance
+            cardContainer.setAlpha(0).setScale(0.8);
             this.tweens.add({
-                targets: button,
+                targets: cardContainer,
                 alpha: 1,
-                scale: UIConfig.animations.scaleIn.end,
-                ease: 'Power2',
+                scale: 1,
                 duration: UIConfig.animations.scaleIn.duration,
+                ease: UIConfig.animations.scaleIn.ease,
                 delay: index * 100
             });
             
-            // Add completed indicator if level is completed
-            if (completedLevels.includes(level.id)) {
-                this.add.text(level.x - 150, level.y, '✓', {
-                    fontFamily: 'Arial',
-                    fontSize: 24,
-                    color: '#00ff00',
-                    stroke: '#000000',
-                    strokeThickness: 4
-                }).setOrigin(0.5);
-            }
-            
-            // Make button interactive if unlocked
+            // Make interactive if unlocked
             if (isUnlocked) {
-                button.setInteractive({ useHandCursor: true });
-                button.on('pointerover', () => {
-                    button.setTint(btnCfg.hoverTint);
+                hitArea.on('pointerover', () => {
                     AudioManager.getInstance().playSFX('hover');
+                    this.tweens.add({
+                        targets: cardContainer,
+                        scale: 1.05,
+                        duration: 200,
+                        ease: 'Power2.easeOut'
+                    });
                 });
-                button.on('pointerout', () => button.clearTint());
-                button.on('pointerdown', () => {
+                
+                hitArea.on('pointerout', () => {
+                    this.tweens.add({
+                        targets: cardContainer,
+                        scale: 1,
+                        duration: 200,
+                        ease: 'Power2.easeOut'
+                    });
+                });
+                
+                hitArea.on('pointerdown', () => {
                     AudioManager.getInstance().playSFX('click');
-                    this.scene.start(SceneKeys.GAME, { levelId: level.id });
+                    this.tweens.add({
+                        targets: cardContainer,
+                        scale: 0.95,
+                        duration: 100,
+                        ease: 'Power2.easeOut',
+                        yoyo: true,
+                        onComplete: () => {
+                            this.cameras.main.fadeOut(300);
+                            this.time.delayedCall(300, () => {
+                                this.scene.start(SceneKeys.GAME, { levelId: level.id });
+                            });
+                        }
+                    });
                 });
             }
         });
+    }
+    
+    /**
+     * Create special birthday minigame button
+     */
+    createBirthdayButton() {
+        // Birthday button with special animation - positioned above the level cards
+        const birthdayContainer = this.add.container(512, 620);
+        
+        // Glowing background
+        const buttonBg = this.add.rectangle(0, 0, 300, 80, 0xFFD700)
+            .setStrokeStyle(4, 0xFF00FF);
+        
+        // Birthday text
+        const birthdayText = this.add.text(0, -10, '🎂 WYN\'S 9TH BIRTHDAY RUSH! 🎂', {
+            fontFamily: 'Impact',
+            fontSize: '22px',
+            color: '#000000',
+            stroke: '#FFFFFF',
+            strokeThickness: 3,
+            align: 'center'
+        }).setOrigin(0.5);
+        
+        const subText = this.add.text(0, 15, 'Special Birthday Minigame!', {
+            fontFamily: 'Arial',
+            fontSize: '14px',
+            color: '#FFFFFF',
+            stroke: '#000000',
+            strokeThickness: 2,
+            align: 'center'
+        }).setOrigin(0.5);
+        
+        birthdayContainer.add([buttonBg, birthdayText, subText]);
+        
+        // Make it interactive
+        buttonBg.setInteractive({ useHandCursor: true });
+        
+        // Constant celebration animation
+        this.tweens.add({
+            targets: birthdayContainer,
+            scale: { from: 0.95, to: 1.05 },
+            duration: 1000,
+            repeat: -1,
+            yoyo: true,
+            ease: 'Sine.InOut'
+        });
+        
+        // Rainbow color animation
+        let hue = 0;
+        this.time.addEvent({
+            delay: 100,
+            callback: () => {
+                hue = (hue + 10) % 360;
+                const color = Phaser.Display.Color.HSVToRGB(hue / 360, 1, 1);
+                buttonBg.setFillStyle(color.color);
+            },
+            loop: true
+        });
+        
+        // Hover effects
+        buttonBg.on('pointerover', () => {
+            AudioManager.getInstance().playSFX('hover');
+            this.tweens.add({
+                targets: birthdayContainer,
+                scale: 1.15,
+                duration: 200,
+                ease: 'Power2.easeOut'
+            });
+        });
+        
+        buttonBg.on('pointerout', () => {
+            this.tweens.add({
+                targets: birthdayContainer,
+                scale: 1,
+                duration: 200,
+                ease: 'Power2.easeOut'
+            });
+        });
+        
+        buttonBg.on('pointerdown', () => {
+            // Unlock audio on click (browser autoplay policy)
+            if (this.sound.context && this.sound.context.state === 'suspended') {
+                this.sound.context.resume();
+            }
+            if (window.Howler && window.Howler.ctx && window.Howler.ctx.state === 'suspended') {
+                window.Howler.ctx.resume();
+            }
+            
+            AudioManager.getInstance().playSFX('click');
+            // Add click animation
+            this.tweens.add({
+                targets: birthdayContainer,
+                scale: 0.9,
+                duration: 100,
+                yoyo: true,
+                onComplete: () => {
+                    // Fade out and start the birthday minigame
+                    this.cameras.main.fadeOut(300);
+                    this.time.delayedCall(300, () => {
+                        this.scene.start(SceneKeys.BIRTHDAY_MINIGAME);
+                    });
+                }
+            });
+        });
+        
+        // Add floating 9s around the button
+        for (let i = 0; i < 3; i++) {
+            const floatingNine = this.add.text(
+                512 + Phaser.Math.Between(-200, 200),
+                620 + Phaser.Math.Between(-60, 60),
+                '9',
+                {
+                    fontSize: '24px',
+                    color: '#FFD700',
+                    fontFamily: 'Impact',
+                    alpha: 0.3
+                }
+            );
+            
+            this.tweens.add({
+                targets: floatingNine,
+                y: '-=30',
+                alpha: 0,
+                duration: 3000,
+                delay: i * 1000,
+                repeat: -1,
+                ease: 'Sine.Out'
+            });
+        }
     }
     
     /**
