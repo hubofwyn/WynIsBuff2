@@ -15,7 +15,8 @@ const testFiles = [
     './test-core-systems.mjs',
     './test-subtitle-integration.mjs',
     './test-player-controller.mjs',
-    './test-level-loader.mjs'
+    './test-level-loader.mjs',
+    './test-logger.mjs'
 ];
 
 console.log('🧪 Running WynIsBuff2 Test Suite...\n');

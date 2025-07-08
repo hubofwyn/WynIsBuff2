@@ -1,5 +1,6 @@
 import RAPIER from '@dimforge/rapier2d-compat';
 import { EventNames } from '../../constants/EventNames';
+import { getLogger } from '../../core/Logger';
 
 /**
  * LevelCompletionManager class is responsible for handling level completion logic
@@ -13,6 +14,7 @@ export class LevelCompletionManager {
      * @param {CollectibleManager} collectibleManager - Reference to the collectible manager
      */
     constructor(scene, world, eventSystem, collectibleManager) {
+        this.logger = getLogger('LevelCompletionManager');
         this.scene = scene;
         this.world = world;
         this.eventSystem = eventSystem;
@@ -45,7 +47,7 @@ export class LevelCompletionManager {
      */
     log(message) {
         if (this.debugMode) {
-            console.log(`[LevelCompletionManager] ${message}`);
+            this.logger.debug(message);
         }
     }
     
@@ -117,7 +119,7 @@ export class LevelCompletionManager {
             
             return this.completionTrigger;
         } catch (error) {
-            console.error('[LevelCompletionManager] Error in createCompletionTrigger:', error);
+            this.logger.error('Error in createCompletionTrigger:', error);
             return null;
         }
     }

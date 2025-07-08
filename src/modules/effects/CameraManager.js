@@ -1,4 +1,5 @@
 import { EventNames } from '../../constants/EventNames';
+import { getLogger } from '../../core/Logger';
 
 /**
  * CameraManager class handles camera effects like screen shake
@@ -11,6 +12,7 @@ export class CameraManager {
      * @param {EventSystem} eventSystem - The event system for communication
      */
     constructor(scene, eventSystem) {
+        this.logger = getLogger('CameraManager');
         this.scene = scene;
         this.eventSystem = eventSystem;
         this.camera = scene.cameras.main;
@@ -34,7 +36,7 @@ export class CameraManager {
         // Set up event listeners
         this.setupEventListeners();
         
-        console.log('[CameraManager] Initialized');
+        this.logger.info('Initialized');
     }
     
     /**
@@ -193,6 +195,6 @@ export class CameraManager {
         this.quality = level;
         // Disable effects on 'Low'
         this.effectsEnabled = level !== 'Low';
-        console.log(`[CameraManager] Quality set to ${level}, effectsEnabled=${this.effectsEnabled}`);
+        this.logger.info(`Quality set to ${level}, effectsEnabled=${this.effectsEnabled}`);
     }
 }

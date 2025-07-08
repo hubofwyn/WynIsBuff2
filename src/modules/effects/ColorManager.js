@@ -1,4 +1,5 @@
 import { EventNames } from '../../constants/EventNames';
+import { getLogger } from '../../core/Logger';
 
 /**
  * ColorManager class handles color transitions and effects for game objects,
@@ -11,6 +12,7 @@ export class ColorManager {
      * @param {EventSystem} eventSystem - The event system for communication
      */
     constructor(scene, eventSystem) {
+        this.logger = getLogger('ColorManager');
         this.scene = scene;
         this.eventSystem = eventSystem;
         
@@ -29,7 +31,7 @@ export class ColorManager {
         // Set up event listeners
         this.setupEventListeners();
         
-        console.log('[ColorManager] Initialized');
+        this.logger.info('Initialized');
     }
     
     /**
@@ -351,7 +353,7 @@ export class ColorManager {
      */
     applyPalette(palette) {
         this.currentPalette = palette;
-        console.log(`[ColorManager] Applying palette: ${palette}`);
+        this.logger.info(`Applying palette: ${palette}`);
         // Apply CSS-based filter on game canvas as a simple palette simulation
         const canvas = this.scene.sys.game.canvas;
         if (canvas && canvas.style) {

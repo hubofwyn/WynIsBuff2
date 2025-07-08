@@ -13,6 +13,7 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { getLogger } from '../src/core/Logger.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -21,8 +22,10 @@ const MANIFEST_PATH = path.join(__dirname, '../assets/manifest.json');
 const OUTPUT_PATH = path.join(__dirname, '../src/constants/Assets.js');
 
 function generateAssetsConstants() {
+    const logger = getLogger('GenerateAssets');
+    
     try {
-        console.log('📦 Generating assets constants...');
+        logger.info('📦 Generating assets constants...');
         
         // Read the manifest file
         const manifestData = fs.readFileSync(MANIFEST_PATH, 'utf8');
@@ -222,9 +225,9 @@ export function validateAssets() {
         // Write the output file
         fs.writeFileSync(OUTPUT_PATH, output, 'utf8');
         
-        console.log(`✅ Generated assets constants: ${OUTPUT_PATH}`);
-        console.log(`📊 Generated ${Object.keys(manifest.assets.images).length} image assets`);
-        console.log(`🎵 Generated ${Object.keys(manifest.assets.audio.music).length} music assets`);
+        logger.info(`✅ Generated assets constants: ${OUTPUT_PATH}`);
+        logger.info(`📊 Generated ${Object.keys(manifest.assets.images).length} image assets`);
+        logger.info(`🎵 Generated ${Object.keys(manifest.assets.audio.music).length} music assets`);
         
         // Count SFX
         let sfxCount = 0;
@@ -233,10 +236,10 @@ export function validateAssets() {
         sfxCount += manifest.assets.audio.sfx.ui.click.length;
         sfxCount += manifest.assets.audio.sfx.ui.hover.length;
         
-        console.log(`🔊 Generated ${sfxCount} sound effect assets`);
+        logger.info(`🔊 Generated ${sfxCount} sound effect assets`);
         
     } catch (error) {
-        console.error('❌ Error generating assets constants:', error.message);
+        logger.error('❌ Error generating assets constants:', error.message);
         process.exit(1);
     }
 }

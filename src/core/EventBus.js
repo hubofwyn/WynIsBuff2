@@ -6,6 +6,7 @@
  */
 
 /* eslint-disable import/no-extraneous-dependencies */
+import { getLogger } from './Logger.js';
 
 // Determine the best available EventEmitter implementation.
 let EventEmitterClass = null;
@@ -58,8 +59,8 @@ if (!EventEmitterClass) {
         try {
           fn(payload);
         } catch (e) {
-          /* eslint-disable no-console */
-          console.error(`[EventBus] listener for '${event}' threw`, e);
+          const logger = getLogger('EventBus');
+          logger.error(`listener for '${event}' threw`, e);
         }
       });
     }

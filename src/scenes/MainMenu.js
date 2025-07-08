@@ -1,5 +1,5 @@
 import { Scene } from 'phaser';
-import { GameStateManager, AudioManager } from '@features/core';
+import { GameStateManager, AudioManager, getLogger } from '@features/core';
 import { UIConfig } from '../constants/UIConfig';
 import { SceneKeys } from '../constants/SceneKeys.js';
 import { ImageAssets, AudioAssets } from '../constants/Assets.js';
@@ -8,12 +8,13 @@ export class MainMenu extends Scene {
     constructor() {
         super(SceneKeys.MAIN_MENU);
         
+        this.logger = getLogger('MainMenu');
         // Game state manager for level progress
         this.gameStateManager = null;
     }
 
     create() {
-        console.log('[MainMenu] Scene started - look for birthday button below level cards!');
+        this.logger.info('Scene started - look for birthday button below level cards!');
         
         // Initialize game state manager
         this.gameStateManager = new GameStateManager();

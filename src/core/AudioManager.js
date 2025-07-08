@@ -1,6 +1,7 @@
 import { Howl, Howler } from 'howler';
 // Using the new path alias introduced in Step 2
 import { BaseManager } from './BaseManager.js';
+import { getLogger } from './Logger.js';
 import { AudioAssets, AudioPaths } from '../constants/Assets.js';
 
 // Background music sources
@@ -56,6 +57,7 @@ export class AudioManager extends BaseManager {
             // eslint-disable-next-line no-constructor-return
             return AudioManager.getInstance();
         }
+        this.logger = getLogger('AudioManager');
         this.music = {};
         this.sfx = {};
         this.settings = {
@@ -66,7 +68,7 @@ export class AudioManager extends BaseManager {
         // Set master volume
         Howler.volume(this.settings.masterVolume);
         this._initSounds();
-        console.log('[AudioManager] Initialized with settings', this.settings);
+        this.logger.info('Initialized with settings', this.settings);
         // Mark as initialised for BaseManager consumers
         this._initialized = true;
     }
@@ -92,14 +94,14 @@ export class AudioManager extends BaseManager {
     _initSounds() {
         // Setup background music
         Object.entries(bgmList).forEach(([key, src]) => {
-            console.log(`[AudioManager] Loading music: ${key} from ${src}`);
+            this.logger.debug(`Loading music: ${key} from ${src}`);
             this.music[key] = new Howl({
                 src: [src],
                 html5: true,
                 loop: true,
                 volume: this.settings.musicVolume,
-                onload: () => console.log(`[AudioManager] Successfully loaded: ${key}`),
-                onloaderror: (id, err) => console.error(`[AudioManager] Failed to load ${key}:`, err)
+                onload: () => this.logger.debug(`Successfully loaded: ${key}`),
+                onloaderror: (id, err) => this.logger.error(`Failed to load ${key}:`, err)
             });
         });
         // Setup sound effects
@@ -118,16 +120,16 @@ export class AudioManager extends BaseManager {
      */
     playMusic(key) {
         const track = this.music[key];
-        console.log(`[AudioManager] playMusic called for: ${key}`, track);
+        this.logger.debug(`playMusic called for: ${key}`, track);
         if (track) {
             if (!track.playing()) {
-                console.log(`[AudioManager] Starting playback of: ${key}`);
+                this.logger.info(`Starting playback of: ${key}`);
                 track.play();
             } else {
-                console.log(`[AudioManager] ${key} is already playing`);
+                this.logger.debug(`${key} is already playing`);
             }
         } else {
-            console.error(`[AudioManager] Track not found: ${key}`);
+            this.logger.error(`Track not found: ${key}`);
         }
     }
 
@@ -150,7 +152,7 @@ export class AudioManager extends BaseManager {
     playSFX(key, pan = 0) {
         const arr = this.sfx[key];
         if (!arr || arr.length === 0) {
-            console.warn(`[AudioManager] No SFX for key: ${key}`);
+            this.logger.warn(`No SFX for key: ${key}`);
             return;
         }
         const howl = arr[Math.floor(Math.random() * arr.length)];

@@ -1,5 +1,6 @@
 import { BaseController } from '../../core/BaseController.js';
 import { EventNames } from '../../constants/EventNames.js';
+import { getLogger } from '../../core/Logger.js';
 
 /**
  * BossController: Controls the jumping boss enemy at the top of levels
@@ -9,6 +10,7 @@ export class BossController extends BaseController {
     constructor(scene, world, eventSystem, x, y, spriteKey = 'axelface') {
         super();
         
+        this.logger = getLogger('BossController');
         this.scene = scene;
         this.world = world;
         this.eventSystem = eventSystem;
@@ -48,7 +50,7 @@ export class BossController extends BaseController {
         this.createPhysicsBody();
         this.scheduleNextJump();
         
-        console.log('[BossController] Boss initialized at', this.x, this.y);
+        this.logger.info('Boss initialized at', this.x, this.y);
     }
     
     createSprite() {
@@ -112,7 +114,7 @@ export class BossController extends BaseController {
         
         this.nextJumpTime = Date.now() + interval;
         
-        console.log(`[BossController] Next jump scheduled in ${Math.round(interval)}ms`);
+        this.logger.debug(`Next jump scheduled in ${Math.round(interval)}ms`);
     }
     
     performJump() {
@@ -148,7 +150,7 @@ export class BossController extends BaseController {
             force: jumpForce 
         });
         
-        console.log('[BossController] Boss jumped with force', jumpForce);
+        this.logger.debug('Boss jumped with force', jumpForce);
     }
     
     checkGroundContact() {
@@ -188,7 +190,7 @@ export class BossController extends BaseController {
             y: this.y 
         });
         
-        console.log('[BossController] Boss landed');
+        this.logger.debug('Boss landed');
     }
     
     update(time, delta) {
@@ -266,6 +268,6 @@ export class BossController extends BaseController {
             this.world.removeRigidBody(this.body);
         }
         
-        console.log('[BossController] Boss destroyed');
+        this.logger.info('Boss destroyed');
     }
 }

@@ -1,4 +1,5 @@
 import { EventNames } from '../../constants/EventNames.js';
+import { getLogger } from '../../core/Logger.js';
 
 /**
  * CollisionController class handles all collision-related functionality for the player
@@ -11,6 +12,7 @@ export class CollisionController {
      * @param {EventSystem} eventSystem - The event system for communication
      */
     constructor(scene, eventSystem) {
+        this.logger = getLogger('CollisionController');
         this.scene = scene;
         this.eventSystem = eventSystem;
         
@@ -29,7 +31,7 @@ export class CollisionController {
             groundHeight: 50     // Height of the ground
         };
         
-        console.log('[CollisionController] Initialized');
+        this.logger.info('Initialized');
     }
     
     /**
@@ -79,7 +81,7 @@ export class CollisionController {
             // Store previous ground state
             this._lastOnGround = this.isOnGround;
         } catch (error) {
-            console.error('[CollisionController] Error in processCollisions:', error);
+            this.logger.error('Error in processCollisions:', error);
         }
     }
     

@@ -5,8 +5,8 @@
     "images": {
       "background": {
         "type": "image",
-        "path": "images/characters/mainlogo.png",
-        "description": "Main background image used in Boot scene"
+        "path": "images/backgrounds/lake-scene.png",
+        "description": "Main background image used in Boot scene and as level fallback"
       },
       "logo": {
         "type": "image", 
@@ -209,23 +209,23 @@
       },
       "buffBg": {
         "type": "image",
-        "path": "images/characters/mainlogo.png",
-        "description": "Buff-themed background for level1 - using logo as placeholder"
+        "path": "images/backgrounds/lake-scene.png",
+        "description": "Buff-themed background for level1"
       },
       "parallaxSky": {
         "type": "image",
-        "path": "images/characters/mainlogo.png",
-        "description": "Parallax background layer - sky - using logo as placeholder"
+        "path": "images/backgrounds/lake-scene.png",
+        "description": "Parallax background layer - sky"
       },
       "parallaxMountains": {
         "type": "image",
-        "path": "images/characters/mainlogo.png",
-        "description": "Parallax background layer - mountains - using logo as placeholder"
+        "path": "images/backgrounds/lake-scene.png",
+        "description": "Parallax background layer - mountains"
       },
       "parallaxForeground": {
         "type": "image",
-        "path": "images/characters/mainlogo.png",
-        "description": "Parallax background layer - foreground - using logo as placeholder"
+        "path": "images/backgrounds/lake-scene.png",
+        "description": "Parallax background layer - foreground"
       }
     },
     "audio": {

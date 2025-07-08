@@ -1,5 +1,6 @@
 import { EventNames } from '../../constants/EventNames.js';
 import { getLevelById } from '../../constants/LevelData.js';
+import { getLogger } from '../../core/Logger.js';
 // Enemy controller for spawning buff-themed enemies
 import { EnemyController } from '../enemy/EnemyController.js';
 
@@ -19,6 +20,7 @@ export class LevelLoader {
      * @param {LevelCompletionManager} managers.completionManager - The level completion manager
      */
     constructor(scene, eventSystem, managers) {
+        this.logger = getLogger('LevelLoader');
         this.scene = scene;
         this.eventSystem = eventSystem;
         this.managers = managers;
@@ -47,7 +49,7 @@ export class LevelLoader {
      */
     log(message) {
         if (this.debugMode) {
-            console.log(`[LevelLoader] ${message}`);
+            this.logger.debug(message);
         }
     }
     
@@ -63,7 +65,7 @@ export class LevelLoader {
             // Get level configuration
             const levelConfig = getLevelById(levelId);
             if (!levelConfig) {
-                console.error(`[LevelLoader] Level not found: ${levelId}`);
+                this.logger.error(`Level not found: ${levelId}`);
                 return false;
             }
             
@@ -89,7 +91,7 @@ export class LevelLoader {
             this.log(`Level ${levelId} loaded successfully`);
             return true;
         } catch (error) {
-            console.error(`[LevelLoader] Error loading level ${levelId}:`, error);
+            this.logger.error(`Error loading level ${levelId}:`, error);
             return false;
         }
     }
@@ -152,7 +154,7 @@ export class LevelLoader {
                     }
                     this.scene.enemies.push(enemy);
                 } catch (error) {
-                    console.error('[LevelLoader] Error spawning enemy:', error);
+                    this.logger.error('Error spawning enemy:', error);
                 }
             });
         }
@@ -175,9 +177,9 @@ export class LevelLoader {
                         // Store boss reference for updates and cleanup
                         this.scene.pulsatingBoss = boss;
                         
-                        console.log('[LevelLoader] Pulsating boss spawned at', levelConfig.boss.x, levelConfig.boss.y);
+                        this.logger.info('Pulsating boss spawned at', levelConfig.boss.x, levelConfig.boss.y);
                     }).catch(error => {
-                        console.error('[LevelLoader] Error importing PulsatingBoss:', error);
+                        this.logger.error('Error importing PulsatingBoss:', error);
                     });
                 } else if (levelConfig.boss.active) {
                     // Original boss logic for other levels
@@ -195,13 +197,13 @@ export class LevelLoader {
                         // Store boss reference for updates and cleanup
                         this.scene.boss = boss;
                         
-                        console.log('[LevelLoader] Boss spawned at', levelConfig.boss.x, levelConfig.boss.y);
+                        this.logger.info('Boss spawned at', levelConfig.boss.x, levelConfig.boss.y);
                     }).catch(error => {
-                        console.error('[LevelLoader] Error importing BossController:', error);
+                        this.logger.error('Error importing BossController:', error);
                     });
                 }
             } catch (error) {
-                console.error('[LevelLoader] Error spawning boss:', error);
+                this.logger.error('Error spawning boss:', error);
             }
         }
         
@@ -340,7 +342,7 @@ export class LevelLoader {
                         break;
                 }
             } catch (error) {
-                console.error('[LevelLoader] Error creating decoration:', error);
+                this.logger.error('Error creating decoration:', error);
             }
         });
     }

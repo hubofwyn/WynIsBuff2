@@ -1,4 +1,5 @@
 import { EventBus } from './EventBus.js';
+import { getLogger } from './Logger.js';
 
 /**
  * EventSystem provides a debug-enabled wrapper around EventBus
@@ -8,6 +9,7 @@ export class EventSystem {
     constructor() {
         this.eventBus = EventBus;
         this.debugMode = false;
+        this.logger = getLogger('EventSystem');
     }
     
     on(event, callback) {
@@ -20,7 +22,7 @@ export class EventSystem {
     
     emit(event, data) {
         if (this.debugMode) {
-            console.log(`[EventSystem] Event emitted: ${event}`, data);
+            this.logger.debug(`Event emitted: ${event}`, data);
         }
         this.eventBus.emit(event, data);
     }

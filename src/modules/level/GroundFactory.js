@@ -1,5 +1,6 @@
 import RAPIER from '@dimforge/rapier2d-compat';
 import { EventNames } from '../../constants/EventNames';
+import { getLogger } from '../../core/Logger';
 
 /**
  * GroundFactory class is responsible for creating and managing the ground
@@ -12,6 +13,7 @@ export class GroundFactory {
      * @param {EventSystem} eventSystem - The event system for communication
      */
     constructor(scene, world, eventSystem) {
+        this.logger = getLogger('GroundFactory');
         this.scene = scene;
         this.world = world;
         this.eventSystem = eventSystem;
@@ -40,7 +42,7 @@ export class GroundFactory {
      */
     log(message) {
         if (this.debugMode) {
-            console.log(`[GroundFactory] ${message}`);
+            this.logger.debug(message);
         }
     }
     
@@ -112,7 +114,7 @@ export class GroundFactory {
             
             return this.ground;
         } catch (error) {
-            console.error('[GroundFactory] Error in createGround:', error);
+            this.logger.error('Error in createGround:', error);
             return null;
         }
     }

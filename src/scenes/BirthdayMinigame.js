@@ -3,7 +3,7 @@ import { SceneKeys } from '../constants/SceneKeys.js';
 import { EventNames } from '../constants/EventNames.js';
 import { UIConfig } from '../constants/UIConfig.js';
 import { AudioAssets } from '../constants/Assets.js';
-import { AudioManager } from '@features/core';
+import { AudioManager, getLogger } from '@features/core';
 
 /**
  * Birthday Minigame: "Wyn's 9th Birthday Shake Rush!"
@@ -12,6 +12,8 @@ import { AudioManager } from '@features/core';
 export class BirthdayMinigame extends Scene {
     constructor() {
         super(SceneKeys.BIRTHDAY_MINIGAME);
+        
+        this.logger = getLogger('BirthdayMinigame');
         
         // Game config - simplified 3-lane system
         this.laneHeight = 120;
@@ -143,7 +145,7 @@ export class BirthdayMinigame extends Scene {
         
         // Initialize audio manager if needed
         const audioManager = AudioManager.getInstance();
-        console.log('[BirthdayMinigame] AudioManager initialized:', audioManager);
+        this.logger.debug('AudioManager initialized:', audioManager);
         
         // Set world bounds to match screen
         this.physics.world.setBounds(0, 0, 1024, 768);
@@ -257,7 +259,7 @@ export class BirthdayMinigame extends Scene {
             this.lanePositions[i] = startY + i * this.laneHeight + this.laneHeight / 2;
         }
         
-        console.log('[Lanes] Lane positions:', this.lanePositions);
+        this.logger.debug('Lane positions:', this.lanePositions);
     }
     
     createPlayer() {
@@ -272,7 +274,7 @@ export class BirthdayMinigame extends Scene {
             this.player.setScale(0.25);
         } else {
             // Fallback: create a simple Wyn representation
-            console.warn('[BirthdayMinigame] wynSprite texture not found, using fallback');
+            this.logger.warn('wynSprite texture not found, using fallback');
             this.player = this.add.rectangle(0, 0, 40, 50, 0xFFD700);
         }
         
@@ -362,7 +364,7 @@ export class BirthdayMinigame extends Scene {
         
         shakeContainer.pickupZoneX = (this.playerContainer?.x ?? this.playerX) + 50;
         
-        console.log('[Spawn] Protein shake in lane', lane, 'at y:', y, 'isParcel:', shakeContainer.getData('isParcel'));
+        this.logger.debug('[Spawn] Protein shake in lane', lane, 'at y:', y, 'isParcel:', shakeContainer.getData('isParcel'));
     }
     
     spawnShakeShake() {
@@ -899,14 +901,14 @@ export class BirthdayMinigame extends Scene {
             // Resume Web Audio context if suspended (browser autoplay policy)
             if (this.sound.context && this.sound.context.state === 'suspended') {
                 this.sound.context.resume().then(() => {
-                    console.log('[BirthdayMinigame] Audio context resumed');
+                    this.logger.debug('Audio context resumed');
                 });
             }
             
             // Also try to unlock Howler audio
             if (window.Howler && window.Howler.ctx && window.Howler.ctx.state === 'suspended') {
                 window.Howler.ctx.resume().then(() => {
-                    console.log('[BirthdayMinigame] Howler context resumed');
+                    this.logger.debug('Howler context resumed');
                 });
             }
             
@@ -918,12 +920,12 @@ export class BirthdayMinigame extends Scene {
             // Small delay to ensure audio context is ready
             this.time.delayedCall(100, () => {
                 audioManager.playMusic(AudioAssets.BIRTHDAY_SONG);
-                console.log('[BirthdayMinigame] Birthday music started');
+                this.logger.info('Birthday music started');
                 
                 // Check if music is actually playing
                 const musicTrack = audioManager.music[AudioAssets.BIRTHDAY_SONG];
                 if (musicTrack && !musicTrack.playing()) {
-                    console.warn('[BirthdayMinigame] Music failed to start - showing audio hint');
+                    this.logger.warn('Music failed to start - showing audio hint');
                     // Show audio permission hint
                     const audioHint = this.add.text(512, 50, '🔇 Click anywhere to enable audio', {
                         fontSize: '18px',
@@ -940,7 +942,7 @@ export class BirthdayMinigame extends Scene {
                 }
             });
         } catch (error) {
-            console.error('[BirthdayMinigame] Failed to start music:', error);
+            this.logger.error('Failed to start music:', error);
         }
         
         this.deliveryTimer = this.maxDeliveryTime;
@@ -1152,7 +1154,7 @@ export class BirthdayMinigame extends Scene {
         
         // Debug player position occasionally
         if (Math.random() < 0.01) {
-            console.log('[Player] Lane:', playerLane, 'Y:', playerY, 'X:', collisionX, 'Objects:', this.scrollingObjects.children.entries.length);
+            this.logger.trace('[Player] Lane:', playerLane, 'Y:', playerY, 'X:', collisionX, 'Objects:', this.scrollingObjects.children.entries.length);
         }
         
         this.scrollingObjects.children.entries.forEach(container => {
@@ -1170,7 +1172,7 @@ export class BirthdayMinigame extends Scene {
                     
                     if (laneMatch) {
                         if (isParcel && this.carriedItems.length < this.maxCarryCapacity && !pickedUp) {
-                            console.log('[Pickup!] Type:', itemType, 'distance:', distance);
+                            this.logger.debug('[Pickup!] Type:', itemType, 'distance:', distance);
                             container.setData('pickedUp', true);
                             this.pickupParcel(container);
                         } else if (container.getData('isObstacle') && !container.getData('hit')) {
@@ -1222,7 +1224,7 @@ export class BirthdayMinigame extends Scene {
         const now = this.time.now;
         if (!this.lastSpawnTime) {
             this.lastSpawnTime = now;
-            console.log('[Spawning] Started spawning system');
+            this.logger.info('[Spawning] Started spawning system');
         }
         
         // Start slow, speed up over time
@@ -1241,10 +1243,10 @@ export class BirthdayMinigame extends Scene {
             if (this.deliveries < 3) {
                 // Early game - mostly protein shakes, some obstacles
                 if (pattern < 20) {
-                    console.log('[Spawn] Obstacle type:', Phaser.Math.Between(0, 2));
+                    this.logger.trace('[Spawn] Obstacle type:', Phaser.Math.Between(0, 2));
                     this.spawnObstacle(Phaser.Math.Between(0, 2)); // No cakes yet
                 } else if (pattern < 80) {
-                    console.log('[Spawn] Attempting protein shake spawn');
+                    this.logger.trace('[Spawn] Attempting protein shake spawn');
                     this.spawnProteinShake();
                 }
             } else if (this.deliveries < 6) {
@@ -2738,7 +2740,7 @@ export class BirthdayMinigame extends Scene {
         
         this.scrollingObjects.add(shakeContainer);
         
-        console.log('[Spawn] Protein shake created with data:', {
+        this.logger.trace('[Spawn] Protein shake created with data:', {
             isParcel: shakeContainer.getData('isParcel'),
             itemType: shakeContainer.getData('itemType'),
             points: shakeContainer.getData('points'),

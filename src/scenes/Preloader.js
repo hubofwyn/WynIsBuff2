@@ -1,5 +1,5 @@
 import { Scene } from 'phaser';
-import { AudioManager, GameStateManager } from '@features/core';
+import { AudioManager, GameStateManager, getLogger } from '@features/core';
 import { SceneKeys } from '../constants/SceneKeys.js';
 import { ImageAssets, ImagePaths, AudioAssets, AudioPaths, SpritesheetConfigs } from '../constants/Assets.js';
 
@@ -8,6 +8,7 @@ export class Preloader extends Scene
     constructor ()
     {
         super(SceneKeys.PRELOADER);
+        this.logger = getLogger('Preloader');
     }
 
     init ()
@@ -134,7 +135,7 @@ export class Preloader extends Scene
             audio.setMusicVolume(settings.volumes.music);
             audio.setSFXVolume(settings.volumes.sfx);
         }
-        console.log('[Preloader] AudioManager initialized with persisted settings', settings.volumes);
+        this.logger.info('AudioManager initialized with persisted settings', settings.volumes);
         // Move to Welcome Screen
         this.scene.start(SceneKeys.WELCOME);
     }

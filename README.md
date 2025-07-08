@@ -37,6 +37,10 @@ Do you have what it takes to **witness pure, unfiltered, RAW BUFFNESS**? Can you
 - **C** - DUCK under obstacles with the grace of a BUFF NINJA doing limbo at the gym!
 - **ESC** - Pause the buffness (but WHY WOULD YOU? Are you AFRAID OF THE GAINS?!)
 
+## 📋 DEVELOPMENT ROADMAP
+
+Check out our [ROADMAP.md](ROADMAP.md) for the current project status, completed features, and prioritized backlog.
+
 ## 🛠️💪 INSTALLATION & DEVELOPMENT OF EXTREME BUFFNESS
 
 To get this game up and running, first **make sure your machine is BUFF ENOUGH** to handle it. Weak computers may SPONTANEOUSLY START DOING PUSHUPS just to keep up!

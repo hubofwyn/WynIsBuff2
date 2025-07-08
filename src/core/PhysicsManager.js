@@ -2,6 +2,7 @@ import RAPIER from '@dimforge/rapier2d-compat';
 import { EventNames } from '../constants/EventNames';
 import { PhysicsConfig } from '../constants/PhysicsConfig';
 import { BaseManager } from './BaseManager';
+import { getLogger } from './Logger';
 
 /**
  * PhysicsManager class handles the Rapier physics world and synchronization
@@ -16,6 +17,7 @@ export class PhysicsManager extends BaseManager {
         super();
         if (this.isInitialized()) return;
         
+        this.logger = getLogger('PhysicsManager');
         this.scene = null;
         this.eventSystem = null;
         this.world = null;
@@ -43,13 +45,13 @@ export class PhysicsManager extends BaseManager {
         this.scene = scene;
         this.eventSystem = eventSystem;
         try {
-            console.log('[PhysicsManager] Initializing Rapier...');
+            this.logger.info('Initializing Rapier...');
             await RAPIER.init();
-            console.log('[PhysicsManager] Rapier initialized successfully');
+            this.logger.info('Rapier initialized successfully');
             
             // Create physics world with gravity
             this.world = new RAPIER.World(new RAPIER.Vector2(gravityX, gravityY));
-            console.log('[PhysicsManager] Rapier world created with gravity:', gravityX, gravityY);
+            this.logger.info('Rapier world created with gravity:', gravityX, gravityY);
             
             // Set up collision event handling
             this.setupCollisionEvents();
@@ -65,7 +67,7 @@ export class PhysicsManager extends BaseManager {
             
             return true;
         } catch (error) {
-            console.error('[PhysicsManager] Error initializing physics:', error);
+            this.logger.error('Error initializing physics:', error);
             return false;
         }
     }
@@ -111,13 +113,13 @@ export class PhysicsManager extends BaseManager {
             });
         } else {
             // Fallback for collision event handling if contactPairEvents is not available
-            console.warn('[PhysicsManager] contactPairEvents is not available, using fallback collision detection.');
+            this.logger.warn('contactPairEvents is not available, using fallback collision detection.');
             this.world.bodies.forEach(body => {
                 // Implement fallback collision detection logic here
             });
         }
         
-        console.log('[PhysicsManager] Collision events set up');
+        this.logger.debug('Collision events set up');
     }
     
     /**
@@ -150,7 +152,7 @@ export class PhysicsManager extends BaseManager {
             try {
                 handler(bodyHandleA, bodyHandleB);
             } catch (error) {
-                console.error('[PhysicsManager] Error in collision handler:', error);
+                this.logger.error('Error in collision handler:', error);
             }
         });
     }
@@ -228,7 +230,7 @@ export class PhysicsManager extends BaseManager {
             // If we hit max steps, reset accumulator to prevent permanent lag
             if (steps >= maxStepsPerFrame) {
                 this.accumulator = 0;
-                console.warn('[PhysicsManager] Frame budget exceeded, resetting accumulator');
+                this.logger.warn('Frame budget exceeded, resetting accumulator');
             }
             
             // Calculate interpolation factor for smooth rendering
@@ -237,7 +239,7 @@ export class PhysicsManager extends BaseManager {
             // Update all sprites based on their physics bodies with interpolation
             this.updateGameObjects(interpolation);
         } catch (error) {
-            console.error('[PhysicsManager] Error in update:', error);
+            this.logger.error('Error in update:', error);
         }
     }
     
@@ -281,7 +283,7 @@ export class PhysicsManager extends BaseManager {
                 }
             });
         } catch (error) {
-            console.error('[PhysicsManager] Error in updateGameObjects:', error);
+            this.logger.error('Error in updateGameObjects:', error);
         }
     }
     

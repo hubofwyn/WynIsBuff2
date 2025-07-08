@@ -1,4 +1,5 @@
 import { EventNames } from '../../constants/EventNames.js';
+import { getLogger } from '../../core/Logger.js';
 
 /**
  * MovementController class handles all movement-related functionality for the player
@@ -11,6 +12,7 @@ export class MovementController {
      * @param {EventSystem} eventSystem - The event system for communication
      */
     constructor(scene, eventSystem) {
+        this.logger = getLogger('MovementController');
         this.scene = scene;
         this.eventSystem = eventSystem;
         
@@ -57,7 +59,7 @@ export class MovementController {
             torqueFactor: 0.05     // Torque factor for self-balancing
         };
         
-        console.log('[MovementController] Initialized');
+        this.logger.info('Initialized');
     }
     
     /**
@@ -153,7 +155,7 @@ export class MovementController {
             // Apply the new velocity
             body.setLinvel({ x: newVelX, y: newVelY }, true);
         } catch (error) {
-            console.error('[MovementController] Error in handleMovement:', error);
+            this.logger.error('Error in handleMovement:', error);
         }
     }
     

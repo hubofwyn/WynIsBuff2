@@ -1,5 +1,6 @@
 import RAPIER from '@dimforge/rapier2d-compat';
 import { EventNames } from '../../constants/EventNames';
+import { getLogger } from '../../core/Logger';
 
 /**
  * PlatformFactory class is responsible for creating and managing static platforms
@@ -12,6 +13,7 @@ export class PlatformFactory {
      * @param {EventSystem} eventSystem - The event system for communication
      */
     constructor(scene, world, eventSystem) {
+        this.logger = getLogger('PlatformFactory');
         this.scene = scene;
         this.world = world;
         this.eventSystem = eventSystem;
@@ -40,7 +42,7 @@ export class PlatformFactory {
      */
     log(message) {
         if (this.debugMode) {
-            console.log(`[PlatformFactory] ${message}`);
+            this.logger.debug(message);
         }
     }
     
@@ -116,13 +118,13 @@ export class PlatformFactory {
                         });
                     }
                 } catch (error) {
-                    console.error(`[PlatformFactory] Error creating platform ${index+1}:`, error);
+                    this.logger.error(`Error creating platform ${index+1}:`, error);
                 }
             });
             
             return this.platforms;
         } catch (error) {
-            console.error('[PlatformFactory] Error in createPlatforms:', error);
+            this.logger.error('Error in createPlatforms:', error);
             return [];
         }
     }

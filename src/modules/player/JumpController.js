@@ -1,5 +1,6 @@
 import { EventNames } from '../../constants/EventNames.js';
 import { SceneKeys } from '../../constants/SceneKeys.js';
+import { getLogger } from '../../core/Logger.js';
 
 /**
  * JumpController class handles all jump-related functionality for the player
@@ -12,6 +13,7 @@ export class JumpController {
      * @param {EventSystem} eventSystem - The event system for communication
      */
     constructor(scene, eventSystem) {
+        this.logger = getLogger('JumpController');
         this.scene = scene;
         this.eventSystem = eventSystem;
         
@@ -70,7 +72,7 @@ export class JumpController {
             }
         };
         
-        console.log('[JumpController] Initialized');
+        this.logger.info('Initialized');
     }
     
     /**
