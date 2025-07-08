@@ -1,5 +1,5 @@
 import { Scene } from 'phaser';
-import { GameStateManager, AudioManager } from '@features/core';
+import { GameStateManager, AudioManager, getLogger } from '@features/core';
 import { UIConfig } from '../constants/UIConfig';
 import { SceneKeys } from '../constants/SceneKeys.js';
 import { ImageAssets, AudioAssets } from '../constants/Assets.js';
@@ -8,11 +8,14 @@ export class MainMenu extends Scene {
     constructor() {
         super(SceneKeys.MAIN_MENU);
         
+        this.logger = getLogger('MainMenu');
         // Game state manager for level progress
         this.gameStateManager = null;
     }
 
     create() {
+        this.logger.info('Scene started - look for birthday button below level cards!');
+        
         // Initialize game state manager
         this.gameStateManager = new GameStateManager();
         // Play title screen music
@@ -261,8 +264,8 @@ export class MainMenu extends Scene {
      * Create special birthday minigame button
      */
     createBirthdayButton() {
-        // Birthday button with special animation - positioned above the level cards
-        const birthdayContainer = this.add.container(512, 620);
+        // Birthday button with special animation - positioned below the level cards
+        const birthdayContainer = this.add.container(512, 680);
         
         // Glowing background
         const buttonBg = this.add.rectangle(0, 0, 300, 80, 0xFFD700)

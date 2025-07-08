@@ -6,6 +6,7 @@
  */
 
 /* eslint-disable import/no-extraneous-dependencies */
+import { getLogger } from './Logger.js';
 
 // Determine the best available EventEmitter implementation.
 let EventEmitterClass = null;
@@ -58,10 +59,14 @@ if (!EventEmitterClass) {
         try {
           fn(payload);
         } catch (e) {
-          /* eslint-disable no-console */
-          console.error(`[EventBus] listener for '${event}' threw`, e);
+          const logger = getLogger('EventBus');
+          logger.error(`listener for '${event}' threw`, e);
         }
       });
+    }
+
+    removeAllListeners() {
+      this._events.clear();
     }
   }
 
@@ -70,3 +75,15 @@ if (!EventEmitterClass) {
 
 // Single, shared instance exported for the entire app.
 export const EventBus = new EventEmitterClass();
+
+// Add removeAllListeners method if not present (for compatibility)
+if (!EventBus.removeAllListeners) {
+  EventBus.removeAllListeners = function() {
+    if (this._events && this._events.clear) {
+      this._events.clear();
+    } else if (this.removeAllListeners) {
+      // Phaser's EventEmitter already has this method
+      this.removeAllListeners();
+    }
+  };
+}

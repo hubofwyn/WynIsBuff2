@@ -1,4 +1,5 @@
 import { EventNames } from '../../constants/EventNames';
+import { getLogger } from '../../core/Logger';
 
 /**
  * ParticleManager class handles the creation and management of particle effects
@@ -11,6 +12,7 @@ export class ParticleManager {
      * @param {EventSystem} eventSystem - The event system for communication
      */
     constructor(scene, eventSystem) {
+        this.logger = getLogger('ParticleManager');
         this.scene = scene;
         this.eventSystem = eventSystem;
         this.emitters = new Map();
@@ -21,7 +23,7 @@ export class ParticleManager {
         // Set up event listeners
         this.setupEventListeners();
         
-        console.log('[ParticleManager] Initialized');
+        this.logger.info('Initialized');
     }
     
     /**
@@ -358,7 +360,7 @@ export class ParticleManager {
      */
     setQuality(level) {
         this.quality = level;
-        console.log(`[ParticleManager] Quality set to ${level}`);
+        this.logger.info(`Quality set to ${level}`);
         // Future: adjust particle config density or disable effects for 'Low'
     }
 }

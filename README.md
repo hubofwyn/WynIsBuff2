@@ -1,5 +1,8 @@
 # WynIsBuff2 💪🎮💥
 
+[![CI](https://github.com/verlyn13/WynIsBuff2/actions/workflows/ci.yml/badge.svg)](https://github.com/verlyn13/WynIsBuff2/actions/workflows/ci.yml)
+[![Deploy](https://github.com/verlyn13/WynIsBuff2/actions/workflows/deploy.yml/badge.svg)](https://github.com/verlyn13/WynIsBuff2/actions/workflows/deploy.yml)
+
 ## 🔥🔥 THE BUFFEST, THE GAMEST, THE MOST ABSOLUTELY RIDICULOUS BUFF GAME EVER CREATED! 🔥🔥
 
 Welcome to **WynIsBuff2**, where **Wyn isn't just Buff, Wyn is MEGA-ULTRA-HYPER-BUFF** and the game is so game that it games harder than any game that has ever gamed in the history of gaming since games were invented!
@@ -7,6 +10,7 @@ Welcome to **WynIsBuff2**, where **Wyn isn't just Buff, Wyn is MEGA-ULTRA-HYPER-
 Do you have what it takes to **witness pure, unfiltered, RAW BUFFNESS**? Can you handle the sheer **EXPLOSIVE GAMING POWER** of **WynIsBuff2**? This game will make your **gaming biceps EXPLODE** and your **brain muscles FLEX** to the **ABSOLUTE MAXIMUM BUFFNESS LIMIT**!
 
 ## 🏋️‍♂️💪 FEATURES OF EXTREME BUFFNESS
+
 - **TRIPLE JUMP MECHANICS** – Leap with increasing power that gets SO BUFF your screen might crack from the sheer force!
 - **PHYSICS-POWERED MOVEMENT** – Rapier physics engine so realistic your computer might start sweating protein shake!
 - **MODULAR ARCHITECTURE** – Code so buff it not only flexes on other codebases, it makes them look like they SKIP LEG DAY!
@@ -19,17 +23,23 @@ Do you have what it takes to **witness pure, unfiltered, RAW BUFFNESS**? Can you
 - **ATMOSPHERIC PARTICLES** – Background effects that float like protein powder in the wind of VICTORY!
 
 ## 🚀💻 TECHNICAL STACK OF POWER
+
 - **Phaser 3.88.0** – HTML5 game framework so buffed it makes other frameworks look like they're still in TUTORIAL MODE!
 - **Rapier 0.14.0** – 2D physics engine with muscles so defined it calculates collision responses WHILE DOING ONE-HANDED PUSHUPS!
 - **Vite 5.3.1** – Build tool so fast it BREAKS THE SOUND BARRIER and never, EVER skips leg day!
 - **JavaScript ES6+** – Programming language so buff it flexes its functions and makes other languages CRY PROTEIN TEARS!
- - **Howler.js** – Audio management for BGM & SFX with MP3/OGG support and stereo panning.
+- **Howler.js** – Audio management for BGM & SFX with MP3/OGG support and stereo panning.
 
 ## 🎮🔥 CONTROLS OF ULTIMATE BUFFNESS
+
 - **WASD or Arrow Keys** - Move with such MAXIMUM BUFFNESS your keyboard might need a gym membership!
 - **Space Bar** - TRIPLE JUMP with increasing power so intense it might launch your character INTO ORBIT!
 - **C** - DUCK under obstacles with the grace of a BUFF NINJA doing limbo at the gym!
 - **ESC** - Pause the buffness (but WHY WOULD YOU? Are you AFRAID OF THE GAINS?!)
+
+## 📋 DEVELOPMENT ROADMAP
+
+Check out our [ROADMAP.md](ROADMAP.md) for the current project status, completed features, and prioritized backlog.
 
 ## 🛠️💪 INSTALLATION & DEVELOPMENT OF EXTREME BUFFNESS
 
@@ -59,12 +69,14 @@ Then sit back and **BEHOLD THE MASSIVE GAINS** as your screen FLEXES with pure, 
 This codebase has been through an **EXTREME MAKEOVER** with a feature-based architecture that's **SO ORGANIZED** it makes Marie Kondo look messy!
 
 ### 🎯 FEATURE-BASED ORGANIZATION
+
 - **`@features/player`** - Player controls SO RESPONSIVE they respond before you think!
 - **`@features/level`** - Level management that NEVER SKIPS LEG DAY!
 - **`@features/effects`** - Visual effects so INTENSE they might need safety goggles!
 - **`@features/core`** - Core systems SO SOLID they could support a weightlifting competition!
 
 ### 🚫 NO MAGIC STRINGS ZONE
+
 We've **ELIMINATED ALL MAGIC STRINGS** like they were empty calories! Every asset, scene, and event uses **GENERATED CONSTANTS** that are SO RELIABLE they show up to the gym even on rest days!
 
 ```javascript
@@ -78,6 +90,7 @@ this.load.image(ImageAssets.PLAYER, ImagePaths.PLAYER);
 ```
 
 ### 📚 DOCUMENTATION GAINS
+
 - **`CONTRIBUTING.md`** - Development guide SO COMPREHENSIVE it could train a new developer from couch to codebase!
 - **`docs/ARCHITECTURE.md`** - Technical deep-dive SO DETAILED it makes blueprints jealous!
 
@@ -106,6 +119,7 @@ WynIsBuff2/
 ### 🤝 WANT TO CONTRIBUTE TO THE BUFFNESS?
 
 Check out **`CONTRIBUTING.md`** for the **ULTIMATE DEVELOPER WORKOUT PLAN**! Learn how to:
+
 - Use the **FEATURE-BASED ARCHITECTURE** like a pro bodybuilder uses proper form
 - Follow **NAMING CONVENTIONS** so consistent they make drill sergeants proud
 - Write **TESTS** that are more reliable than your gym buddy's protein shake schedule

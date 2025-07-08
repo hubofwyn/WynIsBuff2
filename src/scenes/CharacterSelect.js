@@ -1,5 +1,5 @@
 import { Scene } from 'phaser';
-import { GameStateManager, EventSystem, AudioManager } from '@features/core';
+import { GameStateManager, EventSystem, AudioManager, getLogger } from '@features/core';
 import { EventNames } from '../constants/EventNames';
 import { UIConfig } from '../constants/UIConfig';
 import { SceneKeys } from '../constants/SceneKeys.js';
@@ -10,6 +10,7 @@ import { SceneKeys } from '../constants/SceneKeys.js';
 export class CharacterSelect extends Scene {
     constructor() {
         super(SceneKeys.CHARACTER_SELECT);
+        this.logger = getLogger('CharacterSelect');
         this.gameState = new GameStateManager();
         this.eventSystem = new EventSystem();
         this.selection = null; // Will be set in create()
@@ -24,7 +25,7 @@ export class CharacterSelect extends Scene {
         
         // Initialize selection after GameStateManager is fully ready
         this.selection = this.gameState.getSelectedCharacter();
-        console.log('[CharacterSelect] Current selection:', this.selection);
+        this.logger.debug('Current selection:', this.selection);
         
         // Add dark gradient background
         this.cameras.main.setBackgroundColor('#0F1B2B');

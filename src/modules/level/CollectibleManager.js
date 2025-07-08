@@ -1,5 +1,6 @@
 import RAPIER from '@dimforge/rapier2d-compat';
 import { EventNames } from '../../constants/EventNames';
+import { getLogger } from '../../core/Logger';
 
 /**
  * CollectibleManager class is responsible for creating and managing collectibles
@@ -12,6 +13,7 @@ export class CollectibleManager {
      * @param {EventSystem} eventSystem - The event system for communication
      */
     constructor(scene, world, eventSystem) {
+        this.logger = getLogger('CollectibleManager');
         this.scene = scene;
         this.world = world;
         this.eventSystem = eventSystem;
@@ -43,7 +45,7 @@ export class CollectibleManager {
      */
     log(message) {
         if (this.debugMode) {
-            console.log(`[CollectibleManager] ${message}`);
+            this.logger.debug(message);
         }
     }
     
@@ -131,13 +133,13 @@ export class CollectibleManager {
                     
                     this.log(`Collectible ${index+1} created successfully`);
                 } catch (error) {
-                    console.error(`[CollectibleManager] Error creating collectible ${index+1}:`, error);
+                    this.logger.error(`Error creating collectible ${index+1}:`, error);
                 }
             });
             
             return this.collectibles;
         } catch (error) {
-            console.error('[CollectibleManager] Error in createCollectibles:', error);
+            this.logger.error('Error in createCollectibles:', error);
             return [];
         }
     }

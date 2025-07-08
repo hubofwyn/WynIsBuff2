@@ -1,3 +1,5 @@
+import { getLogger } from '../core/Logger.js';
+
 export const EventNames = {
     // Game state events
     GAME_INIT: 'game:init',
@@ -78,7 +80,8 @@ export const DeprecatedEventNames = Object.freeze({
     get: (deprecatedName) => {
         const newName = DeprecatedEventNames[deprecatedName];
         if (newName && process.env.NODE_ENV !== 'production') {
-            console.warn(`[EventNames] Deprecated event name "${deprecatedName}" used. Please use EventNames.${Object.keys(EventNames).find(key => EventNames[key] === newName)} instead.`);
+            const logger = getLogger('EventNames');
+            logger.warn(`Deprecated event name "${deprecatedName}" used. Please use EventNames.${Object.keys(EventNames).find(key => EventNames[key] === newName)} instead.`);
         }
         return newName || deprecatedName;
     }

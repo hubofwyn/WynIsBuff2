@@ -1,9 +1,10 @@
 import Phaser from 'phaser';
 import RAPIER from '@dimforge/rapier2d-compat';
-import { EventNames } from '../../constants/EventNames';
-import { JumpController } from './JumpController';
-import { MovementController } from './MovementController';
-import { CollisionController } from './CollisionController';
+import { EventNames } from '../../constants/EventNames.js';
+import { getLogger } from '../../core/Logger.js';
+import { JumpController } from './JumpController.js';
+import { MovementController } from './MovementController.js';
+import { CollisionController } from './CollisionController.js';
 
 /**
  * PlayerController class coordinates all player-related functionality
@@ -27,6 +28,7 @@ export class PlayerController {
      * @param {string} textureKey - Key of the sprite texture to use
      */
     constructor(scene, world, eventSystem, x = 512, y = 300, textureKey = 'player') {
+        this.logger = getLogger('PlayerController');
         this.scene = scene;
         this.world = world;
         this.eventSystem = eventSystem;
@@ -57,7 +59,7 @@ export class PlayerController {
             });
         }
         
-        console.log('[PlayerController] Initialized with modular architecture');
+        this.logger.info('Initialized with modular architecture');
     }
     
     /**
@@ -67,22 +69,22 @@ export class PlayerController {
      */
     create(x, y) {
         try {
-            console.log('[PlayerController] Creating player...');
+            this.logger.debug('Creating player...');
             
-            // Player dimensions - doubled for better visibility
-            const playerWidth = 64;
-            const playerHeight = 64;
+            // Player dimensions - standard 2D platformer size
+            const playerWidth = 48;
+            const playerHeight = 48;
             
             // Create a visual representation of the player
             if (this.scene.textures.exists(this.textureKey)) {
-                console.log('[PlayerController] Using texture:', this.textureKey);
+                this.logger.debug('Using texture:', this.textureKey);
                 this.sprite = this.scene.add.sprite(x, y, this.textureKey);
                 this.sprite.setDisplaySize(playerWidth, playerHeight);
                 // Ensure sprite is visible and on top
                 this.sprite.setDepth(100);
                 this.sprite.setVisible(true);
             } else {
-                console.log('[PlayerController] Texture not found:', this.textureKey, 'using rectangle');
+                this.logger.debug('Texture not found:', this.textureKey, 'using rectangle');
                 this.sprite = this.scene.add.rectangle(
                     x, y, playerWidth, playerHeight, 0x0000ff
                 );
@@ -99,7 +101,7 @@ export class PlayerController {
                 .setLinearDamping(0.1); // Reduce linear damping for more responsive movement
             
             this.body = this.world.createRigidBody(playerBodyDesc);
-            console.log('[PlayerController] Player body created');
+            this.logger.debug('Player body created');
             
             // Create a collider (hitbox) for the player
             const playerColliderDesc = RAPIER.ColliderDesc
@@ -113,9 +115,9 @@ export class PlayerController {
                 this.body
             );
             
-            console.log('[PlayerController] Player created successfully');
+            this.logger.info('Player created successfully');
         } catch (error) {
-            console.error('[PlayerController] Error in create:', error);
+            this.logger.error('Error in create:', error);
         }
     }
     
@@ -193,7 +195,7 @@ export class PlayerController {
             // Update sprite position to match physics body
             this.updateSpritePosition();
         } catch (error) {
-            console.error('[PlayerController] Error in update:', error);
+            this.logger.error('Error in update:', error);
         }
     }
     

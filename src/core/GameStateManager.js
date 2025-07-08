@@ -1,4 +1,5 @@
 import { BaseManager } from './BaseManager.js';
+import { getLogger } from './Logger.js';
 
 /**
  * GameStateManager class handles game state persistence,
@@ -19,6 +20,7 @@ export class GameStateManager extends BaseManager {
             return;
         }
         
+        this.logger = getLogger('GameStateManager');
         this.storageKey = 'wynIsBuff2Progress';
         this.charKey = 'wynIsBuff2SelectedCharacter';
         this.settingsKey = 'wynIsBuff2Settings';
@@ -35,7 +37,7 @@ export class GameStateManager extends BaseManager {
         try {
             // Check if localStorage is available
             if (typeof localStorage === 'undefined') {
-                console.warn('[GameStateManager] localStorage is not available, progress will not be saved');
+                this.logger.warn('localStorage is not available, progress will not be saved');
                 this.initialized = false;
                 this._initialized = false;
                 // Default character selection
@@ -46,14 +48,14 @@ export class GameStateManager extends BaseManager {
             // Try to access localStorage to make sure it's working
             localStorage.getItem('test');
             
-            console.log('[GameStateManager] Initialized successfully');
+            this.logger.info('Initialized successfully');
             this.initialized = true;
             this._initialized = true;
             // Load selected character if present
             const stored = localStorage.getItem(this.charKey);
             this.selectedCharacter = stored || 'axelSprite';
         } catch (error) {
-            console.error('[GameStateManager] Error initializing:', error);
+            this.logger.error('Error initializing:', error);
             this.initialized = false;
             this._initialized = false;
         }
@@ -86,10 +88,10 @@ export class GameStateManager extends BaseManager {
             // Save progress
             localStorage.setItem(this.storageKey, JSON.stringify(progress));
             
-            console.log(`[GameStateManager] Progress saved for level ${levelId}`);
+            this.logger.info(`Progress saved for level ${levelId}`);
             return true;
         } catch (error) {
-            console.error('[GameStateManager] Error saving progress:', error);
+            this.logger.error('Error saving progress:', error);
             return false;
         }
     }
@@ -110,7 +112,7 @@ export class GameStateManager extends BaseManager {
             // Parse progress or return empty object if not found
             return progressJson ? JSON.parse(progressJson) : {};
         } catch (error) {
-            console.error('[GameStateManager] Error loading progress:', error);
+            this.logger.error('Error loading progress:', error);
             return {};
         }
     }
@@ -129,7 +131,7 @@ export class GameStateManager extends BaseManager {
             const progress = this.loadProgress();
             return progress[levelId] && progress[levelId].completed;
         } catch (error) {
-            console.error('[GameStateManager] Error checking level completion:', error);
+            this.logger.error('Error checking level completion:', error);
             return false;
         }
     }
@@ -148,7 +150,7 @@ export class GameStateManager extends BaseManager {
             const progress = this.loadProgress();
             return progress[levelId] || null;
         } catch (error) {
-            console.error('[GameStateManager] Error getting level progress:', error);
+            this.logger.error('Error getting level progress:', error);
             return null;
         }
     }
@@ -168,7 +170,7 @@ export class GameStateManager extends BaseManager {
                 progress[levelId] && progress[levelId].completed
             );
         } catch (error) {
-            console.error('[GameStateManager] Error getting completed levels:', error);
+            this.logger.error('Error getting completed levels:', error);
             return [];
         }
     }
@@ -196,7 +198,7 @@ export class GameStateManager extends BaseManager {
             
             return { collected, total };
         } catch (error) {
-            console.error('[GameStateManager] Error getting total collectibles:', error);
+            this.logger.error('Error getting total collectibles:', error);
             return { collected: 0, total: 0 };
         }
     }
@@ -214,10 +216,10 @@ export class GameStateManager extends BaseManager {
             localStorage.removeItem(this.storageKey);
             // Reset character selection as well
             localStorage.removeItem(this.charKey);
-            console.log('[GameStateManager] Progress reset');
+            this.logger.info('Progress reset');
             return true;
         } catch (error) {
-            console.error('[GameStateManager] Error resetting progress:', error);
+            this.logger.error('Error resetting progress:', error);
             return false;
         }
     }
@@ -232,7 +234,7 @@ export class GameStateManager extends BaseManager {
             try {
                 localStorage.setItem(this.charKey, key);
             } catch (error) {
-                console.error('[GameStateManager] Error persisting character selection:', error);
+                this.logger.error('Error persisting character selection:', error);
             }
         }
     }
@@ -262,7 +264,7 @@ export class GameStateManager extends BaseManager {
             this.settings = settings;
             return true;
         } catch (error) {
-            console.error('[GameStateManager] Error saving settings:', error);
+            this.logger.error('Error saving settings:', error);
             return false;
         }
     }
@@ -292,16 +294,16 @@ export class GameStateManager extends BaseManager {
                     return parsed.settings;
                 }
                 // Migrate or reset on version mismatch
-                console.warn(`[GameStateManager] Settings schema mismatch: found ${parsed.schemaVersion}, expected ${GameStateManager.SETTINGS_SCHEMA_VERSION}. Resetting to defaults.`);
+                this.logger.warn(`Settings schema mismatch: found ${parsed.schemaVersion}, expected ${GameStateManager.SETTINGS_SCHEMA_VERSION}. Resetting to defaults.`);
                 this.resetSettings();
                 return defaults;
             }
             // Legacy unversioned settings
-            console.info('[GameStateManager] Loading legacy settings, upgrading schema');
+            this.logger.info('Loading legacy settings, upgrading schema');
             this.saveSettings(parsed);
             return parsed;
         } catch (error) {
-            console.error('[GameStateManager] Error loading settings:', error);
+            this.logger.error('Error loading settings:', error);
             return defaults;
         }
     }
@@ -317,10 +319,10 @@ export class GameStateManager extends BaseManager {
         try {
             localStorage.removeItem(this.settingsKey);
             this.settings = this.loadSettings();
-            console.log('[GameStateManager] Settings reset to defaults');
+            this.logger.info('Settings reset to defaults');
             return true;
         } catch (error) {
-            console.error('[GameStateManager] Error resetting settings:', error);
+            this.logger.error('Error resetting settings:', error);
             return false;
         }
     }

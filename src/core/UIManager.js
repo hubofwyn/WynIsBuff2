@@ -1,5 +1,6 @@
 import { EventNames } from '../constants/EventNames';
 import { BaseManager } from './BaseManager';
+import { getLogger } from './Logger';
 
 /**
  * UIManager class handles all UI-related functionality including
@@ -14,6 +15,7 @@ export class UIManager extends BaseManager {
         super();
         if (this.isInitialized()) return;
         
+        this.logger = getLogger('UIManager');
         this.scene = null;
         this.events = null;
         this.elements = new Map();
@@ -374,7 +376,7 @@ export class UIManager extends BaseManager {
      * @param {boolean} enabled
      */
     applyHighContrast(enabled) {
-        console.log(`[UIManager] High contrast mode: ${enabled}`);
+        this.logger.info(`High contrast mode: ${enabled}`);
         // Apply CSS contrast filter to game canvas
         const canvas = this.scene.sys.game.canvas;
         if (canvas && canvas.style) {
@@ -404,7 +406,7 @@ export class UIManager extends BaseManager {
      * @param {boolean} enabled
      */
     showSubtitles(enabled) {
-        console.log(`[UIManager] Subtitles enabled: ${enabled}`);
+        this.logger.info(`Subtitles enabled: ${enabled}`);
         this.subtitlesEnabled = enabled;
         
         if (!this.scene) return;

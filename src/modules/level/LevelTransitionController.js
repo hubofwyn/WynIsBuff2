@@ -1,6 +1,7 @@
 import { EventNames } from '../../constants/EventNames';
 import { getNextLevelId } from '../../constants/LevelData';
 import { SceneKeys } from '../../constants/SceneKeys.js';
+import { getLogger } from '../../core/Logger';
 
 /**
  * LevelTransitionController class is responsible for managing level transitions
@@ -12,6 +13,7 @@ export class LevelTransitionController {
      * @param {EventSystem} eventSystem - The event system for communication
      */
     constructor(scene, eventSystem) {
+        this.logger = getLogger('LevelTransitionController');
         this.scene = scene;
         this.eventSystem = eventSystem;
         
@@ -57,7 +59,7 @@ export class LevelTransitionController {
      */
     log(message) {
         if (this.debugMode) {
-            console.log(`[LevelTransitionController] ${message}`);
+            this.logger.debug(message);
         }
     }
     

@@ -1,5 +1,6 @@
 import RAPIER from '@dimforge/rapier2d-compat';
 import { EventNames } from '../../constants/EventNames';
+import { getLogger } from '../../core/Logger';
 
 /**
  * MovingPlatformController class is responsible for creating and managing moving platforms
@@ -12,6 +13,7 @@ export class MovingPlatformController {
      * @param {EventSystem} eventSystem - The event system for communication
      */
     constructor(scene, world, eventSystem) {
+        this.logger = getLogger('MovingPlatformController');
         this.scene = scene;
         this.world = world;
         this.eventSystem = eventSystem;
@@ -40,7 +42,7 @@ export class MovingPlatformController {
      */
     log(message) {
         if (this.debugMode) {
-            console.log(`[MovingPlatformController] ${message}`);
+            this.logger.debug(message);
         }
     }
     
@@ -120,13 +122,13 @@ export class MovingPlatformController {
                         });
                     }
                 } catch (error) {
-                    console.error(`[MovingPlatformController] Error creating moving platform ${index+1}:`, error);
+                    this.logger.error(`Error creating moving platform ${index+1}:`, error);
                 }
             });
             
             return this.movingPlatforms;
         } catch (error) {
-            console.error('[MovingPlatformController] Error in createMovingPlatforms:', error);
+            this.logger.error('Error in createMovingPlatforms:', error);
             return [];
         }
     }
@@ -239,7 +241,7 @@ export class MovingPlatformController {
                     });
                 }
             } catch (error) {
-                console.error('[MovingPlatformController] Error updating moving platform:', error);
+                this.logger.error('Error updating moving platform:', error);
             }
         });
     }

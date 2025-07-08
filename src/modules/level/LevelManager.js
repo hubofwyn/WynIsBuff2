@@ -1,4 +1,5 @@
 import { EventNames } from '../../constants/EventNames';
+import { getLogger } from '../../core/Logger';
 import { GroundFactory } from './GroundFactory';
 import { PlatformFactory } from './PlatformFactory';
 import { MovingPlatformController } from './MovingPlatformController';
@@ -19,6 +20,7 @@ export class LevelManager {
      * @param {EventSystem} eventSystem - The event system for communication
      */
     constructor(scene, world, eventSystem) {
+        this.logger = getLogger('LevelManager');
         this.scene = scene;
         this.world = world;
         this.eventSystem = eventSystem;
@@ -110,7 +112,7 @@ export class LevelManager {
      */
     log(message) {
         if (this.debugMode) {
-            console.log(`[LevelManager] ${message}`);
+            this.logger.debug(message);
         }
     }
     

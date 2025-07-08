@@ -1,5 +1,5 @@
 import { Scene } from 'phaser';
-import { AudioManager, GameStateManager } from '@features/core';
+import { AudioManager, GameStateManager, getLogger } from '@features/core';
 import { SceneKeys } from '../constants/SceneKeys.js';
 import { ImageAssets, ImagePaths, AudioAssets, AudioPaths, SpritesheetConfigs } from '../constants/Assets.js';
 
@@ -8,6 +8,7 @@ export class Preloader extends Scene
     constructor ()
     {
         super(SceneKeys.PRELOADER);
+        this.logger = getLogger('Preloader');
     }
 
     init ()
@@ -32,8 +33,7 @@ export class Preloader extends Scene
 
     preload ()
     {
-        //  Load the assets for the game
-        this.load.setPath('assets');
+        //  Load the assets for the game - paths already include 'assets/' prefix
 
         // Load the custom game logo
         this.load.image(ImageAssets.LOGO, ImagePaths.LOGO);
@@ -55,6 +55,12 @@ export class Preloader extends Scene
         
         // Load tileset for potential use in level design
         this.load.image(ImageAssets.DUNGEON_TILES, ImagePaths.DUNGEON_TILES);
+        
+        // Load tileset as spritesheet for platform tiles
+        this.load.spritesheet('dungeon-tiles', ImagePaths.DUNGEON_TILES, {
+            frameWidth: 16,
+            frameHeight: 16
+        });
         
         // Load UI elements
         this.load.image(ImageAssets.ARROW1, ImagePaths.ARROW1);
@@ -129,7 +135,7 @@ export class Preloader extends Scene
             audio.setMusicVolume(settings.volumes.music);
             audio.setSFXVolume(settings.volumes.sfx);
         }
-        console.log('[Preloader] AudioManager initialized with persisted settings', settings.volumes);
+        this.logger.info('AudioManager initialized with persisted settings', settings.volumes);
         // Move to Welcome Screen
         this.scene.start(SceneKeys.WELCOME);
     }

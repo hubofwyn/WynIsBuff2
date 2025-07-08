@@ -1,7 +1,7 @@
 import { Scene } from 'phaser';
 import { PlayerController } from '@features/player';
 import { ParticleManager, CameraManager, ColorManager } from '@features/effects';
-import { PhysicsManager, EventSystem, InputManager, UIManager, GameStateManager, AudioManager } from '@features/core';
+import { PhysicsManager, EventSystem, InputManager, UIManager, GameStateManager, AudioManager, getLogger } from '@features/core';
 import { LevelManager } from '@features/level';
 import { EventNames } from '../constants/EventNames';
 import { SceneKeys } from '../constants/SceneKeys.js';
@@ -11,7 +11,8 @@ import { PhysicsConfig } from '../constants/PhysicsConfig.js';
 export class Game extends Scene {
     constructor() {
         super(SceneKeys.GAME);
-        console.log('[Game] Constructor called');
+        this.logger = getLogger('Game');
+        this.logger.debug('Constructor called');
         
         // Game managers
         this.eventSystem = null;
@@ -31,7 +32,7 @@ export class Game extends Scene {
     }
 
     init(data) {
-        console.log('[Game] Init called with data:', data);
+        this.logger.debug('Init called with data:', data);
         
         // If a level ID is provided, use it
         if (data && data.levelId) {
@@ -40,11 +41,11 @@ export class Game extends Scene {
     }
 
     preload() {
-        console.log('[Game] Preload called');
+        this.logger.debug('Preload called');
     }
 
     async create() {
-            console.log('[Game] Create method started');
+            this.logger.info('Create method started');
             // Play in-level music
             const audio = AudioManager.getInstance();
             audio.stopMusic(AudioAssets.PROTEIN_PIXEL_ANTHEM);
@@ -89,7 +90,7 @@ export class Game extends Scene {
             this.particleManager = new ParticleManager(this, this.eventSystem);
             this.cameraManager = new CameraManager(this, this.eventSystem);
             this.colorManager = new ColorManager(this, this.eventSystem);
-            console.log('[Game] Effect managers initialized');
+            this.logger.debug('Effect managers initialized');
             
             // Add visual enhancements
             this.createVisualEnhancements();
@@ -124,8 +125,8 @@ export class Game extends Scene {
             const startX = levelConfig && levelConfig.playerStart ? levelConfig.playerStart.x : 512;
             const startY = levelConfig && levelConfig.playerStart ? levelConfig.playerStart.y : 300;
             const selectedKey = this.gameStateManager.getSelectedCharacter();
-            console.log('[Game] Creating player with character key:', selectedKey);
-            console.log('[Game] Available textures:', Object.keys(this.textures.list));
+            this.logger.info('Creating player with character key:', selectedKey);
+            this.logger.debug('Available textures:', Object.keys(this.textures.list));
             this.playerController = new PlayerController(
                 this,
                 this.physicsManager.getWorld(),
@@ -143,14 +144,14 @@ export class Game extends Scene {
             
             // Listen for Pause events via InputManager (ESC key)
             this.eventSystem.on(EventNames.PAUSE, () => {
-                console.log('[Game] Pause event received, launching PauseScene');
+                this.logger.debug('Pause event received, launching PauseScene');
                 // Pause the game and show pause overlay
                 this.scene.launch(SceneKeys.PAUSE);
                 this.scene.pause();
             });
             // Listen for Level Reset events via InputManager (R key)
             this.eventSystem.on(EventNames.LEVEL_RESET, () => {
-                console.log('[Game] Level reset event received, resetting level');
+                this.logger.debug('Level reset event received, resetting level');
                 this.levelManager.resetLevel();
             });
             
@@ -160,9 +161,9 @@ export class Game extends Scene {
                 levelId: this.currentLevelId
             });
             
-            console.log('[Game] Create method completed successfully');
+            this.logger.info('Create method completed successfully');
         } catch (error) {
-            console.error('[Game] Error in create method:', error);
+            this.logger.error('Error in create method:', error);
             // Display error on screen for easier debugging
             this.add.text(512, 400, 'ERROR: ' + error.message, {
                 fontFamily: 'Arial', fontSize: 16, color: '#ff0000',
@@ -359,7 +360,7 @@ export class Game extends Scene {
         
         this.uiManager.addToGroup('levelCompleteUI', 'continueButton');
         
-        console.log('[Game] UI elements created');
+        this.logger.debug('UI elements created');
     }
     
     /**
@@ -370,7 +371,7 @@ export class Game extends Scene {
         this.eventSystem.on(EventNames.PLAYER_LAND, (data) => {
             // Screen shake is now handled by CameraManager
             if (this.cameraManager) {
-                console.log('[Game] Player landed, CameraManager handling effects');
+                this.logger.debug('Player landed, CameraManager handling effects');
             }
             // Play landing sound
             AudioManager.getInstance().playSFX('land');
@@ -378,14 +379,14 @@ export class Game extends Scene {
         
         // Listen for player jump events
         this.eventSystem.on(EventNames.PLAYER_JUMP, (data) => {
-            console.log('[Game] Player jumped, effect managers handling feedback');
+            this.logger.debug('Player jumped, effect managers handling feedback');
             // Play jump sound effect
             AudioManager.getInstance().playSFX('jump');
         });
         
         // Listen for collectible collected events
         this.eventSystem.on(EventNames.COLLECTIBLE_COLLECTED, (data) => {
-            console.log('[Game] Collectible collected:', data);
+            this.logger.debug('Collectible collected:', data);
             // Play pickup sound effect
             AudioManager.getInstance().playSFX('pickup');
             
@@ -413,7 +414,7 @@ export class Game extends Scene {
         
         // Listen for level complete events
         this.eventSystem.on(EventNames.LEVEL_COMPLETE, (data) => {
-            console.log('[Game] Level complete:', data);
+            this.logger.info('Level complete:', data);
             
             // Save progress
             if (this.gameStateManager) {
@@ -442,7 +443,7 @@ export class Game extends Scene {
         
         // Listen for level loaded events
         this.eventSystem.on(EventNames.LEVEL_LOADED, (data) => {
-            console.log('[Game] Level loaded:', data);
+            this.logger.info('Level loaded:', data);
             
             // Update level name
             this.uiManager.updateText(
@@ -468,7 +469,7 @@ export class Game extends Scene {
         
         // Listen for player explode events
         this.eventSystem.on(EventNames.PLAYER_EXPLODE, (data) => {
-            console.log('[Game] Player exploded:', data);
+            this.logger.warn('Player exploded:', data);
             
             // Stop all gameplay
             this.scene.pause();
@@ -485,7 +486,7 @@ export class Game extends Scene {
         
         // Listen for scene transition events
         this.eventSystem.on(EventNames.SCENE_TRANSITION, (data) => {
-            console.log('[Game] Scene transition event:', data);
+            this.logger.debug('Scene transition event:', data);
             
             // Fade out current scene
             this.cameras.main.fadeOut(500, 0, 0, 0);
@@ -527,7 +528,7 @@ export class Game extends Scene {
                     try {
                         enemy.update(time, delta);
                     } catch (err) {
-                        console.error('[Game] Error updating enemy:', err);
+                        this.logger.error('Error updating enemy:', err);
                     }
                 });
             }
@@ -537,7 +538,7 @@ export class Game extends Scene {
                 try {
                     this.boss.update(time, delta);
                 } catch (err) {
-                    console.error('[Game] Error updating boss:', err);
+                    this.logger.error('Error updating boss:', err);
                 }
             }
             
@@ -554,11 +555,11 @@ export class Game extends Scene {
                         }
                     }
                 } catch (err) {
-                    console.error('[Game] Error updating pulsating boss:', err);
+                    this.logger.error('Error updating pulsating boss:', err);
                 }
             }
         } catch (error) {
-            console.error('[Game] Error in update:', error);
+            this.logger.error('Error in update:', error);
         }
     }
 }
