@@ -24,8 +24,9 @@ export class BirthdayMinigame extends Scene {
         // Player state - simplified
         this.currentLane = 1; // Middle lane (0, 1, 2)
         this.isChangingLanes = false;
-        this.isCarrying = false;
-        this.carryIndicator = null;
+        this.carriedItems = []; // Array to hold multiple items
+        this.maxCarryCapacity = 5;
+        this.carryIndicators = []; // Array of visual indicators
         this.playerX = 200; // Fixed X position on screen
         
         // Streak system
@@ -45,6 +46,7 @@ export class BirthdayMinigame extends Scene {
         this.perfectWindow = 2000; // 2 seconds for perfect delivery
         this.goodWindow = 5000; // 5 seconds for good delivery
         this.maxDeliveryTime = 10000; // 10 seconds max delivery time
+        this.deliveryTimer = this.maxDeliveryTime;
         
         // Obstacle spawning
         this.baseObstacleSpeed = 200;
@@ -73,8 +75,69 @@ export class BirthdayMinigame extends Scene {
         this.timerText = null;
         this.streakText = null;
     }
+
+    /**
+     * Phaser automatically invokes `init` every time a scene is started or
+     * restarted.  Because Phaser *re-uses* the same scene instance (the
+     * constructor only runs once), any flags that were mutated during a prior
+     * round – for example `this.gameOver = true` – persist into the next
+     * session.  That was the root cause of the “second play has no movement”
+     * bug:  `this.gameOver` was still `true`, so the `update()` early-return
+     * halted all gameplay.
+     *
+     * Here we reset every runtime flag and transient collection that needs to
+     * start fresh each run.  Only long-term data (high-score, leaderboard)
+     * survives across rounds.
+     */
+    init() {
+        // Core run-state flags
+        this.gameOver = false;
+        this.gameStarted = false;
+
+        // Player state
+        this.currentLane = 1;
+        this.isChangingLanes = false;
+        this.carriedItems = [];
+
+        // Scoring
+        this.score = 0;
+        this.totalPoints = 0;
+        this.deliveries = 0;
+        this.combo = 0;
+        this.perfectDeliveries = 0;
+        this.speedBonus = 1;
+        this.missStreak = 0;
+
+        // Lives
+        this.lives = 3;
+
+        // Difficulty / pacing
+        this.speedMultiplier = 1.0;
+        this.speedLevel = 1;
+        this.difficultyLevel = 1;
+
+        // Timers
+        this.deliveryTimer = this.maxDeliveryTime;
+
+        // Groups & containers – will be (re)created in `create`
+        this.scrollingObjects = null;
+        this.obstacles = null;
+
+        // Make sure physics world is active if it had been paused in a
+        // previous round (Phaser keeps the same Physics.World instance when
+        // a scene restarts).
+        if (this.physics && this.physics.world && this.physics.world.isPaused) {
+            this.physics.resume();
+        }
+    }
     
     create() {
+        // Clear lingering keyboard listeners from prior rounds (they can
+        // accumulate when the scene is restarted).
+        if (this.input && this.input.keyboard) {
+            this.input.keyboard.removeAllListeners();
+        }
+
         // Ensure camera is properly reset and faded in
         this.cameras.main.fadeIn(300);
         
@@ -193,6 +256,8 @@ export class BirthdayMinigame extends Scene {
         for (let i = 0; i < this.numLanes; i++) {
             this.lanePositions[i] = startY + i * this.laneHeight + this.laneHeight / 2;
         }
+        
+        console.log('[Lanes] Lane positions:', this.lanePositions);
     }
     
     createPlayer() {
@@ -232,81 +297,255 @@ export class BirthdayMinigame extends Scene {
             repeat: -1,
             ease: 'Sine.InOut'
         });
+        
+        // Removed collision indicator - was causing visual issues
     }
     
-    spawnParcel() {
-        // Spawn parcels from the right, scrolling left
+    spawnProteinShake() {
+        // Regular protein shake - worth 100 points
         const lane = Phaser.Math.Between(0, this.numLanes - 1);
         const y = this.lanePositions[lane];
-        const x = 1100; // Start off-screen right
+        const x = 1100;
         
-        // Create parcel container
-        const parcelContainer = this.add.container(x, y);
+        const shakeContainer = this.add.container(x, y);
         
-        // Background circle for better visibility
+        // Background circle for visibility
         const bgCircle = this.add.circle(0, 0, 35, 0x000000, 0.5);
-        bgCircle.setStrokeStyle(3, 0xFFD700);
+        bgCircle.setStrokeStyle(2, 0x00FF00);
         
-        // Dynamite emoji is the main visual
-        const dynamiteEmoji = this.add.text(0, 0, '🧨', {
-            fontSize: '40px'
+        // Simple protein shake visual
+        const shake = this.add.text(0, 0, '🥤', {
+            fontSize: '36px'
         }).setOrigin(0.5);
         
-        // S² Shake label with better visibility
-        const labelBg = this.add.rectangle(0, -35, 80, 25, 0x000000, 0.8);
-        labelBg.setStrokeStyle(2, 0xFFD700);
+        // Green glow
+        const glow = this.add.circle(0, 0, 38, 0x00FF00, 0.3);
         
-        const label = this.add.text(0, -35, 'S² SHAKE', {
-            fontSize: '14px',
-            color: '#FFD700',
-            fontFamily: 'Arial Black',
-            fontStyle: 'bold',
-            stroke: '#000000',
-            strokeThickness: 2
-        }).setOrigin(0.5);
-        
-        // Add glow effect
-        const glow = this.add.circle(0, 0, 40, 0xFFD700, 0.3);
-        
-        // Add pickup arrow indicator
-        const arrow = this.add.text(0, 35, '⬆ PICKUP', {
+        // Add pickup hint
+        const pickupHint = this.add.text(0, 28, '100 pts', {
             fontSize: '12px',
-            color: '#FFFFFF',
+            color: '#00FF00',
             fontFamily: 'Arial Black',
             stroke: '#000000',
             strokeThickness: 2
         }).setOrigin(0.5);
         
-        parcelContainer.add([glow, bgCircle, dynamiteEmoji, labelBg, label, arrow]);
+        shakeContainer.add([glow, bgCircle, shake, pickupHint]);
         
-        // Track parcel data
-        parcelContainer.isParcel = true;
-        parcelContainer.lane = lane;
-        parcelContainer.spawnTime = this.time.now;
-        this.scrollingObjects.add(parcelContainer);
+        // Track data using Phaser's data manager
+        shakeContainer.setData('isParcel', true);
+        shakeContainer.setData('itemType', 'protein');
+        shakeContainer.setData('points', 100);
+        shakeContainer.setData('lane', lane);
+        shakeContainer.setData('spawnTime', this.time.now);
         
-        // Entrance animation
-        parcelContainer.setScale(0);
+        this.scrollingObjects.add(shakeContainer);
+        
+        // Simple entrance
+        shakeContainer.setScale(0);
         this.tweens.add({
-            targets: parcelContainer,
+            targets: shakeContainer,
             scale: 1,
-            duration: 300,
+            duration: 200,
             ease: 'Back.Out'
         });
         
         // Pulse effect
         this.tweens.add({
-            targets: [glow, arrow],
-            alpha: { from: 0.3, to: 0.8 },
-            duration: 800,
+            targets: glow,
+            alpha: { from: 0.3, to: 0.6 },
+            scale: { from: 1, to: 1.1 },
+            duration: 600,
             yoyo: true,
             repeat: -1
         });
         
-        // Mark pickup zone for timing – use current player position so it keeps
-        // making sense even if the player has moved horizontally prior to the
-        // first parcel spawning.
-        parcelContainer.pickupZoneX = (this.playerContainer?.x ?? this.playerX) + 50;
+        shakeContainer.pickupZoneX = (this.playerContainer?.x ?? this.playerX) + 50;
+        
+        console.log('[Spawn] Protein shake in lane', lane, 'at y:', y, 'isParcel:', shakeContainer.getData('isParcel'));
+    }
+    
+    spawnShakeShake() {
+        // Special S² Shake - elaborate sundae, worth 500 points
+        const lane = Phaser.Math.Between(0, this.numLanes - 1);
+        const y = this.lanePositions[lane];
+        const x = 1100;
+        
+        const shakeContainer = this.add.container(x, y);
+        
+        // Background circle for emphasis
+        const bgCircle = this.add.circle(0, 0, 40, 0x000000, 0.7);
+        bgCircle.setStrokeStyle(3, 0xFFD700);
+        
+        // Ice cream sundae visual
+        const sundae = this.add.text(0, 0, '🍨', {
+            fontSize: '42px'
+        }).setOrigin(0.5);
+        
+        // S² label
+        const labelBg = this.add.rectangle(0, -40, 60, 25, 0x000000, 0.9);
+        labelBg.setStrokeStyle(2, 0xFFD700);
+        
+        const label = this.add.text(0, -40, 'S²', {
+            fontSize: '20px',
+            color: '#FFD700',
+            fontFamily: 'Arial Black',
+            fontStyle: 'bold',
+            stroke: '#000000',
+            strokeThickness: 3
+        }).setOrigin(0.5);
+        
+        // Golden glow effect
+        const glow = this.add.circle(0, 0, 45, 0xFFD700, 0.4);
+        
+        // Special indicator
+        const special = this.add.text(0, 35, '★ SPECIAL ★', {
+            fontSize: '12px',
+            color: '#FFD700',
+            fontFamily: 'Arial Black',
+            stroke: '#000000',
+            strokeThickness: 2
+        }).setOrigin(0.5);
+        
+        shakeContainer.add([glow, bgCircle, sundae, labelBg, label, special]);
+        
+        // Track data using Phaser's data manager
+        shakeContainer.setData('isParcel', true);
+        shakeContainer.setData('itemType', 'shakeshake');
+        shakeContainer.setData('points', 500);
+        shakeContainer.setData('lane', lane);
+        shakeContainer.setData('spawnTime', this.time.now);
+        this.scrollingObjects.add(shakeContainer);
+        
+        // Grand entrance
+        shakeContainer.setScale(0);
+        this.tweens.add({
+            targets: shakeContainer,
+            scale: 1,
+            duration: 400,
+            ease: 'Back.Out'
+        });
+        
+        // Sparkle effect
+        this.tweens.add({
+            targets: [glow, special],
+            alpha: { from: 0.4, to: 0.9 },
+            duration: 600,
+            yoyo: true,
+            repeat: -1
+        });
+        
+        shakeContainer.pickupZoneX = (this.playerContainer?.x ?? this.playerX) + 50;
+    }
+    
+    spawnDynamite() {
+        // Dynamite - collectible weapon for cakes
+        const lane = Phaser.Math.Between(0, this.numLanes - 1);
+        const y = this.lanePositions[lane];
+        const x = 1100;
+        
+        const dynamiteContainer = this.add.container(x, y);
+        
+        // Dynamite visual
+        const dynamite = this.add.text(0, 0, '🧨', {
+            fontSize: '38px'
+        }).setOrigin(0.5);
+        
+        // Red danger glow
+        const glow = this.add.circle(0, 0, 35, 0xFF0000, 0.3);
+        
+        // Weapon indicator
+        const weaponText = this.add.text(0, 30, 'WEAPON', {
+            fontSize: '10px',
+            color: '#FF0000',
+            fontFamily: 'Arial Black',
+            stroke: '#000000',
+            strokeThickness: 2
+        }).setOrigin(0.5);
+        
+        dynamiteContainer.add([glow, dynamite, weaponText]);
+        
+        // Track data using Phaser's data manager
+        dynamiteContainer.setData('isParcel', true);
+        dynamiteContainer.setData('itemType', 'dynamite');
+        dynamiteContainer.setData('points', 0); // No points, it's a weapon
+        dynamiteContainer.setData('lane', lane);
+        dynamiteContainer.setData('spawnTime', this.time.now);
+        this.scrollingObjects.add(dynamiteContainer);
+        
+        // Entrance with shake
+        dynamiteContainer.setScale(0);
+        this.tweens.add({
+            targets: dynamiteContainer,
+            scale: 1,
+            duration: 300,
+            ease: 'Back.Out'
+        });
+        
+        // Pulse danger effect
+        this.tweens.add({
+            targets: glow,
+            alpha: { from: 0.3, to: 0.6 },
+            duration: 500,
+            yoyo: true,
+            repeat: -1
+        });
+        
+        dynamiteContainer.pickupZoneX = (this.playerContainer?.x ?? this.playerX) + 50;
+    }
+    
+    spawnCake() {
+        // Birthday cake - obstacle that can be blown up with dynamite
+        const lane = Phaser.Math.Between(0, this.numLanes - 1);
+        const y = this.lanePositions[lane];
+        const x = 1100;
+        
+        const cakeContainer = this.add.container(x, y);
+        
+        // Cake visual
+        const cake = this.add.text(0, 0, '🎂', {
+            fontSize: '40px'
+        }).setOrigin(0.5);
+        
+        // Bonus points indicator
+        const bonusText = this.add.text(0, -35, '💥 = +250', {
+            fontSize: '14px',
+            color: '#FFD700',
+            fontFamily: 'Arial Black',
+            stroke: '#000000',
+            strokeThickness: 2
+        }).setOrigin(0.5);
+        
+        cakeContainer.add([cake, bonusText]);
+        
+        // Track data using Phaser's data manager
+        cakeContainer.setData('isObstacle', true);
+        cakeContainer.setData('isCake', true);
+        cakeContainer.setData('bonusPoints', 250);
+        cakeContainer.setData('lane', lane);
+        this.scrollingObjects.add(cakeContainer);
+        
+        // Wobble animation
+        this.tweens.add({
+            targets: cake,
+            angle: { from: -5, to: 5 },
+            duration: 800,
+            yoyo: true,
+            repeat: -1,
+            ease: 'Sine.InOut'
+        });
+    }
+    
+    spawnParcel() {
+        // Backwards compatibility - just spawn a random item
+        const roll = Phaser.Math.Between(0, 100);
+        if (roll < 10) {
+            this.spawnShakeShake();
+        } else if (roll < 25) {
+            this.spawnDynamite();
+        } else {
+            this.spawnProteinShake();
+        }
     }
     
     createDeliveryZone() {
@@ -806,8 +1045,11 @@ export class BirthdayMinigame extends Scene {
         }
         
         // Add to scrolling objects for movement
-        obstacleContainer.isObstacle = true;
-        obstacleContainer.lane = lane;
+        obstacleContainer.setData('isObstacle', true);
+        obstacleContainer.setData('lane', lane);
+        if (obstacleContainer.isPoop) obstacleContainer.setData('isPoop', true);
+        if (obstacleContainer.isDrone) obstacleContainer.setData('isDrone', true);
+        if (obstacleContainer.wobble) obstacleContainer.setData('wobble', true);
         this.scrollingObjects.add(obstacleContainer);
         
         // Setup for wobble effect if needed
@@ -877,7 +1119,18 @@ export class BirthdayMinigame extends Scene {
                 // Remove if off screen
                 if (obj.x < -100) {
                     // Check if it was a parcel that wasn't picked up
-                    if (obj.isParcel && !this.isCarrying) {
+                    // NOTE: we now rely exclusively on Phaser's data manager
+                    // for runtime flags to avoid property-access mismatches
+                    // (`setData` / `getData`).  Direct property access broke
+                    // after objects were wrapped in Phaser containers, which
+                    // is the root cause of the missing pickup / miss logic.
+                    // Due to the possibility of this object having been
+                    // destroyed mid-frame we guard against the method being
+                    // undefined.
+                    const isParcel = typeof obj.getData === 'function' ? obj.getData('isParcel') : false;
+                    const wasPickedUp = typeof obj.getData === 'function' ? obj.getData('pickedUp') : false;
+
+                    if (isParcel && !wasPickedUp) {
                         this.missParcel();
                     }
                     this.scrollingObjects.remove(obj);
@@ -888,46 +1141,63 @@ export class BirthdayMinigame extends Scene {
     }
     
     checkCollisions() {
-        if (!this.scrollingObjects || !this.playerContainer) return;
+        if (!this.scrollingObjects || !this.playerContainer) {
+            return;
+        }
         
         const playerLane = this.currentLane;
-        // Use the *actual* x-position of the player container so that
-        // collisions line-up with what the player sees on screen. Using the
-        // initial fixed `playerX` value caused a perceptible delay when the
-        // player moved horizontally or dashed.
-        const collisionX = this.playerContainer?.x ?? this.playerX;
-        const collisionThreshold = 50;
+        const playerY = this.lanePositions[playerLane];
+        const collisionX = this.playerContainer.x;
+        const collisionThreshold = 60; // Increased threshold
         
-        this.scrollingObjects.children.entries.forEach(obj => {
-            if (obj && obj.active && Math.abs(obj.x - collisionX) < collisionThreshold) {
-                if (obj.lane === playerLane) {
-                    if (obj.isParcel && !this.isCarrying && !obj.pickedUp) {
-                        obj.pickedUp = true;
-                        this.pickupParcel(obj);
-                    } else if (obj.isObstacle && !obj.hit) {
-                        obj.hit = true;
-                        this.hitObstacle(obj);
-                    }
-                } else if (Math.abs(obj.x - collisionX) < 30) {
-                    // Near miss!
-                    if (obj.isObstacle && !obj.nearMissed) {
-                        obj.nearMissed = true;
-                        this.registerNearMiss();
+        // Debug player position occasionally
+        if (Math.random() < 0.01) {
+            console.log('[Player] Lane:', playerLane, 'Y:', playerY, 'X:', collisionX, 'Objects:', this.scrollingObjects.children.entries.length);
+        }
+        
+        this.scrollingObjects.children.entries.forEach(container => {
+            if (container && container.active) {
+                const distance = Math.abs(container.x - collisionX);
+                
+                const isParcel = container.getData('isParcel');
+                const itemType = container.getData('itemType');
+                const pickedUp = container.getData('pickedUp');
+                
+                if (distance < collisionThreshold) {
+                    // Check Y position match (lanes)
+                    const yDistance = Math.abs(container.y - playerY);
+                    const laneMatch = yDistance < 20; // Allow some Y tolerance
+                    
+                    if (laneMatch) {
+                        if (isParcel && this.carriedItems.length < this.maxCarryCapacity && !pickedUp) {
+                            console.log('[Pickup!] Type:', itemType, 'distance:', distance);
+                            container.setData('pickedUp', true);
+                            this.pickupParcel(container);
+                        } else if (container.getData('isObstacle') && !container.getData('hit')) {
+                            // Check if it's a cake and we have dynamite
+                            const hasDynamite = this.carriedItems.some(item => item.type === 'dynamite');
+                            if (container.getData('isCake') && hasDynamite) {
+                                container.setData('hit', true);
+                                this.blowUpCake(container);
+                            } else {
+                                container.setData('hit', true);
+                                this.hitObstacle(container);
+                            }
+                        }
+                    } else if (Math.abs(container.x - collisionX) < 30) {
+                        // Near miss!
+                        if (container.getData('isObstacle') && !container.getData('nearMissed')) {
+                            container.setData('nearMissed', true);
+                            this.registerNearMiss();
+                        }
                     }
                 }
             }
         });
         
         // Check delivery zone  
-        if (this.isCarrying && this.playerContainer.x > 900) {
-            const timeCarried = this.time.now - this.pickupTime;
-            if (timeCarried < this.perfectWindow) {
-                this.makeDelivery('perfect');
-            } else if (timeCarried < this.goodWindow) {
-                this.makeDelivery('good');
-            } else {
-                this.makeDelivery('normal');
-            }
+        if (this.carriedItems.length > 0 && this.playerContainer.x > 900) {
+            this.makeDelivery();
         }
     }
     
@@ -948,24 +1218,67 @@ export class BirthdayMinigame extends Scene {
     }
     
     updateSpawning() {
-        // Rhythmic spawning based on speed level
+        // Progressive difficulty spawning
         const now = this.time.now;
-        if (!this.lastSpawnTime) this.lastSpawnTime = now;
+        if (!this.lastSpawnTime) {
+            this.lastSpawnTime = now;
+            console.log('[Spawning] Started spawning system');
+        }
         
-        const spawnInterval = Math.max(1500, 3000 - (this.speedLevel * 200));
+        // Start slow, speed up over time
+        const baseInterval = 3000; // 3 seconds initially
+        const minInterval = 1200; // 1.2 seconds at max speed
+        const timeElapsed = now / 1000; // Convert to seconds
+        const speedupFactor = Math.min(timeElapsed / 60, 1); // Max speed after 60 seconds
+        const spawnInterval = baseInterval - (baseInterval - minInterval) * speedupFactor;
         
         if (now - this.lastSpawnTime > spawnInterval) {
             this.lastSpawnTime = now;
             
-            // Spawn pattern
+            // Progressive spawn patterns
             const pattern = Phaser.Math.Between(0, 100);
-            if (pattern < 30) {
-                // Obstacle - random type (including cakes)
-                const obstacleType = Phaser.Math.Between(0, 3);
-                this.spawnObstacle(obstacleType);
-            } else if (pattern < 60 && !this.isCarrying) {
-                // Parcel
-                this.spawnParcel();
+            
+            if (this.deliveries < 3) {
+                // Early game - mostly protein shakes, some obstacles
+                if (pattern < 20) {
+                    console.log('[Spawn] Obstacle type:', Phaser.Math.Between(0, 2));
+                    this.spawnObstacle(Phaser.Math.Between(0, 2)); // No cakes yet
+                } else if (pattern < 80) {
+                    console.log('[Spawn] Attempting protein shake spawn');
+                    this.spawnProteinShake();
+                }
+            } else if (this.deliveries < 6) {
+                // Mid game - introduce cakes and dynamite
+                if (pattern < 15) {
+                    this.spawnCake(); // Birthday cakes!
+                } else if (pattern < 30) {
+                    this.spawnObstacle(Phaser.Math.Between(0, 2));
+                } else if (pattern < 45) {
+                    this.spawnDynamite();
+                } else if (pattern < 55) {
+                    this.spawnShakeShake(); // Rare S² shakes
+                } else if (pattern < 90) {
+                    this.spawnProteinShake();
+                }
+            } else {
+                // Late game - more cakes, more chaos
+                if (pattern < 20) {
+                    this.spawnCake();
+                } else if (pattern < 35) {
+                    this.spawnObstacle(Phaser.Math.Between(0, 2));
+                } else if (pattern < 45) {
+                    this.spawnDynamite();
+                } else if (pattern < 60) {
+                    this.spawnShakeShake();
+                } else if (pattern < 95) {
+                    this.spawnProteinShake();
+                }
+            }
+            
+            // Increase speed level gradually
+            if (this.deliveries > 0 && this.deliveries % 3 === 0) {
+                this.speedLevel = Math.min(this.speedLevel + 1, 5);
+                this.speedMultiplier = 1 + (this.speedLevel - 1) * 0.2;
             }
         }
     }
@@ -1094,11 +1407,72 @@ export class BirthdayMinigame extends Scene {
     
     // Removed dash function - simplifying gameplay
     
+    blowUpCake(cake) {
+        // Use dynamite on cake for bonus points!
+        // Remove one dynamite from inventory
+        const dynamiteIndex = this.carriedItems.findIndex(item => item.type === 'dynamite');
+        if (dynamiteIndex !== -1) {
+            this.carriedItems.splice(dynamiteIndex, 1);
+            this.updateCarryIndicators();
+        }
+        
+        // Explosion effect
+        const explosion = this.add.text(cake.x, cake.y, '💥', {
+            fontSize: '64px'
+        }).setOrigin(0.5);
+        
+        // Points popup
+        const bonusPoints = cake.getData('bonusPoints');
+        const pointsText = this.add.text(cake.x, cake.y - 40, `+${bonusPoints}!`, {
+            fontSize: '32px',
+            color: '#FFD700',
+            fontFamily: 'Impact',
+            stroke: '#000000',
+            strokeThickness: 3
+        }).setOrigin(0.5);
+        
+        // Add points
+        this.totalPoints += bonusPoints;
+        this.score = this.totalPoints;
+        this.updateUI();
+        
+        // Animate explosion
+        this.tweens.add({
+            targets: explosion,
+            scale: { from: 0, to: 2 },
+            alpha: { from: 1, to: 0 },
+            duration: 500,
+            onComplete: () => explosion.destroy()
+        });
+        
+        this.tweens.add({
+            targets: pointsText,
+            y: '-=60',
+            alpha: { from: 1, to: 0 },
+            duration: 800,
+            onComplete: () => pointsText.destroy()
+        });
+        
+        // Remove cake
+        this.scrollingObjects.remove(cake);
+        cake.destroy();
+        
+        // Sound effect
+        AudioManager.getInstance().playSFX('pickup');
+        
+        // Screen shake for impact
+        this.cameras.main.shake(200, 0.02);
+        
+        // Combo for cake destruction!
+        this.combo++;
+        this.updateComboDisplay();
+    }
+    
     hitObstacle(obstacle) {
         this.dropParcel();
         
         // Check if it's a poop obstacle
-        if (obstacle.isPoop) {
+        if (obstacle.getData('isPoop')) {
             // Play fart sound for poop
             AudioManager.getInstance().playSFX('fart');
             
@@ -1171,60 +1545,32 @@ export class BirthdayMinigame extends Scene {
     }
     
     pickupParcel(parcel) {
-        this.isCarrying = true;
-        this.carriedParcel = parcel;
-        this.carriedType = parcel.itemType;
-        this.carriedPoints = parcel.points;
-        this.pickupTime = this.time.now;
-        parcel.destroy();
-        
-        // Reset timer when picking up
-        this.deliveryTimer = this.maxDeliveryTime;
-        
-        // Show carrying indicator based on item type
-        const indicatorContainer = this.add.container(0, -40);
-        
-        // Background glow
-        const glowColor = this.carriedType === 'shakeshake' ? 0xFFD700 : 0x00FF00;
-        const glow = this.add.circle(0, 0, 20, glowColor, 0.5);
-        indicatorContainer.add(glow);
-        
-        // Show appropriate icon
-        let indicatorText = '';
-        if (this.carriedType === 'shakeshake') {
-            indicatorText = 'S²';
-        } else {
-            indicatorText = '🥤';
-        }
-        
-        const indicator = this.add.text(0, 0, indicatorText, {
-            fontSize: this.carriedType === 'shakeshake' ? '18px' : '24px',
-            fontFamily: this.carriedType === 'shakeshake' ? 'Arial Black' : 'Arial',
-            color: this.carriedType === 'shakeshake' ? '#FFD700' : '#FFFFFF'
-        }).setOrigin(0.5);
-        indicatorContainer.add(indicator);
-        
-        // Urgency pulse
-        this.tweens.add({
-            targets: glow,
-            scale: { from: 1, to: 1.3 },
-            alpha: { from: 0.5, to: 0.2 },
-            duration: 500,
-            yoyo: true,
-            repeat: -1
+        // Add to carried items
+        this.carriedItems.push({
+            type: parcel.getData('itemType'),
+            points: parcel.getData('points'),
+            pickupTime: this.time.now
         });
         
-        this.playerContainer.add(indicatorContainer);
-        this.carryIndicator = indicatorContainer;
+        // Destroy the parcel
+        parcel.destroy();
+        
+        // Update visual indicators
+        this.updateCarryIndicators();
         
         // Satisfying pickup feedback
         this.cameras.main.flash(100, 255, 255, 0, true);
         AudioManager.getInstance().playSFX('pickup');
         
         // Show pickup message
-        const pickupText = this.add.text(this.playerContainer.x, this.playerContainer.y - 80, 'GO GO GO!', {
+        const messages = [
+            'Nice!', 'Got it!', 'Sweet!', 'Awesome!', 'Great!'
+        ];
+        const message = this.carriedItems.length === this.maxCarryCapacity ? 'MAX LOAD!' : messages[Math.floor(Math.random() * messages.length)];
+        
+        const pickupText = this.add.text(this.playerContainer.x, this.playerContainer.y - 80, message, {
             fontSize: '24px',
-            color: '#00FF00',
+            color: this.carriedItems.length === this.maxCarryCapacity ? '#FFD700' : '#00FF00',
             fontFamily: 'Arial Black',
             stroke: '#000000',
             strokeThickness: 3
@@ -1239,14 +1585,89 @@ export class BirthdayMinigame extends Scene {
         });
     }
     
-    dropParcel() {
-        if (!this.isCarrying) return;
+    updateCarryIndicators() {
+        // Clear existing indicators
+        this.carryIndicators.forEach(indicator => indicator.destroy());
+        this.carryIndicators = [];
         
-        this.isCarrying = false;
-        if (this.carryIndicator) {
-            this.carryIndicator.destroy();
-            this.carryIndicator = null;
+        // Create indicators for each carried item
+        this.carriedItems.forEach((item, index) => {
+            const yOffset = -40 - (index * 25);
+            const xOffset = (index - (this.carriedItems.length - 1) / 2) * 30;
+            
+            const indicatorContainer = this.add.container(xOffset, yOffset);
+            
+            // Background glow
+            let glowColor = 0x00FF00; // Default green for protein
+            if (item.type === 'shakeshake') {
+                glowColor = 0xFFD700; // Gold for S²
+            } else if (item.type === 'dynamite') {
+                glowColor = 0xFF0000; // Red for dynamite
+            }
+            
+            const glow = this.add.circle(0, 0, 15, glowColor, 0.5);
+            indicatorContainer.add(glow);
+            
+            // Show appropriate icon
+            let indicatorText = '';
+            let fontSize = '20px';
+            if (item.type === 'shakeshake') {
+                indicatorText = 'S²';
+                fontSize = '14px';
+            } else if (item.type === 'dynamite') {
+                indicatorText = '🧨';
+            } else {
+                indicatorText = '🥤';
+            }
+            
+            const indicator = this.add.text(0, 0, indicatorText, {
+                fontSize: fontSize,
+                fontFamily: item.type === 'shakeshake' ? 'Arial Black' : 'Arial',
+                color: item.type === 'shakeshake' ? '#FFD700' : '#FFFFFF'
+            }).setOrigin(0.5);
+            indicatorContainer.add(indicator);
+            
+            // Pulse effect
+            this.tweens.add({
+                targets: glow,
+                scale: { from: 1, to: 1.3 },
+                alpha: { from: 0.5, to: 0.2 },
+                duration: 500,
+                yoyo: true,
+                repeat: -1,
+                delay: index * 100
+            });
+            
+            this.playerContainer.add(indicatorContainer);
+            this.carryIndicators.push(indicatorContainer);
+        });
+        
+        // Update carry count display
+        if (this.carriedItems.length > 0) {
+            const countText = this.add.text(0, -20, `${this.carriedItems.length}/${this.maxCarryCapacity}`, {
+                fontSize: '16px',
+                color: '#FFFFFF',
+                fontFamily: 'Arial Black',
+                stroke: '#000000',
+                strokeThickness: 2
+            }).setOrigin(0.5);
+            
+            const countContainer = this.add.container(0, 0);
+            countContainer.add(countText);
+            this.playerContainer.add(countContainer);
+            this.carryIndicators.push(countContainer);
         }
+    }
+    
+    dropParcel() {
+        if (this.carriedItems.length === 0) return;
+        
+        // Drop all items
+        this.carriedItems = [];
+        
+        // Clear indicators
+        this.carryIndicators.forEach(indicator => indicator.destroy());
+        this.carryIndicators = [];
         
         // Reset streaks
         this.deliveryStreak = 0;
@@ -1318,11 +1739,44 @@ export class BirthdayMinigame extends Scene {
         });
     }
     
-    makeDelivery(quality) {
-        // Only count if actually carrying a parcel
-        if (!this.isCarrying) return;
+    makeDelivery() {
+        // Only deliver if carrying items
+        if (this.carriedItems.length === 0) return;
         
-        this.deliveries++;
+        // Separate deliverable items from dynamite
+        const deliverableItems = this.carriedItems.filter(item => item.type !== 'dynamite');
+        const dynamiteItems = this.carriedItems.filter(item => item.type === 'dynamite');
+        
+        if (deliverableItems.length === 0 && dynamiteItems.length > 0) {
+            // Only carrying dynamite - show hint
+            const hintText = this.add.text(512, 300, 'Use dynamite on cakes! 💥🎂', {
+                fontSize: '28px',
+                color: '#FF0000',
+                fontFamily: 'Arial Black',
+                stroke: '#000000',
+                strokeThickness: 3
+            }).setOrigin(0.5).setScrollFactor(0);
+            
+            this.tweens.add({
+                targets: hintText,
+                y: '-=30',
+                alpha: 0,
+                duration: 1500,
+                onComplete: () => hintText.destroy()
+            });
+            
+            return;
+        }
+        
+        // Deliver all deliverable items
+        let totalPoints = 0;
+        let totalBasePoints = 0;
+        
+        deliverableItems.forEach(item => {
+            this.deliveries++;
+            totalBasePoints += item.points;
+        });
+        
         this.scoreText.setText(`Deliveries: ${this.deliveries}/9`);
         
         // Calculate time left for speed bonus
@@ -1340,21 +1794,24 @@ export class BirthdayMinigame extends Scene {
         
         // Calculate points with enhanced system
         this.combo++;
-        const basePoints = this.carriedPoints || 100; // Use carried item's points
+        const multiDeliveryBonus = deliverableItems.length > 1 ? (deliverableItems.length - 1) * 50 : 0;
         const timeBonus = Math.floor(timeLeft * 20); // 20 points per second left
         const comboBonus = Math.pow(this.combo, 1.5) * 50; // Exponential combo growth
         const perfectBonus = this.perfectDeliveries > 2 ? this.perfectDeliveries * 100 : 0;
         const speedBonusPoints = (speedBonusMultiplier - 1) * 50;
-        const earnedPoints = Math.floor(basePoints + timeBonus + comboBonus + perfectBonus + speedBonusPoints);
+        const earnedPoints = Math.floor(totalBasePoints + multiDeliveryBonus + timeBonus + comboBonus + perfectBonus + speedBonusPoints);
         this.totalPoints += earnedPoints;
         
+        // Update score
+        this.score = this.totalPoints;
+        
         // Update UI
-        this.pointsText.setText(`Points: ${this.totalPoints}`);
+        this.pointsText.setText(`Points: ${this.score}`);
         this.updateComboDisplay();
         
         // Check for new high score
-        if (this.totalPoints > this.highScore) {
-            this.highScore = this.totalPoints;
+        if (this.score > this.highScore) {
+            this.highScore = this.score;
             localStorage.setItem('birthdayHighScore', this.highScore.toString());
             this.highScoreText.setText(`High Score: ${this.highScore}`);
             this.highScoreText.setColor('#00FF00');
@@ -1371,36 +1828,35 @@ export class BirthdayMinigame extends Scene {
         
         // Show detailed points popup
         this.showDetailedPointsPopup(earnedPoints, {
-            base: basePoints,
+            base: totalBasePoints,
+            multi: multiDeliveryBonus,
             time: timeBonus,
             combo: Math.floor(comboBonus),
             perfect: perfectBonus,
             speed: speedBonusPoints
         });
         
-        // Remove the carrying indicator
-        this.isCarrying = false;
-        if (this.carryIndicator) {
-            this.carryIndicator.destroy();
-            this.carryIndicator = null;
-        }
+        // Clear all carried items (delivered + kept dynamite)
+        this.carriedItems = dynamiteItems; // Keep only dynamite
+        this.updateCarryIndicators();
         
         // Increase difficulty
         this.speedMultiplier += 0.05;
         this.difficultyLevel = Math.min(5, Math.floor(this.score / 2) + 1);
         
-        // Success effect with speed indicator and item type
-        let itemName = this.carriedType === 'shakeshake' ? 'S² SHAKE' : 'PROTEIN SHAKE';
-        let deliveryMessage = speedBonusMultiplier > 1 ? `FAST ${itemName}! x${speedBonusMultiplier}` : `+1 ${itemName}!`;
-        
-        if (this.carriedType === 'shakeshake') {
-            deliveryMessage = '✨ SPECIAL S² SHAKE! ✨';
+        // Success effect with item count
+        let deliveryMessage = '';
+        if (deliverableItems.length > 1) {
+            deliveryMessage = `MULTI DELIVERY! x${deliverableItems.length}`;
+        } else {
+            const item = deliverableItems[0];
+            deliveryMessage = item.type === 'shakeshake' ? '✨ SPECIAL S² SHAKE! ✨' : 'PROTEIN SHAKE!';
         }
         
-        if (this.deliveries === 9) {
+        if (this.deliveries >= 9) {
             deliveryMessage = '9TH DELIVERY! 🎉';
-        } else if (this.deliveries > 5) {
-            deliveryMessage = `${this.deliveries}/9 DELIVERIES!`;
+        } else if (speedBonusMultiplier > 2) {
+            deliveryMessage += ` SUPER FAST!`;
         }
         
         const successText = this.add.text(512, 200, deliveryMessage, {
@@ -1503,6 +1959,7 @@ export class BirthdayMinigame extends Scene {
         };
         
         addLine('Base', breakdown.base);
+        if (breakdown.multi > 0) addLine('Multi!', breakdown.multi, '#FF00FF');
         addLine('Time', breakdown.time, '#00FFFF');
         if (breakdown.combo > 0) addLine('Combo', breakdown.combo, '#00FF00');
         if (breakdown.perfect > 0) addLine('Perfect!', breakdown.perfect, '#FFD700');
@@ -1789,7 +2246,25 @@ export class BirthdayMinigame extends Scene {
         // Play special birthday music/sound
         AudioManager.getInstance().playSFX('pickup');
         
-        // Return to menu with rewards
+        // Return to menu with rewards OR play again
+
+        const endPrompt = this.add.text(512, 650, 'Press R to play again  |  ENTER for menu', {
+            fontSize: '24px',
+            color: '#FFD700',
+            fontFamily: 'Arial',
+            stroke: '#000000',
+            strokeThickness: 2
+        }).setOrigin(0.5).setScrollFactor(0);
+
+        this.tweens.add({
+            targets: endPrompt,
+            alpha: { from: 0.7, to: 1 },
+            duration: 800,
+            yoyo: true,
+            repeat: -1
+        });
+
+        // Menu route
         this.input.keyboard.once('keydown-ENTER', () => {
             // Save birthday achievement
             const gameState = this.scene.get(SceneKeys.GAME)?.gameStateManager;
@@ -1800,6 +2275,12 @@ export class BirthdayMinigame extends Scene {
             
             AudioManager.getInstance().stopMusic(AudioAssets.BIRTHDAY_SONG);
             this.scene.start(SceneKeys.MAIN_MENU);
+        });
+
+        // Play again route
+        this.input.keyboard.once('keydown-R', () => {
+            AudioManager.getInstance().stopMusic(AudioAssets.BIRTHDAY_SONG);
+            this.scene.restart();
         });
     }
     
@@ -1861,7 +2342,7 @@ export class BirthdayMinigame extends Scene {
         // Show leaderboard
         this.showLeaderboard(isNewHighScore ? 350 : 320);
         
-        const restartText = this.add.text(512, 660, 'Press ENTER to return', {
+        const restartText = this.add.text(512, 660, 'Press R to play again  |  ENTER for menu', {
             fontSize: '24px',
             color: '#FFD700',
             fontFamily: 'Arial',
@@ -1878,9 +2359,16 @@ export class BirthdayMinigame extends Scene {
             repeat: -1
         });
         
+        // Menu return
         this.input.keyboard.once('keydown-ENTER', () => {
             AudioManager.getInstance().stopMusic(AudioAssets.BIRTHDAY_SONG);
             this.scene.start(SceneKeys.MAIN_MENU);
+        });
+
+        // Play again (restart scene in-place)
+        this.input.keyboard.once('keydown-R', () => {
+            AudioManager.getInstance().stopMusic(AudioAssets.BIRTHDAY_SONG);
+            this.scene.restart();
         });
     }
     
@@ -2211,6 +2699,216 @@ export class BirthdayMinigame extends Scene {
                     alpha: 0,
                     duration: 500,
                     onComplete: () => comboIndicator.destroy()
+                });
+            }
+        });
+    }
+    
+    spawnProteinShake() {
+        const lane = Phaser.Math.Between(0, this.numLanes - 1);
+        const y = this.lanePositions[lane];
+        const x = 1100;
+        
+        const shakeContainer = this.add.container(x, y);
+        
+        // Simple protein shake visual
+        const shakeBg = this.add.rectangle(0, 0, 30, 45, 0x8B4513, 1);
+        shakeBg.setStrokeStyle(2, 0x654321);
+        
+        // Lid
+        const lid = this.add.rectangle(0, -22, 25, 8, 0x333333);
+        
+        // Straw
+        const straw = this.add.rectangle(5, -25, 3, 20, 0xFF0000);
+        
+        // Label
+        const label = this.add.text(0, 0, 'P', {
+            fontSize: '16px',
+            color: '#FFFFFF',
+            fontFamily: 'Arial Black'
+        }).setOrigin(0.5);
+        
+        shakeContainer.add([shakeBg, lid, straw, label]);
+        
+        // Track data using Phaser's data manager
+        shakeContainer.setData('isParcel', true);
+        shakeContainer.setData('itemType', 'protein');
+        shakeContainer.setData('points', 100);
+        shakeContainer.setData('lane', lane);
+        
+        this.scrollingObjects.add(shakeContainer);
+        
+        console.log('[Spawn] Protein shake created with data:', {
+            isParcel: shakeContainer.getData('isParcel'),
+            itemType: shakeContainer.getData('itemType'),
+            points: shakeContainer.getData('points'),
+            lane: shakeContainer.getData('lane')
+        });
+        
+        // Entrance animation
+        this.tweens.add({
+            targets: shakeContainer,
+            scale: { from: 0, to: 1 },
+            duration: 300,
+            ease: 'Back.Out'
+        });
+    }
+    
+    spawnShakeShake() {
+        const lane = Phaser.Math.Between(0, this.numLanes - 1);
+        const y = this.lanePositions[lane];
+        const x = 1100;
+        
+        const shakeContainer = this.add.container(x, y);
+        
+        // Elaborate S² Shake sundae visual
+        const glass = this.add.graphics();
+        glass.fillStyle(0xCCCCCC, 0.3);
+        glass.fillRect(-20, -10, 40, 40);
+        
+        // Ice cream scoops
+        const scoop1 = this.add.circle(-10, -15, 12, 0xFFFFFF);
+        const scoop2 = this.add.circle(10, -15, 12, 0xFFC0CB);
+        const scoop3 = this.add.circle(0, -25, 12, 0x8B4513);
+        
+        // Cherry on top
+        const cherry = this.add.circle(0, -35, 5, 0xFF0000);
+        
+        // Whipped cream
+        const cream = this.add.ellipse(0, -20, 30, 15, 0xFFFFFF);
+        
+        // S² label
+        const labelBg = this.add.rectangle(0, 20, 40, 20, 0xFFD700);
+        const label = this.add.text(0, 20, 'S²', {
+            fontSize: '16px',
+            color: '#000000',
+            fontFamily: 'Arial Black',
+            fontStyle: 'bold'
+        }).setOrigin(0.5);
+        
+        // Sparkle effects
+        const sparkle1 = this.add.star(-15, -30, 4, 2, 8, 0xFFFF00);
+        const sparkle2 = this.add.star(15, -25, 4, 2, 8, 0xFFFF00);
+        
+        shakeContainer.add([glass, scoop1, scoop2, scoop3, cream, cherry, labelBg, label, sparkle1, sparkle2]);
+        
+        // Track data using Phaser's data manager
+        shakeContainer.setData('isParcel', true);
+        shakeContainer.setData('itemType', 'shakeshake');
+        shakeContainer.setData('points', 500);
+        shakeContainer.setData('lane', lane);
+        
+        this.scrollingObjects.add(shakeContainer);
+        
+        // Special entrance with rotation
+        this.tweens.add({
+            targets: shakeContainer,
+            scale: { from: 0, to: 1 },
+            rotation: { from: -0.5, to: 0 },
+            duration: 500,
+            ease: 'Back.Out'
+        });
+        
+        // Sparkle animation
+        this.tweens.add({
+            targets: [sparkle1, sparkle2],
+            scale: { from: 1, to: 1.5 },
+            alpha: { from: 1, to: 0.3 },
+            duration: 400,
+            repeat: -1,
+            yoyo: true
+        });
+    }
+    
+    spawnDynamite() {
+        const lane = Phaser.Math.Between(0, this.numLanes - 1);
+        const y = this.lanePositions[lane];
+        const x = 1100;
+        
+        const dynamiteContainer = this.add.container(x, y);
+        
+        // Dynamite stick visual
+        const stick = this.add.rectangle(0, 0, 40, 15, 0xCC0000);
+        stick.setStrokeStyle(2, 0x660000);
+        
+        // Fuse
+        const fuse = this.add.rectangle(20, -5, 2, 10, 0x333333);
+        
+        // Spark
+        const spark = this.add.star(20, -10, 5, 3, 6, 0xFFFF00);
+        
+        // Label
+        const label = this.add.text(0, 0, 'TNT', {
+            fontSize: '10px',
+            color: '#FFFFFF',
+            fontFamily: 'Arial',
+            fontStyle: 'bold'
+        }).setOrigin(0.5);
+        
+        dynamiteContainer.add([stick, fuse, spark, label]);
+        
+        // Track data using Phaser's data manager
+        dynamiteContainer.setData('isParcel', true);
+        dynamiteContainer.setData('itemType', 'dynamite');
+        dynamiteContainer.setData('lane', lane);
+        
+        this.scrollingObjects.add(dynamiteContainer);
+        
+        // Spark animation
+        this.tweens.add({
+            targets: spark,
+            scale: { from: 1, to: 0.5 },
+            alpha: { from: 1, to: 0.3 },
+            duration: 100,
+            repeat: -1,
+            yoyo: true
+        });
+    }
+    
+    spawnCake() {
+        const lane = Phaser.Math.Between(0, this.numLanes - 1);
+        const y = this.lanePositions[lane];
+        const x = 1100;
+        
+        const cakeContainer = this.add.container(x, y);
+        
+        // Cake layers
+        const bottom = this.add.rectangle(0, 10, 50, 20, 0x8B4513);
+        const middle = this.add.rectangle(0, 0, 45, 15, 0xD2691E);
+        const top = this.add.rectangle(0, -10, 40, 15, 0xFFC0CB);
+        
+        // Candles
+        const candles = [];
+        for (let i = -15; i <= 15; i += 10) {
+            const candle = this.add.rectangle(i, -20, 3, 10, 0xFFFFFF);
+            const flame = this.add.circle(i, -25, 3, 0xFFFF00);
+            candles.push(candle, flame);
+        }
+        
+        // "CAKE" label
+        const label = this.add.text(0, 0, '🎂', {
+            fontSize: '24px'
+        }).setOrigin(0.5);
+        
+        cakeContainer.add([bottom, middle, top, ...candles, label]);
+        
+        // Track data using Phaser's data manager
+        cakeContainer.setData('isObstacle', true); // Cakes are obstacles until blown up
+        cakeContainer.setData('isCake', true);
+        cakeContainer.setData('itemType', 'cake');
+        cakeContainer.setData('lane', lane);
+        
+        this.scrollingObjects.add(cakeContainer);
+        
+        // Candle flicker
+        candles.forEach((obj, idx) => {
+            if (idx % 2 === 1) { // Only animate flames
+                this.tweens.add({
+                    targets: obj,
+                    scale: { from: 1, to: 0.7 },
+                    duration: 200 + Math.random() * 200,
+                    repeat: -1,
+                    yoyo: true
                 });
             }
         });
