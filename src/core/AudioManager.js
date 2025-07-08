@@ -94,7 +94,7 @@ export class AudioManager extends BaseManager {
         Object.entries(bgmList).forEach(([key, src]) => {
             console.log(`[AudioManager] Loading music: ${key} from ${src}`);
             this.music[key] = new Howl({
-                src: [`assets/${src}`],
+                src: [src],
                 html5: true,
                 loop: true,
                 volume: this.settings.musicVolume,
@@ -105,7 +105,7 @@ export class AudioManager extends BaseManager {
         // Setup sound effects
         Object.entries(sfxList).forEach(([key, list]) => {
             this.sfx[key] = list.map((src) => new Howl({
-                src: [`assets/${src}`],
+                src: [src],
                 volume: this.settings.sfxVolume,
                 preload: true
             }));

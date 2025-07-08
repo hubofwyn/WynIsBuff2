@@ -32,8 +32,7 @@ export class Preloader extends Scene
 
     preload ()
     {
-        //  Load the assets for the game
-        this.load.setPath('assets');
+        //  Load the assets for the game - paths already include 'assets/' prefix
 
         // Load the custom game logo
         this.load.image(ImageAssets.LOGO, ImagePaths.LOGO);
@@ -55,6 +54,12 @@ export class Preloader extends Scene
         
         // Load tileset for potential use in level design
         this.load.image(ImageAssets.DUNGEON_TILES, ImagePaths.DUNGEON_TILES);
+        
+        // Load tileset as spritesheet for platform tiles
+        this.load.spritesheet('dungeon-tiles', ImagePaths.DUNGEON_TILES, {
+            frameWidth: 16,
+            frameHeight: 16
+        });
         
         // Load UI elements
         this.load.image(ImageAssets.ARROW1, ImagePaths.ARROW1);

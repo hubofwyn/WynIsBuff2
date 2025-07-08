@@ -1,7 +1,7 @@
-import { EventNames } from '../../constants/EventNames';
-import { getLevelById } from '../../constants/LevelData';
+import { EventNames } from '../../constants/EventNames.js';
+import { getLevelById } from '../../constants/LevelData.js';
 // Enemy controller for spawning buff-themed enemies
-import { EnemyController } from '@features/enemy';
+import { EnemyController } from '../enemy/EnemyController.js';
 
 /**
  * LevelLoader class is responsible for loading level data and initializing level elements
@@ -226,9 +226,14 @@ export class LevelLoader {
         }
         // Add static background image if specified
         if (backgroundConfig.image) {
-            this.scene.add.image(0, 0, backgroundConfig.image)
+            const bg = this.scene.add.image(0, 0, backgroundConfig.image)
                 .setOrigin(0, 0)
                 .setScrollFactor(0);
+            
+            // Scale to cover the entire game canvas
+            const gameWidth = this.scene.cameras.main.width;
+            const gameHeight = this.scene.cameras.main.height;
+            bg.setDisplaySize(gameWidth, gameHeight);
         }
         // Add parallax layers if specified
         if (backgroundConfig.layers) {

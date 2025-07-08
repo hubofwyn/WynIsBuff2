@@ -94,7 +94,7 @@ export const LevelData = {
         // Background elements
         background: {
             color: 0x87CEEB,      // Sky blue fallback
-            image: 'buff-bg',     // Buff-themed background image key
+            image: 'buff-bg',     // Lake scene background image key
             elements: [],
             layers: [             // Parallax layers: key and scrollFactor
                 { key: 'parallax-sky', scrollFactor: 0.2 },

@@ -1,4 +1,4 @@
-import { EventNames } from '../../constants/EventNames';
+import { EventNames } from '../../constants/EventNames.js';
 
 /**
  * MovementController class handles all movement-related functionality for the player

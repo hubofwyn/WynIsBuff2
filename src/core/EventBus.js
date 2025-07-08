@@ -63,6 +63,10 @@ if (!EventEmitterClass) {
         }
       });
     }
+
+    removeAllListeners() {
+      this._events.clear();
+    }
   }
 
   EventEmitterClass = MiniEmitter;
@@ -70,3 +74,15 @@ if (!EventEmitterClass) {
 
 // Single, shared instance exported for the entire app.
 export const EventBus = new EventEmitterClass();
+
+// Add removeAllListeners method if not present (for compatibility)
+if (!EventBus.removeAllListeners) {
+  EventBus.removeAllListeners = function() {
+    if (this._events && this._events.clear) {
+      this._events.clear();
+    } else if (this.removeAllListeners) {
+      // Phaser's EventEmitter already has this method
+      this.removeAllListeners();
+    }
+  };
+}

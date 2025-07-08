@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
 import RAPIER from '@dimforge/rapier2d-compat';
-import { EventNames } from '../../constants/EventNames';
+import { EventNames } from '../../constants/EventNames.js';
 
 /**
  * EnemyController handles a single enemy's creation and behavior.

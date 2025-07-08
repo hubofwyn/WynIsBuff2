@@ -1,4 +1,4 @@
-import { EventNames } from '../../constants/EventNames';
+import { EventNames } from '../../constants/EventNames.js';
 
 /**
  * CollisionController class handles all collision-related functionality for the player

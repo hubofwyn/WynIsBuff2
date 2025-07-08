@@ -70,8 +70,8 @@ export class PlatformFactory {
                 try {
                     this.log(`Creating platform ${index+1}`);
                     
-                    // Create a visual representation
-                    const platformSprite = this.scene.add.rectangle(
+                    // Create a visual representation using tileset
+                    const platformSprite = this.createTiledPlatform(
                         platform.x, platform.y,
                         platform.width, platform.height,
                         platform.color
@@ -125,6 +125,65 @@ export class PlatformFactory {
             console.error('[PlatformFactory] Error in createPlatforms:', error);
             return [];
         }
+    }
+    
+    /**
+     * Create a tiled platform using the dungeon tileset
+     * @param {number} x - Platform center X position
+     * @param {number} y - Platform center Y position
+     * @param {number} width - Platform width
+     * @param {number} height - Platform height
+     * @param {number} color - Platform color (used as tint)
+     * @returns {Phaser.GameObjects.Container} The platform container
+     */
+    createTiledPlatform(x, y, width, height, color) {
+        const container = this.scene.add.container(x, y);
+        
+        // If tileset is available, use it
+        if (this.scene.textures.exists('dungeon-tiles')) {
+            const tileSize = 16;
+            const tilesX = Math.ceil(width / tileSize);
+            const tilesY = Math.ceil(height / tileSize);
+            
+            // Tile indices for different platform parts (from dungeon tileset)
+            const TILE_LEFT = 1;     // Left edge tile
+            const TILE_MIDDLE = 2;   // Middle tile
+            const TILE_RIGHT = 3;    // Right edge tile
+            const TILE_TOP = 17;     // Top surface tile
+            
+            for (let ty = 0; ty < tilesY; ty++) {
+                for (let tx = 0; tx < tilesX; tx++) {
+                    let tileFrame = TILE_MIDDLE;
+                    
+                    // Use different tiles for edges and top
+                    if (ty === 0) {
+                        tileFrame = TILE_TOP;
+                    }
+                    if (tx === 0) {
+                        tileFrame = TILE_LEFT;
+                    } else if (tx === tilesX - 1) {
+                        tileFrame = TILE_RIGHT;
+                    }
+                    
+                    const tile = this.scene.add.sprite(
+                        (tx * tileSize) - (width / 2) + (tileSize / 2),
+                        (ty * tileSize) - (height / 2) + (tileSize / 2),
+                        'dungeon-tiles',
+                        tileFrame
+                    );
+                    
+                    // Apply color tint
+                    tile.setTint(color);
+                    container.add(tile);
+                }
+            }
+        } else {
+            // Fallback to rectangle if tileset not loaded
+            const rect = this.scene.add.rectangle(0, 0, width, height, color);
+            container.add(rect);
+        }
+        
+        return container;
     }
     
     /**

@@ -1,5 +1,5 @@
-import { EventNames } from '../../constants/EventNames';
-import { SceneKeys } from '../../constants/SceneKeys';
+import { EventNames } from '../../constants/EventNames.js';
+import { SceneKeys } from '../../constants/SceneKeys.js';
 
 /**
  * JumpController class handles all jump-related functionality for the player
@@ -489,11 +489,11 @@ export class JumpController {
     applyJumpScaling(sprite, jumpNumber) {
         if (!sprite) return;
         
-        // Progressive scaling for each jump - very subtle
+        // Progressive scaling for each jump - more dramatic but balanced
         const scales = {
             1: 1.0,   // Normal size
-            2: 1.05,  // 5% bigger
-            3: 1.1    // 10% bigger
+            2: 1.15,  // 15% bigger
+            3: 1.35   // 35% bigger for triple jump power!
         };
         
         const targetScale = scales[jumpNumber] || 1.0;

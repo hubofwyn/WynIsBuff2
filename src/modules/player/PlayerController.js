@@ -1,9 +1,9 @@
 import Phaser from 'phaser';
 import RAPIER from '@dimforge/rapier2d-compat';
-import { EventNames } from '../../constants/EventNames';
-import { JumpController } from './JumpController';
-import { MovementController } from './MovementController';
-import { CollisionController } from './CollisionController';
+import { EventNames } from '../../constants/EventNames.js';
+import { JumpController } from './JumpController.js';
+import { MovementController } from './MovementController.js';
+import { CollisionController } from './CollisionController.js';
 
 /**
  * PlayerController class coordinates all player-related functionality
@@ -69,9 +69,9 @@ export class PlayerController {
         try {
             console.log('[PlayerController] Creating player...');
             
-            // Player dimensions - doubled for better visibility
-            const playerWidth = 64;
-            const playerHeight = 64;
+            // Player dimensions - standard 2D platformer size
+            const playerWidth = 48;
+            const playerHeight = 48;
             
             // Create a visual representation of the player
             if (this.scene.textures.exists(this.textureKey)) {

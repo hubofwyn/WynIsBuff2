@@ -19,7 +19,7 @@
         "build": "node log.js build & vite build --config vite/config.prod.mjs",
         "dev-nolog": "vite --config vite/config.dev.mjs",
         "build-nolog": "vite build --config vite/config.prod.mjs",
-        "test": "node tests/run-tests.cjs",
+        "test": "node tests/run-tests.mjs",
         "generate-assets": "node scripts/generate-assets.js"
     },
     "devDependencies": {
