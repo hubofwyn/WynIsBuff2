@@ -39,6 +39,11 @@ export const EventNames = {
     BOSS_ATTACK_START: 'boss:attackStart',
     BOSS_HIT_PLAYER: 'boss:hitPlayer',
     BOSS_DAMAGED: 'boss:damaged',
+    BOSS_REWARD_CLAIMED: 'boss:rewardClaimed',
+    BOSS_FIRST_CLEAR: 'boss:firstClear',
+    
+    // Performance events
+    PERFORMANCE_METRIC_RECORDED: 'performance:metricRecorded',
     
     // Enhanced movement events
     PLAYER_STATE_CHANGE: 'player:stateChange',
