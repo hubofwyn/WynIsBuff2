@@ -1,5 +1,7 @@
 import RAPIER from '@dimforge/rapier2d-compat';
 import { EventNames } from '../../constants/EventNames';
+import { PhysicsConfig } from '../../constants/PhysicsConfig.js';
+import { pixelsToMeters } from '../../constants/PhysicsConstants.js';
 
 /**
  * GroundFactory class is responsible for creating and managing the ground
@@ -65,15 +67,15 @@ export class GroundFactory {
             // Remove existing ground if any
             this.removeGround();
             
-            // Create a visual representation of the ground
+            // Create a visual representation of the ground (in pixels)
             const groundSprite = this.scene.add.rectangle(
                 width / 2, y, width, height, color
             );
             this.log('Ground sprite created');
             
-            // Create a fixed (static) rigid body for the ground
+            // Create a fixed (static) rigid body with proper scaling (pixels to meters)
             const groundBodyDesc = RAPIER.RigidBodyDesc.fixed()
-                .setTranslation(width / 2, y);
+                .setTranslation(pixelsToMeters(width / 2), pixelsToMeters(y));
             
             const groundBody = this.world.createRigidBody(groundBodyDesc);
             this.log('Ground body created');
@@ -81,10 +83,12 @@ export class GroundFactory {
             // Store the association between body and sprite
             this.bodyToSprite.set(groundBody.handle, groundSprite);
             
-            // Create a collider (hitbox) for the ground
+            // Create a collider with proper scaling and physics properties
             const groundColliderDesc = RAPIER.ColliderDesc
-                .cuboid(width / 2, height / 2)
-                .setRestitution(0.0); // No bounce
+                .cuboid(pixelsToMeters(width / 2), pixelsToMeters(height / 2))
+                .setFriction(PhysicsConfig.ground.friction)
+                .setRestitution(PhysicsConfig.ground.restitution)
+                .setDensity(PhysicsConfig.ground.density);
                 
             const groundCollider = this.world.createCollider(groundColliderDesc, groundBody);
             this.log('Ground collider created');

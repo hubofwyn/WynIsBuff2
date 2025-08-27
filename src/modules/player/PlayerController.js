@@ -1,29 +1,26 @@
 import Phaser from 'phaser';
 import RAPIER from '@dimforge/rapier2d-compat';
 import { EventNames } from '../../constants/EventNames';
+import { PhysicsConfig } from '../../constants/PhysicsConfig.js';
+import { PIXELS_PER_METER, pixelsToMeters, metersToPixels } from '../../constants/PhysicsConstants.js';
 import { JumpController } from './JumpController';
 import { MovementController } from './MovementController';
 import { CollisionController } from './CollisionController';
+import { WallJumpController } from './WallJumpController';
 
 /**
- * PlayerController class coordinates all player-related functionality
- * by delegating to specialized controllers for movement, jumping, and collisions.
+ * PlayerController class for modern 2D platformer using KinematicCharacterController
+ * Implements proper scaling, responsive controls, and "game feel" mechanics
+ * Based on expert guide recommendations for tight, action-oriented movement
  */
 export class PlayerController {
     /**
-     * Create a new PlayerController
+     * Create a new PlayerController using KinematicCharacterController
      * @param {Phaser.Scene} scene - The scene this controller belongs to
      * @param {RAPIER.World} world - The Rapier physics world
      * @param {EventSystem} eventSystem - The event system for communication
-     * @param {number} x - Initial x position
-     * @param {number} y - Initial y position
-     */
-    /**
-     * @param {Phaser.Scene} scene
-     * @param {RAPIER.World} world
-     * @param {EventSystem} eventSystem
-     * @param {number} x - Initial x position
-     * @param {number} y - Initial y position
+     * @param {number} x - Initial x position in pixels
+     * @param {number} y - Initial y position in pixels
      * @param {string} textureKey - Key of the sprite texture to use
      */
     constructor(scene, world, eventSystem, x = 512, y = 300, textureKey = 'player') {
@@ -32,15 +29,21 @@ export class PlayerController {
         this.eventSystem = eventSystem;
         this.textureKey = textureKey;
         
-        // Player physics objects
-        this.body = null;
-        this.sprite = null;
-        this.collider = null;
+        // Modern character controller setup
+        this.body = null;                    // KinematicPositionBased body
+        this.collider = null;                // Character collider
+        this.characterController = null;     // Rapier's KinematicCharacterController
+        this.sprite = null;                  // Visual representation
         
-        // Create specialized controllers
-        this.jumpController = new JumpController(scene, eventSystem);
-        this.movementController = new MovementController(scene, eventSystem);
-        this.collisionController = new CollisionController(scene, eventSystem);
+        // Movement state for proper physics integration
+        this.velocity = new RAPIER.Vector2(0, 0);  // In meters per second
+        this.isGrounded = false;
+        this.groundContactTimer = 0;
+        
+        // Game feel timers
+        this.coyoteTimer = 0;
+        this.jumpBufferTimer = 0;
+        this.landingRecoveryTimer = 0;
         
         // Create the player at the specified position
         this.create(x, y);
@@ -52,68 +55,78 @@ export class PlayerController {
         if (this.eventSystem) {
             this.eventSystem.emit(EventNames.PLAYER_SPAWN, {
                 position: { x, y },
-                maxJumps: this.jumpController.maxJumps,
                 sprite: this.sprite
             });
         }
         
-        console.log('[PlayerController] Initialized with modular architecture');
+        console.log('[PlayerController] Initialized with KinematicCharacterController');
     }
     
     /**
-     * Create the player physics body and sprite
-     * @param {number} x - Initial x position
-     * @param {number} y - Initial y position
+     * Create the modern character controller setup with proper scaling
+     * @param {number} x - Initial x position in pixels
+     * @param {number} y - Initial y position in pixels
      */
     create(x, y) {
         try {
-            console.log('[PlayerController] Creating player...');
+            console.log('[PlayerController] Creating modern character controller...');
             
-            // Player dimensions - doubled for better visibility
-            const playerWidth = 64;
-            const playerHeight = 64;
+            // Player dimensions in pixels
+            const playerWidth = 32;   // Smaller, more precise hitbox
+            const playerHeight = 48;  // Taller for platformer character feel
             
-            // Create a visual representation of the player
+            // Create visual representation
             if (this.scene.textures.exists(this.textureKey)) {
                 console.log('[PlayerController] Using texture:', this.textureKey);
                 this.sprite = this.scene.add.sprite(x, y, this.textureKey);
                 this.sprite.setDisplaySize(playerWidth, playerHeight);
-                // Ensure sprite is visible and on top
-                this.sprite.setDepth(100);
-                this.sprite.setVisible(true);
             } else {
                 console.log('[PlayerController] Texture not found:', this.textureKey, 'using rectangle');
-                this.sprite = this.scene.add.rectangle(
-                    x, y, playerWidth, playerHeight, 0x0000ff
-                );
-                this.sprite.setDepth(100);
+                this.sprite = this.scene.add.rectangle(x, y, playerWidth, playerHeight, 0x00ff00);
             }
+            this.sprite.setDepth(100);
+            this.sprite.setVisible(true);
             
-            // Add glow effect to player
+            // Add glow effect
             this.createGlowEffect();
             
-            // Create a dynamic rigid body for the player
-            const playerBodyDesc = RAPIER.RigidBodyDesc.dynamic()
-                .setTranslation(x, y)
-                .setAngularDamping(4.0) // Add angular damping to reduce free rotation
-                .setLinearDamping(0.1); // Reduce linear damping for more responsive movement
+            // Create KinematicPositionBased body (not Dynamic!)
+            const bodyDesc = RAPIER.RigidBodyDesc
+                .kinematicPositionBased()
+                .setTranslation(pixelsToMeters(x), pixelsToMeters(y));
             
-            this.body = this.world.createRigidBody(playerBodyDesc);
-            console.log('[PlayerController] Player body created');
+            this.body = this.world.createRigidBody(bodyDesc);
+            console.log('[PlayerController] Kinematic body created at:', pixelsToMeters(x), pixelsToMeters(y));
             
-            // Create a collider (hitbox) for the player
-            const playerColliderDesc = RAPIER.ColliderDesc
-                .cuboid(playerWidth / 2, playerHeight / 2)
-                .setFriction(0.1)      // Low friction for momentum sliding
-                .setDensity(2.0)       // High density for heavy feel
-                .setRestitution(0.15); // Slight bounce for impact feedback
-                
-            this.collider = this.world.createCollider(
-                playerColliderDesc,
-                this.body
-            );
+            // Create capsule collider for smooth movement over edges
+            const halfHeight = pixelsToMeters(playerHeight / 2) - PhysicsConfig.player.radius;
+            const colliderDesc = RAPIER.ColliderDesc
+                .capsule(halfHeight, PhysicsConfig.player.radius)
+                .setFriction(PhysicsConfig.player.friction)
+                .setRestitution(PhysicsConfig.player.restitution)
+                .setDensity(PhysicsConfig.player.density);
             
-            console.log('[PlayerController] Player created successfully');
+            this.collider = this.world.createCollider(colliderDesc, this.body);
+            
+            // Create the KinematicCharacterController - the key to responsive movement
+            this.characterController = this.world.createCharacterController(PhysicsConfig.player.offset);
+            
+            // Configure modern platformer features
+            if (PhysicsConfig.player.enableAutostep) {
+                this.characterController.enableAutostep(
+                    PhysicsConfig.player.autostepMaxHeight,
+                    PhysicsConfig.player.autostepMinWidth,
+                    true
+                );
+            }
+            
+            if (PhysicsConfig.player.enableSnapToGround) {
+                this.characterController.enableSnapToGround(PhysicsConfig.player.snapToGroundDistance);
+            }
+            
+            this.characterController.setMaxSlopeClimbAngle(PhysicsConfig.player.maxSlopeClimbAngle);
+            
+            console.log('[PlayerController] Modern character controller created successfully');
         } catch (error) {
             console.error('[PlayerController] Error in create:', error);
         }
@@ -153,58 +166,263 @@ export class PlayerController {
     }
     
     /**
-     * Update method called every frame
-     * @param {Array} platforms - Array of platforms to check for collisions
+     * Modern character controller update using KinematicCharacterController
+     * @param {number} deltaTime - Frame time in milliseconds
      */
-    update(platforms) {
-        if (!this.body) return;
+    update(deltaTime) {
+        if (!this.body || !this.characterController || !this.collider) return;
         
         try {
-            // Process collisions to detect ground contact
-            const isOnGround = this.collisionController.update(this.body, platforms);
+            const dt = deltaTime / 1000; // Convert to seconds
             
-            // Update jump controller with ground state
-            this.jumpController.setGroundState(isOnGround);
+            // Update game feel timers
+            this.updateTimers(dt);
             
-            // Get landing recovery state from jump controller
-            const jumpState = this.jumpController.getJumpState();
+            // Check ground state using character controller
+            this.updateGroundState();
+            
+            // Handle input and calculate desired movement
+            const desiredMovement = this.calculateMovement(dt);
+            
+            // Use character controller to compute collision-aware movement
+            this.characterController.computeColliderMovement(
+                this.collider,
+                desiredMovement
+            );
+            
+            // Get the final, collision-corrected movement
+            const correctedMovement = this.characterController.computedMovement();
+            
+            // Apply the movement to the kinematic body
+            const currentPosition = this.body.translation();
+            this.body.setNextKinematicTranslation({
+                x: currentPosition.x + correctedMovement.x,
+                y: currentPosition.y + correctedMovement.y
+            });
+            
+            // Update velocity based on actual movement for next frame
+            this.updateVelocityFromMovement(correctedMovement, dt);
+            
+            // Handle landing detection and recovery
+            this.handleLandingDetection();
+            
+            // Update sprite position to match physics body
+            this.updateSpritePosition();
             
             // Handle ducking
             this.handleDucking();
             
-            // Update movement controller
-            this.movementController.update(
-                this.body, 
-                this.sprite, 
-                { cursors: this.cursors, wasd: this.wasd, spaceKey: this.spaceKey },
-                isOnGround,
-                jumpState.isInLandingRecovery
-            );
-            
-            // Update jump controller (disable jumping while ducking)
-            if (!this.isDucking) {
-                this.jumpController.update(
-                    this.body, 
-                    this.sprite, 
-                    { cursors: this.cursors, wasd: this.wasd, spaceKey: this.spaceKey }
-                );
-            }
-            
-            // Update sprite position to match physics body
-            this.updateSpritePosition();
         } catch (error) {
             console.error('[PlayerController] Error in update:', error);
         }
     }
     
     /**
-     * Update sprite position to match physics body
+     * Update game feel timers (coyote time, jump buffer, landing recovery)
+     * @param {number} dt - Delta time in seconds
+     */
+    updateTimers(dt) {
+        if (this.coyoteTimer > 0) {
+            this.coyoteTimer -= dt;
+        }
+        
+        if (this.jumpBufferTimer > 0) {
+            this.jumpBufferTimer -= dt;
+        }
+        
+        if (this.landingRecoveryTimer > 0) {
+            this.landingRecoveryTimer -= dt;
+        }
+    }
+    
+    /**
+     * Update ground state using character controller
+     */
+    updateGroundState() {
+        const wasGrounded = this.isGrounded;
+        this.isGrounded = this.characterController.isGrounded();
+        
+        // Handle coyote time - grace period after leaving ground
+        if (wasGrounded && !this.isGrounded) {
+            this.coyoteTimer = PhysicsConfig.gameFeel.coyoteTime;
+        }
+        
+        // Reset ground timer when grounded
+        if (this.isGrounded) {
+            this.groundContactTimer = 0;
+        } else {
+            this.groundContactTimer += 1/60; // Rough frame time
+        }
+    }
+    
+    /**
+     * Calculate desired movement based on input and physics
+     * @param {number} dt - Delta time in seconds
+     * @returns {RAPIER.Vector2} Desired movement vector in meters
+     */
+    calculateMovement(dt) {
+        const movement = new RAPIER.Vector2(0, 0);
+        
+        // Handle horizontal input
+        let horizontalInput = 0;
+        if (this.cursors.left.isDown || this.wasd.left.isDown) {
+            horizontalInput = -1;
+        } else if (this.cursors.right.isDown || this.wasd.right.isDown) {
+            horizontalInput = 1;
+        }
+        
+        // Apply horizontal movement with proper acceleration
+        const targetSpeed = horizontalInput * PhysicsConfig.movement.walkSpeed;
+        const acceleration = this.isGrounded ? 
+            PhysicsConfig.movement.groundAcceleration : 
+            PhysicsConfig.movement.airAcceleration * PhysicsConfig.movement.airControlFactor;
+        
+        // Apply landing recovery reduction
+        const recoveryMultiplier = this.landingRecoveryTimer > 0 ? 
+            PhysicsConfig.gameFeel.landingSpeedMultiplier : 1.0;
+        
+        if (horizontalInput !== 0) {
+            // Accelerate towards target speed
+            const speedDiff = (targetSpeed * recoveryMultiplier) - this.velocity.x;
+            const maxAccel = acceleration * dt;
+            this.velocity.x += Math.sign(speedDiff) * Math.min(Math.abs(speedDiff), maxAccel);
+        } else {
+            // Decelerate when no input
+            const deceleration = this.isGrounded ? PhysicsConfig.movement.deceleration : PhysicsConfig.movement.airAcceleration;
+            const decel = deceleration * dt;
+            if (Math.abs(this.velocity.x) <= decel) {
+                this.velocity.x = 0;
+            } else {
+                this.velocity.x -= Math.sign(this.velocity.x) * decel;
+            }
+        }
+        
+        // Handle jumping with modern game feel
+        this.handleJumpInput();
+        
+        // Apply gravity (character controller doesn't do this automatically)
+        if (!this.isGrounded) {
+            this.velocity.y += PhysicsConfig.gravityY * dt;
+            
+            // Cap fall speed
+            if (this.velocity.y > PhysicsConfig.movement.maxFallSpeed) {
+                this.velocity.y = PhysicsConfig.movement.maxFallSpeed;
+            }
+        } else {
+            // Reset vertical velocity when grounded
+            if (this.velocity.y > 0) {
+                this.velocity.y = 0;
+            }
+        }
+        
+        // Handle fast fall
+        if ((this.cursors.down.isDown || this.wasd.down.isDown) && this.velocity.y > 0) {
+            this.velocity.y *= PhysicsConfig.movement.fastFallMultiplier;
+        }
+        
+        // Convert velocity to movement for this frame
+        movement.x = this.velocity.x * dt;
+        movement.y = this.velocity.y * dt;
+        
+        return movement;
+    }
+    
+    /**
+     * Handle jump input with modern game feel mechanics
+     */
+    handleJumpInput() {
+        const jumpPressed = this.spaceKey.isDown;
+        const jumpJustPressed = Phaser.Input.Keyboard.JustDown(this.spaceKey);
+        
+        // Jump buffering - remember jump input for a short time
+        if (jumpJustPressed) {
+            this.jumpBufferTimer = PhysicsConfig.gameFeel.jumpBufferTime;
+        }
+        
+        // Can jump if grounded OR within coyote time
+        const canJump = this.isGrounded || this.coyoteTimer > 0;
+        
+        // Execute jump if we can jump and have buffered input
+        if (canJump && this.jumpBufferTimer > 0) {
+            this.velocity.y = -PhysicsConfig.movement.jumpVelocity; // Negative for upward
+            this.jumpBufferTimer = 0;
+            this.coyoteTimer = 0;
+            
+            // Start landing recovery timer for when we land
+            this.landingRecoveryTimer = 0;
+            
+            // Emit jump event
+            if (this.eventSystem) {
+                this.eventSystem.emit(EventNames.PLAYER_JUMP, {
+                    position: this.body.translation(),
+                    velocity: this.velocity
+                });
+            }
+        }
+        
+        // Variable jump height - cut jump short if released early
+        if (!jumpPressed && this.velocity.y < 0) {
+            const minJumpVel = -PhysicsConfig.movement.jumpVelocity * PhysicsConfig.gameFeel.variableJumpMinHeight;
+            if (this.velocity.y < minJumpVel) {
+                this.velocity.y = minJumpVel;
+            }
+        }
+    }
+    
+    /**
+     * Update velocity based on actual movement that occurred
+     * @param {RAPIER.Vector2} correctedMovement - The actual movement after collision
+     * @param {number} dt - Delta time in seconds
+     */
+    updateVelocityFromMovement(correctedMovement, dt) {
+        // If we didn't move as expected horizontally, we hit a wall - stop horizontal velocity
+        const expectedHorizontal = this.velocity.x * dt;
+        if (Math.abs(correctedMovement.x) < Math.abs(expectedHorizontal) * 0.5) {
+            this.velocity.x = 0;
+        }
+        
+        // If we didn't move vertically as expected, we hit floor/ceiling
+        const expectedVertical = this.velocity.y * dt;
+        if (Math.abs(correctedMovement.y) < Math.abs(expectedVertical) * 0.5) {
+            if (this.velocity.y > 0) {
+                // We were falling and hit the ground
+                this.velocity.y = 0;
+            } else {
+                // We were jumping and hit the ceiling
+                this.velocity.y = 0;
+            }
+        }
+    }
+    
+    /**
+     * Handle landing detection and recovery period
+     */
+    handleLandingDetection() {
+        if (this.isGrounded && this.landingRecoveryTimer <= 0 && this.velocity.y === 0) {
+            // We just landed - start recovery period
+            this.landingRecoveryTimer = PhysicsConfig.gameFeel.landingRecoveryTime;
+            
+            // Emit landing event
+            if (this.eventSystem) {
+                this.eventSystem.emit(EventNames.PLAYER_LAND, {
+                    position: this.body.translation()
+                });
+            }
+        }
+    }
+    
+    /**
+     * Update sprite position with proper scaling
      */
     updateSpritePosition() {
         if (!this.body || !this.sprite) return;
         
         const position = this.body.translation();
-        this.sprite.setPosition(position.x, position.y);
+        // Convert from physics meters to render pixels
+        this.sprite.setPosition(
+            metersToPixels(position.x), 
+            metersToPixels(position.y)
+        );
         
         // Don't update rotation from physics if ducking
         if (!this.isDucking) {
@@ -213,7 +431,7 @@ export class PlayerController {
         
         // Update glow position
         if (this.glowGraphics) {
-            this.updateGlow(0.4); // Use current intensity from tween
+            this.updateGlow(0.4);
         }
     }
     
@@ -290,27 +508,60 @@ export class PlayerController {
     }
     
     /**
-     * Get the jump controller
-     * @returns {JumpController} The jump controller
+     * Get velocity information for debugging
+     * @returns {object} Current velocity and movement state
      */
-    getJumpController() {
-        return this.jumpController;
+    getVelocityInfo() {
+        return {
+            velocity: { x: this.velocity.x, y: this.velocity.y },
+            isGrounded: this.isGrounded,
+            coyoteTimer: this.coyoteTimer,
+            jumpBufferTimer: this.jumpBufferTimer
+        };
     }
     
     /**
-     * Get the movement controller
-     * @returns {MovementController} The movement controller
+     * Set the player position (called by level loader)
+     * @param {number} x - X position in pixels
+     * @param {number} y - Y position in pixels
      */
-    getMovementController() {
-        return this.movementController;
+    setPosition(x, y) {
+        if (this.body) {
+            this.body.setTranslation(pixelsToMeters(x), pixelsToMeters(y));
+        }
+        if (this.sprite) {
+            this.sprite.setPosition(x, y);
+        }
+        
+        // Reset velocity
+        this.velocity.x = 0;
+        this.velocity.y = 0;
     }
     
     /**
-     * Get the collision controller
-     * @returns {CollisionController} The collision controller
+     * Reset the player state (called by level loader)
      */
-    getCollisionController() {
-        return this.collisionController;
+    reset() {
+        // Reset velocity
+        this.velocity.x = 0;
+        this.velocity.y = 0;
+        
+        // Reset timers
+        this.coyoteTimer = 0;
+        this.jumpBufferTimer = 0;
+        this.landingRecoveryTimer = 0;
+        
+        // Reset ground state
+        this.isGrounded = false;
+        this.groundContactTimer = 0;
+        
+        // Reset ducking
+        this.isDucking = false;
+        if (this.sprite) {
+            this.sprite.setRotation(0);
+        }
+        
+        console.log('[PlayerController] Player state reset');
     }
     
     /**
@@ -365,11 +616,21 @@ export class PlayerController {
      * Clean up resources when scene is shut down
      */
     shutdown() {
-        // Clean up controllers
-        this.jumpController.shutdown();
+        // Clean up physics resources
+        if (this.world && this.body) {
+            this.world.removeRigidBody(this.body);
+        }
+        
+        // Clean up graphics
+        if (this.glowGraphics) {
+            this.glowGraphics.destroy();
+        }
+        
         // Clean up input listeners via InputManager
         if (this.scene.inputManager) {
             this.scene.inputManager.destroy();
         }
+        
+        console.log('[PlayerController] Resources cleaned up');
     }
 }

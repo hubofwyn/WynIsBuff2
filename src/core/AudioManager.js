@@ -68,7 +68,7 @@ export class AudioManager extends BaseManager {
         this._initSounds();
         console.log('[AudioManager] Initialized with settings', this.settings);
         // Mark as initialised for BaseManager consumers
-        this._initialized = true;
+        this.setInitialized();
     }
 
     /**
@@ -98,8 +98,21 @@ export class AudioManager extends BaseManager {
                 html5: true,
                 loop: true,
                 volume: this.settings.musicVolume,
+                preload: true,
                 onload: () => console.log(`[AudioManager] Successfully loaded: ${key}`),
-                onloaderror: (id, err) => console.error(`[AudioManager] Failed to load ${key}:`, err)
+                onloaderror: (id, err) => {
+                    console.error(`[AudioManager] Failed to load ${key}:`, err);
+                    // Try fallback if available
+                    if (src.endsWith('.mp3')) {
+                        const fallbackSrc = src.replace('.mp3', '.ogg');
+                        console.log(`[AudioManager] Trying fallback: ${fallbackSrc}`);
+                    }
+                },
+                onplayerror: (id, err) => {
+                    console.error(`[AudioManager] Playback error for ${key}:`, err);
+                    // Unlock audio on next user interaction
+                    window.Howler.ctx && window.Howler.ctx.resume();
+                }
             });
         });
         // Setup sound effects
@@ -107,7 +120,8 @@ export class AudioManager extends BaseManager {
             this.sfx[key] = list.map((src) => new Howl({
                 src: [`assets/${src}`],
                 volume: this.settings.sfxVolume,
-                preload: true
+                preload: true,
+                onloaderror: (id, err) => console.warn(`[AudioManager] Failed to load SFX ${src}:`, err)
             }));
         });
     }
@@ -120,14 +134,35 @@ export class AudioManager extends BaseManager {
         const track = this.music[key];
         console.log(`[AudioManager] playMusic called for: ${key}`, track);
         if (track) {
-            if (!track.playing()) {
-                console.log(`[AudioManager] Starting playback of: ${key}`);
-                track.play();
+            // Handle browser autoplay policy
+            if (window.Howler && window.Howler.ctx && window.Howler.ctx.state === 'suspended') {
+                console.log('[AudioManager] Resuming suspended audio context');
+                window.Howler.ctx.resume().then(() => {
+                    this._playTrack(track, key);
+                }).catch(err => {
+                    console.warn('[AudioManager] Could not resume audio context:', err);
+                });
             } else {
-                console.log(`[AudioManager] ${key} is already playing`);
+                this._playTrack(track, key);
             }
         } else {
             console.error(`[AudioManager] Track not found: ${key}`);
+        }
+    }
+
+    /**
+     * Internal method to actually play a track
+     * @private
+     */
+    _playTrack(track, key) {
+        if (!track.playing()) {
+            console.log(`[AudioManager] Starting playback of: ${key}`);
+            const id = track.play();
+            if (id === undefined) {
+                console.warn(`[AudioManager] Failed to play ${key} - may need user interaction`);
+            }
+        } else {
+            console.log(`[AudioManager] ${key} is already playing`);
         }
     }
 

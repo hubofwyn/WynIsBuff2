@@ -1,0 +1,166 @@
+{
+  "version": "1.0.0",
+  "description": "Intelligent agent orchestration configuration for WynIsBuff2 game development",
+  "agents": {
+    "architecture-guardian": {
+      "description": "Ensures architectural consistency and validates system design decisions",
+      "triggers": [
+        "new feature implementation",
+        "refactoring",
+        "module creation",
+        "manager implementation",
+        "system design review",
+        "code organization changes"
+      ],
+      "patterns": [
+        "add.*feature",
+        "create.*module",
+        "refactor",
+        "implement.*manager",
+        "design.*system",
+        "organize.*code"
+      ],
+      "priority": 1
+    },
+    "game-physics-expert": {
+      "description": "Expert in Phaser 3 and Rapier physics for 2D platformers",
+      "triggers": [
+        "physics implementation",
+        "collision detection",
+        "movement mechanics",
+        "jump mechanics",
+        "platformer physics",
+        "performance optimization"
+      ],
+      "patterns": [
+        "physics",
+        "collision",
+        "movement",
+        "jump",
+        "gravity",
+        "velocity",
+        "rapier",
+        "performance.*physics"
+      ],
+      "priority": 2
+    },
+    "game-design-innovator": {
+      "description": "Creative game design expert for innovative mechanics and gameplay",
+      "triggers": [
+        "game mechanics",
+        "level design",
+        "power-ups",
+        "game feel",
+        "player experience",
+        "creative features"
+      ],
+      "patterns": [
+        "mechanic",
+        "gameplay",
+        "level.*design",
+        "power.?up",
+        "game.*feel",
+        "player.*experience",
+        "creative",
+        "innovative"
+      ],
+      "priority": 3
+    }
+  },
+  "workflows": {
+    "feature-development": {
+      "description": "Complete feature development workflow",
+      "steps": [
+        {
+          "phase": "design",
+          "agent": "game-design-innovator",
+          "actions": ["conceptualize", "prototype mechanics", "define player experience"]
+        },
+        {
+          "phase": "architecture",
+          "agent": "architecture-guardian",
+          "actions": ["review design", "validate patterns", "ensure consistency"]
+        },
+        {
+          "phase": "implementation",
+          "agent": "game-physics-expert",
+          "actions": ["implement physics", "optimize performance", "test mechanics"]
+        },
+        {
+          "phase": "validation",
+          "agent": "architecture-guardian",
+          "actions": ["final review", "pattern compliance", "integration testing"]
+        }
+      ]
+    },
+    "bug-fixing": {
+      "description": "Systematic bug fixing workflow",
+      "steps": [
+        {
+          "phase": "analysis",
+          "agent": "game-physics-expert",
+          "condition": "physics-related",
+          "actions": ["diagnose issue", "identify root cause"]
+        },
+        {
+          "phase": "solution",
+          "agent": "architecture-guardian",
+          "actions": ["validate fix approach", "ensure no side effects"]
+        }
+      ]
+    },
+    "optimization": {
+      "description": "Performance optimization workflow",
+      "steps": [
+        {
+          "phase": "profiling",
+          "agent": "game-physics-expert",
+          "actions": ["identify bottlenecks", "measure performance"]
+        },
+        {
+          "phase": "optimization",
+          "agent": "game-physics-expert",
+          "actions": ["optimize algorithms", "improve caching", "reduce computations"]
+        },
+        {
+          "phase": "validation",
+          "agent": "architecture-guardian",
+          "actions": ["ensure maintainability", "verify no regressions"]
+        }
+      ]
+    }
+  },
+  "routing": {
+    "auto_detect": true,
+    "fallback": "architecture-guardian",
+    "parallel_execution": {
+      "enabled": true,
+      "max_agents": 2
+    },
+    "keywords": {
+      "architecture": ["pattern", "structure", "organize", "module", "manager", "singleton", "barrel", "import"],
+      "physics": ["collision", "velocity", "gravity", "jump", "movement", "rapier", "physics", "force"],
+      "design": ["mechanic", "gameplay", "feel", "experience", "power-up", "level", "creative", "fun"]
+    }
+  },
+  "quality_gates": {
+    "pre_implementation": {
+      "agent": "architecture-guardian",
+      "checks": ["pattern_compliance", "naming_conventions", "import_structure"]
+    },
+    "post_implementation": {
+      "agent": "architecture-guardian",
+      "checks": ["test_coverage", "documentation", "event_consistency"]
+    }
+  },
+  "conventions": {
+    "enforced_by": "architecture-guardian",
+    "rules": [
+      "All managers must extend BaseManager",
+      "Use barrel exports from @features/*",
+      "No magic strings - use constants",
+      "Event names follow namespace:action format",
+      "Assets managed through manifest.json"
+    ]
+  }
+}

@@ -1,6 +1,7 @@
 import RAPIER from '@dimforge/rapier2d-compat';
 import { EventNames } from '../constants/EventNames';
 import { PhysicsConfig } from '../constants/PhysicsConfig';
+import { metersToPixels } from '../constants/PhysicsConstants.js';
 import { BaseManager } from './BaseManager';
 
 /**
@@ -180,7 +181,7 @@ export class PhysicsManager extends BaseManager {
     }
     
     /**
-     * Step the physics simulation and update sprites
+     * Step the physics simulation with modern configuration
      * @param {number} delta - Time since last frame in milliseconds
      */
     update(delta) {
@@ -190,25 +191,33 @@ export class PhysicsManager extends BaseManager {
         
         try {
             // Convert delta from milliseconds to seconds
-            const deltaSeconds = delta ? delta / 1000 : 1/60;
+            const deltaSeconds = delta ? delta / 1000 : PhysicsConfig.timeStep;
             
-            // Cap delta to prevent spiral of death (max 1/30 second = ~33ms)
+            // Cap delta to prevent spiral of death
             const cappedDelta = Math.min(deltaSeconds, 1/30);
             
-            // Fixed timestep for deterministic physics
-            const fixedTimeStep = 1/60; // 60 Hz physics
+            // Fixed timestep for deterministic physics (as recommended in guide)
+            const fixedTimeStep = PhysicsConfig.timeStep; // 1/60 for 60Hz
             this.accumulator += cappedDelta;
             
-            // Limit max steps per frame to prevent freezing on slow systems
+            // Limit max steps per frame to prevent freezing
             const maxStepsPerFrame = 3;
             let steps = 0;
             
-            // Track physics timing for performance monitoring
+            // Track physics timing
             const startTime = performance.now();
             
-            // Step physics with fixed timestep
+            // Configure integration parameters for improved stability
+            const integrationParameters = new RAPIER.IntegrationParameters();
+            integrationParameters.dt = fixedTimeStep;
+            integrationParameters.max_velocity_iterations = PhysicsConfig.maxVelIterations;
+            integrationParameters.max_position_iterations = PhysicsConfig.maxPosIterations;
+            integrationParameters.erp = PhysicsConfig.erp; // Error reduction parameter
+            
+            // Step physics with proper integration parameters
             while (this.accumulator >= fixedTimeStep && steps < maxStepsPerFrame) {
-                this.world.step();
+                // Use enhanced step with integration parameters
+                this.world.step(integrationParameters);
                 this.accumulator -= fixedTimeStep;
                 steps++;
             }
@@ -216,16 +225,17 @@ export class PhysicsManager extends BaseManager {
             // Record physics metrics
             const physicsTime = performance.now() - startTime;
             
-            // Emit performance metrics if we have the event system
+            // Emit performance metrics
             if (this.eventSystem && steps > 0) {
                 this.eventSystem.emit('physics:performance', {
                     steps: steps,
                     time: physicsTime,
-                    accumulator: this.accumulator
+                    accumulator: this.accumulator,
+                    fixedTimeStep: fixedTimeStep
                 });
             }
             
-            // If we hit max steps, reset accumulator to prevent permanent lag
+            // Reset accumulator if we hit max steps (prevents permanent lag)
             if (steps >= maxStepsPerFrame) {
                 this.accumulator = 0;
                 console.warn('[PhysicsManager] Frame budget exceeded, resetting accumulator');
@@ -234,20 +244,21 @@ export class PhysicsManager extends BaseManager {
             // Calculate interpolation factor for smooth rendering
             const interpolation = this.accumulator / fixedTimeStep;
             
-            // Update all sprites based on their physics bodies with interpolation
+            // Update all sprites with proper scaling
             this.updateGameObjects(interpolation);
+            
         } catch (error) {
             console.error('[PhysicsManager] Error in update:', error);
         }
     }
     
     /**
-     * Update all game objects based on their physics bodies
+     * Update all game objects with proper meter-to-pixel scaling
      * @param {number} interpolation - Interpolation factor for smooth rendering (0-1)
      */
     updateGameObjects(interpolation = 0) {
         try {
-            // Update all sprites based on their physics bodies
+            // Update all sprites based on their physics bodies with proper scaling
             this.world.bodies.forEach(body => {
                 const sprite = this.bodyToSprite.get(body.handle);
                 
@@ -255,27 +266,31 @@ export class PhysicsManager extends BaseManager {
                     const position = body.translation();
                     const rotation = body.rotation();
                     
+                    // Convert physics position (meters) to render position (pixels)
+                    const pixelX = metersToPixels(position.x);
+                    const pixelY = metersToPixels(position.y);
+                    
                     // Store previous position if not exists
                     if (!sprite.prevX) {
-                        sprite.prevX = position.x;
-                        sprite.prevY = position.y;
+                        sprite.prevX = pixelX;
+                        sprite.prevY = pixelY;
                         sprite.prevRotation = rotation;
                     }
                     
                     // Interpolate between previous and current position for smooth rendering
                     if (interpolation > 0 && interpolation < 1) {
-                        sprite.x = sprite.prevX + (position.x - sprite.prevX) * interpolation;
-                        sprite.y = sprite.prevY + (position.y - sprite.prevY) * interpolation;
+                        sprite.x = sprite.prevX + (pixelX - sprite.prevX) * interpolation;
+                        sprite.y = sprite.prevY + (pixelY - sprite.prevY) * interpolation;
                         sprite.rotation = sprite.prevRotation + (rotation - sprite.prevRotation) * interpolation;
                     } else {
                         // Direct assignment when no interpolation
-                        sprite.x = position.x;
-                        sprite.y = position.y;
+                        sprite.x = pixelX;
+                        sprite.y = pixelY;
                         sprite.rotation = rotation;
                         
                         // Update previous values for next frame
-                        sprite.prevX = position.x;
-                        sprite.prevY = position.y;
+                        sprite.prevX = pixelX;
+                        sprite.prevY = pixelY;
                         sprite.prevRotation = rotation;
                     }
                 }

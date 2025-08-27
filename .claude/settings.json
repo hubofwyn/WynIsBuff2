@@ -1,0 +1,62 @@
+{
+  "model": "claude-sonnet-4-20250514",
+  "ANTHROPIC_SMALL_FAST_MODEL": "claude-haiku-4-20250514",
+  "enableAllProjectMcpServers": true,
+  "permissions": {
+    "allow": [
+      "Task",
+      "Bash",
+      "Edit", 
+      "MultiEdit",
+      "Write",
+      "Read",
+      "Glob",
+      "Grep",
+      "WebSearch",
+      "WebFetch",
+      "TodoWrite"
+    ],
+    "additionalDirectories": [
+      "./assets/",
+      "./docs/",
+      "./tests/",
+      "./scripts/"
+    ],
+    "defaultMode": "acceptEdits"
+  },
+  "hooks": [
+    {
+      "matcher": "Task",
+      "hooks": [
+        {
+          "type": "command",
+          "command": "echo '[ORCHESTRATION] Spawning subagent: $TASK_DESCRIPTION' >> .claude/orchestration.log"
+        }
+      ]
+    },
+    {
+      "matcher": "PreToolUse:Edit|MultiEdit|Write", 
+      "hooks": [
+        {
+          "type": "command",
+          "command": "echo '[QUALITY_GATE] Pre-edit validation for: $FILE_PATH' >> .claude/orchestration.log"
+        }
+      ]
+    }
+  ],
+  "env": {
+    "CLAUDE_BASH_MAINTAIN_PROJECT_WORKING_DIR": "1",
+    "MAX_THINKING_TOKENS": "8192",
+    "DISABLE_COST_WARNINGS": "1",
+    "GAME_PROJECT": "WynIsBuff2",
+    "ORCHESTRATION_ENABLED": "1"
+  },
+  "projectSpecific": {
+    "gameEngine": "Phaser 3.88.2",
+    "physicsEngine": "Rapier 0.14.0", 
+    "buildTool": "Vite 5.4.19",
+    "testFramework": "Node.js Assert",
+    "architecture": "feature-based-modules",
+    "orchestrationConfig": ".claude-orchestration.json"
+  }
+}

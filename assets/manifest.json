@@ -164,12 +164,12 @@
       },
       "collectibleProtein": {
         "type": "image",
-        "path": "spritesheets/items/flasks/flasks_2.png",
+        "path": "spritesheets/items/flasks/flasks_2_1.png",
         "description": "Protein collectible for level1"
       },
       "collectibleDumbbell": {
         "type": "image",
-        "path": "spritesheets/items/chest.png", 
+        "path": "spritesheets/items/collectibles/dumbbell.png", 
         "description": "Dumbbell collectible for level1"
       },
       "torch": {
@@ -209,23 +209,33 @@
       },
       "buffBg": {
         "type": "image",
-        "path": "images/characters/mainlogo.png",
-        "description": "Buff-themed background for level1 - using logo as placeholder"
+        "path": "images/backgrounds/buff-bg.png",
+        "description": "Buff-themed background for level1"
       },
       "parallaxSky": {
         "type": "image",
-        "path": "images/characters/mainlogo.png",
-        "description": "Parallax background layer - sky - using logo as placeholder"
+        "path": "images/backgrounds/parallax-sky.png",
+        "description": "Parallax background layer - sky"
       },
       "parallaxMountains": {
         "type": "image",
-        "path": "images/characters/mainlogo.png",
-        "description": "Parallax background layer - mountains - using logo as placeholder"
+        "path": "images/backgrounds/parallax-mountains.png",
+        "description": "Parallax background layer - mountains"
       },
       "parallaxForeground": {
         "type": "image",
-        "path": "images/characters/mainlogo.png",
-        "description": "Parallax background layer - foreground - using logo as placeholder"
+        "path": "images/backgrounds/parallax-foreground.png",
+        "description": "Parallax background layer - foreground"
+      },
+      "particleFlare": {
+        "type": "image",
+        "path": "images/particles/flares.png",
+        "description": "Particle flare effect for visual effects"
+      },
+      "particleWhite": {
+        "type": "image",
+        "path": "images/particles/white.png",
+        "description": "White particle for tinting effects"
       }
     },
     "audio": {
@@ -239,6 +249,11 @@
           "type": "audio", 
           "path": "sounds/background/hyper-buff-blitz.mp3",
           "description": "In-level background music"
+        },
+        "birthdaySong": {
+          "type": "audio",
+          "path": "audio/music/birthday-song.wav",
+          "description": "Birthday celebration music for special minigame"
         }
       },
       "sfx": {
@@ -347,7 +362,15 @@
               "description": "UI hover sound variant 4"
             }
           ]
-        }
+        },
+        "special": [
+          {
+            "key": "sfxFart",
+            "type": "audio",
+            "path": "sounds/land-effects/land4.mp3",
+            "description": "Special fart sound effect (currently using land4 as placeholder)"
+          }
+        ]
       }
     }
   }

@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WynIsBuff2 Movement Debug</title>
+    <style>
+        body { 
+            margin: 0; 
+            padding: 20px; 
+            font-family: Arial, sans-serif; 
+            background: #222; 
+            color: #fff; 
+        }
+        #status { 
+            position: fixed; 
+            top: 10px; 
+            right: 10px; 
+            background: rgba(0,0,0,0.8); 
+            padding: 10px; 
+            border-radius: 5px; 
+            max-width: 400px; 
+            max-height: 400px; 
+            overflow-y: auto; 
+            font-size: 12px; 
+        }
+        #game-container { 
+            border: 2px solid #555; 
+        }
+        .debug-success { color: #4CAF50; }
+        .debug-error { color: #f44336; }
+        .debug-warning { color: #ff9800; }
+        .debug-info { color: #2196F3; }
+    </style>
+</head>
+<body>
+    <div id="status">
+        <h4>Movement Debug Console</h4>
+        <div id="messages">Initializing...</div>
+    </div>
+    
+    <div id="game-container"></div>
+    
+    <h3>Movement Test Instructions:</h3>
+    <p><strong>Game bypasses main menu → goes directly to Game scene</strong></p>
+    <p><strong>WASD or Arrow Keys:</strong> Should move player (now using KinematicCharacterController)</p>
+    <p><strong>Space:</strong> Jump with variable height</p>
+    <p><strong>Watch Debug Console (top right):</strong> Shows physics events and movement state</p>
+    
+    <script type="module">
+        let logCount = 0;
+        
+        function debugLog(message, type = 'info') {
+            logCount++;
+            const timestamp = new Date().toLocaleTimeString();
+            const messagesDiv = document.getElementById('messages');
+            
+            messagesDiv.innerHTML += `<br><span class="debug-${type}">[${timestamp}] ${message}</span>`;
+            
+            // Auto-scroll and limit messages
+            const statusDiv = document.getElementById('status');
+            statusDiv.scrollTop = statusDiv.scrollHeight;
+            
+            if (logCount > 100) {
+                const lines = messagesDiv.innerHTML.split('<br>');
+                messagesDiv.innerHTML = '<br>' + lines.slice(-80).join('<br>');
+                logCount = 80;
+            }
+        }
+        
+        debugLog('🚀 Starting movement debug session...', 'info');
+        debugLog('🔧 Physics system: KinematicCharacterController', 'info');
+        debugLog('📏 Scaling: 100 pixels = 1 meter', 'info');
+        
+        try {
+            // Import and start game
+            const gameModule = await import('./src/main.js');
+            debugLog('✅ Game module loaded', 'success');
+            
+            if (gameModule.default) {
+                debugLog('✅ Phaser game instance found', 'success');
+                debugLog('🎮 Game should bypass menu → load Game scene directly', 'info');
+                
+                // Monitor console for physics events
+                const originalLog = console.log;
+                const originalError = console.error;
+                
+                console.log = function(...args) {
+                    const logStr = args.join(' ');
+                    
+                    // Filter for important game events
+                    if (logStr.includes('[PlayerController]') || 
+                        logStr.includes('[Physics') || 
+                        logStr.includes('[Game]') || 
+                        logStr.includes('KinematicCharacter') ||
+                        logStr.includes('movement') ||
+                        logStr.includes('velocity') ||
+                        logStr.includes('grounded')) {
+                        debugLog(`🔍 ${logStr}`, 'info');
+                    }
+                    
+                    // Special monitoring for critical events
+                    if (logStr.includes('Create method completed')) {
+                        debugLog('🎯 Game scene loaded - try movement now!', 'success');
+                    }
+                    
+                    if (logStr.includes('PlayerController') && logStr.includes('Initialized')) {
+                        debugLog('🎮 PlayerController ready - WASD/Space should work', 'success');
+                    }
+                    
+                    originalLog.apply(console, args);
+                };
+                
+                console.error = function(...args) {
+                    debugLog(`❌ ERROR: ${args.join(' ')}`, 'error');
+                    originalError.apply(console, args);
+                };
+                
+                // Set up keyboard monitoring
+                document.addEventListener('keydown', (event) => {
+                    if (['KeyW', 'KeyA', 'KeyS', 'KeyD', 'Space', 'ArrowUp', 'ArrowLeft', 'ArrowRight', 'ArrowDown'].includes(event.code)) {
+                        debugLog(`⌨️ Key pressed: ${event.code}`, 'warning');
+                    }
+                });
+                
+                debugLog('👀 Monitoring started - watch for game scene loading...', 'info');
+                
+            } else {
+                debugLog('❌ No game instance found in module', 'error');
+            }
+            
+        } catch (error) {
+            debugLog(`❌ Failed to load: ${error.message}`, 'error');
+            console.error('Movement debug error:', error);
+        }
+    </script>
+</body>
+</html>

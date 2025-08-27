@@ -12,3 +12,8 @@ export { MovementController } from '../../modules/player/MovementController.js';
 export { JumpController } from '../../modules/player/JumpController.js';
 export { CollisionController } from '../../modules/player/CollisionController.js';
 
+// Enhanced movement system controllers  
+export { EnhancedMovementController } from '../../modules/player/EnhancedMovementController.js';
+export { EnhancedJumpController } from '../../modules/player/EnhancedJumpController.js';
+export { WallDashController } from '../../modules/player/WallDashController.js';
+

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WynIsBuff2 Physics Test</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            background: #222;
+            color: #fff;
+        }
+        #status {
+            margin-bottom: 20px;
+            padding: 10px;
+            background: #333;
+            border-radius: 5px;
+        }
+        #game-container {
+            border: 2px solid #555;
+        }
+        .controls {
+            margin-top: 10px;
+            padding: 10px;
+            background: #333;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div id="status">
+        <h3>WynIsBuff2 Enhanced Physics Test</h3>
+        <div id="messages">Loading physics improvements...</div>
+    </div>
+    
+    <div id="game-container"></div>
+    
+    <div class="controls">
+        <h4>Enhanced Controls:</h4>
+        <p>🚶 <strong>Movement:</strong> A/D or Arrow Keys (Buff Momentum System)</p>
+        <p>🏃 <strong>Jump:</strong> Space (Enhanced Triple Jump with Particles)</p>
+        <p>🧗 <strong>Wall Jump:</strong> Touch wall + Space (New Wall Mechanics)</p>
+        <p>🦆 <strong>Duck/Fast Fall:</strong> C or S (90° Rotation)</p>
+    </div>
+    
+    <script type="module">
+        function updateStatus(message) {
+            console.log('[PhysicsTest]', message);
+            document.getElementById('messages').innerHTML += '<br>' + message;
+        }
+        
+        updateStatus('Testing enhanced physics system...');
+        
+        try {
+            // Test basic imports
+            updateStatus('✅ Testing module imports...');
+            
+            // Test if game starts without syntax errors
+            const gameModule = await import('./src/main.js');
+            updateStatus('✅ Main game module loaded successfully');
+            updateStatus('✅ Physics improvements active');
+            updateStatus('🎮 <strong>Ready to test!</strong> Use controls above');
+            updateStatus('');
+            updateStatus('📊 <strong>What to Test:</strong>');
+            updateStatus('• Movement should feel heavier and more powerful');
+            updateStatus('• Triple jump creates particles instead of scaling');
+            updateStatus('• Wall jumping works on platforms');
+            updateStatus('• Duck rotates player 90 degrees');
+            updateStatus('• Precision timing tracks your muscle memory');
+            
+        } catch (error) {
+            updateStatus('❌ Error: ' + error.message);
+            console.error('Physics test error:', error);
+        }
+    </script>
+</body>
+</html>

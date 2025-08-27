@@ -1,5 +1,7 @@
 import RAPIER from '@dimforge/rapier2d-compat';
 import { EventNames } from '../../constants/EventNames';
+import { PhysicsConfig } from '../../constants/PhysicsConfig.js';
+import { pixelsToMeters } from '../../constants/PhysicsConstants.js';
 
 /**
  * PlatformFactory class is responsible for creating and managing static platforms
@@ -70,26 +72,34 @@ export class PlatformFactory {
                 try {
                     this.log(`Creating platform ${index+1}`);
                     
-                    // Create a visual representation
+                    // Create a visual representation (in pixels)
                     const platformSprite = this.scene.add.rectangle(
                         platform.x, platform.y,
                         platform.width, platform.height,
                         platform.color
                     );
                     
-                    // Create a fixed rigid body for the platform
+                    // Create a fixed rigid body with proper scaling (pixels to meters)
                     const platformBodyDesc = RAPIER.RigidBodyDesc.fixed()
-                        .setTranslation(platform.x, platform.y);
+                        .setTranslation(
+                            pixelsToMeters(platform.x), 
+                            pixelsToMeters(platform.y)
+                        );
                     
                     const platformBody = this.world.createRigidBody(platformBodyDesc);
                     
                     // Store the association between body and sprite
                     this.bodyToSprite.set(platformBody.handle, platformSprite);
                     
-                    // Create a collider for the platform
+                    // Create a collider with proper scaling and physics properties
                     const platformColliderDesc = RAPIER.ColliderDesc
-                        .cuboid(platform.width / 2, platform.height / 2)
-                        .setRestitution(0.0);
+                        .cuboid(
+                            pixelsToMeters(platform.width / 2), 
+                            pixelsToMeters(platform.height / 2)
+                        )
+                        .setFriction(PhysicsConfig.ground.friction)
+                        .setRestitution(PhysicsConfig.ground.restitution)
+                        .setDensity(PhysicsConfig.ground.density);
                         
                     const platformCollider = this.world.createCollider(
                         platformColliderDesc, 

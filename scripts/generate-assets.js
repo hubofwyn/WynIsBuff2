@@ -99,6 +99,14 @@ function generateAssetsConstants() {
             output += `  ${constName}: '${sound.key}',\n`;
         });
         
+        // Handle special SFX if present
+        if (sfx.special) {
+            sfx.special.forEach((sound, index) => {
+                const constName = sound.key.replace(/([A-Z])/g, '_$1').toUpperCase().replace(/^_/, '');
+                output += `  ${constName}: '${sound.key}',\n`;
+            });
+        }
+        
         output += `});\n\n`;
 
         // Generate audio paths
@@ -130,6 +138,14 @@ function generateAssetsConstants() {
             const constName = sound.key.replace(/([A-Z])/g, '_$1').toUpperCase().replace(/^_/, '');
             output += `  ${constName}: '${sound.path}',\n`;
         });
+        
+        // Handle special SFX paths if present
+        if (sfx.special) {
+            sfx.special.forEach((sound, index) => {
+                const constName = sound.key.replace(/([A-Z])/g, '_$1').toUpperCase().replace(/^_/, '');
+                output += `  ${constName}: '${sound.path}',\n`;
+            });
+        }
         
         output += `});\n\n`;
 
@@ -232,6 +248,9 @@ export function validateAssets() {
         sfxCount += manifest.assets.audio.sfx.pickup.length;
         sfxCount += manifest.assets.audio.sfx.ui.click.length;
         sfxCount += manifest.assets.audio.sfx.ui.hover.length;
+        if (manifest.assets.audio.sfx.special) {
+            sfxCount += manifest.assets.audio.sfx.special.length;
+        }
         
         console.log(`🔊 Generated ${sfxCount} sound effect assets`);
         

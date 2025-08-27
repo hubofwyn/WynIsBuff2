@@ -15,6 +15,14 @@ export const SceneKeys = Object.freeze({
   SETTINGS: 'Settings',
   GAME_OVER: 'GameOver',
   BIRTHDAY_MINIGAME: 'BirthdayMinigame',
+  
+  // Idle/Automation System Scenes
+  HUB: 'HubScene',
+  RUN: 'RunScene',
+  RESULTS: 'ResultsScene',
+  FACTORY: 'FactoryScene',
+  UPGRADES: 'UpgradesScene',
+  PRESTIGE: 'PrestigeScene',
 });
 
 // Optional: backwards-compat map so legacy code using literal strings can turn
