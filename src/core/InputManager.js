@@ -26,25 +26,33 @@ export class InputManager extends BaseManager {
      * @param {EventSystem} eventSystem - The central event bus
      */
     init(scene, eventSystem) {
+        console.log('[InputManager] Initializing...');
         this.scene = scene;
         this.eventSystem = eventSystem;
         const { keyboard } = this.scene.input;
+        
         // Arrow keys
         this.keys.cursors = keyboard.createCursorKeys();
+        console.log('[InputManager] Created cursor keys');
+        
         // WASD and SPACE keys for movement and jumping
         ['W', 'A', 'S', 'D', 'SPACE'].forEach(keyName => {
             this.keys[keyName] = keyboard.addKey(Phaser.Input.Keyboard.KeyCodes[keyName]);
         });
+        console.log('[InputManager] Created WASD and SPACE keys');
+        
         // Reset key (R)
         this.keys.R = keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.R);
         // Duck key (C)
         this.keys.C = keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.C);
+        console.log('[InputManager] Created R and C keys');
 
         // Arrow key events
         this.keys.cursors.left.on('down', () => this.eventSystem.emit(EventNames.MOVE_LEFT));
         this.keys.cursors.right.on('down', () => this.eventSystem.emit(EventNames.MOVE_RIGHT));
         this.keys.cursors.up.on('down', () => this.eventSystem.emit(EventNames.MOVE_UP));
         this.keys.cursors.down.on('down', () => this.eventSystem.emit(EventNames.MOVE_DOWN));
+        
         // Dynamic keybindings (Jump, Move Left/Right, Pause)
         const gs = new GameStateManager();
         const bindings = gs.settings.keybindings;
@@ -63,11 +71,15 @@ export class InputManager extends BaseManager {
                 this.keys[action] = keyObj;
             }
         });
+        
         // Level reset (R)
         this.keys.R.on('down', () => this.eventSystem.emit(EventNames.LEVEL_RESET));
         
+        console.log('[InputManager] All keys initialized:', Object.keys(this.keys));
+        
         // Mark as initialized
-        this._initialized = true;
+        this.setInitialized();
+        console.log('[InputManager] Initialization complete');
     }
 
     /**

@@ -49,6 +49,7 @@ export class PlayerController {
         this.create(x, y);
         
         // Set up input handlers
+        console.log('[PlayerController] About to setup controls, inputManager available:', !!this.scene.inputManager);
         this.setupControls();
         
         // Emit player spawn event
@@ -136,9 +137,12 @@ export class PlayerController {
      * Set up keyboard controls
      */
     setupControls() {
-        // Acquire input keys from InputManager if available
-        if (this.scene.inputManager && this.scene.inputManager.keys) {
-            const keys = this.scene.inputManager.keys;
+        // Get InputManager singleton instance
+        const inputManager = this.scene.inputManager;
+        
+        if (inputManager && inputManager.keys) {
+            console.log('[PlayerController] Using InputManager keys');
+            const keys = inputManager.keys;
             this.cursors = keys.cursors;
             this.wasd = {
                 up: keys.W,
@@ -149,7 +153,8 @@ export class PlayerController {
             this.spaceKey = keys.SPACE;
             this.duckKey = keys.C;
         } else {
-            // Fallback to direct keyboard polling
+            console.log('[PlayerController] InputManager not available, creating direct keyboard controls');
+            // Direct keyboard controls as fallback
             this.cursors = this.scene.input.keyboard.createCursorKeys();
             this.wasd = {
                 up: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W),
@@ -161,6 +166,21 @@ export class PlayerController {
             this.duckKey = this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.C);
         }
         
+        console.log('[PlayerController] Controls setup complete:', {
+            cursors: !!this.cursors,
+            wasd: !!this.wasd,
+            spaceKey: !!this.spaceKey,
+            duckKey: !!this.duckKey
+        });
+        
+        // Test key accessibility immediately
+        if (this.cursors) {
+            console.log('[PlayerController] Cursor keys object:', this.cursors);
+        }
+        if (this.wasd) {
+            console.log('[PlayerController] WASD keys object:', this.wasd);
+        }
+        
         // Track ducking state
         this.isDucking = false;
     }
@@ -170,10 +190,28 @@ export class PlayerController {
      * @param {number} deltaTime - Frame time in milliseconds
      */
     update(deltaTime) {
-        if (!this.body || !this.characterController || !this.collider) return;
+        // TRIAGE FIX: Early exit guards to prevent crashes
+        if (!this.body || !this.characterController || !this.collider || !this.sprite) {
+            console.warn('[PlayerController] Missing essential components, skipping update');
+            return;
+        }
+        
+        // Circuit breaker: disable if too many errors
+        if (this.errorCount > 5) {
+            console.warn('[PlayerController] Too many errors, player disabled');
+            return;
+        }
         
         try {
-            const dt = deltaTime / 1000; // Convert to seconds
+            // TRIAGE FIX: Clamp deltaTime to prevent physics explosions
+            const clampedDelta = Math.min(deltaTime, 50); // Cap at 50ms (20 FPS minimum)
+            const dt = clampedDelta / 1000; // Convert to seconds
+            
+            // TRIAGE FIX: Validate dt is finite
+            if (!Number.isFinite(dt) || dt <= 0) {
+                console.warn('[PlayerController] Invalid deltaTime:', deltaTime);
+                return;
+            }
             
             // Update game feel timers
             this.updateTimers(dt);
@@ -184,6 +222,12 @@ export class PlayerController {
             // Handle input and calculate desired movement
             const desiredMovement = this.calculateMovement(dt);
             
+            // TRIAGE FIX: Validate movement vector
+            if (!desiredMovement || !Number.isFinite(desiredMovement.x) || !Number.isFinite(desiredMovement.y)) {
+                console.warn('[PlayerController] Invalid movement vector, skipping movement');
+                return;
+            }
+            
             // Use character controller to compute collision-aware movement
             this.characterController.computeColliderMovement(
                 this.collider,
@@ -193,12 +237,20 @@ export class PlayerController {
             // Get the final, collision-corrected movement
             const correctedMovement = this.characterController.computedMovement();
             
+            // TRIAGE FIX: Validate corrected movement
+            if (!correctedMovement || !Number.isFinite(correctedMovement.x) || !Number.isFinite(correctedMovement.y)) {
+                console.warn('[PlayerController] Invalid corrected movement, using zero movement');
+                return;
+            }
+            
             // Apply the movement to the kinematic body
             const currentPosition = this.body.translation();
-            this.body.setNextKinematicTranslation({
-                x: currentPosition.x + correctedMovement.x,
-                y: currentPosition.y + correctedMovement.y
-            });
+            if (currentPosition) {
+                this.body.setNextKinematicTranslation({
+                    x: currentPosition.x + correctedMovement.x,
+                    y: currentPosition.y + correctedMovement.y
+                });
+            }
             
             // Update velocity based on actual movement for next frame
             this.updateVelocityFromMovement(correctedMovement, dt);
@@ -212,8 +264,21 @@ export class PlayerController {
             // Handle ducking
             this.handleDucking();
             
+            // Reset error count on successful update
+            this.errorCount = 0;
+            
         } catch (error) {
-            console.error('[PlayerController] Error in update:', error);
+            this.errorCount = (this.errorCount || 0) + 1;
+            console.error(`[PlayerController] Error in update (${this.errorCount}/5):`, error);
+            
+            // Emergency fallback: try to at least update sprite position
+            try {
+                if (this.body && this.sprite) {
+                    this.updateSpritePosition();
+                }
+            } catch (fallbackError) {
+                console.error('[PlayerController] Fallback update also failed:', fallbackError);
+            }
         }
     }
     
@@ -267,8 +332,10 @@ export class PlayerController {
         let horizontalInput = 0;
         if (this.cursors.left.isDown || this.wasd.left.isDown) {
             horizontalInput = -1;
+            console.log('[PlayerController] Moving left');
         } else if (this.cursors.right.isDown || this.wasd.right.isDown) {
             horizontalInput = 1;
+            console.log('[PlayerController] Moving right');
         }
         
         // Apply horizontal movement with proper acceleration
@@ -276,6 +343,12 @@ export class PlayerController {
         const acceleration = this.isGrounded ? 
             PhysicsConfig.movement.groundAcceleration : 
             PhysicsConfig.movement.airAcceleration * PhysicsConfig.movement.airControlFactor;
+            
+        // TRIAGE FIX: Validate values are finite
+        if (!Number.isFinite(targetSpeed) || !Number.isFinite(acceleration)) {
+            console.warn('[PlayerController] Invalid movement values, using defaults');
+            return new RAPIER.Vector2(0, 0);
+        }
         
         // Apply landing recovery reduction
         const recoveryMultiplier = this.landingRecoveryTimer > 0 ? 
@@ -300,6 +373,17 @@ export class PlayerController {
         // Handle jumping with modern game feel
         this.handleJumpInput();
         
+        // Debug key states occasionally
+        if (Math.random() < 0.01) { // 1% chance per frame to avoid spam
+            console.log('[PlayerController] Key states:', {
+                cursorsLeft: this.cursors?.left?.isDown,
+                cursorsRight: this.cursors?.right?.isDown,
+                wasdLeft: this.wasd?.left?.isDown,
+                wasdRight: this.wasd?.right?.isDown,
+                space: this.spaceKey?.isDown
+            });
+        }
+        
         // Apply gravity (character controller doesn't do this automatically)
         if (!this.isGrounded) {
             this.velocity.y += PhysicsConfig.gravityY * dt;
@@ -319,6 +403,15 @@ export class PlayerController {
         if ((this.cursors.down.isDown || this.wasd.down.isDown) && this.velocity.y > 0) {
             this.velocity.y *= PhysicsConfig.movement.fastFallMultiplier;
         }
+        
+        // TRIAGE FIX: Clamp velocities to prevent runaway physics
+        const maxSpeed = 50; // Maximum reasonable speed in m/s
+        this.velocity.x = Math.max(-maxSpeed, Math.min(maxSpeed, this.velocity.x));
+        this.velocity.y = Math.max(-maxSpeed, Math.min(maxSpeed, this.velocity.y));
+        
+        // TRIAGE FIX: Ensure velocities are finite
+        if (!Number.isFinite(this.velocity.x)) this.velocity.x = 0;
+        if (!Number.isFinite(this.velocity.y)) this.velocity.y = 0;
         
         // Convert velocity to movement for this frame
         movement.x = this.velocity.x * dt;

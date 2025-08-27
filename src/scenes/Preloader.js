@@ -158,6 +158,24 @@ export class Preloader extends Scene
     {
         //  Load the assets for the game
         this.load.setPath('assets');
+        
+        // TRIAGE FIX: Configure loader to prevent OUT_OF_MEMORY errors
+        this.load.maxParallelDownloads = 2; // Reduce concurrent downloads
+        
+        // TRIAGE FIX: Add error handlers for asset loading
+        this.load.on('loaderror', (fileObj) => {
+            console.error('[Preloader] Failed to load asset:', fileObj.key, fileObj.src);
+        });
+        
+        this.load.on('filecomplete', (key) => {
+            // TRIAGE FIX: Set safe texture filters to prevent mipmap errors
+            if (this.textures.exists(key)) {
+                const texture = this.textures.get(key);
+                if (texture && texture.setFilter) {
+                    texture.setFilter(Phaser.Textures.FilterMode.LINEAR);
+                }
+            }
+        });
 
         // Load the custom game logo
         this.load.image(ImageAssets.LOGO, ImagePaths.LOGO);
