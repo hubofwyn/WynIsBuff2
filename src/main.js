@@ -19,14 +19,15 @@ import { FactoryScene } from './scenes/FactoryScene';
 console.log('[Main] Initializing Phaser game...');
 
 const config = {
-    type: Phaser.AUTO,
+    type: Phaser.WEBGL,
     width: 1024,
     height: 768,
     parent: 'game-container',
     backgroundColor: '#028af8',
     scale: {
         mode: Phaser.Scale.FIT,
-        autoCenter: Phaser.Scale.CENTER_BOTH
+        autoCenter: Phaser.Scale.CENTER_BOTH,
+        autoRound: true
     },
     physics: {
         default: 'arcade',
@@ -42,12 +43,19 @@ const config = {
         smoothStep: false
     },
     render: {
-        antialias: true,
+        // TRIAGE FIX: Disable mipmaps to prevent OUT_OF_MEMORY and GL_INVALID_OPERATION
+        mipmapFilter: 'LINEAR',      // Never use *_MIPMAP_* unless we guarantee POT textures
+        antialias: false,            // Disable anti-aliasing to reduce VRAM usage
+        antialiasGL: false,          // Explicitly disable WebGL anti-aliasing
         pixelArt: false,
-        roundPixels: false,
+        roundPixels: true,           // Reduce sub-pixel rendering overhead
         transparent: false,
         clearBeforeRender: true,
-        powerPreference: 'default' // 'high-performance', 'low-power', or 'default'
+        powerPreference: 'high-performance',  // Request dedicated GPU if available
+        // Additional safety settings
+        failIfMajorPerformanceCaveat: false,  // Don't fail on slower hardware
+        premultipliedAlpha: false,            // Reduce texture complexity
+        preserveDrawingBuffer: false          // Don't preserve buffer (saves memory)
     },
     scene: [
         Boot,
@@ -73,6 +81,28 @@ const game = new Phaser.Game(config);
 // Add game event listeners for debugging
 game.events.on('ready', () => {
     console.log('[Main] Phaser game is ready!');
+});
+
+// TRIAGE FIX: Handle WebGL context loss gracefully
+game.events.on('contextlost', (event) => {
+    console.warn('[Main] WebGL context lost - pausing game');
+    event.preventDefault(); // Prevent default browser behavior
+    // Pause all scenes
+    game.scene.scenes.forEach(scene => {
+        if (scene.scene.isActive()) {
+            scene.scene.pause();
+        }
+    });
+});
+
+game.events.on('contextrestored', () => {
+    console.log('[Main] WebGL context restored - resuming game');
+    // Resume all paused scenes
+    game.scene.scenes.forEach(scene => {
+        if (scene.scene.isPaused()) {
+            scene.scene.resume();
+        }
+    });
 });
 
 console.log('[Main] Phaser game instance created:', game);

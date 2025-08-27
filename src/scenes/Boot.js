@@ -20,17 +20,9 @@ export class Boot extends Scene
     {
         console.log('[Boot] Boot scene created');
         
-        // Add visible test element
-        this.add.text(400, 300, 'BOOT SCENE', {
-            fontSize: '32px',
-            color: '#ffffff'
-        }).setOrigin(0.5);
-        
-        // TEMPORARY: Skip directly to Game scene to test movement
-        this.time.delayedCall(1000, () => {
-            console.log('[Boot] TEMPORARY: Bypassing to Game scene for movement testing...');
-            this.scene.start(SceneKeys.GAME, { levelId: 'level1' });
-        });
+        // Boot scene should transition to Preloader
+        console.log('[Boot] Transitioning to Preloader scene...');
+        this.scene.start(SceneKeys.PRELOADER);
     }
     
     update (time, delta)

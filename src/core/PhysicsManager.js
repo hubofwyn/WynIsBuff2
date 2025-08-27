@@ -189,12 +189,24 @@ export class PhysicsManager extends BaseManager {
             return;
         }
         
+        // TRIAGE FIX: Circuit breaker for repeated errors
+        if (this.errorCount > 10) {
+            console.warn('[PhysicsManager] Too many errors, physics disabled');
+            return;
+        }
+        
         try {
+            // TRIAGE FIX: Validate delta is a finite number
+            if (!Number.isFinite(delta) || delta < 0 || delta > 1000) {
+                console.warn('[PhysicsManager] Invalid delta:', delta, 'using fallback');
+                delta = 16.67; // Fallback to 60fps
+            }
+            
             // Convert delta from milliseconds to seconds
             const deltaSeconds = delta ? delta / 1000 : PhysicsConfig.timeStep;
             
-            // Cap delta to prevent spiral of death
-            const cappedDelta = Math.min(deltaSeconds, 1/30);
+            // TRIAGE FIX: More aggressive delta capping to prevent physics explosions
+            const cappedDelta = Math.min(deltaSeconds, 1/20); // Cap to 50ms (20 FPS minimum)
             
             // Fixed timestep for deterministic physics (as recommended in guide)
             const fixedTimeStep = PhysicsConfig.timeStep; // 1/60 for 60Hz
@@ -247,8 +259,21 @@ export class PhysicsManager extends BaseManager {
             // Update all sprites with proper scaling
             this.updateGameObjects(interpolation);
             
+            // Reset error count on successful update
+            this.errorCount = 0;
+            
         } catch (error) {
-            console.error('[PhysicsManager] Error in update:', error);
+            this.errorCount = (this.errorCount || 0) + 1;
+            console.error(`[PhysicsManager] Error in update (${this.errorCount}/10):`, error);
+            
+            // TRIAGE FIX: Emergency fallback - try to at least update sprites
+            try {
+                if (this.bodyToSprite && this.bodyToSprite.size > 0) {
+                    this.updateGameObjects(0); // No interpolation in emergency mode
+                }
+            } catch (fallbackError) {
+                console.error('[PhysicsManager] Fallback update also failed:', fallbackError);
+            }
         }
     }
     
