@@ -342,8 +342,8 @@ export class ResultsScene extends Scene {
     }
 
     revealClone() {
-        // Emit forge request event with performance data
-        this.eventBus.emit(EventNames.FORGE_REQUEST, {
+        // Emit clone forge start event with performance data
+        this.eventBus.emit(EventNames.CLONE_FORGE_START, {
             performance: this.performance,
             routeId: this.level,
             stats: this.cloneStats
@@ -387,9 +387,9 @@ export class ResultsScene extends Scene {
         // Display clone stats
         this.displayCloneStats(clone);
         
-        // Emit clone forged events
-        this.eventBus.emit(EventNames.CLONE_FORGE_COMPLETE, { clone });
-        this.eventBus.emit(EventNames.FORGE_CREATED, {
+        // Emit single clone forged complete event with all data
+        this.eventBus.emit(EventNames.CLONE_FORGE_COMPLETE, { 
+            clone,
             cloneId: clone.id,
             rate: clone.productionRate,
             stability: clone.stability,
