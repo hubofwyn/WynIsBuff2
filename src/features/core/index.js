@@ -9,6 +9,7 @@ export { EconomyManager } from '../../core/EconomyManager.js';
 export { EventBus } from '../../core/EventBus.js';
 export { EventSystem } from '../../core/EventSystem.js';
 export { GameStateManager } from '../../core/GameStateManager.js';
+export { GoldenSeedTester } from '../../core/GoldenSeedTester.js';
 export { InputManager } from '../../core/InputManager.js';
 export { PerformanceMonitor } from '../../core/PerformanceMonitor.js';
 export { PhysicsManager } from '../../core/PhysicsManager.js';
