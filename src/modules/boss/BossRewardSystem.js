@@ -30,15 +30,15 @@ export class BossRewardSystem extends BaseManager {
         rewards: {
           firstClear: {
             movementTech: 'tripleJump',
-            buffDNA: 10,
-            gritShards: 5,
-            coins: 1000,
+            essence: 10,      // Maps to buffDNA concept
+            timeCrystals: 5,  // Maps to gritShards concept  
+            energy: 1000,     // Maps to coins concept
             cloneMutation: 'protein_synthesis'
           },
           repeat: {
-            buffDNA: 3,
-            gritShards: 1,
-            coins: 500
+            essence: 3,
+            timeCrystals: 1,
+            energy: 500
           }
         }
       }],
@@ -49,15 +49,15 @@ export class BossRewardSystem extends BaseManager {
         rewards: {
           firstClear: {
             movementTech: 'wallDash',
-            buffDNA: 20,
-            gritShards: 10,
-            coins: 2500,
+            essence: 20,
+            timeCrystals: 10,
+            energy: 2500,
             cloneMutation: 'rhythm_sync'
           },
           repeat: {
-            buffDNA: 5,
-            gritShards: 2,
-            coins: 1000
+            essence: 5,
+            timeCrystals: 2,
+            energy: 1000
           }
         }
       }],
@@ -68,15 +68,15 @@ export class BossRewardSystem extends BaseManager {
         rewards: {
           firstClear: {
             movementTech: 'momentumVault',
-            buffDNA: 50,
-            gritShards: 25,
-            coins: 10000,
+            essence: 50,
+            timeCrystals: 25,
+            energy: 10000,
             cloneMutation: 'mass_production'
           },
           repeat: {
-            buffDNA: 10,
-            gritShards: 5,
-            coins: 2500
+            essence: 10,
+            timeCrystals: 5,
+            energy: 2500
           }
         }
       }]
@@ -160,36 +160,36 @@ export class BossRewardSystem extends BaseManager {
    */
   calculateMultipliers(runScore = {}, timeElapsed = 0, hitsTaken = 0) {
     const multipliers = {
-      coins: 1.0,
-      buffDNA: 1.0,
-      gritShards: 1.0
+      energy: 1.0,
+      essence: 1.0,
+      timeCrystals: 1.0
     };
     
     // Speed bonus (under 2 minutes = up to 50% bonus)
     if (timeElapsed > 0 && timeElapsed < 120000) {
       const speedBonus = Math.max(0, 1.5 - (timeElapsed / 120000));
-      multipliers.coins *= speedBonus;
+      multipliers.energy *= speedBonus;
     }
     
     // No-hit bonus (100% bonus for perfect run)
     if (hitsTaken === 0) {
-      multipliers.buffDNA *= 2.0;
-      multipliers.gritShards *= 1.5;
+      multipliers.essence *= 2.0;
+      multipliers.timeCrystals *= 1.5;
     } else if (hitsTaken <= 3) {
       // Small bonus for low hits
-      multipliers.buffDNA *= 1.25;
+      multipliers.essence *= 1.25;
     }
     
     // Combo bonus from runScore
     if (runScore.C) {
       const comboBonus = Math.min(2.0, 1.0 + (runScore.C / 100));
-      multipliers.coins *= comboBonus;
+      multipliers.energy *= comboBonus;
     }
     
     // Style bonus from S and B scores
     if (runScore.S && runScore.B) {
       const styleBonus = 1.0 + ((runScore.S + runScore.B) / 200);
-      multipliers.buffDNA *= styleBonus;
+      multipliers.essence *= styleBonus;
     }
     
     return multipliers;
@@ -208,22 +208,22 @@ export class BossRewardSystem extends BaseManager {
     const grantedRewards = {};
     
     // Grant resources with multipliers
-    if (rewards.coins) {
-      const amount = Math.floor(rewards.coins * multipliers.coins);
-      economyManager.addResource('coins', amount);
-      grantedRewards.coins = amount;
+    if (rewards.energy) {
+      const amount = Math.floor(rewards.energy * multipliers.energy);
+      economyManager.addResource('energy', amount);
+      grantedRewards.energy = amount;
     }
     
-    if (rewards.buffDNA) {
-      const amount = Math.floor(rewards.buffDNA * multipliers.buffDNA);
-      economyManager.addResource('buffDNA', amount);
-      grantedRewards.buffDNA = amount;
+    if (rewards.essence) {
+      const amount = Math.floor(rewards.essence * multipliers.essence);
+      economyManager.addResource('essence', amount);
+      grantedRewards.essence = amount;
     }
     
-    if (rewards.gritShards) {
-      const amount = Math.floor(rewards.gritShards * multipliers.gritShards);
-      economyManager.addResource('gritShards', amount);
-      grantedRewards.gritShards = amount;
+    if (rewards.timeCrystals) {
+      const amount = Math.floor(rewards.timeCrystals * multipliers.timeCrystals);
+      economyManager.addResource('timeCrystals', amount);
+      grantedRewards.timeCrystals = amount;
     }
     
     // Grant movement tech (first clear only, no multiplier)

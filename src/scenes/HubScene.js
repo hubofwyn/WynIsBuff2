@@ -1,7 +1,9 @@
 import { Scene } from 'phaser';
 import { SceneKeys } from '../constants/SceneKeys.js';
 import { EventNames } from '../constants/EventNames.js';
-import { GameStateManager } from '@features/core';
+import { GameStateManager, EventBus, EconomyManager } from '@features/core';
+import { BossRewardSystem } from '@features/boss';
+import { EnhancedCloneManager } from '@features/idle';
 
 /**
  * HubScene - Central hub for the idle/automation game
@@ -16,8 +18,14 @@ export class HubScene extends Scene {
     }
 
     init() {
-        // Initialize managers
-        this.gameStateManager = new GameStateManager();
+        // Initialize managers (singletons)
+        this.gameStateManager = GameStateManager.getInstance();
+        this.economyManager = EconomyManager.getInstance();
+        this.eventBus = EventBus.getInstance();
+        
+        // Initialize game systems (ensure they're listening to events)
+        this.bossRewardSystem = BossRewardSystem.getInstance();
+        this.cloneManager = EnhancedCloneManager.getInstance();
         
         // Scene state
         this.isTransitioning = false;
@@ -29,8 +37,8 @@ export class HubScene extends Scene {
     create() {
         console.log('[HubScene] Creating hub scene');
         
-        // Emit hub entered event
-        this.events.emit(EventNames.HUB_ENTERED);
+        // Emit hub entered event via EventBus
+        this.eventBus.emit(EventNames.HUB_ENTERED);
         
         // Set up the hub UI
         this.createBackground();
