@@ -1,4 +1,7 @@
 import { BaseManager } from './BaseManager.js';
+import { EconomyManager } from './EconomyManager.js';
+import { EventBus } from './EventBus.js';
+import { EventNames } from '../constants/EventNames.js';
 
 /**
  * GameStateManager class handles game state persistence,
@@ -727,5 +730,114 @@ export class GameStateManager extends BaseManager {
             console.error('[GameStateManager] Error resetting idle progress:', error);
             return false;
         }
+    }
+    
+    /**
+     * Central save method - coordinates all manager saves
+     * @returns {boolean} Success status
+     */
+    saveAllManagers() {
+        try {
+            // Get all manager instances (lazy loading pattern)
+            const managers = this.getManagerInstances();
+            const saveData = {};
+            
+            // Collect serialized data from each manager
+            for (const [name, manager] of Object.entries(managers)) {
+                if (manager && typeof manager.serialize === 'function') {
+                    saveData[name] = manager.serialize();
+                }
+            }
+            
+            // Save to a central key
+            localStorage.setItem('wynisbuff2_managers', JSON.stringify(saveData));
+            
+            // Update last save time
+            localStorage.setItem(this.lastSaveKey, Date.now().toString());
+            
+            // Emit save complete event
+            EventBus.getInstance().emit(EventNames.custom('save', 'complete'), {
+                timestamp: Date.now(),
+                managers: Object.keys(saveData)
+            });
+            
+            return true;
+        } catch (error) {
+            console.error('[GameStateManager] Error in central save:', error);
+            return false;
+        }
+    }
+    
+    /**
+     * Central load method - coordinates all manager loads
+     * @returns {boolean} Success status
+     */
+    loadAllManagers() {
+        try {
+            const saveDataJson = localStorage.getItem('wynisbuff2_managers');
+            if (!saveDataJson) {
+                console.log('[GameStateManager] No save data found');
+                return false;
+            }
+            
+            const saveData = JSON.parse(saveDataJson);
+            const managers = this.getManagerInstances();
+            
+            // Deserialize data for each manager
+            for (const [name, manager] of Object.entries(managers)) {
+                if (manager && typeof manager.deserialize === 'function' && saveData[name]) {
+                    manager.deserialize(saveData[name]);
+                }
+            }
+            
+            // Emit load complete event
+            EventBus.getInstance().emit(EventNames.custom('load', 'complete'), {
+                timestamp: Date.now(),
+                managers: Object.keys(saveData)
+            });
+            
+            return true;
+        } catch (error) {
+            console.error('[GameStateManager] Error in central load:', error);
+            return false;
+        }
+    }
+    
+    /**
+     * Get instances of all managers that need saving
+     * Uses lazy loading to avoid circular dependencies
+     * @returns {Object} Manager instances
+     */
+    getManagerInstances() {
+        const managers = {};
+        
+        // Dynamically import to avoid circular dependencies
+        try {
+            // Core managers
+            managers.economy = EconomyManager.getInstance();
+            
+            // Lazy load optional managers
+            if (typeof BossRewardSystem !== 'undefined') {
+                const { BossRewardSystem } = require('@features/boss');
+                managers.bossRewards = BossRewardSystem.getInstance();
+            }
+            
+            if (typeof EnhancedCloneManager !== 'undefined') {
+                const { EnhancedCloneManager } = require('@features/idle');
+                managers.clones = EnhancedCloneManager.getInstance();
+            }
+            
+            if (typeof DeterministicRNG !== 'undefined') {
+                const { DeterministicRNG } = require('@features/core');
+                managers.rng = DeterministicRNG.getInstance();
+            }
+        } catch (e) {
+            // Some managers may not be available yet
+            if (process.env.NODE_ENV !== 'production') {
+                console.log('[GameStateManager] Some managers not available for save/load:', e.message);
+            }
+        }
+        
+        return managers;
     }
 }

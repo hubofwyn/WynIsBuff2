@@ -35,8 +35,8 @@ export class FactoryScene extends Scene {
     create() {
         console.log('[FactoryScene] Creating factory scene');
         
-        // Emit factory entered event
-        this.events.emit(EventNames.FACTORY_ENTERED);
+        // Emit factory entered event via EventBus
+        this.eventBus.emit(EventNames.FACTORY_ENTERED);
         
         // Create factory UI
         this.createBackground();
@@ -107,20 +107,66 @@ export class FactoryScene extends Scene {
         const lineHeight = 100;
         const maxLines = 5;
         
-        // Create production line slots
-        for (let i = 0; i < maxLines; i++) {
+        // Get lanes from EnhancedCloneManager
+        const lanes = this.cloneManager.getAllLaneStats();
+        
+        // Create production lines from clone lanes
+        lanes.forEach((lane, i) => {
+            if (i >= maxLines) return;
             const y = startY + (i * lineHeight);
-            
-            if (i < this.getUnlockedLineCount()) {
-                // Create active production line
-                this.createProductionLine(i, startX, y);
-            } else {
-                // Create locked production line slot
-                this.createLockedLine(i, startX, y);
-            }
+            this.createProductionLineFromLane(i, startX, y, lane);
+        });
+        
+        // Create locked slots for remaining spaces
+        for (let i = lanes.length; i < maxLines; i++) {
+            const y = startY + (i * lineHeight);
+            this.createLockedLine(i, startX, y);
         }
     }
 
+    createProductionLineFromLane(index, x, y, laneData) {
+        // Production line background
+        const bg = this.add.rectangle(x, y, 600, 80, 0x27ae60, 0.3)
+            .setOrigin(0, 0.5)
+            .setStrokeStyle(2, 0x27ae60);
+        
+        // Lane name and specialty
+        const nameText = this.add.text(x + 20, y - 20, 
+            `Lane ${laneData.id} - ${laneData.specialty.toUpperCase()}`, {
+            fontSize: '16px',
+            fontFamily: 'Arial',
+            color: '#FFFFFF'
+        });
+        
+        // Production rate with decay indicator
+        const rateText = this.add.text(x + 20, y + 10, 
+            `${laneData.effectiveRate.toFixed(1)}/s (${laneData.decayPercent.toFixed(0)}% efficiency)`, {
+            fontSize: '14px',
+            fontFamily: 'Arial',
+            color: laneData.decayPercent > 80 ? '#27ae60' : 
+                   laneData.decayPercent > 60 ? '#f39c12' : '#e74c3c'
+        });
+        
+        // Decay bar
+        const decayBarBg = this.add.rectangle(x + 350, y, 200, 20, 0x7f8c8d, 0.3)
+            .setOrigin(0, 0.5);
+        const decayBarFill = this.add.rectangle(x + 350, y, 
+            200 * (laneData.decayPercent / 100), 20, 
+            laneData.decayPercent > 80 ? 0x27ae60 : 
+            laneData.decayPercent > 60 ? 0xf39c12 : 0xe74c3c, 0.8)
+            .setOrigin(0, 0.5);
+        
+        // Store reference
+        this.productionLines.push({
+            laneId: laneData.id,
+            bg,
+            nameText,
+            rateText,
+            decayBarFill,
+            data: laneData
+        });
+    }
+    
     createProductionLine(index, x, y) {
         const lineData = this.factoryState.lines ? this.factoryState.lines[index] : null;
         
@@ -410,7 +456,7 @@ export class FactoryScene extends Scene {
 
     onProductionComplete(line) {
         // Emit production complete event
-        this.events.emit(EventNames.PRODUCTION_COMPLETE, {
+        this.eventBus.emit(EventNames.PRODUCTION_COMPLETE, {
             lineIndex: line.index,
             product: line.data.type,
             amount: line.data.rate
@@ -463,7 +509,7 @@ export class FactoryScene extends Scene {
             this.saveFactoryState();
             
             // Emit upgrade event
-            this.events.emit(EventNames.FACTORY_UPGRADE, {
+            this.eventBus.emit(EventNames.FACTORY_UPGRADE, {
                 lineIndex: index,
                 newLevel: line.data.level,
                 newRate: line.data.rate
@@ -486,7 +532,7 @@ export class FactoryScene extends Scene {
             this.gameStateManager.saveResources(resources);
             
             // Unlock line
-            this.events.emit(EventNames.FACTORY_UNLOCK, { lineIndex: index });
+            this.eventBus.emit(EventNames.FACTORY_UNLOCK, { lineIndex: index });
             
             // Refresh scene to show new line
             this.scene.restart();
@@ -499,7 +545,7 @@ export class FactoryScene extends Scene {
         console.log('[FactoryScene] Production boost activated');
         
         // Emit boost event
-        this.events.emit(EventNames.PRODUCTION_BOOST_ACTIVE, {
+        this.eventBus.emit(EventNames.PRODUCTION_BOOST_ACTIVE, {
             multiplier: 2,
             duration: 30000 // 30 seconds
         });
@@ -537,7 +583,7 @@ export class FactoryScene extends Scene {
         this.updateResourceDisplay();
         
         // Emit collect event
-        this.events.emit(EventNames.FACTORY_COLLECT, totalCollected);
+        this.eventBus.emit(EventNames.FACTORY_COLLECT, totalCollected);
         
         console.log('[FactoryScene] Collected:', totalCollected);
     }
@@ -610,7 +656,7 @@ export class FactoryScene extends Scene {
         this.saveFactoryState();
         
         // Emit factory exited event
-        this.events.emit(EventNames.FACTORY_EXITED);
+        this.eventBus.emit(EventNames.FACTORY_EXITED);
         
         // Return to hub
         this.scene.start(SceneKeys.HUB);

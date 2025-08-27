@@ -136,6 +136,7 @@ export const EventNames = {
     // Additional Boss system events
     BOSS_SPAWNED: 'boss:spawned',
     BOSS_PHASE_CHANGE: 'boss:phaseChange',
+    BOSS_FIRST_CLEAR: 'boss:firstClear',
     BOSS_REWARD_CLAIMED: 'boss:rewardClaimed',
     BOSS_TIMER_UPDATE: 'boss:timerUpdate',
     BOSS_HEALTH_UPDATE: 'boss:healthUpdate',

@@ -1,5 +1,5 @@
 import RAPIER from '@dimforge/rapier2d-compat';
-import { EventNames } from '../../constants/EventNames';
+import { EventNames } from '../../constants/EventNames.js';
 
 /**
  * PulsarController - Boss physics controller for The Pulsar's pulsating obstacles
@@ -17,13 +17,18 @@ export class PulsarController {
         this.world = world;
         this.eventSystem = eventSystem;
         
+        // Boss identity
+        this.bossId = 'the-pulsar';
+        
         // Boss state
         this.state = {
             phase: 'idle',  // idle, pulsing, attacking, vulnerable
             health: 100,
             position: { x: 800, y: 300 },
             pulsePhase: 0,
-            lastPhaseChange: 0
+            lastPhaseChange: 0,
+            battleStartTime: 0,
+            hitsTaken: 0
         };
         
         // Pulsating obstacles configuration
@@ -511,6 +516,9 @@ export class PulsarController {
         
         if (distance < obstacleRadius + playerRadius) {
             if (this.eventSystem) {
+                // Track hits taken by player
+                this.state.hitsTaken++;
+                
                 this.eventSystem.emit(EventNames.BOSS_HIT_PLAYER, {
                     damage: 10,
                     knockback: { x: -dx / distance * 500, y: -dy / distance * 500 },
@@ -560,6 +568,22 @@ export class PulsarController {
     }
     
     /**
+     * Start the battle (called when player enters boss area)
+     */
+    startBattle() {
+        this.state.battleStartTime = Date.now();
+        this.state.hitsTaken = 0;
+        this.state.phase = 'pulsing';
+        
+        if (this.eventSystem) {
+            this.eventSystem.emit(EventNames.BOSS_SPAWNED, {
+                bossId: this.bossId,
+                position: this.state.position
+            });
+        }
+    }
+    
+    /**
      * Take damage
      */
     takeDamage(amount) {
@@ -589,9 +613,16 @@ export class PulsarController {
         }
         this.obstacles = [];
         
+        // Calculate battle duration
+        const timeElapsed = this.state.battleStartTime ? Date.now() - this.state.battleStartTime : 0;
+        
         if (this.eventSystem) {
             this.eventSystem.emit(EventNames.BOSS_DEFEATED, {
-                position: this.state.position
+                bossId: this.bossId,
+                position: this.state.position,
+                timeElapsed: timeElapsed,
+                hitsTaken: this.state.hitsTaken,
+                runScore: this.scene.runScore || { S: 0, C: 0, H: 0, R: 0, B: 0 }
             });
         }
     }
