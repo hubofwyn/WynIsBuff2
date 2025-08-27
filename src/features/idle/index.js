@@ -10,4 +10,5 @@ export { EconomyManager } from '../../core/EconomyManager.js';
 
 // Idle modules
 export { DNAExtractor } from '../../modules/idle/DNAExtractor.js';
+export { EnhancedCloneManager } from '../../modules/idle/EnhancedCloneManager.js';
 export { TimeEchoRecorder } from '../../modules/idle/TimeEchoRecorder.js';

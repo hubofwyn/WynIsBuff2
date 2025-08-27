@@ -6,6 +6,7 @@ try {
     require('./test-core-systems.cjs');
     require('./test-subtitle-integration.cjs');
     require('./PerformanceAnalyzer-simple.test.cjs');
+    require('./determinism.test.cjs');
     console.log('All tests passed.');
 } catch (err) {
     console.error('Tests failed:', err);
