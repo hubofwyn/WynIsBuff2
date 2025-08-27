@@ -147,7 +147,7 @@ export const EventNames = {
     COMBO_MILESTONE: 'combo:milestone',
     COMBO_MULTIPLIER_CHANGE: 'combo:multiplierChange',
     
-    // Run system events
+    // Run system events - using past tense for consistency
     RUN_STARTED: 'run:started',
     RUN_ENDED: 'run:ended',
     RUN_PAUSED: 'run:paused',
@@ -156,27 +156,16 @@ export const EventNames = {
     RUN_DISTANCE_UPDATE: 'run:distanceUpdate',
     RUN_RESULT_CALCULATED: 'run:resultCalculated',
     
-    // New core loop events for Day 1
-    RUN_START: 'run:start', // Run lifecycle with detailed payload
-    RUN_END: 'run:end', // Complete run data for analysis
-    RUN_PAUSE: 'run:pause', // Pause with state preservation
-    RUN_RESUME: 'run:resume', // Resume from pause
-    
-    // Clone forging events
-    FORGE_REQUEST: 'forge:request', // Request to create clone from performance
-    FORGE_CREATED: 'forge:created', // Clone successfully created
-    FORGE_FAILED: 'forge:failed', // Clone creation failed
-    
     // Movement unlock events
-    MOVEMENT_UNLOCKED: 'movement:unlocked', // New movement tech unlocked
+    MOVEMENT_UNLOCKED: 'movement:unlocked',
     
     // Reward system events
-    REWARD_GRANTED: 'reward:granted', // Generic reward granted
+    REWARD_GRANTED: 'reward:granted',
     
     // Offline/Idle calculation events
-    OFFLINE_CALCULATED: 'offline:calculated', // Offline progress calculated
-    IDLE_BOOST_APPLIED: 'idle:boost:applied', // Temporary idle boost applied
-    IDLE_DECAY_APPLIED: 'idle:decay:applied', // Decay applied to production
+    OFFLINE_CALCULATED: 'offline:calculated',
+    IDLE_BOOST_APPLIED: 'idle:boostApplied', // Fixed to namespace:action format
+    IDLE_DECAY_APPLIED: 'idle:decayApplied', // Fixed to namespace:action format
     
     // Factory/Production events
     FACTORY_UNLOCK: 'factory:unlock',
