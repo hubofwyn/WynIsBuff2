@@ -52,6 +52,8 @@ export const ImageAssets = Object.freeze({
   PARALLAX_SKY: 'parallaxSky',
   PARALLAX_MOUNTAINS: 'parallaxMountains',
   PARALLAX_FOREGROUND: 'parallaxForeground',
+  PARTICLE_FLARE: 'particleFlare',
+  PARTICLE_WHITE: 'particleWhite',
 });
 
 export const ImagePaths = Object.freeze({
@@ -86,8 +88,8 @@ export const ImagePaths = Object.freeze({
   SQUARE_UP_DOWN4: 'images/ui/interface/square_up_down_4.png',
   COIN: 'spritesheets/items/coin.png',
   CHEST: 'spritesheets/items/chest.png',
-  COLLECTIBLE_PROTEIN: 'spritesheets/items/flasks/flasks_2.png',
-  COLLECTIBLE_DUMBBELL: 'spritesheets/items/chest.png',
+  COLLECTIBLE_PROTEIN: 'spritesheets/items/flasks/flasks_2_1.png',
+  COLLECTIBLE_DUMBBELL: 'spritesheets/items/collectibles/dumbbell.png',
   TORCH: 'spritesheets/effects/torch/torch.png',
   AXELFACE: 'images/characters/axelface.png',
   WYNFACE: 'images/characters/wynface.png',
@@ -95,10 +97,12 @@ export const ImagePaths = Object.freeze({
   AXEL_SPRITE: 'images/characters/axel_sprite.png',
   WYN_SPRITE: 'images/characters/wyn_sprite.png',
   THE_WYN: 'images/characters/thewyn.png',
-  BUFF_BG: 'images/characters/mainlogo.png',
-  PARALLAX_SKY: 'images/characters/mainlogo.png',
-  PARALLAX_MOUNTAINS: 'images/characters/mainlogo.png',
-  PARALLAX_FOREGROUND: 'images/characters/mainlogo.png',
+  BUFF_BG: 'images/backgrounds/buff-bg.png',
+  PARALLAX_SKY: 'images/backgrounds/parallax-sky.png',
+  PARALLAX_MOUNTAINS: 'images/backgrounds/parallax-mountains.png',
+  PARALLAX_FOREGROUND: 'images/backgrounds/parallax-foreground.png',
+  PARTICLE_FLARE: 'images/particles/flares.png',
+  PARTICLE_WHITE: 'images/particles/white.png',
 });
 
 export const AudioAssets = Object.freeze({
@@ -147,7 +151,7 @@ export const AudioPaths = Object.freeze({
   SFX_HOVER2: 'sounds/ui-hover/hover2.mp3',
   SFX_HOVER3: 'sounds/ui-hover/hover3.mp3',
   SFX_HOVER4: 'sounds/ui-hover/hover4.mp3',
-  SFX_FART: 'sounds/land-effects/land4.mp3', // Using land4 as fart sound placeholder
+  SFX_FART: 'sounds/land-effects/land4.mp3',
 });
 
 export const SpritesheetConfigs = Object.freeze({

@@ -17,21 +17,39 @@ export class MainMenu extends Scene {
         this.gameStateManager = new GameStateManager();
         // Play title screen music
         AudioManager.getInstance().playMusic(AudioAssets.PROTEIN_PIXEL_ANTHEM);
+        // Enhanced gradient background for consistency
+        const { width, height } = this.cameras.main;
+        const gradientBg = this.add.graphics();
+        gradientBg.fillGradientStyle(0x0f1b2b, 0x1a1a2e, 0x16213e, 0x0f3460, 1);
+        gradientBg.fillRect(0, 0, width, height);
+        
         // Fade in camera
         this.cameras.main.fadeIn(UIConfig.animations.fadeInDuration);
         
-        // Set background
-        this.add.image(512, 384, ImageAssets.BACKGROUND);
+        // Enhanced main title
+        const mainTitle = this.add.text(width / 2, 180, 'WYN IS BUFF 2', {
+            fontFamily: 'Impact, Arial Black, sans-serif',
+            fontSize: '64px',
+            color: '#FFE66D',
+            stroke: '#000000',
+            strokeThickness: 6,
+            shadow: { offsetX: 4, offsetY: 4, color: '#000000', blur: 8, fill: true }
+        }).setOrigin(0.5);
         
-        // Add logo if available
+        // Skill to automation subtitle
+        const subtitle = this.add.text(width / 2, 230, 'SKILL TO AUTOMATION', {
+            fontFamily: 'Arial, sans-serif',
+            fontSize: '20px',
+            color: '#4ECDC4',
+            letterSpacing: '4px'
+        }).setOrigin(0.5);
+        
+        // Add logo if available (smaller, positioned above title)
         if (this.textures.exists(ImageAssets.LOGO)) {
-            this.add.image(512, 200, ImageAssets.LOGO)
-                .setOrigin(0.5);
+            this.add.image(width / 2, 120, ImageAssets.LOGO)
+                .setOrigin(0.5)
+                .setScale(0.4);
         }
-        
-        // Add title
-        this.add.text(512, 300, 'WynIsBuff2', UIConfig.text.heading)
-            .setOrigin(0.5);
         
         // Create a more dynamic background panel with gradient effect
         const panelCfg = UIConfig.panel;
@@ -61,31 +79,40 @@ export class MainMenu extends Scene {
     }
     
     /**
-     * Create level selection buttons with improved card-based design
+     * Create level selection buttons with WynIsBuff2 skill-to-automation theming
      */
     createLevelSelection() {
         const levels = [
             { 
                 id: 'level1', 
-                name: 'First Steps', 
-                description: 'Learn the basics',
+                name: 'Protein Plant', 
+                description: 'Master basic movements\n& build strength foundation',
+                biome: '🏭 INDUSTRIAL',
                 color: '#4ECDC4',
-                difficulty: 1
+                gradient: ['#4ECDC4', '#44A08D'],
+                difficulty: 'BEGINNER',
+                skillFocus: 'Movement Mastery'
             },
             { 
                 id: 'level2', 
-                name: 'Double Trouble', 
-                description: 'Master double jumps',
+                name: 'Metronome Mines', 
+                description: 'Perfect timing drills\n& rhythm coordination',
+                biome: '⛏️ UNDERGROUND',
                 color: '#FFE66D',
-                difficulty: 2,
+                gradient: ['#FFE66D', '#F09819'],
+                difficulty: 'INTERMEDIATE',
+                skillFocus: 'Timing Precision',
                 locked: true
             },
             { 
                 id: 'level3', 
-                name: 'Triple Threat', 
-                description: 'Ultimate challenge',
+                name: 'Automation Apex', 
+                description: 'Ultimate muscle memory\n& peak performance',
+                biome: '🚀 FUTURISTIC',
                 color: '#FF6B9D',
-                difficulty: 3,
+                gradient: ['#FF6B9D', '#C73E1D'],
+                difficulty: 'MASTER',
+                skillFocus: 'Full Automation',
                 locked: true
             }
         ];
@@ -109,41 +136,80 @@ export class MainMenu extends Scene {
             // Create card container
             const cardContainer = this.add.container(x, y);
             
-            // Card background
+            // Enhanced card background with gradient
             const cardBg = this.add.graphics();
-            const bgColor = isUnlocked ? Phaser.Display.Color.HexStringToColor(level.color).color : 0x333333;
-            const bgAlpha = isUnlocked ? 0.9 : 0.5;
             
-            cardBg.fillStyle(bgColor, bgAlpha);
-            cardBg.fillRoundedRect(-cardWidth/2, -cardHeight/2, cardWidth, cardHeight, 12);
-            cardBg.lineStyle(3, isUnlocked ? 0xFFFFFF : 0x666666, isUnlocked ? 0.8 : 0.3);
-            cardBg.strokeRoundedRect(-cardWidth/2, -cardHeight/2, cardWidth, cardHeight, 12);
+            if (isUnlocked) {
+                // Create gradient background for unlocked levels
+                const startColor = Phaser.Display.Color.HexStringToColor(level.gradient[0]).color;
+                const endColor = Phaser.Display.Color.HexStringToColor(level.gradient[1]).color;
+                
+                cardBg.fillGradientStyle(startColor, endColor, startColor, endColor, 0.15);
+                cardBg.fillRoundedRect(-cardWidth/2, -cardHeight/2, cardWidth, cardHeight, 15);
+                
+                // Glowing border effect
+                cardBg.lineStyle(3, Phaser.Display.Color.HexStringToColor(level.color).color, 0.8);
+                cardBg.strokeRoundedRect(-cardWidth/2, -cardHeight/2, cardWidth, cardHeight, 15);
+                
+                // Inner glow
+                cardBg.lineStyle(1, 0xFFFFFF, 0.4);
+                cardBg.strokeRoundedRect(-cardWidth/2 + 2, -cardHeight/2 + 2, cardWidth - 4, cardHeight - 4, 13);
+            } else {
+                // Locked card styling
+                cardBg.fillStyle(0x1a1a1a, 0.8);
+                cardBg.fillRoundedRect(-cardWidth/2, -cardHeight/2, cardWidth, cardHeight, 15);
+                cardBg.lineStyle(2, 0x444444, 0.6);
+                cardBg.strokeRoundedRect(-cardWidth/2, -cardHeight/2, cardWidth, cardHeight, 15);
+            }
             
-            // Level number
-            const levelNumber = this.add.text(0, -cardHeight/2 + 25, `${index + 1}`, {
-                fontFamily: 'Impact, Arial Black, sans-serif',
-                fontSize: '48px',
-                color: isUnlocked ? '#FFFFFF' : '#666666',
-                stroke: isUnlocked ? '#000000' : '#333333',
-                strokeThickness: 4
-            }).setOrigin(0.5);
-            
-            // Level name
-            const levelName = this.add.text(0, -10, level.name, {
-                fontFamily: 'Arial, sans-serif',
-                fontSize: '18px',
-                color: isUnlocked ? '#FFFFFF' : '#666666',
-                align: 'center',
-                wordWrap: { width: cardWidth - 20 }
-            }).setOrigin(0.5);
-            
-            // Description
-            const description = this.add.text(0, 25, level.description, {
+            // Biome badge at top
+            const biomeBadge = this.add.text(0, -cardHeight/2 + 20, level.biome, {
                 fontFamily: 'Arial, sans-serif',
                 fontSize: '14px',
+                color: isUnlocked ? '#FFFFFF' : '#666666',
+                backgroundColor: isUnlocked ? '#000000' : '#333333',
+                backgroundAlpha: 0.7,
+                padding: { x: 8, y: 4 }
+            }).setOrigin(0.5);
+            
+            // Level name with enhanced styling
+            const levelName = this.add.text(0, -cardHeight/2 + 50, level.name, {
+                fontFamily: 'Impact, Arial Black, sans-serif',
+                fontSize: '22px',
+                color: isUnlocked ? level.color : '#666666',
+                align: 'center',
+                stroke: '#000000',
+                strokeThickness: 2,
+                wordWrap: { width: cardWidth - 20 }
+            }).setOrigin(0.5);
+            
+            // Skill focus label
+            const skillLabel = this.add.text(0, -5, level.skillFocus, {
+                fontFamily: 'Arial, sans-serif',
+                fontSize: '12px',
+                color: isUnlocked ? '#FFE66D' : '#555555',
+                fontStyle: 'italic',
+                align: 'center'
+            }).setOrigin(0.5);
+            
+            // Description with better formatting
+            const description = this.add.text(0, 25, level.description, {
+                fontFamily: 'Arial, sans-serif',
+                fontSize: '13px',
                 color: isUnlocked ? '#E0E0E0' : '#555555',
                 align: 'center',
+                lineSpacing: 2,
                 wordWrap: { width: cardWidth - 20 }
+            }).setOrigin(0.5);
+            
+            // Difficulty badge at bottom
+            const difficultyBadge = this.add.text(0, cardHeight/2 - 45, level.difficulty, {
+                fontFamily: 'Arial, sans-serif',
+                fontSize: '11px',
+                color: '#000000',
+                backgroundColor: isUnlocked ? level.color : '#666666',
+                backgroundAlpha: 0.9,
+                padding: { x: 6, y: 2 }
             }).setOrigin(0.5);
             
             // Progress or lock icon
@@ -198,7 +264,7 @@ export class MainMenu extends Scene {
             }
             
             // Add all elements to container
-            cardContainer.add([cardBg, levelNumber, levelName, description]);
+            cardContainer.add([cardBg, biomeBadge, levelName, skillLabel, description, difficultyBadge]);
             
             // Interactive hitbox
             const hitArea = this.add.rectangle(0, 0, cardWidth, cardHeight, 0x000000, 0)
@@ -261,8 +327,8 @@ export class MainMenu extends Scene {
      * Create special birthday minigame button
      */
     createBirthdayButton() {
-        // Birthday button with special animation - positioned above the level cards
-        const birthdayContainer = this.add.container(512, 620);
+        // Birthday button with special animation - positioned BELOW the level cards to avoid overlap
+        const birthdayContainer = this.add.container(512, 640);
         
         // Glowing background
         const buttonBg = this.add.rectangle(0, 0, 300, 80, 0xFFD700)
@@ -390,7 +456,7 @@ export class MainMenu extends Scene {
      * Create reset progress button
      */
     createResetButton() {
-        const resetButton = this.add.text(512, 670, 'Reset Progress', {
+        const resetButton = this.add.text(512, 720, 'Reset Progress', {
             fontFamily: 'Arial',
             fontSize: 18,
             color: '#ff0000',

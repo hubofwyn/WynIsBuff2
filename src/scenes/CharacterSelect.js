@@ -26,8 +26,13 @@ export class CharacterSelect extends Scene {
         this.selection = this.gameState.getSelectedCharacter();
         console.log('[CharacterSelect] Current selection:', this.selection);
         
-        // Add dark gradient background
-        this.cameras.main.setBackgroundColor('#0F1B2B');
+        // Enhanced gradient background matching the WelcomeScene
+        const gradientBg = this.add.graphics();
+        gradientBg.fillGradientStyle(0x0f1b2b, 0x1a1a2e, 0x16213e, 0x0f3460, 1);
+        gradientBg.fillRect(0, 0, width, height);
+        
+        // Fade in the camera
+        this.cameras.main.fadeIn(600, 0, 0, 0);
         
         // Title with modern styling and animation
         const title = this.add.text(width / 2, 120, 'Select Your Champion', UIConfig.text.heading)

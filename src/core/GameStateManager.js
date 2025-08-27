@@ -22,6 +22,17 @@ export class GameStateManager extends BaseManager {
         this.storageKey = 'wynIsBuff2Progress';
         this.charKey = 'wynIsBuff2SelectedCharacter';
         this.settingsKey = 'wynIsBuff2Settings';
+        
+        // Idle/Automation System Storage Keys
+        this.idleStateKey = 'wynIsBuff2IdleState';
+        this.resourcesKey = 'wynIsBuff2Resources';
+        this.upgradesKey = 'wynIsBuff2Upgrades';
+        this.automationKey = 'wynIsBuff2Automation';
+        this.factoryKey = 'wynIsBuff2Factory';
+        this.prestigeKey = 'wynIsBuff2Prestige';
+        this.achievementsKey = 'wynIsBuff2Achievements';
+        this.lastSaveKey = 'wynIsBuff2LastSave';
+        
         this.initialized = false;
         // Initialize storage and load persisted data
         this.initialize();
@@ -330,5 +341,391 @@ export class GameStateManager extends BaseManager {
      */
     isInitialized() {
         return this.initialized;
+    }
+    
+    // ========================================
+    // Idle/Automation System State Management
+    // ========================================
+    
+    /**
+     * Save idle game state
+     * @param {Object} idleState - Complete idle state object
+     * @returns {boolean} Whether the save was successful
+     */
+    saveIdleState(idleState) {
+        if (!this.initialized) {
+            return false;
+        }
+        
+        try {
+            const saveData = {
+                ...idleState,
+                timestamp: Date.now(),
+                version: 1
+            };
+            
+            localStorage.setItem(this.idleStateKey, JSON.stringify(saveData));
+            localStorage.setItem(this.lastSaveKey, Date.now().toString());
+            
+            console.log('[GameStateManager] Idle state saved');
+            return true;
+        } catch (error) {
+            console.error('[GameStateManager] Error saving idle state:', error);
+            return false;
+        }
+    }
+    
+    /**
+     * Load idle game state
+     * @returns {Object|null} Idle state object or null if not found
+     */
+    loadIdleState() {
+        if (!this.initialized) {
+            return null;
+        }
+        
+        try {
+            const stateJson = localStorage.getItem(this.idleStateKey);
+            return stateJson ? JSON.parse(stateJson) : null;
+        } catch (error) {
+            console.error('[GameStateManager] Error loading idle state:', error);
+            return null;
+        }
+    }
+    
+    /**
+     * Save resources state
+     * @param {Object} resources - Resources object with buffCoins, buffGems, etc.
+     * @returns {boolean} Whether the save was successful
+     */
+    saveResources(resources) {
+        if (!this.initialized) {
+            return false;
+        }
+        
+        try {
+            localStorage.setItem(this.resourcesKey, JSON.stringify(resources));
+            return true;
+        } catch (error) {
+            console.error('[GameStateManager] Error saving resources:', error);
+            return false;
+        }
+    }
+    
+    /**
+     * Load resources state
+     * @returns {Object} Resources object with default values if not found
+     */
+    loadResources() {
+        if (!this.initialized) {
+            return { buffCoins: 0, buffGems: 0, dna: 0, timeEchoes: 0 };
+        }
+        
+        try {
+            const resourcesJson = localStorage.getItem(this.resourcesKey);
+            return resourcesJson ? JSON.parse(resourcesJson) : { buffCoins: 0, buffGems: 0, dna: 0, timeEchoes: 0 };
+        } catch (error) {
+            console.error('[GameStateManager] Error loading resources:', error);
+            return { buffCoins: 0, buffGems: 0, dna: 0, timeEchoes: 0 };
+        }
+    }
+    
+    /**
+     * Save upgrades state
+     * @param {Object} upgrades - Upgrades purchased and levels
+     * @returns {boolean} Whether the save was successful
+     */
+    saveUpgrades(upgrades) {
+        if (!this.initialized) {
+            return false;
+        }
+        
+        try {
+            localStorage.setItem(this.upgradesKey, JSON.stringify(upgrades));
+            return true;
+        } catch (error) {
+            console.error('[GameStateManager] Error saving upgrades:', error);
+            return false;
+        }
+    }
+    
+    /**
+     * Load upgrades state
+     * @returns {Object} Upgrades object or empty object if not found
+     */
+    loadUpgrades() {
+        if (!this.initialized) {
+            return {};
+        }
+        
+        try {
+            const upgradesJson = localStorage.getItem(this.upgradesKey);
+            return upgradesJson ? JSON.parse(upgradesJson) : {};
+        } catch (error) {
+            console.error('[GameStateManager] Error loading upgrades:', error);
+            return {};
+        }
+    }
+    
+    /**
+     * Save automation state
+     * @param {Object} automation - Automation settings and active automations
+     * @returns {boolean} Whether the save was successful
+     */
+    saveAutomation(automation) {
+        if (!this.initialized) {
+            return false;
+        }
+        
+        try {
+            localStorage.setItem(this.automationKey, JSON.stringify(automation));
+            return true;
+        } catch (error) {
+            console.error('[GameStateManager] Error saving automation:', error);
+            return false;
+        }
+    }
+    
+    /**
+     * Load automation state
+     * @returns {Object} Automation object or empty object if not found
+     */
+    loadAutomation() {
+        if (!this.initialized) {
+            return {};
+        }
+        
+        try {
+            const automationJson = localStorage.getItem(this.automationKey);
+            return automationJson ? JSON.parse(automationJson) : {};
+        } catch (error) {
+            console.error('[GameStateManager] Error loading automation:', error);
+            return {};
+        }
+    }
+    
+    /**
+     * Save factory state
+     * @param {Object} factory - Factory production lines and upgrades
+     * @returns {boolean} Whether the save was successful
+     */
+    saveFactory(factory) {
+        if (!this.initialized) {
+            return false;
+        }
+        
+        try {
+            localStorage.setItem(this.factoryKey, JSON.stringify(factory));
+            return true;
+        } catch (error) {
+            console.error('[GameStateManager] Error saving factory:', error);
+            return false;
+        }
+    }
+    
+    /**
+     * Load factory state
+     * @returns {Object} Factory object or empty object if not found
+     */
+    loadFactory() {
+        if (!this.initialized) {
+            return {};
+        }
+        
+        try {
+            const factoryJson = localStorage.getItem(this.factoryKey);
+            return factoryJson ? JSON.parse(factoryJson) : {};
+        } catch (error) {
+            console.error('[GameStateManager] Error loading factory:', error);
+            return {};
+        }
+    }
+    
+    /**
+     * Save prestige state
+     * @param {Object} prestige - Prestige currency and bonuses
+     * @returns {boolean} Whether the save was successful
+     */
+    savePrestige(prestige) {
+        if (!this.initialized) {
+            return false;
+        }
+        
+        try {
+            localStorage.setItem(this.prestigeKey, JSON.stringify(prestige));
+            return true;
+        } catch (error) {
+            console.error('[GameStateManager] Error saving prestige:', error);
+            return false;
+        }
+    }
+    
+    /**
+     * Load prestige state
+     * @returns {Object} Prestige object or default values if not found
+     */
+    loadPrestige() {
+        if (!this.initialized) {
+            return { prestigePoints: 0, totalPrestiges: 0, bonuses: {} };
+        }
+        
+        try {
+            const prestigeJson = localStorage.getItem(this.prestigeKey);
+            return prestigeJson ? JSON.parse(prestigeJson) : { prestigePoints: 0, totalPrestiges: 0, bonuses: {} };
+        } catch (error) {
+            console.error('[GameStateManager] Error loading prestige:', error);
+            return { prestigePoints: 0, totalPrestiges: 0, bonuses: {} };
+        }
+    }
+    
+    /**
+     * Save achievements state
+     * @param {Object} achievements - Unlocked achievements and progress
+     * @returns {boolean} Whether the save was successful
+     */
+    saveAchievements(achievements) {
+        if (!this.initialized) {
+            return false;
+        }
+        
+        try {
+            localStorage.setItem(this.achievementsKey, JSON.stringify(achievements));
+            return true;
+        } catch (error) {
+            console.error('[GameStateManager] Error saving achievements:', error);
+            return false;
+        }
+    }
+    
+    /**
+     * Load achievements state
+     * @returns {Object} Achievements object or empty object if not found
+     */
+    loadAchievements() {
+        if (!this.initialized) {
+            return { unlocked: [], progress: {} };
+        }
+        
+        try {
+            const achievementsJson = localStorage.getItem(this.achievementsKey);
+            return achievementsJson ? JSON.parse(achievementsJson) : { unlocked: [], progress: {} };
+        } catch (error) {
+            console.error('[GameStateManager] Error loading achievements:', error);
+            return { unlocked: [], progress: {} };
+        }
+    }
+    
+    /**
+     * Get last save timestamp
+     * @returns {number|null} Timestamp in milliseconds or null if not found
+     */
+    getLastSaveTime() {
+        if (!this.initialized) {
+            return null;
+        }
+        
+        try {
+            const timestamp = localStorage.getItem(this.lastSaveKey);
+            return timestamp ? parseInt(timestamp, 10) : null;
+        } catch (error) {
+            console.error('[GameStateManager] Error getting last save time:', error);
+            return null;
+        }
+    }
+    
+    /**
+     * Calculate offline time since last save
+     * @returns {number} Milliseconds since last save, or 0 if no save found
+     */
+    getOfflineTime() {
+        const lastSave = this.getLastSaveTime();
+        if (!lastSave) {
+            return 0;
+        }
+        
+        const now = Date.now();
+        return Math.max(0, now - lastSave);
+    }
+    
+    /**
+     * Save all idle-related state at once
+     * @param {Object} fullState - Complete idle game state
+     * @returns {boolean} Whether all saves were successful
+     */
+    saveFullIdleState(fullState) {
+        if (!this.initialized) {
+            return false;
+        }
+        
+        let success = true;
+        
+        if (fullState.resources) {
+            success = this.saveResources(fullState.resources) && success;
+        }
+        if (fullState.upgrades) {
+            success = this.saveUpgrades(fullState.upgrades) && success;
+        }
+        if (fullState.automation) {
+            success = this.saveAutomation(fullState.automation) && success;
+        }
+        if (fullState.factory) {
+            success = this.saveFactory(fullState.factory) && success;
+        }
+        if (fullState.prestige) {
+            success = this.savePrestige(fullState.prestige) && success;
+        }
+        if (fullState.achievements) {
+            success = this.saveAchievements(fullState.achievements) && success;
+        }
+        
+        // Save the main idle state
+        success = this.saveIdleState(fullState.idle || {}) && success;
+        
+        return success;
+    }
+    
+    /**
+     * Load all idle-related state at once
+     * @returns {Object} Complete idle game state
+     */
+    loadFullIdleState() {
+        return {
+            idle: this.loadIdleState(),
+            resources: this.loadResources(),
+            upgrades: this.loadUpgrades(),
+            automation: this.loadAutomation(),
+            factory: this.loadFactory(),
+            prestige: this.loadPrestige(),
+            achievements: this.loadAchievements(),
+            offlineTime: this.getOfflineTime()
+        };
+    }
+    
+    /**
+     * Reset all idle-related progress
+     * @returns {boolean} Whether the reset was successful
+     */
+    resetIdleProgress() {
+        if (!this.initialized) {
+            return false;
+        }
+        
+        try {
+            localStorage.removeItem(this.idleStateKey);
+            localStorage.removeItem(this.resourcesKey);
+            localStorage.removeItem(this.upgradesKey);
+            localStorage.removeItem(this.automationKey);
+            localStorage.removeItem(this.factoryKey);
+            // Note: We might want to keep prestige between resets
+            // localStorage.removeItem(this.prestigeKey);
+            localStorage.removeItem(this.achievementsKey);
+            localStorage.removeItem(this.lastSaveKey);
+            
+            console.log('[GameStateManager] Idle progress reset');
+            return true;
+        } catch (error) {
+            console.error('[GameStateManager] Error resetting idle progress:', error);
+            return false;
+        }
     }
 }

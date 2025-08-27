@@ -48,6 +48,13 @@ export class BaseManager {
   }
 
   /**
+   * Mark this manager as initialized.
+   */
+  setInitialized() {
+    this._initialized = true;
+  }
+
+  /**
    * Framework method – subclasses should perform their expensive set-up here
    * and set `this._initialized = true` when done.
    * Accepts arbitrary arguments so managers can receive a Phaser.Scene or

@@ -20,7 +20,8 @@
         "dev-nolog": "vite --config vite/config.dev.mjs",
         "build-nolog": "vite build --config vite/config.prod.mjs",
         "test": "node tests/run-tests.cjs",
-        "generate-assets": "node scripts/generate-assets.js"
+        "generate-assets": "node scripts/generate-assets.js",
+        "validate-assets": "node scripts/validate-assets.js"
     },
     "devDependencies": {
         "terser": "^5.43.1",

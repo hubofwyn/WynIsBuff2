@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WynIsBuff2 Debug</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            background: #222;
+            color: #fff;
+        }
+        #debug-info {
+            margin-bottom: 20px;
+            padding: 10px;
+            background: #333;
+            border-radius: 5px;
+        }
+        #game-container {
+            border: 2px solid #555;
+        }
+    </style>
+</head>
+<body>
+    <div id="debug-info">
+        <h3>WynIsBuff2 Debug Information</h3>
+        <div id="status">Loading...</div>
+    </div>
+    
+    <div id="game-container"></div>
+    
+    <script type="module">
+        const statusDiv = document.getElementById('status');
+        
+        function updateStatus(message) {
+            console.log('[Debug]', message);
+            statusDiv.innerHTML += '<br>' + message;
+        }
+        
+        updateStatus('Starting debug checks...');
+        
+        // Test if Phaser can be imported
+        try {
+            updateStatus('Testing Phaser import...');
+            
+            const { Scene } = await import('phaser');
+            updateStatus('✅ Phaser imported successfully');
+            updateStatus('Phaser version: ' + Phaser.VERSION);
+            
+            // Create minimal test scene
+            class DebugScene extends Scene {
+                constructor() {
+                    super({ key: 'DebugScene' });
+                }
+                
+                create() {
+                    updateStatus('✅ DebugScene created successfully!');
+                    
+                    // Add visible elements
+                    this.add.rectangle(400, 300, 800, 600, 0x00ff00, 0.2);
+                    this.add.text(400, 300, 'DEBUG SCENE WORKING!', {
+                        fontSize: '32px',
+                        color: '#ffffff'
+                    }).setOrigin(0.5);
+                    
+                    this.add.text(400, 350, 'If you see this, Phaser is working', {
+                        fontSize: '16px',
+                        color: '#ffff00'
+                    }).setOrigin(0.5);
+                }
+            }
+            
+            // Minimal Phaser config
+            const config = {
+                type: Phaser.AUTO,
+                width: 800,
+                height: 600,
+                parent: 'game-container',
+                backgroundColor: '#4488ff',
+                scene: [DebugScene]
+            };
+            
+            updateStatus('Creating Phaser game instance...');
+            const game = new Phaser.Game(config);
+            
+            game.events.on('ready', () => {
+                updateStatus('✅ Phaser game ready event fired!');
+            });
+            
+        } catch (error) {
+            updateStatus('❌ Error: ' + error.message);
+            updateStatus('Stack: ' + error.stack);
+        }
+    </script>
+</body>
+</html>

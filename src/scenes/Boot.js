@@ -11,15 +11,26 @@ export class Boot extends Scene
 
     preload ()
     {
-        //  The Boot Scene is typically used to load in any assets you require for your Preloader, such as a game logo or background.
-        //  The smaller the file size of the assets, the better, as the Boot Scene itself has no preloader.
-
-        this.load.image(ImageAssets.BACKGROUND, 'assets/' + ImagePaths.BACKGROUND);
+        console.log('[Boot] Boot scene preload started');
+        // Skip asset loading for now to test scene flow
+        // this.load.image(ImageAssets.BACKGROUND, 'assets/' + ImagePaths.BACKGROUND);
     }
 
     create ()
     {
-        this.scene.start(SceneKeys.PRELOADER);
+        console.log('[Boot] Boot scene created');
+        
+        // Add visible test element
+        this.add.text(400, 300, 'BOOT SCENE', {
+            fontSize: '32px',
+            color: '#ffffff'
+        }).setOrigin(0.5);
+        
+        // TEMPORARY: Skip directly to Game scene to test movement
+        this.time.delayedCall(1000, () => {
+            console.log('[Boot] TEMPORARY: Bypassing to Game scene for movement testing...');
+            this.scene.start(SceneKeys.GAME, { levelId: 'level1' });
+        });
     }
     
     update (time, delta)

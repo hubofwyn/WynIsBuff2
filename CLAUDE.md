@@ -176,3 +176,108 @@ The birthday minigame (`BirthdayMinigame.js`) is a special lane-based runner gam
 - Features enhanced particle effects and birthday-themed celebrations
 
 Access from the main menu via the animated rainbow birthday button!
+
+## Agent Orchestration System (NEW!)
+
+This project now includes an intelligent multi-agent orchestration system that automatically routes tasks to specialized agents based on context and requirements.
+
+### Available Agents
+
+1. **architecture-guardian**: Ensures architectural consistency, reviews system design, validates patterns
+   - Triggers: New features, refactoring, module creation, code organization
+   - Priority: Highest (enforces all conventions)
+
+2. **game-physics-expert**: Expert in Phaser 3 and Rapier physics for 2D platformers
+   - Triggers: Physics implementation, collision detection, movement mechanics, performance
+   - Specialties: Jump mechanics, gravity, velocity calculations, optimization
+
+3. **game-design-innovator**: Creative game design expert for innovative mechanics
+   - Triggers: Game mechanics, level design, power-ups, player experience
+   - Specialties: Creative features, game feel, experimental gameplay
+
+### Automatic Agent Routing
+
+The system automatically analyzes your requests and routes them to the appropriate agent(s):
+
+```javascript
+// Examples of automatic routing:
+
+"Add wall jumping mechanic" 
+→ game-design-innovator (design) → architecture-guardian (review) → game-physics-expert (implement)
+
+"Fix collision detection bug"
+→ game-physics-expert (diagnose) → architecture-guardian (validate fix)
+
+"Create new power-up system"
+→ game-design-innovator (conceptualize) → architecture-guardian (structure) → implementation
+
+"Refactor the player controller"
+→ architecture-guardian (primary) with game-physics-expert (supporting)
+```
+
+### Workflow Types
+
+#### Feature Development Workflow
+1. **Design Phase** (game-design-innovator): Conceptualize and prototype
+2. **Architecture Phase** (architecture-guardian): Review and validate patterns
+3. **Implementation Phase** (game-physics-expert): Build with optimal physics
+4. **Validation Phase** (architecture-guardian): Final review and integration
+
+#### Bug Fixing Workflow
+1. **Analysis Phase**: Appropriate expert diagnoses the issue
+2. **Solution Phase**: Architecture guardian validates the fix approach
+
+#### Optimization Workflow
+1. **Profiling Phase** (game-physics-expert): Identify bottlenecks
+2. **Optimization Phase** (game-physics-expert): Implement improvements
+3. **Validation Phase** (architecture-guardian): Ensure maintainability
+
+### Quality Gates
+
+All code changes pass through automated quality gates:
+
+**Pre-Implementation Checks:**
+- Pattern compliance (BaseManager inheritance)
+- Naming conventions (PascalCase classes, camelCase directories)
+- Import structure (@features/* barrel exports)
+
+**Post-Implementation Checks:**
+- Test coverage verification
+- Documentation completeness
+- Event consistency (namespace:action format)
+
+### How It Works
+
+1. **Task Analysis**: Your request is analyzed for keywords, patterns, and intent
+2. **Agent Selection**: Primary and supporting agents are selected based on confidence scores
+3. **Workflow Matching**: Complex tasks trigger multi-phase workflows
+4. **Parallel Execution**: Supporting agents can work in parallel when appropriate
+5. **Quality Assurance**: Code passes through quality gates at key checkpoints
+
+### Manual Agent Selection
+
+While automatic routing is the default, you can explicitly request specific agents:
+
+```
+"Use the game-design-innovator agent to brainstorm boss battle mechanics"
+"Have the architecture-guardian review this module structure"
+"Ask the game-physics-expert about optimizing collision detection"
+```
+
+### Configuration
+
+The orchestration system is configured in `.claude-orchestration.json` and managed by `src/core/AgentOrchestrator.js`. The system:
+- Maintains execution history for learning
+- Supports parallel agent execution (max 2 concurrent)
+- Falls back to architecture-guardian when uncertain
+- Enforces all project conventions automatically
+
+### Best Practices with Agents
+
+1. **Let the system route automatically** - It knows the patterns and will choose optimally
+2. **Complex features trigger workflows** - Multi-phase execution ensures quality
+3. **Architecture guardian has final say** - All code must pass architectural review
+4. **Physics expert owns performance** - Performance issues go directly to physics expert
+5. **Design innovator leads creativity** - New mechanics start with design phase
+
+This orchestration system ensures consistent, high-quality code that follows all project conventions while leveraging specialized expertise for each aspect of game development.

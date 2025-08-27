@@ -135,11 +135,9 @@ export class Game extends Scene {
                 selectedKey
             );
             
-            // Register player body-sprite with physics manager
-            this.physicsManager.registerBodySprite(
-                this.playerController.getBody(),
-                this.playerController.getSprite()
-            );
+            // DON'T register player with physics manager - player manages own sprite position
+            // because it uses KinematicCharacterController for advanced movement
+            console.log('[Game] Player uses KinematicCharacterController, managing own sprite position');
             
             // Listen for Pause events via InputManager (ESC key)
             this.eventSystem.on(EventNames.PAUSE, () => {
@@ -517,9 +515,9 @@ export class Game extends Scene {
                 this.levelManager.update(delta);
             }
             
-            // Update player
+            // Update player with delta time
             if (this.playerController) {
-                this.playerController.update(this.levelManager.getPlatforms());
+                this.playerController.update(delta);
             }
             // Update enemies
             if (this.enemies) {

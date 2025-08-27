@@ -330,10 +330,13 @@ export class JumpController {
             y: this.jumpParams.additionalImpulse.y
         }, true);
         
-        // Apply jump-specific squash effect and scaling
+        // Apply jump-specific squash effect and enhanced particle effects
         const squashParams = this.jumpParams.squashStretch[jumpNumber] || this.jumpParams.squashStretch[1];
-        this.applyJumpScaling(sprite, jumpNumber);
         this.applySquashEffect(sprite, squashParams.squashX, squashParams.squashY, squashParams.duration);
+        
+        // Enhanced visual feedback with particles instead of scaling
+        this.createJumpParticles(body, sprite, jumpNumber);
+        this.enhancePlayerGlow(sprite, jumpNumber);
         
         // Start cooldown after triple jump
         if (jumpNumber === 3) {
@@ -482,30 +485,165 @@ export class JumpController {
     }
     
     /**
-     * Apply progressive scaling based on jump number
+     * Create jump particles for enhanced visual feedback
+     * @param {RAPIER.RigidBody} body - The player's physics body
      * @param {Phaser.GameObjects.Sprite|Phaser.GameObjects.Rectangle} sprite - The sprite
      * @param {number} jumpNumber - Which jump (1, 2, or 3)
      */
-    applyJumpScaling(sprite, jumpNumber) {
-        if (!sprite) return;
+    createJumpParticles(body, sprite, jumpNumber) {
+        if (!sprite || !body) return;
         
-        // Progressive scaling for each jump - very subtle
-        const scales = {
-            1: 1.0,   // Normal size
-            2: 1.05,  // 5% bigger
-            3: 1.1    // 10% bigger
+        const position = body.translation();
+        
+        // Particle configurations for each jump level
+        const particleConfigs = {
+            1: { count: 8, color: 0x44ff44, size: 4, speed: 80 },
+            2: { count: 12, color: 0x44ddff, size: 6, speed: 120 },
+            3: { count: 20, color: 0xff4444, size: 8, speed: 160 }
         };
         
-        const targetScale = scales[jumpNumber] || 1.0;
+        const config = particleConfigs[jumpNumber] || particleConfigs[1];
         
-        // Animate the scaling
+        // Create jump burst particles
+        for (let i = 0; i < config.count; i++) {
+            const angle = (Math.PI * 2 * i) / config.count + Math.random() * 0.3;
+            const distance = config.speed + Math.random() * 40;
+            
+            const particle = this.scene.add.circle(
+                position.x,
+                position.y + 20, // Start from bottom of player
+                config.size,
+                config.color,
+                0.8
+            );
+            
+            particle.setDepth(95); // Behind player but above background
+            
+            // Animate particle outward and fade
+            this.scene.tweens.add({
+                targets: particle,
+                x: position.x + Math.cos(angle) * distance,
+                y: position.y + Math.sin(angle) * distance + 20,
+                alpha: 0,
+                scale: 0.2,
+                duration: 400 + Math.random() * 200,
+                ease: 'Power2.Out',
+                onComplete: () => particle.destroy()
+            });
+        }
+        
+        // Create trailing effect for triple jump
+        if (jumpNumber === 3) {
+            this.createTripleJumpTrail(body, sprite);
+        }
+    }
+    
+    /**
+     * Enhance player glow based on jump number
+     * @param {Phaser.GameObjects.Sprite|Phaser.GameObjects.Rectangle} sprite - The sprite
+     * @param {number} jumpNumber - Which jump (1, 2, or 3)
+     */
+    enhancePlayerGlow(sprite, jumpNumber) {
+        if (!sprite) return;
+        
+        // Get player controller for glow access
+        const playerController = this.scene.playerController;
+        if (!playerController || !playerController.glowGraphics) return;
+        
+        const glowGraphics = playerController.glowGraphics;
+        
+        // Glow enhancement configurations
+        const glowConfigs = {
+            1: { intensity: 0.6, color: 0x44ff44, duration: 200, pulseCount: 1 },
+            2: { intensity: 0.8, color: 0x44ddff, duration: 300, pulseCount: 2 },
+            3: { intensity: 1.2, color: 0xff4444, duration: 500, pulseCount: 3 }
+        };
+        
+        const config = glowConfigs[jumpNumber] || glowConfigs[1];
+        
+        // Create pulsing glow effect
+        let pulseIndex = 0;
+        const createPulse = () => {
+            if (pulseIndex >= config.pulseCount) return;
+            
+            // Temporarily override glow with jump-specific effect
+            const jumpColors = [config.color, config.color, config.color];
+            
+            // Create temporary bright pulse
+            this.scene.tweens.add({
+                targets: { intensity: 0.4 },
+                intensity: config.intensity,
+                duration: config.duration / 2,
+                yoyo: true,
+                ease: 'Power2.InOut',
+                onUpdate: (tween) => {
+                    const intensity = tween.getValue();
+                    
+                    glowGraphics.clear();
+                    const sizes = [50, 35, 20];
+                    
+                    jumpColors.forEach((color, i) => {
+                        glowGraphics.fillStyle(color, intensity * (0.4 - i * 0.1));
+                        glowGraphics.fillCircle(sprite.x, sprite.y, sizes[i]);
+                    });
+                },
+                onComplete: () => {
+                    pulseIndex++;
+                    if (pulseIndex < config.pulseCount) {
+                        setTimeout(createPulse, 100);
+                    }
+                }
+            });
+        };
+        
+        createPulse();
+    }
+    
+    /**
+     * Create special triple jump trail effect
+     * @param {RAPIER.RigidBody} body - The player's physics body
+     * @param {Phaser.GameObjects.Sprite|Phaser.GameObjects.Rectangle} sprite - The sprite
+     */
+    createTripleJumpTrail(body, sprite) {
+        if (!sprite || !body) return;
+        
+        const position = body.translation();
+        
+        // Create a temporary trail following the player
+        const trailSprite = this.scene.add.sprite(position.x, position.y, sprite.texture.key);
+        trailSprite.setTint(0xff4444);
+        trailSprite.setAlpha(0.5);
+        trailSprite.setScale(sprite.scaleX, sprite.scaleY);
+        trailSprite.setDepth(90); // Behind player
+        
+        // Animate trail to fade and scale down
         this.scene.tweens.add({
-            targets: sprite,
-            scaleX: targetScale,
-            scaleY: targetScale,
-            duration: 300,
-            ease: 'Power2'
+            targets: trailSprite,
+            alpha: 0,
+            scaleX: 1.5,
+            scaleY: 1.5,
+            duration: 800,
+            ease: 'Power2.Out',
+            onComplete: () => trailSprite.destroy()
         });
+        
+        // Create energy rings for triple jump
+        for (let i = 0; i < 3; i++) {
+            setTimeout(() => {
+                const ring = this.scene.add.circle(position.x, position.y, 10, 0xff4444, 0);
+                ring.setStrokeStyle(3, 0xff4444, 0.8);
+                ring.setDepth(92);
+                
+                this.scene.tweens.add({
+                    targets: ring,
+                    radius: 60,
+                    alpha: 0,
+                    duration: 600,
+                    ease: 'Power2.Out',
+                    onComplete: () => ring.destroy()
+                });
+            }, i * 100);
+        }
     }
     
     /**

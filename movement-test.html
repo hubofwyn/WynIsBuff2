@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WynIsBuff2 Movement Test</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            background: #222;
+            color: #fff;
+        }
+        #status {
+            margin-bottom: 20px;
+            padding: 10px;
+            background: #333;
+            border-radius: 5px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        #game-container {
+            border: 2px solid #555;
+            margin-bottom: 10px;
+        }
+        .controls {
+            padding: 10px;
+            background: #333;
+            border-radius: 5px;
+        }
+        .status-success { color: #4CAF50; }
+        .status-error { color: #f44336; }
+        .status-info { color: #2196F3; }
+    </style>
+</head>
+<body>
+    <div id="status">
+        <h3>WynIsBuff2 Movement System Test</h3>
+        <div id="messages">Initializing movement test...</div>
+    </div>
+    
+    <div id="game-container"></div>
+    
+    <div class="controls">
+        <h4>Movement Controls:</h4>
+        <p><strong>WASD / Arrow Keys:</strong> Move (should feel heavier/more powerful)</p>
+        <p><strong>Space:</strong> Jump (progressive particle effects)</p>
+        <p><strong>C:</strong> Duck/Rotate</p>
+        <p><strong>Watch console for:</strong> Movement events, physics updates, error messages</p>
+    </div>
+    
+    <script type="module">
+        let messageCount = 0;
+        
+        function updateStatus(message, type = 'info') {
+            messageCount++;
+            const timestamp = new Date().toLocaleTimeString();
+            const className = `status-${type}`;
+            
+            console.log(`[MovementTest ${timestamp}]`, message);
+            
+            const messagesDiv = document.getElementById('messages');
+            messagesDiv.innerHTML += `<br><span class="${className}">[${timestamp}] ${message}</span>`;
+            
+            // Auto-scroll to bottom
+            const statusDiv = document.getElementById('status');
+            statusDiv.scrollTop = statusDiv.scrollHeight;
+            
+            // Limit to 50 messages to prevent memory issues
+            if (messageCount > 50) {
+                const lines = messagesDiv.innerHTML.split('<br>');
+                messagesDiv.innerHTML = '<br>' + lines.slice(-45).join('<br>');
+                messageCount = 45;
+            }
+        }
+        
+        updateStatus('🔧 Starting movement system diagnostics...', 'info');
+        
+        try {
+            // Test module loading
+            updateStatus('📦 Loading game modules...', 'info');
+            
+            // Import main game
+            const gameModule = await import('./src/main.js');
+            updateStatus('✅ Game module loaded successfully', 'success');
+            
+            // Check if Phaser game instance is created
+            if (gameModule.default) {
+                updateStatus('✅ Phaser game instance found', 'success');
+                
+                // Monitor game events for movement
+                const game = gameModule.default;
+                
+                updateStatus('🎮 Game initialized - Test movement now!', 'success');
+                updateStatus('👀 Watching for movement activity...', 'info');
+                
+                // Set up console monitoring
+                const originalConsoleLog = console.log;
+                const originalConsoleError = console.error;
+                
+                console.log = function(...args) {
+                    // Filter for movement-related logs
+                    const logStr = args.join(' ');
+                    if (logStr.includes('[Movement') || 
+                        logStr.includes('[Player') || 
+                        logStr.includes('[Jump') ||
+                        logStr.includes('velocity') ||
+                        logStr.includes('physics')) {
+                        updateStatus(`📊 ${logStr}`, 'info');
+                    }
+                    originalConsoleLog.apply(console, args);
+                };
+                
+                console.error = function(...args) {
+                    updateStatus(`❌ ERROR: ${args.join(' ')}`, 'error');
+                    originalConsoleError.apply(console, args);
+                };
+                
+                // Check for physics manager
+                updateStatus('🔍 Checking for physics system...', 'info');
+                
+                // Test basic functionality after a delay
+                setTimeout(() => {
+                    try {
+                        updateStatus('🧪 Running basic system checks...', 'info');
+                        updateStatus('📋 Movement test ready - try WASD or arrow keys!', 'success');
+                        updateStatus('💡 Look for: Player position changes, velocity updates, particle effects', 'info');
+                    } catch (testError) {
+                        updateStatus(`Test error: ${testError.message}`, 'error');
+                    }
+                }, 2000);
+                
+            } else {
+                updateStatus('❌ No game instance found', 'error');
+            }
+            
+        } catch (error) {
+            updateStatus(`❌ Module loading error: ${error.message}`, 'error');
+            updateStatus(`Stack: ${error.stack}`, 'error');
+        }
+    </script>
+</body>
+</html>
