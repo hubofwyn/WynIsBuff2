@@ -85,7 +85,9 @@ export class DeterministicRNG extends BaseManager {
   next(stream = 'main') {
     const s = this.streams.get(stream);
     if (!s) {
-      console.warn(`[DeterministicRNG] Stream '${stream}' not found, using 'main'`);
+      if (process.env.NODE_ENV !== 'production') {
+        console.warn(`[DeterministicRNG] Stream '${stream}' not found, using 'main'`);
+      }
       return this.next('main');
     }
     
@@ -187,7 +189,8 @@ export class DeterministicRNG extends BaseManager {
    */
   gaussian(mean = 0, stdDev = 1, stream = 'main') {
     // Box-Muller transform
-    const u1 = this.next(stream);
+    // Clamp u1 to avoid Math.log(0) = -Infinity
+    const u1 = Math.max(1e-12, this.next(stream));
     const u2 = this.next(stream);
     
     const z0 = Math.sqrt(-2 * Math.log(u1)) * Math.cos(2 * Math.PI * u2);

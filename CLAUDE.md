@@ -177,6 +177,55 @@ The birthday minigame (`BirthdayMinigame.js`) is a special lane-based runner gam
 
 Access from the main menu via the animated rainbow birthday button!
 
+## Determinism and Testing Framework
+
+### GoldenSeedTester Usage
+
+The `GoldenSeedTester` is available for deterministic testing and validating game behavior:
+
+```javascript
+// In development scenes, you can enable golden seed testing:
+import { GoldenSeedTester, DeterministicRNG } from '@features/core';
+
+// To record a golden run (in Game.js create() method):
+if (this.game.config.goldenSeedTest) {
+  this.goldenTester = GoldenSeedTester.getInstance();
+  this.goldenTester.startRecording({ seed: 1138, maxFrames: 600 });
+}
+
+// In update loop:
+if (this.goldenTester?.isRecording) {
+  this.goldenTester.recordFrame({
+    player: this.player,
+    enemies: this.enemies,
+    score: this.score,
+    coins: this.coins
+  });
+}
+
+// To validate against a snapshot:
+const snapshot = localStorage.getItem('goldenSnapshot');
+if (snapshot) {
+  this.goldenTester.startValidation(JSON.parse(snapshot));
+}
+```
+
+### Deterministic RNG
+
+All randomness should use `DeterministicRNG` for reproducible gameplay:
+
+```javascript
+import { DeterministicRNG } from '@features/core';
+
+const rng = DeterministicRNG.getInstance();
+rng.init(seedValue); // Initialize with a specific seed
+
+// Use different streams for different systems:
+const enemyChoice = rng.pick(['goblin', 'orc'], 'ai');
+const lootRoll = rng.int(1, 100, 'loot');
+const particleSpread = rng.gaussian(0, 10, 'particles');
+```
+
 ## Agent Orchestration System (NEW!)
 
 This project now includes an intelligent multi-agent orchestration system that automatically routes tasks to specialized agents based on context and requirements.
