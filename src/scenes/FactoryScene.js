@@ -1,7 +1,8 @@
 import { Scene } from 'phaser';
 import { SceneKeys } from '../constants/SceneKeys.js';
 import { EventNames } from '../constants/EventNames.js';
-import { GameStateManager } from '@features/core';
+import { GameStateManager, EventBus } from '@features/core';
+import { EnhancedCloneManager } from '@features/idle';
 
 /**
  * FactoryScene - Production and automation management
@@ -16,14 +17,19 @@ export class FactoryScene extends Scene {
 
     init() {
         // Initialize managers
-        this.gameStateManager = new GameStateManager();
+        this.gameStateManager = GameStateManager.getInstance();
+        this.cloneManager = EnhancedCloneManager.getInstance();
+        this.eventBus = EventBus.getInstance();
         
         // Load factory state
         this.factoryState = this.gameStateManager.loadFactory();
         
-        // Production lines
+        // Production lines (from clone lanes)
         this.productionLines = [];
         this.selectedLine = null;
+        
+        // UI containers
+        this.laneContainers = new Map();
     }
 
     create() {
