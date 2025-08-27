@@ -5,28 +5,24 @@
  * Handles boss encounters, AI, rewards, and progression.
  */
 
-// Core Boss System
-export { BossManager } from '../../modules/boss/BossManager.js';
-export { BossController } from '../../modules/boss/BossController.js';
-export { BossSpawner } from '../../modules/boss/BossSpawner.js';
-
-// Boss AI and Behavior
-export { BossAI } from '../../modules/boss/BossAI.js';
-export { BossPhaseController } from '../../modules/boss/BossPhaseController.js';
-export { BossAttackPatterns } from '../../modules/boss/BossAttackPatterns.js';
-
-// Boss Rewards and Progression
+// Boss Rewards and Progression (currently implemented)
 export { BossRewardSystem } from '../../modules/boss/BossRewardSystem.js';
-export { BossProgressionTracker } from '../../modules/boss/BossProgressionTracker.js';
 
-// Boss Health and Damage
-export { BossHealthManager } from '../../modules/boss/BossHealthManager.js';
-export { BossDamageCalculator } from '../../modules/boss/BossDamageCalculator.js';
+// Boss Controllers (currently implemented)
+export { PulsarController } from '../../modules/boss/PulsarController.js';
 
-// Boss Timer System
-export { BossTimerManager } from '../../modules/boss/BossTimerManager.js';
-
-// Boss Data Definitions
-export { BossDefinitions } from '../../modules/boss/data/BossDefinitions.js';
-export { BossRewardTables } from '../../modules/boss/data/BossRewardTables.js';
-export { BossScalingFormulas } from '../../modules/boss/data/BossScalingFormulas.js';
+// Note: Additional boss modules will be added as they are implemented
+// Future exports:
+// - BossManager
+// - BossController
+// - BossSpawner
+// - BossAI
+// - BossPhaseController
+// - BossAttackPatterns
+// - BossProgressionTracker
+// - BossHealthManager
+// - BossDamageCalculator
+// - BossTimerManager
+// - BossDefinitions
+// - BossRewardTables
+// - BossScalingFormulas
