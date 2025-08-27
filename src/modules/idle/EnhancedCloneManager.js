@@ -1,5 +1,4 @@
-import { CloneManager } from '@features/core';
-import { EventBus } from '@features/core';
+import { CloneManager, EventBus } from '@features/core';
 import { EventNames } from '../../constants/EventNames.js';
 
 /**
@@ -19,6 +18,9 @@ export class EnhancedCloneManager extends CloneManager {
   }
 
   initEnhanced() {
+    // Debug flag - set to false in production
+    this.debug = process.env.NODE_ENV !== 'production';
+    
     // Clone lanes for production
     this.lanes = new Map(); // laneId -> lane data
     this.nextLaneId = 1;
@@ -32,7 +34,6 @@ export class EnhancedCloneManager extends CloneManager {
     this.lastUpdateTime = Date.now();
     
     // Boost system
-    this.boostQueue = [];
     this.activeBoosts = new Map(); // boostId -> boost data
     this.nextBoostId = 1;
     
@@ -104,7 +105,9 @@ export class EnhancedCloneManager extends CloneManager {
     // Start production immediately
     this.startLaneProduction(lane.id);
     
-    console.log(`[EnhancedCloneManager] Created lane ${lane.id} with rate ${lane.baseRate}/s`);
+    if (this.debug) {
+      console.log(`[EnhancedCloneManager] Created lane ${lane.id} with rate ${lane.baseRate}/s`);
+    }
     
     return lane;
   }
@@ -147,7 +150,7 @@ export class EnhancedCloneManager extends CloneManager {
       
       lane.lastDecayUpdate = now;
       
-      if (hoursSinceLastUpdate > 0.1) { // Log significant decay
+      if (this.debug && hoursSinceLastUpdate > 0.1) { // Log significant decay
         console.log(`[EnhancedCloneManager] Lane ${laneId} decayed to ${lane.currentRate.toFixed(2)}/s`);
       }
     }
@@ -177,7 +180,9 @@ export class EnhancedCloneManager extends CloneManager {
       target: boostData.laneId ? `lane_${boostData.laneId}` : 'global'
     });
     
-    console.log(`[EnhancedCloneManager] Applied ${boostData.multiplier}x boost for ${boostData.duration / 60000} minutes`);
+    if (this.debug) {
+      console.log(`[EnhancedCloneManager] Applied ${boostData.multiplier}x boost for ${boostData.duration / 60000} minutes`);
+    }
     
     return boostData.id;
   }
@@ -280,7 +285,9 @@ export class EnhancedCloneManager extends CloneManager {
     // Cap offline time
     const cappedMs = Math.min(deltaMs, this.offlineCapHours * 3600000);
     
-    console.log(`[EnhancedCloneManager] Calculating offline for ${(cappedMs / 3600000).toFixed(2)} hours`);
+    if (this.debug) {
+      console.log(`[EnhancedCloneManager] Calculating offline for ${(cappedMs / 3600000).toFixed(2)} hours`);
+    }
     
     const totalProduction = {
       coins: 0,
@@ -347,9 +354,8 @@ export class EnhancedCloneManager extends CloneManager {
 
   /**
    * Update production for all lanes (called each frame)
-   * @param {number} deltaMs - Time since last update
    */
-  update(deltaMs) {
+  update() {
     const now = Date.now();
     
     for (const [laneId, lane] of this.lanes) {
@@ -376,7 +382,9 @@ export class EnhancedCloneManager extends CloneManager {
     for (const [boostId, boost] of this.activeBoosts) {
       if (boost.endTime < now) {
         this.activeBoosts.delete(boostId);
-        console.log(`[EnhancedCloneManager] Boost ${boostId} expired`);
+        if (this.debug) {
+          console.log(`[EnhancedCloneManager] Boost ${boostId} expired`);
+        }
       }
     }
     
@@ -425,7 +433,9 @@ export class EnhancedCloneManager extends CloneManager {
       newRate: lane.currentRate
     });
     
-    console.log(`[EnhancedCloneManager] Lane ${laneId} refreshed to ${lane.baseRate}/s`);
+    if (this.debug) {
+      console.log(`[EnhancedCloneManager] Lane ${laneId} refreshed to ${lane.baseRate}/s`);
+    }
   }
 
   /**
@@ -469,7 +479,9 @@ export class EnhancedCloneManager extends CloneManager {
     // Calculate offline progress
     if (this.lastUpdateTime < Date.now() - 60000) { // More than 1 minute offline
       const offline = this.calculateOfflineProduction(this.lastUpdateTime);
-      console.log('[EnhancedCloneManager] Offline production:', offline.production);
+      if (this.debug) {
+        console.log('[EnhancedCloneManager] Offline production:', offline.production);
+      }
     }
   }
 }

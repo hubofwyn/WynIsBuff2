@@ -1,5 +1,4 @@
 import { BaseManager, DeterministicRNG, PhysicsManager } from '@features/core';
-import { EventNames } from '../constants/EventNames.js';
 
 /**
  * GoldenSeedTester - Framework for deterministic testing with golden seed 1138
@@ -15,6 +14,9 @@ export class GoldenSeedTester extends BaseManager {
   }
 
   init() {
+    // Debug flag - set to false in production
+    this.debug = process.env.NODE_ENV !== 'production';
+    
     // Golden seed constant
     this.GOLDEN_SEED = 1138;
     
@@ -49,7 +51,9 @@ export class GoldenSeedTester extends BaseManager {
       systems = {}
     } = options;
     
-    console.log(`[GoldenSeedTester] Starting recording with seed ${seed}`);
+    if (this.debug) {
+      console.log(`[GoldenSeedTester] Starting recording with seed ${seed}`);
+    }
     
     // Initialize RNG with golden seed
     this.rng = DeterministicRNG.getInstance();
@@ -138,7 +142,7 @@ export class GoldenSeedTester extends BaseManager {
     this.currentFrame++;
     
     // Log milestone frames
-    if (this.currentFrame % 60 === 0) {
+    if (this.debug && this.currentFrame % 60 === 0) {
       console.log(`[GoldenSeedTester] Recorded frame ${this.currentFrame}`);
     }
   }
@@ -163,7 +167,9 @@ export class GoldenSeedTester extends BaseManager {
       timestamp: Date.now()
     };
     
-    console.log(`[GoldenSeedTester] Recording complete: ${snapshot.totalFrames} frames`);
+    if (this.debug) {
+      console.log(`[GoldenSeedTester] Recording complete: ${snapshot.totalFrames} frames`);
+    }
     
     return snapshot;
   }
@@ -174,11 +180,15 @@ export class GoldenSeedTester extends BaseManager {
    */
   startValidation(snapshot) {
     if (!snapshot || !snapshot.frames) {
-      console.error('[GoldenSeedTester] Invalid snapshot');
+      if (this.debug) {
+        console.error('[GoldenSeedTester] Invalid snapshot');
+      }
       return false;
     }
     
-    console.log(`[GoldenSeedTester] Starting validation against ${snapshot.totalFrames} frames`);
+    if (this.debug) {
+      console.log(`[GoldenSeedTester] Starting validation against ${snapshot.totalFrames} frames`);
+    }
     
     // Initialize RNG with same seed
     this.rng = DeterministicRNG.getInstance();
@@ -246,13 +256,15 @@ export class GoldenSeedTester extends BaseManager {
     // Log errors
     if (errors.length > 0) {
       this.validationErrors.push(...errors);
-      console.error(`[GoldenSeedTester] Frame ${this.currentFrame} validation failed:`, errors);
+      if (this.debug) {
+        console.error(`[GoldenSeedTester] Frame ${this.currentFrame} validation failed:`, errors);
+      }
     }
     
     this.currentFrame++;
     
     // Log progress
-    if (this.currentFrame % 60 === 0) {
+    if (this.debug && this.currentFrame % 60 === 0) {
       console.log(`[GoldenSeedTester] Validated frame ${this.currentFrame}/${this.validationSnapshot.frames.length}`);
     }
     
@@ -278,10 +290,12 @@ export class GoldenSeedTester extends BaseManager {
       errorSummary: this.summarizeErrors()
     };
     
-    if (report.success) {
-      console.log(`[GoldenSeedTester] ✅ Validation PASSED! All ${report.framesValidated} frames match.`);
-    } else {
-      console.error(`[GoldenSeedTester] ❌ Validation FAILED! ${this.validationErrors.length} errors found.`);
+    if (this.debug) {
+      if (report.success) {
+        console.log(`[GoldenSeedTester] ✅ Validation PASSED! All ${report.framesValidated} frames match.`);
+      } else {
+        console.error(`[GoldenSeedTester] ❌ Validation FAILED! ${this.validationErrors.length} errors found.`);
+      }
     }
     
     return report;
@@ -328,7 +342,9 @@ export class GoldenSeedTester extends BaseManager {
     try {
       return JSON.parse(json);
     } catch (error) {
-      console.error('[GoldenSeedTester] Failed to parse snapshot:', error);
+      if (this.debug) {
+        console.error('[GoldenSeedTester] Failed to parse snapshot:', error);
+      }
       return null;
     }
   }
