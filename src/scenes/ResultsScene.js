@@ -11,6 +11,7 @@ import {
     CloneManager,
     EconomyManager
 } from '@features/idle';
+import { PerformanceAnalyzer } from '@features/analytics';
 
 export class ResultsScene extends Scene {
     constructor() {
@@ -18,12 +19,30 @@ export class ResultsScene extends Scene {
     }
 
     init(data) {
+        // Store complete run data for analysis
+        this.runData = data || {};
+        
+        // Extract specific values for backwards compatibility
         this.score = data.score || { S: 0, C: 0, H: 0, R: 0, B: 1.0 };
         this.dna = data.dna || {};
         this.timeEcho = data.timeEcho || null;
         this.level = data.level || 'protein-plant';
         this.flowPeak = data.score?.flowPeak || 1.0;
-        this.runTime = data.score?.runTime || 0;
+        this.runTime = data.runTime || data.score?.runTime || 0;
+        
+        // New run data structure for PerformanceAnalyzer
+        this.completeRunData = {
+            runId: data.runId || `run_${Date.now()}`,
+            time: Math.floor(this.runTime / 1000), // Convert to seconds
+            deaths: data.deaths || 0,
+            maxCombo: data.maxCombo || 0,
+            possibleCombo: data.possibleCombo || 100,
+            pickups: data.pickups || { coin: 0, grit: 0, relics: [] },
+            bosses: data.bosses || {},
+            routeLength: data.routeLength || 1000,
+            parTime: data.parTime || 120,
+            routeTier: data.routeTier || 'normal'
+        };
     }
 
     create() {
@@ -33,6 +52,21 @@ export class ResultsScene extends Scene {
         this.gameStateManager = GameStateManager.getInstance();
         this.cloneManager = CloneManager.getInstance();
         this.economyManager = EconomyManager.getInstance();
+        this.performanceAnalyzer = PerformanceAnalyzer.getInstance();
+        
+        // Analyze run performance using the new system
+        this.performanceReport = this.performanceAnalyzer.generateReport(this.completeRunData);
+        this.performance = this.performanceReport.performance;
+        this.cloneStats = this.performanceReport.cloneStats;
+        
+        // Update score for backwards compatibility
+        this.score = {
+            S: this.performance.S,
+            C: this.performance.C,
+            H: this.performance.H,
+            R: this.performance.R,
+            B: this.performance.B
+        };
         
         // Create background
         this.createBackground();
@@ -132,6 +166,16 @@ export class ResultsScene extends Scene {
     createPerformanceDisplay() {
         // Performance container
         const perfContainer = this.add.container(200, 200);
+        
+        // Display performance grade prominently
+        const gradeText = this.add.text(200, 160, `GRADE: ${this.performanceReport.grade}`, {
+            fontSize: '32px',
+            fontFamily: 'Arial Black',
+            color: this.getGradeColor(this.performanceReport.grade),
+            stroke: '#000000',
+            strokeThickness: 4
+        });
+        gradeText.setOrigin(0.5);
         
         // Performance metrics
         const metrics = [
@@ -298,8 +342,28 @@ export class ResultsScene extends Scene {
     }
 
     revealClone() {
-        // Forge the clone using CloneManager
+        // Emit forge request event with performance data
+        this.eventBus.emit(EventNames.FORGE_REQUEST, {
+            performance: this.performance,
+            routeId: this.level,
+            stats: this.cloneStats
+        });
+        
+        // Create clone data structure using analyzed stats
+        const cloneData = {
+            id: `clone_${Date.now()}`,
+            productionRate: this.cloneStats.rate,
+            stability: this.cloneStats.stability,
+            specialization: this.cloneStats.specialty,
+            traits: this.generateTraits(this.cloneStats.specialty),
+            dna: this.dna,
+            performanceOrigin: this.performance
+        };
+        
+        // Forge the clone using CloneManager (backwards compatibility)
         const clone = this.cloneManager.forgeClone(this.score, this.dna);
+        // Override with our calculated stats
+        Object.assign(clone, cloneData);
         this.forgedClone = clone;
         
         // Update text
@@ -323,8 +387,37 @@ export class ResultsScene extends Scene {
         // Display clone stats
         this.displayCloneStats(clone);
         
-        // Emit clone forged event
+        // Emit clone forged events
         this.eventBus.emit(EventNames.CLONE_FORGE_COMPLETE, { clone });
+        this.eventBus.emit(EventNames.FORGE_CREATED, {
+            cloneId: clone.id,
+            rate: clone.productionRate,
+            stability: clone.stability,
+            specialty: clone.specialization
+        });
+    }
+    
+    generateTraits(specialty) {
+        const traitPool = {
+            speedster: ['Quick', 'Agile', 'Swift'],
+            comboist: ['Rhythmic', 'Flowing', 'Chained'],
+            survivor: ['Tough', 'Resilient', 'Sturdy'],
+            explorer: ['Curious', 'Thorough', 'Keen'],
+            warrior: ['Strong', 'Fierce', 'Bold'],
+            balanced: ['Versatile', 'Adaptive', 'Stable']
+        };
+        
+        const traits = traitPool[specialty] || traitPool.balanced;
+        // Pick 1-2 random traits
+        const numTraits = Math.floor(Math.random() * 2) + 1;
+        const selected = [];
+        for (let i = 0; i < numTraits; i++) {
+            const trait = traits[Math.floor(Math.random() * traits.length)];
+            if (!selected.includes(trait)) {
+                selected.push(trait);
+            }
+        }
+        return selected;
     }
 
     displayCloneStats(clone) {
@@ -558,5 +651,17 @@ export class ResultsScene extends Scene {
 
     runAgain() {
         this.scene.start(SceneKeys.RUN, { level: this.level });
+    }
+    
+    getGradeColor(grade) {
+        const colors = {
+            'S': '#FFD700', // Gold
+            'A': '#FF6B6B', // Red
+            'B': '#4ECDC4', // Teal
+            'C': '#95E77E', // Green
+            'D': '#A8A8A8', // Gray
+            'F': '#555555'  // Dark gray
+        };
+        return colors[grade] || '#FFFFFF';
     }
 }
