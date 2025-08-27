@@ -4,6 +4,7 @@ export { AgentOrchestrator } from '../../core/AgentOrchestrator.js';
 export { AudioManager } from '../../core/AudioManager.js';
 export { BaseManager } from '../../core/BaseManager.js';
 export { CloneManager } from '../../core/CloneManager.js';
+export { DeterministicRNG, getRNG } from '../../core/DeterministicRNG.js';
 export { EconomyManager } from '../../core/EconomyManager.js';
 export { EventBus } from '../../core/EventBus.js';
 export { EventSystem } from '../../core/EventSystem.js';
