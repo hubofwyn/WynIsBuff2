@@ -1,4 +1,5 @@
-import { Scene } from 'phaser';
+import Phaser, { Scene } from 'phaser';
+import { PhysicsDebugOverlay } from '@features/debug';
 
 export class TestScene extends Scene {
     constructor() {
@@ -25,5 +26,22 @@ export class TestScene extends Scene {
                 color: '#ffff00'
             }).setOrigin(0.5);
         });
+
+        // Minimal overlay toggle (F1) to surface FPS in non-physics scene
+        this.debugOverlay = new PhysicsDebugOverlay(this);
+        this.debugKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.F1);
+        this.debugOverlay.enable();
+        this.events.once('shutdown', () => {
+            if (this.debugOverlay) this.debugOverlay.disable();
+            if (this.debugKey) this.input.keyboard.removeKey(this.debugKey);
+        });
+    }
+
+    update() {
+        if (this.debugKey && Phaser.Input.Keyboard.JustDown(this.debugKey)) {
+            if (this.debugOverlay.enabled) this.debugOverlay.disable(); else this.debugOverlay.enable();
+        }
+        const fps = this.game && this.game.loop ? Math.round(this.game.loop.actualFps || 0) : 0;
+        if (this.debugOverlay) this.debugOverlay.update({ fps });
     }
 }

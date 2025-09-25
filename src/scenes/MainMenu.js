@@ -3,6 +3,7 @@ import { GameStateManager, AudioManager } from '@features/core';
 import { UIConfig } from '../constants/UIConfig';
 import { SceneKeys } from '../constants/SceneKeys.js';
 import { ImageAssets, AudioAssets } from '../constants/Assets.js';
+import { createPrimaryButton, createSecondaryButton } from '../ui/UIButton.js';
 
 export class MainMenu extends Scene {
     constructor() {
@@ -15,8 +16,16 @@ export class MainMenu extends Scene {
     create() {
         // Initialize game state manager
         this.gameStateManager = new GameStateManager();
-        // Play title screen music
-        AudioManager.getInstance().playMusic(AudioAssets.PROTEIN_PIXEL_ANTHEM);
+        // Play title screen music only if audio is unlocked
+        const audio = AudioManager.getInstance();
+        if (this.sound.locked === false) {
+            audio.playMusic(AudioAssets.PROTEIN_PIXEL_ANTHEM);
+        } else {
+            // Will play once user interacts with the menu
+            this.sound.once('unlocked', () => {
+                audio.playMusic(AudioAssets.PROTEIN_PIXEL_ANTHEM);
+            });
+        }
         // Enhanced gradient background for consistency
         const { width, height } = this.cameras.main;
         const gradientBg = this.add.graphics();
@@ -456,25 +465,7 @@ export class MainMenu extends Scene {
      * Create reset progress button
      */
     createResetButton() {
-        const resetButton = this.add.text(512, 720, 'Reset Progress', {
-            fontFamily: 'Arial',
-            fontSize: 18,
-            color: '#ff0000',
-            stroke: '#000000',
-            strokeThickness: 3,
-            align: 'center'
-        }).setOrigin(0.5).setInteractive();
-        
-        resetButton.on('pointerover', () => {
-            resetButton.setTint(0xffff00);
-            AudioManager.getInstance().playSFX('hover');
-        });
-        
-        resetButton.on('pointerout', () => {
-            resetButton.clearTint();
-        });
-        
-        resetButton.on('pointerdown', () => {
+        const { btn } = createSecondaryButton(this, 512, 720, 'Reset Progress', () => {
             AudioManager.getInstance().playSFX('click');
             // Create confirmation dialog
             const confirmBg = this.add.rectangle(512, 384, 400, 200, 0x000000, 0.8);
@@ -486,45 +477,18 @@ export class MainMenu extends Scene {
                 align: 'center'
             }).setOrigin(0.5);
             
-            const yesButton = this.add.text(450, 400, 'Yes', {
-                fontFamily: 'Arial',
-                fontSize: 20,
-                color: '#ffffff',
-                align: 'center'
-            }).setOrigin(0.5).setInteractive();
-            
-            const noButton = this.add.text(550, 400, 'No', {
-                fontFamily: 'Arial',
-                fontSize: 20,
-                color: '#ffffff',
-                align: 'center'
-            }).setOrigin(0.5).setInteractive();
-            
-            // Yes button
-            yesButton.on('pointerover', () => {
-                yesButton.setTint(0xffff00);
-                AudioManager.getInstance().playSFX('hover');
-            });
-            yesButton.on('pointerout', () => yesButton.clearTint());
-            yesButton.on('pointerdown', () => {
+            const yes = createPrimaryButton(this, 450, 400, 'Yes', () => {
                 AudioManager.getInstance().playSFX('click');
                 this.gameStateManager.resetProgress();
                 this.scene.restart();
-            });
-            
-            // No button
-            noButton.on('pointerover', () => {
-                noButton.setTint(0xffff00);
-                AudioManager.getInstance().playSFX('hover');
-            });
-            noButton.on('pointerout', () => noButton.clearTint());
-            noButton.on('pointerdown', () => {
+            }, { scale: 0.3 });
+            const no = createSecondaryButton(this, 550, 400, 'No', () => {
                 AudioManager.getInstance().playSFX('click');
                 confirmBg.destroy();
                 confirmText.destroy();
-                yesButton.destroy();
-                noButton.destroy();
-            });
+                yes.btn.destroy(); yes.txt.destroy();
+                no.btn.destroy(); no.txt.destroy();
+            }, { scale: 0.3 });
         });
     }
 }

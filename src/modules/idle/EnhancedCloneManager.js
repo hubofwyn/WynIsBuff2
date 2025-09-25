@@ -38,7 +38,7 @@ export class EnhancedCloneManager extends CloneManager {
     this.nextBoostId = 1;
     
     // Listen for forge events
-    EventBus.getInstance().on(EventNames.CLONE_FORGE_START, this.handleForgeRequest.bind(this));
+    EventBus.on(EventNames.CLONE_FORGE_START, this.handleForgeRequest.bind(this));
     
     this.enhancedInitialized = true;
   }
@@ -60,7 +60,7 @@ export class EnhancedCloneManager extends CloneManager {
     });
     
     // Emit creation event
-    EventBus.getInstance().emit(EventNames.CLONE_FORGE_COMPLETE, {
+    EventBus.emit(EventNames.CLONE_FORGE_COMPLETE, {
       laneId: lane.id,
       rate: lane.currentRate,
       stability: lane.stability,
@@ -173,7 +173,7 @@ export class EnhancedCloneManager extends CloneManager {
     this.activeBoosts.set(boostData.id, boostData);
     
     // Emit boost applied event
-    EventBus.getInstance().emit(EventNames.IDLE_BOOST_APPLIED, {
+    EventBus.emit(EventNames.IDLE_BOOST_APPLIED, {
       boostId: boostData.id,
       multiplier: boostData.multiplier,
       duration: boostData.duration,
@@ -334,7 +334,7 @@ export class EnhancedCloneManager extends CloneManager {
     }
     
     // Emit offline calculation event
-    EventBus.getInstance().emit(EventNames.OFFLINE_CALCULATED, {
+    EventBus.emit(EventNames.OFFLINE_CALCULATED, {
       timeElapsed: deltaMs,
       timeCapped: cappedMs,
       wasLimited: deltaMs > cappedMs,
@@ -427,7 +427,7 @@ export class EnhancedCloneManager extends CloneManager {
     lane.lastDecayUpdate = Date.now();
     
     // Emit decay refresh event
-    EventBus.getInstance().emit(EventNames.IDLE_DECAY_APPLIED, {
+    EventBus.emit(EventNames.IDLE_DECAY_APPLIED, {
       laneId,
       action: 'refresh',
       newRate: lane.currentRate

@@ -19,7 +19,7 @@ export class FactoryScene extends Scene {
         // Initialize managers
         this.gameStateManager = GameStateManager.getInstance();
         this.cloneManager = EnhancedCloneManager.getInstance();
-        this.eventBus = EventBus.getInstance();
+        this.eventBus = EventBus;
         
         // Load factory state
         this.factoryState = this.gameStateManager.loadFactory();

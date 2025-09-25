@@ -35,7 +35,7 @@
 ### Rapier Physics
 
 - **Package**: @dimforge/rapier2d-compat
-- **Version**: 0.14.0
+- **Version**: 0.18.2
 - **Description**: Rapier is a set of 2D and 3D physics engines written in Rust, with JavaScript bindings. It's used for realistic physics simulations in games.
 - **Official Documentation**: https://rapier.rs/docs/
 - **Usage in Project**: Provides the physics simulation for the game, including rigid bodies, colliders, and physics-based movement.
@@ -53,7 +53,7 @@
 
 | Package | Version | Description | Usage |
 |---------|---------|-------------|-------|
-| @dimforge/rapier2d-compat | 0.14.0 | 2D physics engine with JavaScript bindings | Provides physics simulation for the game |
+| @dimforge/rapier2d-compat | 0.18.2 | 2D physics engine with JavaScript bindings | Provides physics simulation for the game |
 | phaser | 3.88.0 | HTML5 game framework | Core game engine |
 
 ### Development Dependencies

@@ -20,7 +20,7 @@ export class PerformanceAnalyzer extends BaseManager {
 
   init() {
       // Initialize event system
-      this.eventSystem = EventBus.getInstance();
+      this.eventSystem = EventBus;
       
       // Performance weights for clone stat calculation
       this.performanceWeights = {

@@ -92,7 +92,7 @@ export class BossRewardSystem extends BaseManager {
   }
 
   setupEventListeners() {
-    const eventBus = EventBus.getInstance();
+    const eventBus = EventBus;
     
     // Listen for boss defeats
     eventBus.on(EventNames.BOSS_DEFEATED, this.handleBossDefeated.bind(this));
@@ -128,7 +128,7 @@ export class BossRewardSystem extends BaseManager {
       this.defeatedBosses.add(bossId);
       
       // Emit first clear event
-      EventBus.getInstance().emit(EventNames.BOSS_FIRST_CLEAR, {
+      EventBus.emit(EventNames.BOSS_FIRST_CLEAR, {
         bossId,
         bossName: bossConfig.name,
         tier: bossConfig.tier,
@@ -137,7 +137,7 @@ export class BossRewardSystem extends BaseManager {
     }
     
     // Emit reward claimed event
-    EventBus.getInstance().emit(EventNames.BOSS_REWARD_CLAIMED, {
+    EventBus.emit(EventNames.BOSS_REWARD_CLAIMED, {
       bossId,
       bossName: bossConfig.name,
       isFirstClear,
@@ -204,7 +204,7 @@ export class BossRewardSystem extends BaseManager {
    */
   grantRewards(rewards, multipliers, isFirstClear) {
     const economyManager = EconomyManager.getInstance();
-    const eventBus = EventBus.getInstance();
+    const eventBus = EventBus;
     const grantedRewards = {};
     
     // Grant resources with multipliers

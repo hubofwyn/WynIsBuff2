@@ -121,7 +121,7 @@ Focus areas for tests:
 ## Technology Stack
 
 - **Phaser 3.88.2**: HTML5 game framework
-- **Rapier 0.14.0**: 2D physics engine (accessed via PhysicsManager)
+- **Rapier 0.18.2**: 2D physics engine (accessed via PhysicsManager)
 - **Howler 2.2.4**: Audio management (wrapped by AudioManager)
 - **Vite 5.4.19**: Build tool with custom configs in `vite/` directory
 

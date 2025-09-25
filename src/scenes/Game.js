@@ -48,7 +48,15 @@ export class Game extends Scene {
             // Play in-level music
             const audio = AudioManager.getInstance();
             audio.stopMusic(AudioAssets.PROTEIN_PIXEL_ANTHEM);
-            audio.playMusic(AudioAssets.HYPER_BUFF_BLITZ);
+            // Only play if audio context is unlocked (user has interacted)
+            if (this.sound.locked === false) {
+                audio.playMusic(AudioAssets.HYPER_BUFF_BLITZ);
+            } else {
+                // Will play once user interacts with the game
+                this.sound.once('unlocked', () => {
+                    audio.playMusic(AudioAssets.HYPER_BUFF_BLITZ);
+                });
+            }
         
         try {
             // Initialize event system
@@ -77,6 +85,9 @@ export class Game extends Scene {
             if (!physicsInitialized) {
                 throw new Error('Failed to initialize physics');
             }
+            
+            // P0: Create known-good test ground and probe
+            this.createTestGround();
             
             // Initialize UI Manager
             this.uiManager = UIManager.getInstance();
@@ -135,9 +146,81 @@ export class Game extends Scene {
                 selectedKey
             );
             
+            // Pass input keys to player controller
+            if (this.inputManager && this.inputManager.keys) {
+                console.log('[Game] Passing input keys to PlayerController');
+                this.playerController.setInputKeys(this.inputManager.keys);
+            } else {
+                console.warn('[Game] InputManager keys not available yet!');
+            }
+            
             // DON'T register player with physics manager - player manages own sprite position
             // because it uses KinematicCharacterController for advanced movement
             console.log('[Game] Player uses KinematicCharacterController, managing own sprite position');
+            
+            // FORCE SYNC: Maintain registry of physics bodies to sync
+            this.physicsSync = this.physicsSync || [];
+            
+            // Register player for forced sync
+            if (this.playerController) {
+                const body = this.playerController.getBody ? this.playerController.getBody() : this.playerController.body;
+                const sprite = this.playerController.getSprite ? this.playerController.getSprite() : this.playerController.sprite;
+                
+                if (body && sprite) {
+                    this.physicsSync.push({ 
+                        rb: body, 
+                        sprite: sprite, 
+                        type: 'player' 
+                    });
+                    console.log('[Game] Registered player for physics sync');
+                } else {
+                    console.warn('[Game] Player controller missing body or sprite for sync');
+                }
+            }
+            
+            // Install postupdate hook to force sprite sync AFTER physics
+            if (!this._syncHookInstalled) {
+                this._syncHookInstalled = true;
+                const PPM = 100; // pixels-per-meter constant
+                
+                this.events.on('postupdate', () => {
+                    if (!this.physicsSync || !this.physicsSync.length) return;
+                    
+                    for (const syncItem of this.physicsSync) {
+                        try {
+                            const { rb, sprite, type } = syncItem;
+                            if (!rb || !sprite || !rb.translation) continue;
+                            
+                            const p = rb.translation();
+                            if (!p || typeof p.x !== 'number' || typeof p.y !== 'number') {
+                                console.warn(`[SYNC] Invalid translation for ${type}`);
+                                continue;
+                            }
+                            
+                            const pixelX = p.x * PPM;
+                            const pixelY = p.y * PPM;
+                            
+                            // Only log occasionally to avoid spam
+                            if (Math.random() < 0.01) {
+                                console.log(`[SYNC] ${type} body: (${p.x.toFixed(2)}, ${p.y.toFixed(2)}) → sprite: (${pixelX.toFixed(0)}, ${pixelY.toFixed(0)})`);
+                            }
+                            
+                            sprite.setPosition(pixelX, pixelY);
+                            
+                            // Sync rotation if available
+                            if (typeof rb.rotation === 'function') {
+                                const rot = rb.rotation();
+                                if (typeof rot === 'number') {
+                                    sprite.setRotation(rot);
+                                }
+                            }
+                        } catch (error) {
+                            console.error('[SYNC] Error syncing physics:', error);
+                        }
+                    }
+                });
+                console.log('[Game] Force sync hook installed');
+            }
             
             // Listen for Pause events via InputManager (ESC key)
             this.eventSystem.on(EventNames.PAUSE, () => {
@@ -558,5 +641,161 @@ export class Game extends Scene {
         } catch (error) {
             console.error('[Game] Error in update:', error);
         }
+    }
+    
+    /**
+     * P0: Create known-good test ground and probe to verify collision system
+     */
+    createTestGround() {
+        // Get RAPIER from registry (loaded in Boot scene)
+        const RAPIER = this.registry.get('RAPIER');
+        if (!RAPIER) {
+            console.error('[Game] RAPIER not available in registry!');
+            return;
+        }
+        
+        const world = this.physicsManager.getWorld();
+        if (!world) {
+            console.error('[Game] No physics world available for test ground!');
+            return;
+        }
+        
+        const PPM = 100; // pixels-per-meter
+        const GROUND_Y_M = 6.0; // meters from top
+        const GROUND_W_M = 20.0; // meters wide
+        const GROUND_H_M = 2.0; // meters thick - P0-7: thicker to prevent tunneling
+        
+        console.log('[P0] Creating known-good test ground...');
+        
+        // Fixed ground (not a sensor)
+        const groundRb = world.createRigidBody(
+            RAPIER.RigidBodyDesc.fixed()
+                .setTranslation(0, GROUND_Y_M)
+        );
+        
+        const groundCol = world.createCollider(
+            RAPIER.ColliderDesc.cuboid(GROUND_W_M/2, GROUND_H_M/2)
+                .setRestitution(0)
+                .setFriction(0.9)
+                .setSensor(false), // CRITICAL: Not a sensor
+            groundRb
+        );
+        
+        // Visual ground
+        const groundSprite = this.add.rectangle(
+            0, GROUND_Y_M * PPM, 
+            GROUND_W_M * PPM, GROUND_H_M * PPM, 
+            0x444444
+        );
+        groundSprite.setOrigin(0.5, 0.5);
+        
+        // Dynamic probe above ground
+        const probeRb = world.createRigidBody(
+            RAPIER.RigidBodyDesc.dynamic()
+                .setTranslation(0, GROUND_Y_M - 3)
+                .setCanSleep(false)
+        );
+        
+        // P0-7: Enable CCD on probe
+        probeRb.enableCcd(true);
+        
+        const probeCol = world.createCollider(
+            RAPIER.ColliderDesc.cuboid(0.25, 0.25)
+                .setDensity(1)
+                .setSensor(false), // CRITICAL: Not a sensor
+            probeRb
+        );
+        
+        // Visual probe
+        const probeSprite = this.add.rectangle(
+            0, (GROUND_Y_M - 3) * PPM,
+            50, 50,
+            0xff0000
+        );
+        
+        // Register probe for sync
+        this.physicsSync = this.physicsSync || [];
+        this.physicsSync.push({
+            rb: probeRb,
+            sprite: probeSprite,
+            type: 'test_probe'
+        });
+        
+        // Quick smoke test for 3 seconds
+        this.time.delayedCall(3000, () => {
+            const p = probeRb.translation();
+            console.log('[SMOKE] Test probe position after 3s:', {
+                y: p.y.toFixed(3),
+                expected_range: `${(GROUND_Y_M - 1.5).toFixed(1)} to ${GROUND_Y_M.toFixed(1)}`,
+                test_pass: p.y > (GROUND_Y_M - 1.5) && p.y < GROUND_Y_M
+            });
+            
+            if (p.y > (GROUND_Y_M - 1.5) && p.y < GROUND_Y_M) {
+                console.log('✅ [SMOKE] Test probe landed on ground - collision system working!');
+            } else {
+                console.error('❌ [SMOKE] Test probe fell through world - collision system FAILED!');
+            }
+        });
+        
+        console.log('[P0] Test ground created. Probe should land on ground in ~3s');
+        
+        // Diagnostic dump of all colliders in world
+        let n = 0;
+        world.forEachCollider((c) => {
+            try {
+                // Try to compute AABB - method might vary by Rapier version
+                let aabb = null;
+                if (typeof c.computeAABB === 'function') {
+                    aabb = c.computeAABB();
+                } else if (typeof c.worldAabb === 'function') {
+                    aabb = c.worldAabb();
+                } else {
+                    // Fallback: try to get translation from parent body
+                    const parent = c.parent();
+                    if (parent) {
+                        const translation = parent.translation();
+                        aabb = {
+                            min: { x: translation.x - 1, y: translation.y - 1 },
+                            max: { x: translation.x + 1, y: translation.y + 1 }
+                        };
+                    }
+                }
+                
+                console.debug('[P0] COL', ++n, {
+                    isSensor: c.isSensor(),
+                    parentType: c.parent()?.bodyType(), // 0=dynamic,1=static(fixed),2=kinematic
+                    aabb: aabb ? { 
+                        min: { x: aabb.min.x.toFixed(2), y: aabb.min.y.toFixed(2) },
+                        max: { x: aabb.max.x.toFixed(2), y: aabb.max.y.toFixed(2) }
+                    } : 'unavailable'
+                });
+            } catch (err) {
+                console.debug('[P0] COL', ++n, 'Error getting info:', err.message);
+            }
+        });
+        // Get body and collider count - API may vary by Rapier version
+        let bodyCount = 0;
+        let colliderCount = 0;
+        
+        try {
+            // Try the function call syntax first
+            if (typeof world.numBodies === 'function') {
+                bodyCount = world.numBodies();
+            } else if (typeof world.bodies === 'object') {
+                // Fallback: count bodies manually
+                world.bodies.forEach(() => bodyCount++);
+            }
+            
+            if (typeof world.numColliders === 'function') {
+                colliderCount = world.numColliders();
+            } else if (typeof world.colliders === 'object') {
+                // Fallback: count colliders manually
+                world.forEachCollider(() => colliderCount++);
+            }
+        } catch (err) {
+            console.debug('[P0] Error counting bodies/colliders:', err.message);
+        }
+        
+        console.debug('[P0] Bodies:', bodyCount, 'Colliders:', colliderCount);
     }
 }

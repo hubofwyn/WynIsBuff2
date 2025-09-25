@@ -2,6 +2,7 @@ import Phaser, { Scene } from 'phaser';
 import { UIConfig } from '../constants/UIConfig';
 import { AudioManager, GameStateManager } from '@features/core';
 import { SceneKeys } from '../constants/SceneKeys.js';
+import { createSecondaryButton } from '../ui/UIButton.js';
 
 /**
  * SettingsScene: placeholder scene for game settings UI.
@@ -307,28 +308,18 @@ export class SettingsScene extends Scene {
       // Persist
       gameState.saveSettings(Object.assign({}, settings, { accessibility: acc }));
     });
-    // Back button
-    const backBtn = this.add.text(
-      width / 2,
-      height / 2 + 200,
-      'Back',
-      menuButton
-    )
-      .setOrigin(0.5)
-      .setInteractive();
-    focusables.push(backBtn);
-    // Button interactions
-    backBtn.on('pointerover', () => {
-      backBtn.setTint(menuButton.hoverTint);
-      AudioManager.getInstance().playSFX('hover');
-    });
-    backBtn.on('pointerout', () => backBtn.clearTint());
-    backBtn.on('pointerdown', () => {
+    // Back button using generated UI
+    const { btn: backBtnUI, txt: backTxt } = createSecondaryButton(this, width / 2, height / 2 + 200, 'Back', () => {
       AudioManager.getInstance().playSFX('click');
-      // Return to pause overlay
-      this.scene.stop();
-      this.scene.resume(SceneKeys.PAUSE);
-    });
+      // Return to pause overlay if active; otherwise go to Main Menu
+      if (this.scene.isActive(SceneKeys.PAUSE)) {
+        this.scene.stop();
+        this.scene.resume(SceneKeys.PAUSE);
+      } else {
+        this.scene.start(SceneKeys.MAIN_MENU);
+      }
+    }, { scale: 0.35, focusRing: true });
+    focusables.push(backTxt);
     // ESC key to go back
     this.input.keyboard.once('keydown-ESC', () => {
       AudioManager.getInstance().playSFX('click');
@@ -348,7 +339,7 @@ export class SettingsScene extends Scene {
     // High-contrast and subtitles toggles
     focusables.push(hcText, subText);
     // Back button
-    focusables.push(backBtn);
+    focusables.push(backTxt);
     let currentFocus = 0;
     // Highlight and clear helper
     const highlight = (el) => el.setStyle({ backgroundColor: '#4444aa' });

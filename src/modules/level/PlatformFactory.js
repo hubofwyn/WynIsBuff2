@@ -2,6 +2,7 @@ import RAPIER from '@dimforge/rapier2d-compat';
 import { EventNames } from '../../constants/EventNames';
 import { PhysicsConfig } from '../../constants/PhysicsConfig.js';
 import { pixelsToMeters } from '../../constants/PhysicsConstants.js';
+import { CollisionGroups } from '../../constants/CollisionGroups.js';
 
 /**
  * PlatformFactory class is responsible for creating and managing static platforms
@@ -99,7 +100,19 @@ export class PlatformFactory {
                         )
                         .setFriction(PhysicsConfig.ground.friction)
                         .setRestitution(PhysicsConfig.ground.restitution)
-                        .setDensity(PhysicsConfig.ground.density);
+                        .setDensity(PhysicsConfig.ground.density)
+                        .setSensor(false) // P0-4: CRITICAL - must not be sensor
+                        // STATIC collides with DYNAMIC, PLAYER, ENEMY
+                        .setCollisionGroups(
+                            CollisionGroups.createMask(
+                                CollisionGroups.STATIC,
+                                (CollisionGroups.DYNAMIC | CollisionGroups.PLAYER | CollisionGroups.ENEMY)
+                            )
+                        )
+                        .setActiveEvents(
+                            (RAPIER.ActiveEvents?.COLLISION_EVENTS || 0)
+                            | (RAPIER.ActiveEvents?.INTERSECTION_EVENTS || 0)
+                        );
                         
                     const platformCollider = this.world.createCollider(
                         platformColliderDesc, 

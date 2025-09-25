@@ -1,5 +1,6 @@
 import { Scene } from 'phaser';
 import { GameStateManager, EventSystem, AudioManager } from '@features/core';
+import { ImageAssets } from '../constants/Assets.js';
 import { EventNames } from '../constants/EventNames';
 import { UIConfig } from '../constants/UIConfig';
 import { SceneKeys } from '../constants/SceneKeys.js';
@@ -52,19 +53,19 @@ export class CharacterSelect extends Scene {
         // Character options with colors and descriptions
         const options = [
             { 
-                key: 'ilaSprite', 
+                key: ImageAssets.GEN_SPRITE_CLUMPER_BOSS, 
                 label: 'Favorite Sister', 
                 color: '#FF6B9D',
                 description: 'Swift and agile\nMaster of precision'
             },
             { 
-                key: 'axelSprite', 
+                key: ImageAssets.GEN_SPRITE_PULSAR_BOSS, 
                 label: 'Not Buff Axel', 
                 color: '#4ECDC4',
                 description: 'Balanced fighter\nJack of all trades'
             },
             { 
-                key: 'wynSprite', 
+                key: ImageAssets.GEN_SPRITE_WYN_IDLE, 
                 label: 'Wyn the Buff', 
                 color: '#FFE66D',
                 description: 'Maximum power\nUnstoppable force'
@@ -72,8 +73,20 @@ export class CharacterSelect extends Scene {
         ];
 
         const cardConfig = UIConfig.characterSelect;
-        const totalWidth = (cardConfig.cardWidth + cardConfig.cardPadding) * options.length - cardConfig.cardPadding;
-        const startX = (width - totalWidth) / 2 + cardConfig.cardWidth / 2;
+        // Responsive card sizing to avoid overlap on narrow viewports
+        const margin = 40;
+        const available = Math.max(100, width - margin * 2);
+        let cardWidth = cardConfig.cardWidth;
+        let cardHeight = cardConfig.cardHeight;
+        const needed = cardConfig.cardWidth * options.length + cardConfig.cardPadding * (options.length - 1);
+        if (needed > available) {
+            const per = Math.floor((available - cardConfig.cardPadding * (options.length - 1)) / options.length);
+            cardWidth = Math.max(120, per);
+            // maintain aspect ratio approximately
+            cardHeight = Math.floor(cardWidth * (cardConfig.cardHeight / cardConfig.cardWidth));
+        }
+        const totalWidth = (cardWidth + cardConfig.cardPadding) * options.length - cardConfig.cardPadding;
+        const startX = (width - totalWidth) / 2 + cardWidth / 2;
 
         // Track selected card for visual feedback
         let selectedCard = null;
@@ -104,18 +117,18 @@ export class CharacterSelect extends Scene {
                 cardBg.clear()
                     .fillStyle(cardConfig.cardBackgroundColor, fillAlpha)
                     .fillRoundedRect(
-                        -cardConfig.cardWidth / 2, 
-                        -cardConfig.cardHeight / 2, 
-                        cardConfig.cardWidth, 
-                        cardConfig.cardHeight, 
+                        -cardWidth / 2, 
+                        -cardHeight / 2, 
+                        cardWidth, 
+                        cardHeight, 
                         cardConfig.cardBorderRadius
                     )
                     .lineStyle(borderWidth, borderColor)
                     .strokeRoundedRect(
-                        -cardConfig.cardWidth / 2, 
-                        -cardConfig.cardHeight / 2, 
-                        cardConfig.cardWidth, 
-                        cardConfig.cardHeight, 
+                        -cardWidth / 2, 
+                        -cardHeight / 2, 
+                        cardWidth, 
+                        cardHeight, 
                         cardConfig.cardBorderRadius
                     );
             };
@@ -125,10 +138,10 @@ export class CharacterSelect extends Scene {
             const glow = this.add.graphics()
                 .fillStyle(Phaser.Display.Color.HexStringToColor(opt.color).color, 0.3)
                 .fillRoundedRect(
-                    -cardConfig.cardWidth / 2 - 10, 
-                    -cardConfig.cardHeight / 2 - 10, 
-                    cardConfig.cardWidth + 20, 
-                    cardConfig.cardHeight + 20, 
+                    -cardWidth / 2 - 10, 
+                    -cardHeight / 2 - 10, 
+                    cardWidth + 20, 
+                    cardHeight + 20, 
                     cardConfig.cardBorderRadius + 5
                 );
             glow.setVisible(false);
@@ -136,11 +149,20 @@ export class CharacterSelect extends Scene {
             // Character sprite
             let sprite;
             if (this.textures.exists(opt.key)) {
-                sprite = this.add.image(0, -30, opt.key)
-                    .setDisplaySize(120, 120)
-                    .setOrigin(0.5);
+                sprite = this.add.image(0, -30, opt.key).setOrigin(0.5);
+                // Fit portrait to card while preserving aspect ratio
+                const maxW = Math.floor(cardWidth * 0.6);
+                const maxH = Math.floor(cardHeight * 0.6);
+                const tx = this.textures.get(opt.key);
+                const base = tx?.getSourceImage ? tx.getSourceImage() : null;
+                const naturalW = (base && base.width) || sprite.width;
+                const naturalH = (base && base.height) || sprite.height;
+                const scale = Math.min(maxW / naturalW, maxH / naturalH, 1);
+                sprite.setDisplaySize(Math.floor(naturalW * scale), Math.floor(naturalH * scale));
             } else {
-                sprite = this.add.rectangle(0, -30, 120, 120, 0x666699)
+                const maxW = Math.floor(cardWidth * 0.6);
+                const maxH = Math.floor(cardHeight * 0.6);
+                sprite = this.add.rectangle(0, -30, maxW, maxH, 0x666699)
                     .setOrigin(0.5);
             }
 
@@ -152,7 +174,7 @@ export class CharacterSelect extends Scene {
             }).setOrigin(0.5);
 
             // Interactive area
-            const hitArea = this.add.rectangle(0, 0, cardConfig.cardWidth, cardConfig.cardHeight, 0x000000, 0)
+            const hitArea = this.add.rectangle(0, 0, cardWidth, cardHeight, 0x000000, 0)
                 .setInteractive({ useHandCursor: true });
 
             // Add all elements to container

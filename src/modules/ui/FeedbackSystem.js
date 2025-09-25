@@ -87,7 +87,7 @@ export class FeedbackSystem extends BaseManager {
      * Setup event listeners for automatic feedback
      */
     setupEventListeners() {
-        const eventBus = EventBus.getInstance();
+        const eventBus = EventBus;
         
         // Combat feedback
         eventBus.on(EventNames.PLAYER_TAKE_DAMAGE, this.handlePlayerDamage.bind(this));
@@ -607,7 +607,7 @@ export class FeedbackSystem extends BaseManager {
         this.cleanup();
         
         // Remove event listeners
-        const eventBus = EventBus.getInstance();
+        const eventBus = EventBus;
         eventBus.off(EventNames.PLAYER_TAKE_DAMAGE, this.handlePlayerDamage);
         eventBus.off(EventNames.BOSS_DEFEATED, this.handleBossDefeated);
         eventBus.off(EventNames.RESOURCE_GAINED, this.handleResourceGained);

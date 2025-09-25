@@ -68,6 +68,18 @@
     }
   },
   "workflows": {
+    "get-more-buff": {
+      "description": "End-to-end orchestration for the get-more-buff flow (events, rewards, factory, determinism, tests, save/load)",
+      "steps": [
+        { "phase": "events-wiring", "agent": "architecture-guardian", "actions": ["add BOSS_FIRST_CLEAR", "standardize EventBus usage", "normalize forge events"] },
+        { "phase": "boss-rewards", "agent": "architecture-guardian", "actions": ["instantiate BossRewardSystem", "unify resource schema", "emit full boss defeat payload"] },
+        { "phase": "determinism", "agent": "game-physics-expert", "actions": ["clamp gaussian", "add rng tests"] },
+        { "phase": "factory-integration", "agent": "architecture-guardian", "actions": ["drive Factory from EnhancedCloneManager lanes", "visualize decay/effective rate", "EventBus events"] },
+        { "phase": "tests", "agent": "architecture-guardian", "actions": ["add real BossRewardSystem integration test", "add lane/Factory integration test", "wire into run-tests.cjs"] },
+        { "phase": "save-load", "agent": "architecture-guardian", "actions": ["persist defeated bosses", "persist lanes/boosts centrally"] },
+        { "phase": "polish", "agent": "architecture-guardian", "actions": ["gate logs in prod", "alphabetize barrels", "2-space indent"] }
+      ]
+    },
     "feature-development": {
       "description": "Complete feature development workflow",
       "steps": [
@@ -127,6 +139,53 @@
           "agent": "architecture-guardian",
           "actions": ["ensure maintainability", "verify no regressions"]
         }
+      ]
+    },
+    "asset-corruption-recovery": {
+      "description": "Comprehensive workflow for detecting, handling, and recovering from corrupted image assets",
+      "steps": [
+        {
+          "phase": "detection",
+          "agent": "architecture-guardian",
+          "actions": ["add asset validation to preloader", "implement corruption detection", "log asset health metrics"]
+        },
+        {
+          "phase": "fallback-system",
+          "agent": "architecture-guardian", 
+          "actions": ["create placeholder textures", "implement graceful degradation", "add fallback asset mapping"]
+        },
+        {
+          "phase": "recovery",
+          "agent": "architecture-guardian",
+          "actions": ["add asset reloading mechanism", "implement retry logic", "create asset health monitoring"]
+        },
+        {
+          "phase": "prevention",
+          "agent": "architecture-guardian",
+          "actions": ["add asset validation script", "implement CI asset checks", "create asset integrity verification"]
+        }
+      ]
+    }
+    ,
+    "refactor-phase-1": {
+      "description": "Unify asset usage across scenes, integrate generated UI, normalize LevelLoader backgrounds, and gate with usage audit + tests",
+      "steps": [
+        { "phase": "assets-normalize", "agent": "architecture-guardian", "actions": ["replace raw keys", "autoload GEN_* in Preloader", "prune manifest if needed"] },
+        { "phase": "scene-unify", "agent": "architecture-guardian", "actions": ["use generated buttons/icons", "ParallaxLayers for RunScene only"] },
+        { "phase": "level-loader", "agent": "architecture-guardian", "actions": ["map biome→parallax constants", "fallback to gradient"] },
+        { "phase": "boss-visuals", "agent": "architecture-guardian", "actions": ["display boss sprites/emblem in Results", "wire sprites in boss scenes"] },
+        { "phase": "tests-gates", "agent": "architecture-guardian", "actions": ["add Results/LevelLoader tests", "usage audit = 0/0"] }
+      ]
+    }
+    ,
+    "phaser4-migration": {
+      "description": "Staged migration plan to Phaser 4 with Rapier integration and smoke tests",
+      "steps": [
+        { "phase": "planning", "agent": "architecture-guardian", "actions": ["freeze phaser3 scenes list", "identify rendering-only surfaces", "define smoke harness"] },
+        { "phase": "sandbox", "agent": "architecture-guardian", "actions": ["create phaser4 playground app", "render simple sprite + parallax", "wire rapier"] },
+        { "phase": "compat", "agent": "architecture-guardian", "actions": ["port ParallaxLayers to phaser4 api", "map input/events diffs", "verify asset loader paths"] },
+        { "phase": "smoke-tests", "agent": "architecture-guardian", "actions": ["headless boot smoke", "parallax smoke", "particle emit smoke"] },
+        { "phase": "rollout", "agent": "architecture-guardian", "actions": ["switch branches per scene", "parallel validation", "final cutover"] }
       ]
     }
   },

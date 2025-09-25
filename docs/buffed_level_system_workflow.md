@@ -1,82 +1,162 @@
-## Buffed Modular Level System: Architect Tier Workflow
+## Buffed Level System Orchestrated Workflow
 
-This workflow upgrades WynIsBuff2’s level/progression architecture to match the **ULTRA‑COMPREHENSIVE LEVEL & PHYSICS DESIGN BIBLE**, while strengthening modularity, scalability, and futureproofing.
+This guide makes the “buffed” level and rewards loop practical and automated using the orchestration and asset tooling already in this repo. It ties code fixes, tests, and art generation into one predictable flow you can run locally and in CI.
 
----
+—
 
-### Overview
-Current code uses hardcoded JS objects for level data, and separate classes for platform/collectible instantiation and progression. To "buff" the system:
-- All levels/zones will move to data-driven YAML (validated by schema)
-- Level objects will be spawned through a unified prefab registry
-- Difficulty/variation will rely on a scalable API
-- Zone/stage/progression logic will become explicit
-- The system will allow easy future extension (UX triggers, effects, RX stages, etc)
+### Goals
+- Complete Run → Rewards → Forge → Factory loop with deterministic behavior and tests.
+- Normalize events and resources so systems interoperate cleanly.
+- Generate and audit first‑wave art assets under budget with resume‑safe runs.
+- Produce a reproducible, locked asset manifest with a quick visual preview.
 
----
+—
 
-### 1. Data-Driven Level Pipeline (YAML)
-1. **Create** `assets/levels/` directory. Store all levels here as YAML files:
-    - Naming: `Z2_MomentumMountains/stage-1.yaml`, etc.
-2. **Write** level schema to `schemas/levels.schema.json` — based on the Bible doc.
-3. **Implement** YAML loader in `LevelLoader` (or a new module):
-    - On load, YAML is parsed → JS object
-    - Schema is _AJV_-validated; errors must halt build
-4. **Migrate**/proxy any legacy `LevelData` content into the new data flow, at least for one test stage.
+### Prerequisites
+- Node 18+ and npm.
+- Root `.env` with `OPENAI_API_KEY` set. Verify: `npm run check:openai`.
+- Read the workflow plan: `npm run get-more-buff:plan`.
 
----
+—
 
-### 2. Modular & Extensible Prefab Registry
-1. **Create** a `PrefabRegistry` mapping type string (e.g. `"ledge"`, `"pit"`, `"mover"`) to a factory method/class.
-    - E.g. `"ledge"` → `PlatformFactory`, `"mover"` → `MovingPlatformController`, etc.
-2. Extend `LevelLoader` to, for each object in the YAML's `objects` array:
-    - Look up prefab by `type`
-    - Pass difficulty/scaler props (see below)
-    - Factory adds entity/physics/collision as needed
-3. **Allow easy registration**: New prefab types can be added without changing LevelLoader, just by updating the registry.
+### One‑Command Happy Path
+Use this to gate PRs while you build out tasks incrementally.
 
----
+```
+npm run get-more-buff  # prints workflow, runs verifications, then tests
+```
 
-### 3. Difficulty-Scaler API & Dynamic Level Props
-1. **Write/extend** a `makeScaler(zoneIndex)` API:
-    - Outputs param set: gap, platformW, moverSpeed, etc.
-2. At level load time, **injects** scaler props according to zone/stage (can be read from YAML meta).
-3. Factories use these props to tune platform gaps, spring power, enemy rate, hazard frequency, etc.
+This calls `scripts/orchestrate-get-more-buff.cjs` which checks event constants, boss reward wiring, determinism guardrails, and runs the test suite. It will fail until tasks in `tasks/get-more-buff.json` are completed.
 
----
+—
 
-### 4. Zone/Stage Progression Matrix
-1. **Implement** explicit support for zones and stages:
-    - Levels get IDs like `{ zone, stage }`, not just `level1`
-2. Progression/next-level logic uses the matrix, not a flat list.
-3. Support for remix (RX) stages, and staged difficulty.
-4. Read object quotas/mix (e.g. how many platforms, turrets) from the matrix as the source of truth.
+### Phase A — Events, Rewards, Determinism
+Bring the systems into agreement first. These changes are small and unlock everything else.
 
----
+Commands
+- Show phases: `npm run get-more-buff:plan`
+- Verify + tests: `npm run get-more-buff`
 
-### 5. Event Triggers, UX, and Boss-Escape Hooks
-1. Level objects include support for triggers/events (e.g., checkpoints, gates, tutorials, sensors).
-2. Factories emit to the in-game Event System (analytics/debug ready).
-3. Future‑proof: Effects/polish layers and boss-escape system can be layered on without touching other code.
+Acceptance Gates (verified by orchestrator)
+- Event constant `EventNames.BOSS_FIRST_CLEAR === 'boss:firstClear'` exists.
+- Boss defeat emits via global `EventBus` with `{ bossId, runScore, timeElapsed, hitsTaken }`.
+- `DeterministicRNG.gaussian` clamps `u1 >= 1e-12` to avoid `log(0)`.
+- `FactoryScene` references `EventBus` for cross‑system events (heuristic).
 
----
+Files of interest
+- `src/constants/EventNames.js`
+- `src/modules/boss/PulsarController.js`
+- `src/modules/boss/BossRewardSystem.js`
+- `src/scenes/FactoryScene.js`
+- `src/core/DeterministicRNG.js`
 
-### 6. Physics & Unit Consistency
-1. **Centralize** physics units/scaling (e.g., `PX_PER_M`, masks) in a constants file, imported by all modules.
-2. All prefab/entity factories must respect these units.
+—
 
----
+### Phase B — Factory × Lanes Integration
+Wire `FactoryScene` to real production lanes and unify resource accounting.
 
-### 7. Migration, Testing, and Documentation
-1. Begin with a test YAML level and migrate over time. Proxy old data via the loader when bootstrapping.
-2. Document new workflows in `docs/` and `AIProjectDocs/`. Update readme and onboarding docs.
-3. Ensure all progression/hardness is testable with debug toggles + interfaces (step through progression, force scaler, etc).
-4. Validate by implementing a remix/RX stage and at least two non-trivial object types from the prefab bible.
+Tasks (see `tasks/get-more-buff.json`)
+- Drive Factory from `EnhancedCloneManager` lanes; show `effectiveRate`, decay, stability.
+- Unify where rewards are credited (extend or map to `EconomyManager`).
+- Add integration tests (BossRewardSystem, lanes → production → collection).
 
----
+Commands
+- Run test suite: `npm test`
 
-### Architectural Strengths Provided
-- **Easy expansion:** Designers add levels/zones/objects in YAML and registry, not code.
-- **Strict validation & reliability** via schema and modular prefab enforcement.
-- **Cleaner codebase:** No more growing monoliths or duplicative switch-cases.
-- **Ready for future features:** Boss systems, VFX, triggers fit cleanly into the event and prefab layers.
-- **Buff-level architecture:** Highly composable, designer/developer friendly, futureproof.
+—
+
+### Phase C — First‑Wave Art Assets (Budgeted, Resume‑Safe)
+If you already ran moneyed image generations, focus on integrating and using what’s present under `assets/images/generated/`. The generation steps remain available but should be run only when you actually need new assets.
+
+Shot Definitions
+- File: `asset-generation/shots.json` (43+ entries, expanded to 46 in plan)
+- Validator: `asset-generation/tools/validate-shots.mjs`
+
+Integrate What You Have
+- Manifest already includes generated keys (prefixed `gen*`), and `src/constants/Assets.js` exposes `ImageAssets.GEN_*` and `ImagePaths.*`.
+- Preloader autoloads all generated image keys; no manual wiring needed for new ones.
+- Usage audit to spot unused or missing references:
+  - `npm run assets:usage-audit` → writes `.reports/assets/usage-audit.json`
+
+Generate (Only If Needed)
+- Dry-run budget estimate:
+  - `node asset-generation/tools/wyn-gfx.mjs all --budget=20 --n=4 --dry-run`
+- Thumbs → score → finals:
+  - `npm run gfx:thumbs` → `npm run gfx:score` → `npm run gfx:final`
+- Then integrate, preview, and lock as below.
+
+Audit, Integrate, Preview, Lock
+- Audit images (dimensions, POT, alpha presence):
+  - `npm run gfx:audit`
+- Integrate winners into game assets and update manifest/constants:
+  - `npm run gfx:integrate`
+- Make a quick visual preview grid HTML:
+  - `npm run --prefix asset-generation gfx:preview`
+- Write a lockfile with SHA‑256s for reproducibility:
+  - `npm run --prefix asset-generation gfx:lock`
+
+Budget & Safety
+- Budget guard defaults to `$20`; adjust with `--budget=...`.
+- Resume‑safe skips already generated files and reuses scores.
+- Backdrops must NOT use alpha; sprites/UI must use alpha. The validator enforces this.
+
+Where results land
+- Generated images: `asset-generation/generated/` (intermediate) and `assets/images/generated/` (integrated finals)
+- Reports: `.reports/assets/*` (scores, audit, preview)
+- Manifest: `assets/manifest.json` (+ `assets/manifest.lock.json` after lock step)
+
+—
+
+### Phase D — CI Gate (recommended)
+Add a CI job that runs the orchestrator and asset audit to block regressions.
+
+Suggested steps
+- `npm ci`
+- `npm run get-more-buff` (verifications + tests)
+- `npm run gfx:audit` (should pass on integrated images in `assets/images/generated/`)
+
+Optional
+- Run `check:openai` and a small `gfx:thumbs` smoke on a feature branch (skip on forks).
+
+—
+
+### Operations — Day‑to‑Day Use
+- Iterating on code: run `npm run get-more-buff` frequently; keep tasks green.
+- Using existing assets: rely on autoloaded `ImageAssets.GEN_*` keys directly in scenes.
+- If you need a few new assets: update `asset-generation/shots.json`, then run thumbs → score → finals → integrate for just those (use `--include=…`).
+- Partial runs (only when needed):
+  - `node asset-generation/tools/wyn-gfx.mjs thumbs --include=sprite_wyn --budget=5`
+
+—
+
+### Patterns — Using the Assets In‑Game
+- Parallax backdrops (any biome):
+  - Import helper: `import { ParallaxLayers } from '../systems/ParallaxLayers.js'`
+  - Create layers in a Scene:
+    - `const { container } = ParallaxLayers.create(this, [ImageAssets.GEN_BACKDROP_FACTORY_SKY, ImageAssets.GEN_BACKDROP_FACTORY_MID, ImageAssets.GEN_BACKDROP_FACTORY_FORE, ImageAssets.GEN_BACKDROP_FACTORY_FG], [0.1, 0.3, 0.6, 0.9]);`
+    - `this.add.existing(container);`
+- Sprites/UI: Use `ImageAssets.GEN_SPRITE_*` and `ImageAssets.GEN_UI_*` directly in `add.image` or as textures for sprites.
+- Backdrops policy: Keep backdrops behind gameplay; do not apply alpha or blend modes that reintroduce transparency.
+
+—
+
+### Ownership & Acceptance
+Source of truth for work items and acceptance criteria:
+- `tasks/get-more-buff.json` — task IDs, dependencies, success criteria, file list, owners
+- `.claude-orchestration.json` — workflow phases and intended actions
+- `scripts/orchestrate-get-more-buff.cjs` — verifications wired to concrete code
+
+When all gates pass:
+- The loop Run → Rewards → Forge → Factory is deterministic and test‑covered.
+- First‑wave art is integrated, previewable, audited, and locked.
+- Event names and resource flows are normalized; logs are gated in production.
+
+—
+
+### Troubleshooting
+- Missing `OPENAI_API_KEY`: set it in project root `.env`, then `npm run check:openai`.
+- Asset validator fails: fix prompts in `asset-generation/shots.json` (sprites must say “transparent background”; backdrops must not use alpha).
+- Budget exceeded: use `--budget=…` or run in smaller batches with `--include=…`.
+- Integration failed to update constants: ensure `npm run generate-assets` works locally (used by the integrator).
+
+This workflow stays grounded in the current codebase and tooling, so you can adopt it incrementally and keep shipping while leveling up the system.

@@ -90,7 +90,7 @@ npm run typecheck        # TypeScript checking (if configured)
 
 ### Tech Stack:
 - Phaser 3.88.2 (game framework)
-- Rapier 0.14.0 (physics via PhysicsManager)
+- Rapier 0.18.2 (physics via PhysicsManager)
 - Howler 2.2.4 (audio via AudioManager)
 - Vite 5.4.19 (build tool)
 

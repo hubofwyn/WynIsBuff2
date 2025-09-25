@@ -3,6 +3,7 @@ import { UIConfig } from '../constants/UIConfig';
 import { AudioManager } from '@features/core';
 import { SceneKeys } from '../constants/SceneKeys.js';
 import { ImageAssets, AudioAssets } from '../constants/Assets.js';
+import { createPrimaryButton, createSecondaryButton } from '../ui/UIButton.js';
 
 /**
  * WelcomeScene: shows the game title and prompts player to start.
@@ -41,7 +42,10 @@ export class WelcomeScene extends Scene {
             letterSpacing: '6px'
         }).setOrigin(0.5);
         
-        // Interactive prompt with animation
+        // Generated UI button (primary)
+        const { btn: startBtn } = createPrimaryButton(this, width / 2, height * 0.65, 'START', () => startGame(), { scale: 0.5 });
+
+        // Interactive prompt with animation (overlay on button)
         const promptText = this.add.text(width / 2, height * 0.65, 'CLICK TO START YOUR TRAINING', {
             fontFamily: 'Arial, sans-serif',
             fontSize: '24px',
@@ -113,7 +117,7 @@ export class WelcomeScene extends Scene {
         });
         
         // Handle user interaction
-        const startGame = () => {
+        const startGame = (levelOverride) => {
             // Try to unlock audio context
             if (window.Howler && window.Howler.ctx && window.Howler.ctx.state === 'suspended') {
                 window.Howler.ctx.resume();
@@ -125,15 +129,42 @@ export class WelcomeScene extends Scene {
             // Smooth transition
             this.cameras.main.fadeOut(800, 0, 0, 0);
             this.time.delayedCall(800, () => {
-                this.scene.start(SceneKeys.CHARACTER_SELECT);
+                if (levelOverride) {
+                    this.scene.start(SceneKeys.RUN, { level: levelOverride });
+                } else {
+                    this.scene.start(SceneKeys.CHARACTER_SELECT);
+                }
             });
         };
         
         // Start on SPACE key
-        this.input.keyboard.once('keydown-SPACE', startGame);
+        this.input.keyboard.once('keydown-SPACE', () => startGame());
         
         // Or start on pointer down
-        this.input.once('pointerdown', startGame);
+        this.input.once('pointerdown', () => startGame());
+
+        // Start on button click
+        // startBtn pointerdown handled by UIButton
+
+        // Quick biome hotkeys for direct run (1/2/3)
+        this.input.keyboard.on('keydown-ONE', () => startGame('protein-plant'));
+        this.input.keyboard.on('keydown-TWO', () => startGame('metronome-mines'));
+        this.input.keyboard.on('keydown-THREE', () => startGame('factory-floor'));
+
+        // Simple biome select panel (generated buttons)
+        const panelY = height * 0.52;
+        const makeBiomeButton = (x, label, levelKey) => {
+            const { btn } = createSecondaryButton(this, x, panelY, label, () => startGame(levelKey), { scale: 0.35 });
+        };
+        makeBiomeButton(width/2 - 180, 'Protein Plant', 'protein-plant');
+        makeBiomeButton(width/2,       'Metronome Mines', 'metronome-mines');
+        makeBiomeButton(width/2 + 180, 'Factory Floor', 'factory-floor');
+
+        // Show three generated UI icons as examples
+        const iconY = height * 0.85;
+        this.add.image(width / 2 - 100, iconY, ImageAssets.GEN_UI_ICON_COIN).setScale(0.25);
+        this.add.image(width / 2,       iconY, ImageAssets.GEN_UI_ICON_DNA).setScale(0.25);
+        this.add.image(width / 2 + 100, iconY, ImageAssets.GEN_UI_ICON_GRIT).setScale(0.25);
         
         // Fade in the camera
         this.cameras.main.fadeIn(1000, 0, 0, 0);

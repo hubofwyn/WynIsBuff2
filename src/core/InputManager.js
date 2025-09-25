@@ -47,11 +47,17 @@ export class InputManager extends BaseManager {
         this.keys.C = keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.C);
         console.log('[InputManager] Created R and C keys');
 
-        // Arrow key events
-        this.keys.cursors.left.on('down', () => this.eventSystem.emit(EventNames.MOVE_LEFT));
-        this.keys.cursors.right.on('down', () => this.eventSystem.emit(EventNames.MOVE_RIGHT));
-        this.keys.cursors.up.on('down', () => this.eventSystem.emit(EventNames.MOVE_UP));
-        this.keys.cursors.down.on('down', () => this.eventSystem.emit(EventNames.MOVE_DOWN));
+        // Arrow key events (with proper payloads)
+        this.keys.cursors.left.on('down', () => this.eventSystem.emit(EventNames.MOVE_LEFT, { pressed: true }));
+        this.keys.cursors.right.on('down', () => this.eventSystem.emit(EventNames.MOVE_RIGHT, { pressed: true }));
+        this.keys.cursors.up.on('down', () => this.eventSystem.emit(EventNames.MOVE_UP, { pressed: true }));
+        this.keys.cursors.down.on('down', () => this.eventSystem.emit(EventNames.MOVE_DOWN, { pressed: true }));
+        
+        // Arrow key release events (optional for better control)
+        this.keys.cursors.left.on('up', () => this.eventSystem.emit(EventNames.MOVE_LEFT, { pressed: false }));
+        this.keys.cursors.right.on('up', () => this.eventSystem.emit(EventNames.MOVE_RIGHT, { pressed: false }));
+        this.keys.cursors.up.on('up', () => this.eventSystem.emit(EventNames.MOVE_UP, { pressed: false }));
+        this.keys.cursors.down.on('up', () => this.eventSystem.emit(EventNames.MOVE_DOWN, { pressed: false }));
         
         // Dynamic keybindings (Jump, Move Left/Right, Pause)
         const gs = new GameStateManager();
@@ -67,7 +73,8 @@ export class InputManager extends BaseManager {
             const keyCode = Phaser.Input.Keyboard.KeyCodes[keyName];
             if (keyCode) {
                 const keyObj = keyboard.addKey(keyCode);
-                keyObj.on('down', () => this.eventSystem.emit(eventName));
+                keyObj.on('down', () => this.eventSystem.emit(eventName, { pressed: true }));
+                keyObj.on('up', () => this.eventSystem.emit(eventName, { pressed: false }));
                 this.keys[action] = keyObj;
             }
         });

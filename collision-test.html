@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Collision Detection Test</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 10px;
+            font-family: monospace;
+            background: #1a1a1a;
+            color: #0f0;
+        }
+        #console {
+            position: fixed;
+            right: 0;
+            top: 0;
+            width: 500px;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.9);
+            border-left: 2px solid #0f0;
+            padding: 10px;
+            overflow-y: auto;
+            font-size: 12px;
+        }
+        #game-container {
+            width: calc(100% - 520px);
+            height: 100vh;
+        }
+        .log-entry { margin: 2px 0; }
+        .log-error { color: #f44; }
+        .log-warn { color: #fa0; }
+        .log-info { color: #0ff; }
+        .log-success { color: #4f4; }
+        .log-physics { color: #f4f; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div id="game-container"></div>
+    <div id="console">
+        <h3>Console Output</h3>
+        <div id="logs"></div>
+    </div>
+    
+    <script type="module">
+        const logsDiv = document.getElementById('logs');
+        let logCount = 0;
+        const MAX_LOGS = 100;
+        
+        function addLog(message, type = 'log') {
+            const entry = document.createElement('div');
+            entry.className = `log-entry log-${type}`;
+            const timestamp = new Date().toLocaleTimeString();
+            entry.textContent = `[${timestamp}] ${message}`;
+            
+            logsDiv.appendChild(entry);
+            logCount++;
+            
+            // Remove old logs
+            if (logCount > MAX_LOGS) {
+                logsDiv.removeChild(logsDiv.firstChild);
+                logCount--;
+            }
+            
+            // Auto scroll
+            logsDiv.scrollTop = logsDiv.scrollHeight;
+        }
+        
+        // Override console methods
+        const originalLog = console.log;
+        const originalError = console.error;
+        const originalWarn = console.warn;
+        
+        console.log = function(...args) {
+            const msg = args.join(' ');
+            
+            // Highlight important messages
+            if (msg.includes('[PHYSICS]') || msg.includes('contacts/sec')) {
+                addLog(msg, 'physics');
+            } else if (msg.includes('[Boot]') || msg.includes('RAPIER')) {
+                addLog(msg, 'info');
+            } else if (msg.includes('[SMOKE]') || msg.includes('collision system working')) {
+                addLog(msg, 'success');
+            } else if (msg.includes('[P0]')) {
+                addLog(msg, 'warn');
+            } else {
+                addLog(msg, 'log');
+            }
+            
+            originalLog.apply(console, args);
+        };
+        
+        console.error = function(...args) {
+            addLog(args.join(' '), 'error');
+            originalError.apply(console, args);
+        };
+        
+        console.warn = function(...args) {
+            addLog(args.join(' '), 'warn');
+            originalWarn.apply(console, args);
+        };
+        
+        addLog('Starting collision test...', 'info');
+        
+        // Import and start game
+        import('./src/main.js').then(module => {
+            addLog('Game module loaded', 'success');
+            
+            // Monitor for physics updates
+            setInterval(() => {
+                const game = window.Phaser?.GAMES?.[0];
+                if (game) {
+                    const scene = game.scene.getScenes(true)[0];
+                    if (scene && scene.physicsManager) {
+                        const pm = scene.physicsManager;
+                        if (pm._contactsPerStep !== undefined && pm._contactsPerStep > 0) {
+                            addLog(`COLLISION DETECTED! Contacts: ${pm._contactsPerStep}`, 'success');
+                        }
+                    }
+                }
+            }, 1000);
+        }).catch(error => {
+            addLog(`Failed to load game: ${error.message}`, 'error');
+        });
+        
+        addLog('Console override complete', 'info');
+    </script>
+</body>
+</html>

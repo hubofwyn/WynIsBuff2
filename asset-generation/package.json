@@ -1,0 +1,25 @@
+{
+  "name": "wynisbuff2-asset-gen",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "gfx:init": "bun tools/wyn-gfx.mjs init",
+    "gfx:thumbs": "bun tools/wyn-gfx.mjs thumbs --budget=20 --concurrency=3 --n=4",
+    "gfx:score": "bun tools/wyn-gfx.mjs score --budget=20",
+    "gfx:final": "bun tools/wyn-gfx.mjs final --budget=20",
+    "gfx:all": "bun tools/wyn-gfx.mjs all --budget=20 --concurrency=3 --n=4",
+    "gfx:audit": "bun tools/audit-images.mjs",
+    "gfx:edit": "bun tools/wyn-gfx.mjs edit --size=512",
+    "gfx:integrate": "bun tools/integrate-winners.mjs",
+    "gfx:validate": "bun tools/validate-shots.mjs",
+    "pre-gfx:all": "npm run gfx:validate",
+    "pre-gfx:thumbs": "npm run gfx:validate",
+    "pre-gfx:score": "npm run gfx:validate",
+    "pre-gfx:final": "npm run gfx:validate",
+    "gfx:preview": "bun tools/make-preview.mjs",
+    "gfx:lock": "bun tools/lock-manifest.mjs"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5"
+  }
+}

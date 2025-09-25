@@ -70,3 +70,11 @@ if (!EventEmitterClass) {
 
 // Single, shared instance exported for the entire app.
 export const EventBus = new EventEmitterClass();
+
+// Compatibility shim: Legacy code expects a singleton-style API similar to
+// BaseManager with `getInstance()`. Our EventBus is already a single instance;
+// expose a no-op getter to return itself so older call sites keep working.
+// This avoids runtime crashes like `EventBus.getInstance is not a function`.
+// New code should prefer using the instance directly: `EventBus.on(...)`.
+// eslint-disable-next-line func-names
+EventBus.getInstance = function () { return EventBus; };

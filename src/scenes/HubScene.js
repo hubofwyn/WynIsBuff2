@@ -21,7 +21,7 @@ export class HubScene extends Scene {
         // Initialize managers (singletons)
         this.gameStateManager = GameStateManager.getInstance();
         this.economyManager = EconomyManager.getInstance();
-        this.eventBus = EventBus.getInstance();
+        this.eventBus = EventBus;
         
         // Initialize game systems (ensure they're listening to events)
         this.bossRewardSystem = BossRewardSystem.getInstance();

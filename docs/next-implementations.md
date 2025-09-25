@@ -2,7 +2,7 @@
 
 | Item                            | Answer                                                                                                                                                                                                                              |
 | ------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Engine / Framework**          | ✓ Phaser 3.88.0 + Rapier 0.14.0, built with Vite 5.3.1                                                                                                                                                                              |
+| **Engine / Framework**          | ✓ Phaser 3.90.0 + Rapier 0.18.2, built with Vite 7.x                                                                                                                                                                              |
 | **Plug‑ins / middleware**       | Build‑time: `vite-plugin-pwa`, `vite-plugin-compression`, `vite-plugin-inspect` • Runtime: phaser3‑rex‑plugins (UI + virtual joystick), phaser‑pathfinding (A\*), **Howler.js** (central AudioManager), **XState** (state machines) |
 | **Primary Platforms**           | Desktop Chrome / Firefox / Edge (latest)                                                                                                                                                                                            |
 | **Mobile browser support**      | ✅ Yes – tested on iOS 16+ & Android 12+, with virtual buttons & touch menus                                                                                                                                                         |
@@ -118,5 +118,4 @@
 | Mobile Safari autoplay | **Yes – require first user interaction before starting audio**                    |
 | Licensing constraints  | **No – all music/SFX are original or CC‑0**                                       |
 | Localization plans     | **Ship English at launch; architecture externalizes strings for future ES/FR/JP** |
-
 

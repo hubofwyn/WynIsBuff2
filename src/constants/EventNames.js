@@ -45,6 +45,12 @@ export const EventNames = {
     // Performance events
     PERFORMANCE_METRIC_RECORDED: 'performance:metricRecorded',
     
+    // Asset health monitoring events
+    ASSET_CORRUPTED: 'asset:corrupted',
+    ASSET_FALLBACK_APPLIED: 'asset:fallbackApplied',
+    ASSET_RECOVERED: 'asset:recovered',
+    ASSET_HEALTH_SCAN_COMPLETE: 'asset:healthScanComplete',
+    
     // Enhanced movement events
     PLAYER_STATE_CHANGE: 'player:stateChange',
     PLAYER_DASH: 'player:dash',

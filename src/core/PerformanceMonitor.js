@@ -85,19 +85,12 @@ export class PerformanceMonitor extends BaseManager {
      * Setup event listeners for game metrics
      */
     setupEventListeners() {
-        const eventBus = EventBus.getInstance();
-        
-        // Track run completions
-        eventBus.on(EventNames.LEVEL_COMPLETE, this.handleRunComplete.bind(this));
-        
-        // Track boss defeats
-        eventBus.on(EventNames.BOSS_DEFEATED, this.handleBossDefeated.bind(this));
-        
-        // Track clone forging
-        eventBus.on(EventNames.CLONE_FORGE_COMPLETE, this.handleCloneForged.bind(this));
-        
-        // Track performance warnings
-        eventBus.on(EventNames.PERFORMANCE_METRIC_RECORDED, this.handlePerformanceWarning.bind(this));
+        // Use the exported singleton instance directly
+        const bus = EventBus;
+        bus.on(EventNames.LEVEL_COMPLETE, this.handleRunComplete.bind(this));
+        bus.on(EventNames.BOSS_DEFEATED, this.handleBossDefeated.bind(this));
+        bus.on(EventNames.CLONE_FORGE_COMPLETE, this.handleCloneForged.bind(this));
+        bus.on(EventNames.PERFORMANCE_METRIC_RECORDED, this.handlePerformanceWarning.bind(this));
     }
     
     /**
@@ -222,7 +215,7 @@ export class PerformanceMonitor extends BaseManager {
      * Check performance thresholds and emit warnings
      */
     checkPerformanceThresholds() {
-        const eventBus = EventBus.getInstance();
+        const eventBus = EventBus;
         
         // FPS warnings
         if (this.fps <= this.thresholds.fpsCritical) {
@@ -563,7 +556,7 @@ export class PerformanceMonitor extends BaseManager {
         }
         
         // Remove event listeners
-        const eventBus = EventBus.getInstance();
+        const eventBus = EventBus;
         eventBus.off(EventNames.LEVEL_COMPLETE, this.handleRunComplete);
         eventBus.off(EventNames.BOSS_DEFEATED, this.handleBossDefeated);
         eventBus.off(EventNames.CLONE_FORGE_COMPLETE, this.handleCloneForged);

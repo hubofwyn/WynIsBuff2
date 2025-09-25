@@ -1,7 +1,9 @@
 import { Scene } from 'phaser';
 import { GameStateManager, AudioManager } from '@features/core';
 import { UIConfig } from '../constants/UIConfig';
+import { createPrimaryButton, createSecondaryButton } from '../ui/UIButton.js';
 import { SceneKeys } from '../constants/SceneKeys.js';
+import { ImageAssets } from '../constants/Assets.js';
 
 export class GameOver extends Scene {
     constructor() {
@@ -159,14 +161,14 @@ export class GameOver extends Scene {
     createNormalGameOver() {
         // Set background
         this.cameras.main.setBackgroundColor(0x000000);
-        this.add.image(512, 384, 'background').setAlpha(0.3);
+        this.add.image(512, 384, ImageAssets.BACKGROUND).setAlpha(0.3);
         
         // Add game completion overlay
         this.add.rectangle(512, 384, 1024, 768, 0x000000, 0.7);
 
         // Add game logo if available
-        if (this.textures.exists('logo')) {
-            this.add.image(512, 120, 'logo')
+        if (this.textures.exists(ImageAssets.LOGO)) {
+            this.add.image(512, 120, ImageAssets.LOGO)
                 .setOrigin(0.5)
                 .setScale(0.5);
         }
@@ -229,42 +231,16 @@ export class GameOver extends Scene {
      */
     createButtons() {
         // Create main menu button
-        const menuButton = this.add.text(512, 550, 'Main Menu', UIConfig.text.button)
-            .setOrigin(0.5)
-            .setInteractive();
-        
-        menuButton.on('pointerover', () => {
-            menuButton.setTint(0xffff00);
-            AudioManager.getInstance().playSFX('hover');
-        });
-        
-        menuButton.on('pointerout', () => {
-            menuButton.clearTint();
-        });
-        
-        menuButton.on('pointerdown', () => {
+        const { btn: menuBtn } = createSecondaryButton(this, 512, 550, 'Main Menu', () => {
             AudioManager.getInstance().playSFX('click');
             this.scene.start(SceneKeys.MAIN_MENU);
-        });
+        }, { scale: 0.35 });
         
         // Create play again button
-        const playAgainButton = this.add.text(512, 620, 'Play Again', UIConfig.text.button)
-            .setOrigin(0.5)
-            .setInteractive();
-        
-        playAgainButton.on('pointerover', () => {
-            playAgainButton.setTint(0xffff00);
-            AudioManager.getInstance().playSFX('hover');
-        });
-        
-        playAgainButton.on('pointerout', () => {
-            playAgainButton.clearTint();
-        });
-        
-        playAgainButton.on('pointerdown', () => {
+        const { btn: playAgainBtn } = createPrimaryButton(this, 512, 620, 'Play Again', () => {
             AudioManager.getInstance().playSFX('click');
             this.scene.start(SceneKeys.GAME, { levelId: 'level1' });
-        });
+        }, { scale: 0.35 });
     }
     
     /**

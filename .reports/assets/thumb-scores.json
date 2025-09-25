@@ -1,0 +1,818 @@
+[
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/ui_badge_srank_1024_3.png",
+    "score": 90
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/ui_icon_coin_1024_3.png",
+    "score": 90
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/ui_icon_coin_1024_4.png",
+    "score": 90
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/backdrop_protein_fore_1024_1.png",
+    "score": 85
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/backdrop_protein_sky_1024_4.png",
+    "score": 85
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/backdrop_skygym_sky_1024_1.png",
+    "score": 85
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/sprite_coin_1024_3.png",
+    "score": 85
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/sprite_laser_emitter_1024_4.png",
+    "score": 85
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/sprite_pipe_corner_1024_4.png",
+    "score": 85
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/sprite_pulsar_boss_1024_1.png",
+    "score": 85
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/sprite_pulsar_boss_1024_3.png",
+    "score": 85
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/sprite_shock_grid_1024_3.png",
+    "score": 85
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/sprite_ui_pause_icon_1024_1.png",
+    "score": 85
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/sprite_wyn_idle_1024_1.png",
+    "score": 85
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/ui_badge_srank_1024_1.png",
+    "score": 85
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/backdrop_factory_mid_1024_1.png",
+    "score": 80
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/backdrop_mines_mid_1024_1.png",
+    "score": 80
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/backdrop_protein_plant_512_3.png",
+    "score": 80
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/sprite_the_clumper_boss_1024_1.png",
+    "score": 80
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/backdrop_factory_mid_1024_4.png",
+    "score": 75
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/backdrop_protein_mid_1024_4.png",
+    "score": 75
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/sprite_the_bulk_boss_1024_3.png",
+    "score": 75
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/backdrop_protein_fg_1024_1.png",
+    "score": 70
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/sprite_the_clumper_boss_1024_2.png",
+    "score": 70
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/backdrop_factory_fg_1024_1.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/backdrop_factory_fg_1024_2.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/backdrop_factory_fg_1024_3.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/backdrop_factory_fg_1024_4.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/backdrop_factory_floor_1024_1.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/backdrop_factory_floor_1024_2.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/backdrop_factory_floor_1024_3.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/backdrop_factory_floor_1024_4.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/backdrop_factory_fore_1024_1.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/backdrop_factory_fore_1024_2.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/backdrop_factory_fore_1024_4.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/backdrop_factory_mid_1024_2.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/backdrop_factory_mid_1024_3.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/backdrop_factory_sky_1024_1.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/backdrop_factory_sky_1024_2.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/backdrop_factory_sky_1024_3.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/backdrop_factory_sky_1024_4.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/backdrop_mines_fg_1024_1.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/backdrop_mines_fg_1024_2.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/backdrop_mines_fg_1024_3.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/backdrop_mines_fg_1024_4.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/backdrop_mines_fore_1024_1.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/backdrop_mines_fore_1024_2.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/backdrop_mines_fore_1024_3.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/backdrop_mines_fore_1024_4.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/backdrop_mines_mid_1024_2.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/backdrop_mines_mid_1024_4.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/backdrop_mines_sky_1024_1.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/backdrop_mines_sky_1024_2.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/backdrop_mines_sky_1024_3.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/backdrop_mines_sky_1024_4.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/backdrop_protein_fg_1024_2.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/backdrop_protein_fg_1024_3.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/backdrop_protein_fg_1024_4.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/backdrop_protein_fore_1024_2.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/backdrop_protein_fore_1024_3.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/backdrop_protein_fore_1024_4.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/backdrop_protein_mid_1024_1.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/backdrop_protein_mid_1024_2.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/backdrop_protein_mid_1024_3.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/backdrop_protein_plant_1024_1.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/backdrop_protein_plant_1024_2.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/backdrop_protein_plant_1024_3.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/backdrop_protein_plant_1024_4.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/backdrop_protein_plant_512_1.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/backdrop_protein_plant_512_2.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/backdrop_protein_plant_512_4.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/backdrop_protein_sky_1024_1.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/backdrop_protein_sky_1024_3.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/backdrop_skygym_fg_1024_1.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/backdrop_skygym_fg_1024_2.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/backdrop_skygym_fg_1024_3.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/backdrop_skygym_fg_1024_4.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/backdrop_skygym_fore_1024_1.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/backdrop_skygym_fore_1024_2.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/backdrop_skygym_fore_1024_3.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/backdrop_skygym_fore_1024_4.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/backdrop_skygym_mid_1024_1.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/backdrop_skygym_mid_1024_2.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/backdrop_skygym_mid_1024_3.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/backdrop_skygym_mid_1024_4.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/backdrop_skygym_sky_1024_2.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/backdrop_skygym_sky_1024_3.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/backdrop_skygym_sky_1024_4.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/particle_dust_1024_1.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/particle_dust_1024_2.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/particle_dust_1024_4.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/particle_flare_small_1024_1.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/particle_flare_small_1024_2.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/particle_flare_small_1024_3.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/particle_flare_small_1024_4.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/particle_spark_1024_1.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/particle_spark_1024_2.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/particle_spark_1024_3.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/particle_spark_1024_4.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/sprite_boss_emblem_1024_2.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/sprite_boss_emblem_1024_3.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/sprite_buff_dna_1024_1.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/sprite_buff_dna_1024_2.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/sprite_buff_dna_1024_3.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/sprite_buff_dna_1024_4.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/sprite_checkpoint_flag_1024_1.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/sprite_checkpoint_flag_1024_3.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/sprite_checkpoint_flag_1024_4.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/sprite_coin_1024_1.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/sprite_coin_1024_2.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/sprite_coin_1024_4.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/sprite_crate_heavy_1024_1.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/sprite_crate_heavy_1024_2.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/sprite_crate_heavy_1024_3.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/sprite_crate_heavy_1024_4.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/sprite_crusher_1024_1.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/sprite_crusher_1024_2.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/sprite_crusher_1024_3.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/sprite_crusher_1024_4.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/sprite_grit_shard_1024_1.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/sprite_grit_shard_1024_2.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/sprite_grit_shard_1024_3.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/sprite_grit_shard_1024_4.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/sprite_laser_emitter_1024_2.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/sprite_laser_emitter_1024_3.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/sprite_pipe_corner_1024_1.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/sprite_pipe_corner_1024_2.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/sprite_pipe_corner_1024_3.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/sprite_pipe_straight_1024_1.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/sprite_pipe_straight_1024_2.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/sprite_pipe_straight_1024_3.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/sprite_pipe_straight_1024_4.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/sprite_platform_industrial_1024_1.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/sprite_platform_industrial_1024_3.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/sprite_platform_industrial_1024_4.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/sprite_pulsar_boss_1024_2.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/sprite_pulsar_boss_1024_4.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/sprite_pulsar_boss_512_1.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/sprite_pulsar_boss_512_2.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/sprite_pulsar_boss_512_3.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/sprite_pulsar_boss_512_4.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/sprite_rail_boost_pad_1024_1.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/sprite_rail_boost_pad_1024_2.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/sprite_rail_boost_pad_1024_3.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/sprite_rail_boost_pad_1024_4.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/sprite_shock_grid_1024_1.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/sprite_shock_grid_1024_2.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/sprite_shock_grid_1024_4.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/sprite_sign_warning_1024_1.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/sprite_sign_warning_1024_2.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/sprite_sign_warning_1024_3.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/sprite_sign_warning_1024_4.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/sprite_spikes_1024_1.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/sprite_spikes_1024_2.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/sprite_spikes_1024_3.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/sprite_spikes_1024_4.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/sprite_the_bulk_boss_1024_1.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/sprite_the_bulk_boss_1024_2.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/sprite_the_bulk_boss_1024_4.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/sprite_the_clumper_boss_1024_3.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/sprite_the_clumper_boss_1024_4.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/sprite_ui_pause_icon_1024_2.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/sprite_ui_pause_icon_1024_3.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/sprite_wyn_idle_1024_2.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/sprite_wyn_idle_1024_3.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/sprite_wyn_idle_1024_4.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/sprite_wyn_idle_512_1.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/sprite_wyn_idle_512_2.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/sprite_wyn_idle_512_3.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/sprite_wyn_idle_512_4.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/sprite_wyn_jump_1024_1.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/sprite_wyn_jump_1024_2.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/sprite_wyn_jump_1024_3.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/sprite_wyn_jump_1024_4.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/sprite_wyn_run_1024_1.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/sprite_wyn_run_1024_2.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/sprite_wyn_run_1024_3.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/ui_badge_srank_1024_2.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/ui_badge_srank_1024_4.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/ui_button_primary_1024_1.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/ui_button_primary_1024_2.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/ui_button_primary_1024_3.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/ui_button_primary_1024_4.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/ui_icon_coin_1024_1.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/ui_icon_coin_1024_2.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/ui_icon_dna_1024_1.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/ui_icon_dna_1024_2.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/ui_icon_dna_1024_3.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/ui_icon_dna_1024_4.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/ui_icon_grit_1024_1.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/ui_icon_grit_1024_2.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/ui_icon_grit_1024_3.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/ui_icon_grit_1024_4.png",
+    "score": 1
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/backdrop_factory_fore_1024_3.png",
+    "score": 0
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/backdrop_mines_mid_1024_3.png",
+    "score": 0
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/backdrop_protein_sky_1024_2.png",
+    "score": 0
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/particle_dust_1024_3.png",
+    "score": 0
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/sprite_boss_emblem_1024_1.png",
+    "score": 0
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/sprite_boss_emblem_1024_4.png",
+    "score": 0
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/sprite_checkpoint_flag_1024_2.png",
+    "score": 0
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/sprite_laser_emitter_1024_1.png",
+    "score": 0
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/sprite_platform_industrial_1024_2.png",
+    "score": 0
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/sprite_ui_pause_icon_1024_4.png",
+    "score": 0
+  },
+  {
+    "file": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/asset-generation/generated/sprite_wyn_run_1024_4.png",
+    "score": 0
+  }
+]

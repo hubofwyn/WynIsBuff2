@@ -14,22 +14,52 @@
         "url": "https://github.com/verlyn13/WynIsBuff2/issues"
     },
     "homepage": "https://github.com/verlyn13/WynIsBuff2#readme",
+    "engines": {
+        "bun": ">=1.2.21"
+    },
+    "trustedDependencies": [],
     "scripts": {
-        "dev": "node log.js dev & vite --config vite/config.dev.mjs",
-        "build": "node log.js build & vite build --config vite/config.prod.mjs",
+        "dev": "bunx vite --config vite/config.dev.mjs",
+        "build": "bunx vite build --config vite/config.prod.mjs",
         "dev-nolog": "vite --config vite/config.dev.mjs",
         "build-nolog": "vite build --config vite/config.prod.mjs",
-        "test": "node tests/run-tests.cjs",
-        "generate-assets": "node scripts/generate-assets.js",
-        "validate-assets": "node scripts/validate-assets.js"
-    },
+        "test": "bun tests/run-tests.cjs",
+        "generate-assets": "bun scripts/generate-assets.js",
+        "validate-assets": "bun scripts/validate-assets.js",
+        "validate-assets-health": "bun scripts/validate-assets.cjs",
+        "asset-health": "bun run validate-assets-health",
+        "get-more-buff:plan": "node -e \"const c=require('./.claude-orchestration.json');const wf=c.workflows['get-more-buff'];console.log('Workflow:get-more-buff');wf.steps.forEach((s,i)=>console.log(`${i+1}. ${s.phase} – ${s.agent}`));\"",
+        "get-more-buff:verify": "bun scripts/orchestrate-get-more-buff.cjs",
+        "get-more-buff": "bun scripts/orchestrate-get-more-buff.cjs",
+        "refactor:plan": "node -e \"const c=require('./.claude-orchestration.json');const wf=c.workflows['refactor-phase-1'];console.log('Workflow:refactor-phase-1');wf.steps.forEach((s,i)=>console.log(`${i+1}. ${s.phase} – ${s.agent}`));\"",
+        "refactor:verify": "bun scripts/orchestrate-refactor-phase-1.cjs",
+        "refactor": "bun scripts/orchestrate-refactor-phase-1.cjs",
+        "check:openai": "bun scripts/check-openai.mjs",
+        "gfx:init": "bun --cwd asset-generation run gfx:init",
+        "gfx:thumbs": "bun --cwd asset-generation run gfx:thumbs",
+        "gfx:score": "bun --cwd asset-generation run gfx:score",
+        "gfx:final": "bun --cwd asset-generation run gfx:final",
+        "gfx:all": "bun --cwd asset-generation run gfx:all",
+        "gfx:audit": "bun --cwd asset-generation run gfx:audit",
+        "gfx:edit": "bun --cwd asset-generation run gfx:edit",
+        "gfx:integrate": "bun --cwd asset-generation run gfx:integrate",
+        "assets:usage-audit": "bun scripts/audit-asset-usage.mjs",
+        "lint": "bunx biome lint .",
+        "lint:fix": "bunx biome check --write .",
+        "typecheck": "tsc --noEmit",
+        "format": "bunx biome check --write .",
+        "deps:baseline": "node scripts/capture-deps-baseline.cjs",
+        "perf:baseline": "node scripts/capture-performance-baseline.cjs",
+        "phaser4:sandbox": "bun sandbox/phaser4/main.js",
+        "agentic": "bun scripts/orchestrate-agentic.cjs"
+  },
     "devDependencies": {
         "terser": "^5.43.1",
         "vite": "^7.0.2"
     },
     "dependencies": {
-        "@dimforge/rapier2d-compat": "^0.17.3",
+        "@dimforge/rapier2d-compat": "^0.18.2",
         "howler": "^2.2.4",
-        "phaser": "^3.90.0"
+        "phaser": "^4.0.0-rc.5"
     }
 }

@@ -756,7 +756,7 @@ export class GameStateManager extends BaseManager {
             localStorage.setItem(this.lastSaveKey, Date.now().toString());
             
             // Emit save complete event
-            EventBus.getInstance().emit(EventNames.custom('save', 'complete'), {
+            EventBus.emit(EventNames.custom('save', 'complete'), {
                 timestamp: Date.now(),
                 managers: Object.keys(saveData)
             });
@@ -791,7 +791,7 @@ export class GameStateManager extends BaseManager {
             }
             
             // Emit load complete event
-            EventBus.getInstance().emit(EventNames.custom('load', 'complete'), {
+            EventBus.emit(EventNames.custom('load', 'complete'), {
                 timestamp: Date.now(),
                 managers: Object.keys(saveData)
             });

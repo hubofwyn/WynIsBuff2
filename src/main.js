@@ -9,6 +9,7 @@ import { CharacterSelect } from './scenes/CharacterSelect';
 import { WelcomeScene } from './scenes/WelcomeScene';
 import { BirthdayMinigame } from './scenes/BirthdayMinigame';
 import { TestScene } from './scenes/TestScene';
+import { TestScene_CharacterMotion } from './scenes/TestScene_CharacterMotion';
 import { RunScene } from './scenes/RunScene';
 import { ResultsScene } from './scenes/ResultsScene';
 import { HubScene } from './scenes/HubScene';
@@ -72,7 +73,8 @@ const config = {
         SettingsScene,
         GameOver,
         BirthdayMinigame,
-        TestScene
+        TestScene,
+        TestScene_CharacterMotion
     ]
 };
 

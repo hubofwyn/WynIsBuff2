@@ -47,7 +47,7 @@ export class ResultsScene extends Scene {
 
     create() {
         // Initialize systems
-        this.eventBus = EventBus.getInstance();
+        this.eventBus = EventBus;
         this.audioManager = AudioManager.getInstance();
         this.gameStateManager = GameStateManager.getInstance();
         this.cloneManager = CloneManager.getInstance();
@@ -85,19 +85,31 @@ export class ResultsScene extends Scene {
         
         // Calculate and award resources
         this.calculateRewards();
-        
+
         // Start forge animation after delay
         this.time.delayedCall(1000, () => {
             this.startForgeAnimation();
         });
+
+        // Boss defeat payoff: emblem flash + particle + sfx when grade includes boss component
+        const bossInvolved = this.performanceReport?.grade || this.score?.B > 0 || (this.completeRunData?.bosses && Object.keys(this.completeRunData.bosses).length > 0);
+        if (bossInvolved) {
+            try {
+                const emblem = this.add.image(740, 60, ImageAssets.GEN_SPRITE_BOSS_EMBLEM).setScale(0.25).setAlpha(0).setDepth(100);
+                this.tweens.add({ targets: emblem, alpha: { from: 0, to: 1 }, scale: { from: 0.15, to: 0.3 }, angle: { from: -10, to: 10 }, duration: 600, yoyo: true, ease: 'Sine.easeInOut' });
+                this.add.particles(740, 60, ImageAssets.GEN_PARTICLE_FLARE_SMALL, { lifespan: 700, speed: {min:80, max:160}, scale: {start:0.5, end:0}, quantity: 14, angle: {min:0, max:360}, alpha: {start:0.9, end:0} });
+                this.cameras.main.shake(180, 0.005);
+                this.audioManager.playSFX('click');
+            } catch {}
+        }
     }
 
     createBackground() {
         // Dark overlay
         const overlay = this.add.rectangle(400, 300, 800, 600, 0x000000, 0.8);
         
-        // Animated particles
-        const particles = this.add.particles(400, 300, ImageAssets.PARTICLE_WHITE, {
+        // Animated particles (use generated flare)
+        const particles = this.add.particles(400, 300, ImageAssets.GEN_PARTICLE_FLARE_SMALL, {
             color: [0xffffff, 0xffdd00, 0xff00ff],
             colorEase: 'quad.out',
             lifespan: 2000,
@@ -151,6 +163,31 @@ export class ResultsScene extends Scene {
             color: '#FFFFFF'
         });
         timeText.setOrigin(0.5);
+
+        // Decorative boss emblem (generated) in the corner
+        const emblem = this.add.image(740, 60, ImageAssets.GEN_SPRITE_BOSS_EMBLEM)
+            .setScale(0.25)
+            .setAlpha(0.6);
+
+        // If a boss was involved in the run, show its sprite subtly near the header
+        const bossKey = this.chooseBossSpriteKey(this.completeRunData?.bosses || {});
+        if (bossKey) {
+            this.add.image(60, 60, bossKey).setScale(0.2).setAlpha(0.8);
+        }
+    }
+
+    chooseBossSpriteKey(bosses) {
+        // bosses: object keyed by bossId with stats; use heuristics to map to generated sprites
+        const ids = Object.keys(bosses || {}).map(k => k.toLowerCase());
+        const map = [
+            { kw: 'pulsar', key: ImageAssets.GEN_SPRITE_PULSAR_BOSS },
+            { kw: 'clumper', key: ImageAssets.GEN_SPRITE_CLUMPER_BOSS },
+            { kw: 'bulk', key: ImageAssets.GEN_SPRITE_BULK_BOSS }
+        ];
+        for (const { kw, key } of map) {
+            if (ids.some(id => id.includes(kw))) return key;
+        }
+        return null;
     }
 
     getLevelName() {
@@ -166,9 +203,25 @@ export class ResultsScene extends Scene {
     createPerformanceDisplay() {
         // Performance container
         const perfContainer = this.add.container(200, 200);
+
+        // Resource icons (generated UI) with counts if available
+        const resources = this.runData?.pickups || { coin: 0, grit: 0, dna: 0 };
+        const iconScale = 0.18;
+        const iconRowY = 120;
+        const iconStartX = 60;
+        const iconGap = 80;
+        const coinIcon = this.add.image(iconStartX, iconRowY, ImageAssets.GEN_UI_ICON_COIN).setScale(iconScale);
+        const dnaIcon  = this.add.image(iconStartX + iconGap, iconRowY, ImageAssets.GEN_UI_ICON_DNA).setScale(iconScale);
+        const gritIcon = this.add.image(iconStartX + iconGap*2, iconRowY, ImageAssets.GEN_UI_ICON_GRIT).setScale(iconScale);
+        perfContainer.add(coinIcon);
+        perfContainer.add(dnaIcon);
+        perfContainer.add(gritIcon);
+        perfContainer.add(this.add.text(iconStartX + 24, iconRowY + 16, String(resources.coin ?? 0), { fontSize: '16px', color: '#FFFFFF', stroke: '#000', strokeThickness: 2 }));
+        perfContainer.add(this.add.text(iconStartX + iconGap + 24, iconRowY + 16, String(resources.dna ?? 0), { fontSize: '16px', color: '#FFFFFF', stroke: '#000', strokeThickness: 2 }));
+        perfContainer.add(this.add.text(iconStartX + iconGap*2 + 24, iconRowY + 16, String(resources.grit ?? 0), { fontSize: '16px', color: '#FFFFFF', stroke: '#000', strokeThickness: 2 }));
         
         // Display performance grade prominently
-        const gradeText = this.add.text(200, 160, `GRADE: ${this.performanceReport.grade}`, {
+        const gradeText = this.add.text(200, 200, `GRADE: ${this.performanceReport.grade}`, {
             fontSize: '32px',
             fontFamily: 'Arial Black',
             color: this.getGradeColor(this.performanceReport.grade),
@@ -176,6 +229,17 @@ export class ResultsScene extends Scene {
             strokeThickness: 4
         });
         gradeText.setOrigin(0.5);
+
+        // S-Rank badge (generated) if achieved
+        if (String(this.performanceReport.grade).toUpperCase() === 'S') {
+            const badge = this.add.image(330, 200, ImageAssets.GEN_UI_BADGE_SRANK).setScale(0.22).setAlpha(0.95).setDepth(101);
+            perfContainer.add(badge);
+            // Sparkle effect around the badge
+            try {
+                this.add.particles(330, 200, ImageAssets.GEN_PARTICLE_FLARE_SMALL, { lifespan: 800, speed: {min:50, max:120}, scale: {start:0.4, end:0}, quantity: 12, angle: {min:0, max:360}, alpha: {start:0.9, end:0} });
+            } catch {}
+            this.tweens.add({ targets: badge, scale: { from: 0.22, to: 0.26 }, duration: 450, yoyo: true, repeat: 1, ease: 'Sine.easeInOut', delay: 200 });
+        }
         
         // Performance metrics
         const metrics = [
@@ -270,8 +334,8 @@ export class ResultsScene extends Scene {
         // Draw DNA double helix
         this.drawDNAHelix(graphics);
         
-        // Clone preview (initially hidden)
-        this.cloneSprite = this.add.sprite(0, 0, ImageAssets.PLAYER_SPRITE);
+        // Clone preview (initially hidden) — use generated idle sprite for a crisp look
+        this.cloneSprite = this.add.sprite(0, 0, ImageAssets.GEN_SPRITE_WYN_IDLE);
         this.cloneSprite.setScale(2);
         this.cloneSprite.setAlpha(0);
         this.cloneSprite.setTint(0x8888FF);

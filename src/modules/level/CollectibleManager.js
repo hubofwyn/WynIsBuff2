@@ -65,7 +65,19 @@ export class CollectibleManager {
             // Create each collectible
             collectibleConfigs.forEach((collectible, index) => {
                 try {
-                    this.log(`Creating collectible ${index+1}`);
+                    // Validate collectible data
+                    if (!collectible || typeof collectible !== 'object') {
+                        console.warn(`[CollectibleManager] Invalid collectible at index ${index}:`, collectible);
+                        return;
+                    }
+                    
+                    // Ensure required properties exist
+                    if (!collectible.x || !collectible.y) {
+                        console.warn(`[CollectibleManager] Collectible missing position at index ${index}:`, collectible);
+                        return;
+                    }
+                    
+                    this.log(`Creating collectible ${index+1} of type: ${collectible.type || 'default'}`);
                     
                     // Determine color based on type
                     let color = 0xFFD700; // Gold for default
@@ -77,7 +89,7 @@ export class CollectibleManager {
                     
                     // Create a visual representation (sprite if available, otherwise circle)
                     let collectibleSprite;
-                    const spriteKey = `collectible-${collectible.config.type}`;
+                    const spriteKey = `collectible-${collectible.type || 'default'}`;
                     if (this.scene.textures.exists(spriteKey)) {
                         collectibleSprite = this.scene.add.image(
                             collectible.x, collectible.y,
@@ -112,7 +124,10 @@ export class CollectibleManager {
                     // Create a sensor collider for the collectible
                     const collectibleColliderDesc = RAPIER.ColliderDesc
                         .ball(15) // radius
-                        .setSensor(true); // Make it a sensor (no physical collision)
+                        .setSensor(true) // Make it a sensor (no physical collision)
+                        .setActiveEvents(
+                            (RAPIER.ActiveEvents?.INTERSECTION_EVENTS || 0)
+                        );
                         
                     const collectibleCollider = this.world.createCollider(
                         collectibleColliderDesc, 

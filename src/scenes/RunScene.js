@@ -2,12 +2,14 @@ import { Scene } from 'phaser';
 import { SceneKeys } from '../constants/SceneKeys.js';
 import { EventNames } from '../constants/EventNames.js';
 import { ImageAssets, AudioAssets } from '../constants/Assets.js';
+import { ParallaxLayers } from '../systems/ParallaxLayers.js';
 import { 
     PlayerController,
     EnhancedMovementController,
     EnhancedJumpController,
     WallDashController
 } from '@features/player';
+import { PhysicsDebugOverlay } from '@features/debug';
 import { 
     LevelManager,
     PlatformFactory
@@ -21,6 +23,7 @@ import {
     DNAExtractor,
     TimeEchoRecorder
 } from '@features/idle';
+import { PhysicsManager } from '../core/PhysicsManager.js';
 
 export class RunScene extends Scene {
     constructor() {
@@ -41,9 +44,13 @@ export class RunScene extends Scene {
 
     create() {
         // Initialize systems
-        this.eventBus = EventBus.getInstance();
+        this.eventBus = EventBus;
         this.audioManager = AudioManager.getInstance();
         this.gameStateManager = GameStateManager.getInstance();
+        
+        // Initialize Rapier physics via PhysicsManager (Boot sets RAPIER in registry)
+        this.physicsManager = PhysicsManager.getInstance();
+        this.physicsManager.init(this, this.eventBus);
         
         // Initialize performance tracking
         this.dnaExtractor = new DNAExtractor(this, this.eventBus);
@@ -59,17 +66,28 @@ export class RunScene extends Scene {
         // Create world background
         this.createBackground();
         
-        // Set up physics world bounds
-        this.physics.world.setBounds(0, 0, 3200, 600);
+        // Keep camera bounds; Arcade bounds are optional when using Rapier
+        if (this.physics && this.physics.world) {
+            this.physics.world.setBounds(0, 0, 3200, 600);
+        }
         
         // Initialize level systems
-        this.levelManager = new LevelManager(this, this.eventBus);
-        this.platformFactory = new PlatformFactory(this, this.physics.world);
+        this.levelManager = new LevelManager(this, this.physicsManager.getWorld(), this.eventBus);
+        this.platformFactory = new PlatformFactory(this, this.physicsManager.getWorld(), this.eventBus);
         
-        // Load level data
-        this.levelManager.loadLevel(this.levelData);
+        // Load level data with safe fallback if not found
+        let loaded = this.levelManager.loadLevel(this.levelData);
+        if (!loaded) {
+            console.warn(`[RunScene] Level '${this.levelData}' not found. Falling back to 'level1'.`);
+            this.levelData = 'level1';
+            loaded = this.levelManager.loadLevel(this.levelData);
+        }
+        // Register platform bodies for sprite syncing
+        if (this.physicsManager && this.platformFactory?.getBodyToSpriteMap) {
+            this.physicsManager.registerBodySpriteMap(this.platformFactory.getBodyToSpriteMap());
+        }
         
-        // Create player
+        // Create player (use a safe default spawn; LevelLoader will reposition if level defines playerStart)
         this.createPlayer();
         
         // Initialize enhanced movement systems
@@ -98,9 +116,33 @@ export class RunScene extends Scene {
         
         // Subscribe to events
         this.setupEventListeners();
+        // Physics-driven landing feedback via collision events
+        this.eventBus.on(EventNames.COLLISION_START, (data) => {
+            try {
+                if (!this.playerController) return;
+                const playerHandle = this.playerController.getBody()?.handle;
+                if (!playerHandle) return;
+                const other = (data.bodyHandleA === playerHandle) ? data.bodyHandleB : (data.bodyHandleB === playerHandle ? data.bodyHandleA : null);
+                if (other == null) return;
+                const body = this.physicsManager?.getWorld()?.getBodyByHandle(other);
+                // 1 = static in Rapier
+                if (body && typeof body.bodyType === 'function' && body.bodyType() === 1) {
+                    this.cameras.main.shake(50, 0.002);
+                }
+            } catch {}
+        });
         
         // Start idle systems
         this.eventBus.emit(EventNames.IDLE_TICK);
+
+        // Debug overlay (F1) — FPS only in this scene
+        this.debugOverlay = new PhysicsDebugOverlay(this);
+        this.debugKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.F1);
+        this.debugOverlay.enable();
+        this.events.once('shutdown', () => {
+            if (this.debugOverlay) this.debugOverlay.disable();
+            if (this.debugKey) this.input.keyboard.removeKey(this.debugKey);
+        });
     }
 
     createBackground() {
@@ -120,12 +162,31 @@ export class RunScene extends Scene {
             graphics.fillRect(0, i, 3200, 1);
         }
         
-        // Add parallax layers if available
-        if (ImageAssets[`${this.levelData.toUpperCase()}_BG`]) {
-            this.add.tileSprite(0, 0, 3200, 600, 
-                ImageAssets[`${this.levelData.toUpperCase()}_BG`])
-                .setOrigin(0, 0)
-                .setScrollFactor(0.5);
+        // Add generated parallax backdrops (quality-first)
+        const keyMap = {
+            'protein-plant': [
+                ImageAssets.GEN_BACKDROP_PROTEIN_SKY,
+                ImageAssets.GEN_BACKDROP_PROTEIN_MID,
+                ImageAssets.GEN_BACKDROP_PROTEIN_FORE,
+                ImageAssets.GEN_BACKDROP_PROTEIN_FG,
+            ],
+            'metronome-mines': [
+                ImageAssets.GEN_BACKDROP_MINES_SKY,
+                ImageAssets.GEN_BACKDROP_MINES_MID,
+                ImageAssets.GEN_BACKDROP_MINES_FORE,
+                ImageAssets.GEN_BACKDROP_MINES_FG,
+            ],
+            'factory-floor': [
+                ImageAssets.GEN_BACKDROP_FACTORY_SKY,
+                ImageAssets.GEN_BACKDROP_FACTORY_MID,
+                ImageAssets.GEN_BACKDROP_FACTORY_FORE,
+                ImageAssets.GEN_BACKDROP_FACTORY_FG,
+            ]
+        };
+
+        const parallaxKeys = keyMap[this.levelData];
+        if (parallaxKeys && parallaxKeys.every(k => !!k)) {
+            ParallaxLayers.create(this, parallaxKeys, [0.1, 0.3, 0.6, 0.9]);
         }
     }
 
@@ -140,18 +201,24 @@ export class RunScene extends Scene {
     }
 
     createPlayer() {
-        // Create player at spawn point
-        const spawnPoint = this.levelManager.getSpawnPoint();
+        // Use center-ish default spawn; LevelLoader will reposition to playerStart if defined
+        const { width, height } = this.cameras.main;
+        const defaultX = Math.floor(width * 0.2);
+        const defaultY = Math.floor(height * 0.5);
         this.playerController = new PlayerController(
             this,
-            spawnPoint.x,
-            spawnPoint.y,
-            this.eventBus
+            this.physicsManager.getWorld(),
+            this.eventBus,
+            defaultX,
+            defaultY
         );
         
         // Initialize player sprite and physics
         this.player = this.playerController.getSprite();
         this.playerBody = this.playerController.getBody();
+        if (this.physicsManager && this.playerBody && this.player) {
+            this.physicsManager.registerBodySprite(this.playerBody, this.player);
+        }
     }
 
     setupCamera() {
@@ -383,6 +450,10 @@ export class RunScene extends Scene {
     }
 
     update(time, delta) {
+        // Step Rapier physics (fixed timestep handled inside manager)
+        if (this.physicsManager) {
+            this.physicsManager.update(delta);
+        }
         // Update timer
         const elapsed = Math.floor((Date.now() - this.runStartTime) / 1000);
         const minutes = Math.floor(elapsed / 60);
@@ -434,6 +505,15 @@ export class RunScene extends Scene {
         
         // Update UI indicators
         this.updateIndicators();
+
+        // Overlay toggle + update
+        if (this.debugKey && Phaser.Input.Keyboard.JustDown(this.debugKey)) {
+            if (this.debugOverlay.enabled) this.debugOverlay.disable(); else this.debugOverlay.enable();
+        }
+        const fps = this.game && this.game.loop ? Math.round(this.game.loop.actualFps || 0) : 0;
+        const contacts = this.physicsManager?.getLastContactsPerSec ? this.physicsManager.getLastContactsPerSec() : undefined;
+        const bodies = this.physicsManager?.world?.bodies ? this.physicsManager.world.bodies.len : undefined;
+        if (this.debugOverlay) this.debugOverlay.update({ fps, contacts, bodies });
         
         // Check for run completion
         if (this.playerController.getSprite().x > 3000) {

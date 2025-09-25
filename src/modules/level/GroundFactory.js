@@ -1,4 +1,5 @@
-import RAPIER from '@dimforge/rapier2d-compat';
+// RAPIER is now loaded in Boot scene and accessed via getRapier helper
+import { getRapier } from '../../utils/getRapier';
 import { EventNames } from '../../constants/EventNames';
 import { PhysicsConfig } from '../../constants/PhysicsConfig.js';
 import { pixelsToMeters } from '../../constants/PhysicsConstants.js';
@@ -18,6 +19,9 @@ export class GroundFactory {
         this.world = world;
         this.eventSystem = eventSystem;
         
+        // Get RAPIER from registry
+        this.RAPIER = getRapier(scene);
+        
         // Store ground for later reference
         this.ground = null;
         
@@ -25,7 +29,7 @@ export class GroundFactory {
         this.bodyToSprite = new Map();
         
         // Debug mode
-        this.debugMode = false;
+        this.debugMode = true; // Enable debug to see what's happening
     }
     
     /**
@@ -74,7 +78,7 @@ export class GroundFactory {
             this.log('Ground sprite created');
             
             // Create a fixed (static) rigid body with proper scaling (pixels to meters)
-            const groundBodyDesc = RAPIER.RigidBodyDesc.fixed()
+            const groundBodyDesc = this.RAPIER.RigidBodyDesc.fixed()
                 .setTranslation(pixelsToMeters(width / 2), pixelsToMeters(y));
             
             const groundBody = this.world.createRigidBody(groundBodyDesc);
@@ -84,14 +88,41 @@ export class GroundFactory {
             this.bodyToSprite.set(groundBody.handle, groundSprite);
             
             // Create a collider with proper scaling and physics properties
-            const groundColliderDesc = RAPIER.ColliderDesc
+            const ALL_GROUPS = 0xFFFF;
+            const groundColliderDesc = this.RAPIER.ColliderDesc
                 .cuboid(pixelsToMeters(width / 2), pixelsToMeters(height / 2))
                 .setFriction(PhysicsConfig.ground.friction)
                 .setRestitution(PhysicsConfig.ground.restitution)
-                .setDensity(PhysicsConfig.ground.density);
+                .setDensity(PhysicsConfig.ground.density)
+                .setSensor(false) // P0-4: CRITICAL - must not be sensor
+                .setCollisionGroups((ALL_GROUPS << 16) | ALL_GROUPS); // FIX: Set groups on descriptor!
                 
             const groundCollider = this.world.createCollider(groundColliderDesc, groundBody);
-            this.log('Ground collider created');
+            
+            // P0-5: Verify collision groups are set correctly
+            console.log('[GroundFactory] Collider groups set on descriptor AND verified after creation');
+            
+            // P0-4: Verify collider setup
+            console.assert(!groundCollider.isSensor(), '[P0] Ground is sensor - will not resolve contacts!');
+            console.assert(groundCollider.parent() === groundBody, '[P0] Ground collider not attached to body');
+            
+            // CRITICAL DEBUG: Verify collision groups for raycast
+            console.log('[GroundFactory] COLLISION GROUP DEBUG:', {
+                groundGroups: '0x' + groundCollider.collisionGroups().toString(16),
+                expectedGroups: '0x' + ((ALL_GROUPS << 16) | ALL_GROUPS).toString(16),
+                groundHandle: groundCollider.handle,
+                isSensor: groundCollider.isSensor(),
+                bodyPosition: groundBody.translation(),
+                worldColliderCount: this.world.colliders.getAll ? this.world.colliders.getAll().length : 'unknown'
+            });
+            
+            console.log('[P0] Ground collider verified:', {
+                isSensor: groundCollider.isSensor(),
+                parentType: groundBody.bodyType(), // Should be 1 (fixed)
+                groups: '0x' + groundCollider.collisionGroups().toString(16)
+            });
+            
+            this.log('Ground collider created and verified');
             
             // Store ground info
             this.ground = {

@@ -1,0 +1,39 @@
+{
+  "runs": [
+    {
+      "name": "agentic.boot.smoke",
+      "ok": true,
+      "timestamp": "2025-08-29T21:35:48.349Z",
+      "notes": "Placeholder smoke; wire into runner when ready."
+    },
+    {
+      "name": "agentic.phaser4.module",
+      "ok": false,
+      "version": "unknown",
+      "durationMs": 75,
+      "error": "window is not defined",
+      "timestamp": "2025-08-29T21:35:48.426Z"
+    },
+    {
+      "name": "agentic.assets.logo",
+      "ok": true,
+      "path": "assets/images/characters/mainlogo.png",
+      "timestamp": "2025-08-29T21:35:48.429Z"
+    },
+    {
+      "name": "agentic.ray-filter-smoke",
+      "ok": false,
+      "timestamp": "2025-08-29T21:35:48.428Z",
+      "details": {
+        "toi": null
+      }
+    },
+    {
+      "name": "agentic.assets.logo",
+      "ok": true,
+      "path": "assets/images/characters/mainlogo.png",
+      "timestamp": "2025-08-29T22:24:26.546Z"
+    }
+  ],
+  "flaky": false
+}

@@ -1,4 +1,4 @@
-import RAPIER from '@dimforge/rapier2d-compat';
+// RAPIER is now loaded in Boot scene and passed via registry
 import { EventNames } from '../constants/EventNames';
 import { PhysicsConfig } from '../constants/PhysicsConfig';
 import { metersToPixels } from '../constants/PhysicsConstants.js';
@@ -27,6 +27,15 @@ export class PhysicsManager extends BaseManager {
         
         // Fixed timestep accumulator
         this.accumulator = 0;
+        
+        // Circuit breaker state
+        this.disabledWarningShown = false;
+        
+        // Contact instrumentation
+        this._contactsPerStep = 0;
+        this._lastPhysBeacon = 0;
+        this._lastContactsPerSec = 0;
+        this._contactsLastStep = 0;
     }
     
     /**
@@ -44,13 +53,31 @@ export class PhysicsManager extends BaseManager {
         this.scene = scene;
         this.eventSystem = eventSystem;
         try {
-            console.log('[PhysicsManager] Initializing Rapier...');
-            await RAPIER.init();
-            console.log('[PhysicsManager] Rapier initialized successfully');
+            // Get RAPIER from registry (already initialized in Boot scene)
+            const RAPIER = scene.registry.get('RAPIER');
+            if (!RAPIER) {
+                console.error('[PhysicsManager] RAPIER not found in registry! Was Boot scene run?');
+                return false;
+            }
+            console.log('[PhysicsManager] Using RAPIER from registry');
             
-            // Create physics world with gravity
-            this.world = new RAPIER.World(new RAPIER.Vector2(gravityX, gravityY));
+            // Store RAPIER reference for later use
+            this.RAPIER = RAPIER;
+            
+            // Create physics world with gravity using non-deprecated API
+            const gravity = { x: gravityX, y: gravityY };
+            this.world = new RAPIER.World(gravity);
             console.log('[PhysicsManager] Rapier world created with gravity:', gravityX, gravityY);
+            
+            // Create event queue for collision detection - CRITICAL for world.step()
+            console.log('[PhysicsManager] Creating event queue for collision handling...');
+            this.eventQueue = new this.RAPIER.EventQueue(true); // The 'true' enables contact events
+            
+            if (this.eventQueue) {
+                console.log('[PhysicsManager] ✅ EventQueue created successfully.');
+            } else {
+                console.error('[PhysicsManager] ❌ FAILED to create EventQueue!');
+            }
             
             // Set up collision event handling
             this.setupCollisionEvents();
@@ -79,46 +106,9 @@ export class PhysicsManager extends BaseManager {
             return;
         }
         
-        // Check if contactPairEvents is available
-        if (this.world.contactPairEvents) {
-            this.world.contactPairEvents.on('begin', (event) => {
-                // Extract the body handles from the event
-                const bodyHandleA = event.collider1.parent().handle;
-                const bodyHandleB = event.collider2.parent().handle;
-                
-                // Get the positions of the colliding bodies
-                const bodyA = this.world.getBodyByHandle(bodyHandleA);
-                const bodyB = this.world.getBodyByHandle(bodyHandleB);
-                
-                if (!bodyA || !bodyB) {
-                    return;
-                }
-                
-                const positionA = bodyA.translation();
-                const positionB = bodyB.translation();
-                
-                // Emit collision event
-                if (this.eventSystem) {
-                    this.eventSystem.emit(EventNames.COLLISION_START, {
-                        bodyHandleA,
-                        bodyHandleB,
-                        positionA: { x: positionA.x, y: positionA.y },
-                        positionB: { x: positionB.x, y: positionB.y }
-                    });
-                }
-                
-                // Call any registered collision handlers
-                this.handleCollision(bodyHandleA, bodyHandleB);
-            });
-        } else {
-            // Fallback for collision event handling if contactPairEvents is not available
-            console.warn('[PhysicsManager] contactPairEvents is not available, using fallback collision detection.');
-            this.world.bodies.forEach(body => {
-                // Implement fallback collision detection logic here
-            });
-        }
-        
-        console.log('[PhysicsManager] Collision events set up');
+        // We rely on eventQueue draining during step() to emit collision events consistently.
+        // No setup required here; keep method for parity with previous architecture.
+        console.log('[PhysicsManager] Collision events will be emitted via eventQueue draining.');
     }
     
     /**
@@ -189,9 +179,23 @@ export class PhysicsManager extends BaseManager {
             return;
         }
         
-        // TRIAGE FIX: Circuit breaker for repeated errors
-        if (this.errorCount > 10) {
-            console.warn('[PhysicsManager] Too many errors, physics disabled');
+        // TRIAGE FIX: Only run physics in appropriate scenes (avoid running in menus)
+        if (this.scene && this.scene.scene && this.scene.scene.key) {
+            const sceneKey = this.scene.scene.key;
+            const validScenes = ['Game', 'GameScene', 'RunScene', 'TestScene', 'HubScene'];
+            if (!validScenes.includes(sceneKey)) {
+                console.log('[PhysicsManager] Skipping physics update for scene:', sceneKey);
+                return; // Don't run physics in menu scenes
+            }
+        }
+        
+        // TRIAGE FIX: Circuit breaker for repeated errors (increased threshold)
+        if (this.errorCount > 50) { // Increased from 10 to 50 to be less aggressive
+            // Stop spamming warnings once disabled
+            if (!this.disabledWarningShown) {
+                console.warn('[PhysicsManager] Too many errors, physics disabled');
+                this.disabledWarningShown = true;
+            }
             return;
         }
         
@@ -212,33 +216,99 @@ export class PhysicsManager extends BaseManager {
             const fixedTimeStep = PhysicsConfig.timeStep; // 1/60 for 60Hz
             this.accumulator += cappedDelta;
             
-            // Limit max steps per frame to prevent freezing
-            const maxStepsPerFrame = 3;
+            // Limit max steps per frame to prevent spiral of death
+            const MAX_SUBSTEPS = 5;
             let steps = 0;
             
-            // Track physics timing
-            const startTime = performance.now();
+            // Track physics timing only in debug mode
+            const DEBUG_PHYSICS = false;
+            const startTime = DEBUG_PHYSICS ? performance.now() : 0;
             
             // Configure integration parameters for improved stability
-            const integrationParameters = new RAPIER.IntegrationParameters();
+            const integrationParameters = new this.RAPIER.IntegrationParameters();
             integrationParameters.dt = fixedTimeStep;
             integrationParameters.max_velocity_iterations = PhysicsConfig.maxVelIterations;
             integrationParameters.max_position_iterations = PhysicsConfig.maxPosIterations;
             integrationParameters.erp = PhysicsConfig.erp; // Error reduction parameter
             
             // Step physics with proper integration parameters
-            while (this.accumulator >= fixedTimeStep && steps < maxStepsPerFrame) {
-                // Use enhanced step with integration parameters
-                this.world.step(integrationParameters);
+            while (this.accumulator >= fixedTimeStep && steps < MAX_SUBSTEPS) {
+                let stepContacts = 0;
+                // Step the physics world with the event queue
+                // The integrationParameters are set on the world, not passed to step()
+                this.world.integrationParameters = integrationParameters;
+                this.world.step(this.eventQueue);
+                
+                // Drain collision events and count contacts
+                // Contact events (solid collisions)
+                this.eventQueue.drainCollisionEvents((h1, h2, started) => {
+                    this._contactsPerStep++;
+                    stepContacts++;
+                    if (this.eventSystem) {
+                        try {
+                            const bodyA = this.world.getBodyByHandle(h1);
+                            const bodyB = this.world.getBodyByHandle(h2);
+                            const positionA = bodyA ? bodyA.translation() : { x: 0, y: 0 };
+                            const positionB = bodyB ? bodyB.translation() : { x: 0, y: 0 };
+                            this.eventSystem.emit(EventNames.COLLISION_START, {
+                                bodyHandleA: h1,
+                                bodyHandleB: h2,
+                                started,
+                                positionA: { x: positionA.x, y: positionA.y },
+                                positionB: { x: positionB.x, y: positionB.y }
+                            });
+                        } catch {}
+                    }
+                });
+                // Intersection events (sensors/triggers)
+                try {
+                    if (typeof this.eventQueue.drainIntersectionEvents === 'function') {
+                        this.eventQueue.drainIntersectionEvents((h1, h2, intersecting) => {
+                            if (!intersecting) return;
+                            if (this.eventSystem) {
+                                try {
+                                    const bodyA = this.world.getBodyByHandle(h1);
+                                    const bodyB = this.world.getBodyByHandle(h2);
+                                    const positionA = bodyA ? bodyA.translation() : { x: 0, y: 0 };
+                                    const positionB = bodyB ? bodyB.translation() : { x: 0, y: 0 };
+                                    this.eventSystem.emit(EventNames.COLLISION_START, {
+                                        bodyHandleA: h1,
+                                        bodyHandleB: h2,
+                                        started: true,
+                                        positionA: { x: positionA.x, y: positionA.y },
+                                        positionB: { x: positionB.x, y: positionB.y },
+                                        sensor: true
+                                    });
+                                } catch {}
+                            }
+                        });
+                    }
+                } catch {}
+                
                 this.accumulator -= fixedTimeStep;
                 steps++;
+                this._contactsLastStep = stepContacts;
+                
+                // Count total steps for validation
+                this._stepCount = (this._stepCount || 0) + 1;
+            }
+            
+            // Log step counter once per second
+            const currentTime = performance.now();
+            if (!this._lastBeacon || currentTime - this._lastBeacon > 1000) {
+                this._lastBeacon = currentTime;
+                console.log(`[PHYSICS] Steps per second: ${this._stepCount || 0}`);
+                console.log(`[PHYS] contacts/sec: ${this._contactsPerStep}`);
+                this._lastContactsPerSec = this._contactsPerStep;
+                this._stepCount = 0;
+                this._contactsPerStep = 0;
             }
             
             // Record physics metrics
             const physicsTime = performance.now() - startTime;
             
-            // Emit performance metrics
-            if (this.eventSystem && steps > 0) {
+            // Only emit performance metrics in debug mode
+            if (DEBUG_PHYSICS && this.eventSystem && steps > 0) {
                 this.eventSystem.emit('physics:performance', {
                     steps: steps,
                     time: physicsTime,
@@ -247,10 +317,9 @@ export class PhysicsManager extends BaseManager {
                 });
             }
             
-            // Reset accumulator if we hit max steps (prevents permanent lag)
-            if (steps >= maxStepsPerFrame) {
-                this.accumulator = 0;
-                console.warn('[PhysicsManager] Frame budget exceeded, resetting accumulator');
+            // If starved, drop surplus to avoid spiral of death
+            if (steps >= MAX_SUBSTEPS && this.accumulator >= fixedTimeStep) {
+                this.accumulator = 0; // Reset silently
             }
             
             // Calculate interpolation factor for smooth rendering
@@ -264,7 +333,7 @@ export class PhysicsManager extends BaseManager {
             
         } catch (error) {
             this.errorCount = (this.errorCount || 0) + 1;
-            console.error(`[PhysicsManager] Error in update (${this.errorCount}/10):`, error);
+            console.error(`[PhysicsManager] Error in update (${this.errorCount}/50):`, error);
             
             // TRIAGE FIX: Emergency fallback - try to at least update sprites
             try {
@@ -345,6 +414,23 @@ export class PhysicsManager extends BaseManager {
      */
     getBodyToSpriteMap() {
         return this.bodyToSprite;
+    }
+
+    /**
+     * Get last measured contacts/sec (updated roughly once per second)
+     * @returns {number}
+     */
+    getLastContactsPerSec() {
+        return this._lastContactsPerSec || 0;
+    }
+
+    /**
+     * Get contacts observed in the last physics sub-step.
+     * Useful in tests and overlays when you want immediate per-step feedback.
+     * @returns {number}
+     */
+    getContactsLastStep() {
+        return this._contactsLastStep || 0;
     }
     
     /**

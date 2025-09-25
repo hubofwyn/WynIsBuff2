@@ -3,240 +3,94 @@
   "description": "Asset manifest for WynIsBuff2 game",
   "assets": {
     "images": {
-      "background": {
+      "background": { "type": "image", "path": "images/characters/mainlogo.png", "description": "Main background image used in Boot scene" },
+      "logo": { "type": "image", "path": "images/characters/mainlogo.png", "description": "Game logo" },
+      "player": { "type": "spritesheet", "path": "2D Pixel Dungeon Asset Pack v2.0/2D Pixel Dungeon Asset Pack/character and tileset/Dungeon_Character.png", "frameWidth": 16, "frameHeight": 16, "margin": 0, "spacing": 0, "description": "Player character spritesheet for animations" },
+      "particleWhite": { "type": "image", "path": "images/particles/white.png", "description": "White particle for tinting effects" },
+      "genSpritePulsarBoss": {
         "type": "image",
-        "path": "images/characters/mainlogo.png",
-        "description": "Main background image used in Boot scene"
+        "path": "images/generated/sprite_pulsar_boss_final.png",
+        "description": "Generated final for sprite_pulsar_boss"
       },
-      "logo": {
-        "type": "image", 
-        "path": "images/characters/mainlogo.png",
-        "description": "Game logo"
-      },
-      "playerFull": {
+      "genSpriteWynIdle": {
         "type": "image",
-        "path": "2D Pixel Dungeon Asset Pack v2.0/2D Pixel Dungeon Asset Pack/character and tileset/Dungeon_Character.png",
-        "description": "Full player character image"
+        "path": "images/generated/sprite_wyn_idle_final.png",
+        "description": "Generated final for sprite_wyn_idle"
       },
-      "player": {
-        "type": "spritesheet",
-        "path": "2D Pixel Dungeon Asset Pack v2.0/2D Pixel Dungeon Asset Pack/character and tileset/Dungeon_Character.png",
-        "frameWidth": 16,
-        "frameHeight": 16,
-        "margin": 0,
-        "spacing": 0,
-        "description": "Player character spritesheet for animations"
-      },
-      "dungeonTiles": {
+      "genSpriteClumperBoss": { "type": "image", "path": "images/generated/sprite_the_clumper_boss_final.png", "description": "Generated final for sprite_the_clumper_boss" },
+      "genSpriteBulkBoss": { "type": "image", "path": "images/generated/sprite_the_bulk_boss_final.png", "description": "Generated final for sprite_the_bulk_boss" },
+      "genUiBadgeSrank": {
         "type": "image",
-        "path": "images/tilesets/Dungeon_Tileset.png",
-        "description": "Tileset for level design"
+        "path": "images/generated/ui_badge_srank_final.png",
+        "description": "Generated final for ui_badge_srank"
       },
-      "arrow1": {
+      "genUiIconCoin": { "type": "image", "path": "images/generated/ui_icon_coin_final.png", "description": "Generated final for ui_icon_coin" },
+      "genBackdropProteinFore": {
         "type": "image",
-        "path": "images/ui/interface/arrow_1.png",
-        "description": "UI arrow element 1"
+        "path": "images/generated/backdrop_protein_fore_final.png",
+        "description": "Generated final for backdrop_protein_fore"
       },
-      "arrow2": {
-        "type": "image", 
-        "path": "images/ui/interface/arrow_2.png",
-        "description": "UI arrow element 2"
-      },
-      "arrow3": {
+      "genBackdropProteinSky": {
         "type": "image",
-        "path": "images/ui/interface/arrow_3.png", 
-        "description": "UI arrow element 3"
+        "path": "images/generated/backdrop_protein_sky_final.png",
+        "description": "Generated final for backdrop_protein_sky"
       },
-      "arrow4": {
+      
+      "genBackdropFactoryMid": {
         "type": "image",
-        "path": "images/ui/interface/arrow_4.png",
-        "description": "UI arrow element 4"
+        "path": "images/generated/backdrop_factory_mid_final.png",
+        "description": "Generated final for backdrop_factory_mid"
       },
-      "squareLeft1": {
+      "genBackdropMinesMid": {
         "type": "image",
-        "path": "images/ui/interface/square_left_1.png",
-        "description": "UI square left element 1"
+        "path": "images/generated/backdrop_mines_mid_final.png",
+        "description": "Generated final for backdrop_mines_mid"
       },
-      "squareLeft2": {
+      "genBackdropProteinMid": {
         "type": "image",
-        "path": "images/ui/interface/square_left_2.png",
-        "description": "UI square left element 2"
+        "path": "images/generated/backdrop_protein_mid_final.png",
+        "description": "Generated final for backdrop_protein_mid"
       },
-      "squareLeft2_1": {
+      "genBackdropProteinFg": {
         "type": "image",
-        "path": "images/ui/interface/square_left_2_1.png",
-        "description": "UI square left element 2-1"
+        "path": "images/generated/backdrop_protein_fg_final.png",
+        "description": "Generated final for backdrop_protein_fg"
       },
-      "squareLeft2_2": {
+      "genBackdropFactoryFg": {
         "type": "image",
-        "path": "images/ui/interface/square_left_2_2.png",
-        "description": "UI square left element 2-2"
+        "path": "images/generated/backdrop_factory_fg_final.png",
+        "description": "Generated final for backdrop_factory_fg"
       },
-      "squareLeft2_3": {
+      "genBackdropFactoryFore": {
         "type": "image",
-        "path": "images/ui/interface/square_left_2_3.png",
-        "description": "UI square left element 2-3"
+        "path": "images/generated/backdrop_factory_fore_final.png",
+        "description": "Generated final for backdrop_factory_fore"
       },
-      "squareLeft2_4": {
+      "genBackdropFactorySky": {
         "type": "image",
-        "path": "images/ui/interface/square_left_2_4.png",
-        "description": "UI square left element 2-4"
+        "path": "images/generated/backdrop_factory_sky_final.png",
+        "description": "Generated final for backdrop_factory_sky"
       },
-      "squareLeft3": {
+      "genBackdropMinesFg": {
         "type": "image",
-        "path": "images/ui/interface/square_left_3.png",
-        "description": "UI square left element 3"
+        "path": "images/generated/backdrop_mines_fg_final.png",
+        "description": "Generated final for backdrop_mines_fg"
       },
-      "squareLeft4": {
+      "genBackdropMinesFore": {
         "type": "image",
-        "path": "images/ui/interface/square_left_4.png",
-        "description": "UI square left element 4"
+        "path": "images/generated/backdrop_mines_fore_final.png",
+        "description": "Generated final for backdrop_mines_fore"
       },
-      "squareRight1": {
+      "genBackdropMinesSky": {
         "type": "image",
-        "path": "images/ui/interface/square_right_1.png",
-        "description": "UI square right element 1"
+        "path": "images/generated/backdrop_mines_sky_final.png",
+        "description": "Generated final for backdrop_mines_sky"
       },
-      "squareRight2": {
-        "type": "image",
-        "path": "images/ui/interface/square_right_2.png",
-        "description": "UI square right element 2"
-      },
-      "squareRight2_1": {
-        "type": "image",
-        "path": "images/ui/interface/square_right_2_1.png",
-        "description": "UI square right element 2-1"
-      },
-      "squareRight2_2": {
-        "type": "image",
-        "path": "images/ui/interface/square_right_2_2.png",
-        "description": "UI square right element 2-2"
-      },
-      "squareRight2_3": {
-        "type": "image",
-        "path": "images/ui/interface/square_right_2_3.png",
-        "description": "UI square right element 2-3"
-      },
-      "squareRight2_4": {
-        "type": "image",
-        "path": "images/ui/interface/square_right_2_4.png",
-        "description": "UI square right element 2-4"
-      },
-      "squareRight3": {
-        "type": "image",
-        "path": "images/ui/interface/square_right_3.png",
-        "description": "UI square right element 3"
-      },
-      "squareRight4": {
-        "type": "image",
-        "path": "images/ui/interface/square_right_4.png",
-        "description": "UI square right element 4"
-      },
-      "squareUpDown1": {
-        "type": "image",
-        "path": "images/ui/interface/square_up_down_1.png",
-        "description": "UI square up/down element 1"
-      },
-      "squareUpDown2": {
-        "type": "image",
-        "path": "images/ui/interface/square_up_down_2.png",
-        "description": "UI square up/down element 2"
-      },
-      "squareUpDown3": {
-        "type": "image",
-        "path": "images/ui/interface/square_up_down_3.png",
-        "description": "UI square up/down element 3"
-      },
-      "squareUpDown4": {
-        "type": "image",
-        "path": "images/ui/interface/square_up_down_4.png",
-        "description": "UI square up/down element 4"
-      },
-      "coin": {
-        "type": "image",
-        "path": "spritesheets/items/coin.png",
-        "description": "Coin collectible"
-      },
-      "chest": {
-        "type": "image", 
-        "path": "spritesheets/items/chest.png",
-        "description": "Chest item"
-      },
-      "collectibleProtein": {
-        "type": "image",
-        "path": "spritesheets/items/flasks/flasks_2_1.png",
-        "description": "Protein collectible for level1"
-      },
-      "collectibleDumbbell": {
-        "type": "image",
-        "path": "spritesheets/items/collectibles/dumbbell.png", 
-        "description": "Dumbbell collectible for level1"
-      },
-      "torch": {
-        "type": "image",
-        "path": "spritesheets/effects/torch/torch.png",
-        "description": "Torch effect for environment"
-      },
-      "axelface": {
-        "type": "image",
-        "path": "images/characters/axelface.png",
-        "description": "Axel character face"
-      },
-      "wynface": {
-        "type": "image",
-        "path": "images/characters/wynface.png", 
-        "description": "Wyn character face"
-      },
-      "ilaSprite": {
-        "type": "image",
-        "path": "images/characters/ila_sprite.png",
-        "description": "Ila character sprite"
-      },
-      "axelSprite": {
-        "type": "image",
-        "path": "images/characters/axel_sprite.png",
-        "description": "Axel character sprite"
-      },
-      "wynSprite": {
-        "type": "image", 
-        "path": "images/characters/wyn_sprite.png",
-        "description": "Wyn character sprite"
-      },
-      "theWyn": {
-        "type": "image",
-        "path": "images/characters/thewyn.png",
-        "description": "The Wyn character image"
-      },
-      "buffBg": {
-        "type": "image",
-        "path": "images/backgrounds/buff-bg.png",
-        "description": "Buff-themed background for level1"
-      },
-      "parallaxSky": {
-        "type": "image",
-        "path": "images/backgrounds/parallax-sky.png",
-        "description": "Parallax background layer - sky"
-      },
-      "parallaxMountains": {
-        "type": "image",
-        "path": "images/backgrounds/parallax-mountains.png",
-        "description": "Parallax background layer - mountains"
-      },
-      "parallaxForeground": {
-        "type": "image",
-        "path": "images/backgrounds/parallax-foreground.png",
-        "description": "Parallax background layer - foreground"
-      },
-      "particleFlare": {
-        "type": "image",
-        "path": "images/particles/flares.png",
-        "description": "Particle flare effect for visual effects"
-      },
-      "particleWhite": {
-        "type": "image",
-        "path": "images/particles/white.png",
-        "description": "White particle for tinting effects"
-      }
+      "genParticleFlareSmall": { "type": "image", "path": "images/generated/particle_flare_small_final.png", "description": "Generated final for particle_flare_small" },
+      "genSpriteBossEmblem": { "type": "image", "path": "images/generated/sprite_boss_emblem_final.png", "description": "Generated final for sprite_boss_emblem" },
+      "genUiButtonPrimary": { "type": "image", "path": "images/generated/ui_button_primary_final.png", "description": "Generated final for ui_button_primary" },
+      "genUiIconDna": { "type": "image", "path": "images/generated/ui_icon_dna_final.png", "description": "Generated final for ui_icon_dna" },
+      "genUiIconGrit": { "type": "image", "path": "images/generated/ui_icon_grit_final.png", "description": "Generated final for ui_icon_grit" }
     },
     "audio": {
       "music": {
@@ -246,7 +100,7 @@
           "description": "Title screen music"
         },
         "hyperBuffBlitz": {
-          "type": "audio", 
+          "type": "audio",
           "path": "sounds/background/hyper-buff-blitz.mp3",
           "description": "In-level background music"
         },
@@ -265,14 +119,14 @@
             "description": "Landing sound effect variant 1"
           },
           {
-            "key": "sfxLand2", 
+            "key": "sfxLand2",
             "type": "audio",
             "path": "sounds/land-effects/land2.mp3",
             "description": "Landing sound effect variant 2"
           },
           {
             "key": "sfxLand3",
-            "type": "audio", 
+            "type": "audio",
             "path": "sounds/land-effects/land3.mp3",
             "description": "Landing sound effect variant 3"
           },
@@ -293,7 +147,7 @@
           {
             "key": "sfxPickup2",
             "type": "audio",
-            "path": "sounds/pickup-effects/pickup2.mp3", 
+            "path": "sounds/pickup-effects/pickup2.mp3",
             "description": "Pickup sound effect variant 2"
           },
           {
@@ -324,7 +178,7 @@
               "description": "UI click sound variant 2"
             },
             {
-              "key": "sfxClick3", 
+              "key": "sfxClick3",
               "type": "audio",
               "path": "sounds/primary-click/click3.mp3",
               "description": "UI click sound variant 3"
@@ -357,7 +211,7 @@
             },
             {
               "key": "sfxHover4",
-              "type": "audio", 
+              "type": "audio",
               "path": "sounds/ui-hover/hover4.mp3",
               "description": "UI hover sound variant 4"
             }

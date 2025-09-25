@@ -134,7 +134,7 @@ The modules interact primarily through the Event System, which decouples the com
 
 ### Core Technologies
 - **Phaser 3.88.0**: HTML5 game framework
-- **Rapier 0.14.0**: 2D physics engine
+- **Rapier 0.18.2**: 2D physics engine
 - **Vite 5.3.1**: Build tool and development server
 - **JavaScript (ES6+)**: Programming language
 

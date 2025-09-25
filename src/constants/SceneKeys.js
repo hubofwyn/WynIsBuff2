@@ -16,6 +16,9 @@ export const SceneKeys = Object.freeze({
   GAME_OVER: 'GameOver',
   BIRTHDAY_MINIGAME: 'BirthdayMinigame',
   
+  // Test Scenes
+  TEST_CHARACTER_MOTION: 'TestScene_CharacterMotion',
+  
   // Idle/Automation System Scenes
   HUB: 'HubScene',
   RUN: 'RunScene',

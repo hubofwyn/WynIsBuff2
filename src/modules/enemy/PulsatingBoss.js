@@ -1,5 +1,6 @@
 import RAPIER from '@dimforge/rapier2d-compat';
-import { EventNames } from '../../constants/EventNames';
+import { EventNames } from '../../constants/EventNames.js';
+import { ImageAssets } from '../../constants/Assets.js';
 
 /**
  * PulsatingBoss - A pulsating obstacle that the player must avoid
@@ -34,34 +35,26 @@ export class PulsatingBoss {
     }
     
     createSprite() {
-        // Create a menacing red circle with glow effect
-        const graphics = this.scene.add.graphics();
-        
-        // Outer glow
-        graphics.fillStyle(0xff0000, 0.3);
-        graphics.fillCircle(0, 0, this.baseSize * 1.5);
-        
-        // Middle glow
-        graphics.fillStyle(0xff0000, 0.5);
-        graphics.fillCircle(0, 0, this.baseSize * 1.2);
-        
-        // Core
-        graphics.fillStyle(0xff0000, 1);
-        graphics.fillCircle(0, 0, this.baseSize);
-        
-        // Convert to texture
-        graphics.generateTexture('bossTexture', this.baseSize * 3, this.baseSize * 3);
-        graphics.destroy();
-        
-        // Create sprite from texture
-        this.sprite = this.scene.add.sprite(this.x, this.y, 'bossTexture');
-        this.sprite.setDepth(50);
-        
-        // Add menacing face
-        this.face = this.scene.add.text(this.x, this.y, '👹', {
-            fontSize: '64px'
-        }).setOrigin(0.5);
-        this.face.setDepth(51);
+        // Prefer generated boss sprite if available
+        if (this.scene.textures.exists(ImageAssets.GEN_SPRITE_PULSAR_BOSS)) {
+            this.sprite = this.scene.add.image(this.x, this.y, ImageAssets.GEN_SPRITE_PULSAR_BOSS)
+                .setOrigin(0.5)
+                .setDepth(50)
+                .setScale(this.baseSize / 256); // approximate scale to size
+        } else {
+            // Create a menacing red circle with glow effect as fallback
+            const graphics = this.scene.add.graphics();
+            graphics.fillStyle(0xff0000, 0.3);
+            graphics.fillCircle(0, 0, this.baseSize * 1.5);
+            graphics.fillStyle(0xff0000, 0.5);
+            graphics.fillCircle(0, 0, this.baseSize * 1.2);
+            graphics.fillStyle(0xff0000, 1);
+            graphics.fillCircle(0, 0, this.baseSize);
+            graphics.generateTexture('bossTexture', this.baseSize * 3, this.baseSize * 3);
+            graphics.destroy();
+            this.sprite = this.scene.add.sprite(this.x, this.y, 'bossTexture');
+            this.sprite.setDepth(50);
+        }
         
         // Add warning text
         this.warningText = this.scene.add.text(this.x, this.y - 100, 'DANGER!', {
@@ -131,13 +124,10 @@ export class PulsatingBoss {
             }
         });
         
-        // Add rotation for extra menace
-        this.scene.tweens.add({
-            targets: this.sprite,
-            angle: 360,
-            duration: 10000,
-            repeat: -1
-        });
+        // Add subtle spin if using fallback graphic
+        if (this.sprite?.type === 'Sprite') {
+            this.scene.tweens.add({ targets: this.sprite, angle: 360, duration: 10000, repeat: -1 });
+        }
         
         // Add particle effect
         this.createParticleEffect();
@@ -153,17 +143,13 @@ export class PulsatingBoss {
                 const x = this.x + Math.cos(angle * Math.PI / 180) * distance;
                 const y = this.y + Math.sin(angle * Math.PI / 180) * distance;
                 
-                const particle = this.scene.add.circle(x, y, 5, 0xff0000);
-                
-                this.scene.tweens.add({
-                    targets: particle,
-                    x: this.x + Math.cos(angle * Math.PI / 180) * (distance + 50),
-                    y: this.y + Math.sin(angle * Math.PI / 180) * (distance + 50),
-                    alpha: 0,
-                    scale: 0,
-                    duration: 1000,
-                    onComplete: () => particle.destroy()
-                });
+                try {
+                    this.scene.add.particles(
+                        x, y,
+                        ImageAssets.GEN_PARTICLE_FLARE_SMALL,
+                        { lifespan: 600, speed: {min:30, max:120}, scale: {start:0.4, end:0}, quantity: 1, alpha: {start:0.8, end:0} }
+                    );
+                } catch {}
             },
             loop: true
         });

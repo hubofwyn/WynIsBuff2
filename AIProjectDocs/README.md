@@ -20,7 +20,7 @@ This documentation provides comprehensive information about the technologies, fr
 **WynIsBuff2** is a 2D game built with the following core technologies:
 
 - **Phaser 3.88.0**: HTML5 game framework providing the core game engine functionality
-- **Rapier 0.14.0**: 2D physics engine for realistic physics simulations
+- **Rapier 0.18.2**: 2D physics engine for realistic physics simulations
 - **Vite 5.3.1**: Modern build tool for fast development and optimized production builds
 
 The game features a character that can move and perform triple jumps across platforms, with physics-based interactions powered by the Rapier physics engine.

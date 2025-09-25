@@ -1,0 +1,38 @@
+name: Agentic Tests (Bun)
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  agentic:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: '1.2.21'
+      - name: Prepare Bun tmp dirs
+        run: |
+          echo "BUN_TMPDIR=$GITHUB_WORKSPACE/.bun-tmp" >> $GITHUB_ENV
+          echo "BUN_INSTALL=$HOME/.bun" >> $GITHUB_ENV
+          mkdir -p "$GITHUB_WORKSPACE/.bun-tmp"
+      - name: Install deps
+        run: bun install
+      - name: Run agentic orchestrator (with sandbox smokes)
+        env:
+          AGENTIC_CALL_SANDBOX: '1'
+          SANDBOX_RUNS: '1'
+          SEED: '42'
+          PH4_LOAD_MANIFEST: '1'
+          SANDBOX_GEN_KEY: 'GEN_BACKDROP_FACTORY_SKY'
+        run: bun scripts/orchestrate-agentic.cjs
+      - name: Upload agentic summary
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: agentic-summary
+          path: .reports/agentic/summary.json

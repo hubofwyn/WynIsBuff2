@@ -1,0 +1,43 @@
+{
+  "version": 1,
+  "name": "phaser4-migration",
+  "description": "Staged migration to Phaser 4 with Rapier and smoke tests",
+  "tasks": [
+    {
+      "id": "planning-freeze",
+      "title": "Freeze scene list and declare surfaces",
+      "acceptanceCriteria": ["Scene inventory documented", "render-only surfaces identified"],
+      "files": ["docs/make-all-better/rapier-plus-phaser4.md"],
+      "owner": "architecture-guardian"
+    },
+    {
+      "id": "phaser4-sandbox",
+      "title": "Create Phaser 4 playground with Rapier",
+      "acceptanceCriteria": ["Sprite render", "ParallaxLayers port renders", "Rapier world steps"],
+      "files": ["sandbox/phaser4/*"],
+      "owner": "architecture-guardian"
+    },
+    {
+      "id": "api-compat",
+      "title": "Map API differences (input, events, loader)",
+      "acceptanceCriteria": ["Diff doc written", "ParallaxLayers compatible functions"],
+      "files": ["docs/make-all-better/rapier-plus-phaser4.md", "src/systems/ParallaxLayers.js"],
+      "owner": "architecture-guardian"
+    },
+    {
+      "id": "smokes",
+      "title": "Add headless smokes for Phaser 4 sandbox",
+      "acceptanceCriteria": ["Boot smoke", "Parallax smoke", "Particle smoke"],
+      "files": ["tests/phaser4/*.cjs"],
+      "owner": "architecture-guardian"
+    },
+    {
+      "id": "rollout",
+      "title": "Plan scene-by-scene rollout and cutover",
+      "acceptanceCriteria": ["Branch plan", "Fallback plan", "Cutover checklist"],
+      "files": ["docs/make-all-better/make-all-better.md"],
+      "owner": "architecture-guardian"
+    }
+  ]
+}
+

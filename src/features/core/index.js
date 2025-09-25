@@ -1,6 +1,7 @@
 // Barrel export for Core system managers - now located in src/core/
 
 export { AgentOrchestrator } from '../../core/AgentOrchestrator.js';
+export { AssetHealthManager } from '../../core/AssetHealthManager.js';
 export { AudioManager } from '../../core/AudioManager.js';
 export { BaseManager } from '../../core/BaseManager.js';
 export { CloneManager } from '../../core/CloneManager.js';

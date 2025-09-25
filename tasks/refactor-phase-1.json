@@ -1,0 +1,60 @@
+{
+  "version": 1,
+  "name": "refactor-phase-1",
+  "description": "Unify asset usage across scenes, integrate generated UI, normalize LevelLoader backgrounds, and gate with usage audit + tests",
+  "tasks": [
+    {
+      "id": "assets-normalize",
+      "title": "Replace raw texture keys with ImageAssets constants",
+      "acceptanceCriteria": [
+        "No add.image/add.sprite string literals in src/scenes",
+        "Preloader autoloads GEN_* assets",
+        "Usage audit shows 0 unused / 0 missing"
+      ],
+      "files": ["src/scenes/*.js", "src/constants/Assets.js", "scripts/audit-asset-usage.mjs"],
+      "owner": "architecture-guardian"
+    },
+    {
+      "id": "scene-unify",
+      "title": "Use generated UI buttons/icons in menus",
+      "acceptanceCriteria": [
+        "Welcome/MainMenu/Settings use GEN_UI_BUTTON_PRIMARY where beneficial",
+        "RunScene uses ParallaxLayers only for parallax (no legacy parallax loads)"
+      ],
+      "files": ["src/scenes/WelcomeScene.js", "src/scenes/MainMenu.js", "src/scenes/SettingsScene.js", "src/scenes/RunScene.js"],
+      "owner": "architecture-guardian"
+    },
+    {
+      "id": "level-loader",
+      "title": "Map biome → parallax constants; graceful fallback",
+      "acceptanceCriteria": [
+        "Each known biome maps to 4 generated layers",
+        "Unknown biome falls back to gradient only"
+      ],
+      "files": ["src/modules/level/LevelLoader.js", "src/systems/ParallaxLayers.js"],
+      "owner": "architecture-guardian"
+    },
+    {
+      "id": "boss-visuals",
+      "title": "Display boss sprites and emblem based on run data",
+      "acceptanceCriteria": [
+        "Results shows S-rank badge when earned",
+        "Results and boss scenes display correct boss sprite when applicable"
+      ],
+      "files": ["src/scenes/ResultsScene.js", "src/modules/enemy/*.js"],
+      "owner": "architecture-guardian"
+    },
+    {
+      "id": "tests-gates",
+      "title": "Add tests + keep audit green",
+      "acceptanceCriteria": [
+        "Results UI test (badge/boss)",
+        "LevelLoader parallax smoke test",
+        "npm run assets:usage-audit returns no issues"
+      ],
+      "files": ["tests/*.cjs"],
+      "owner": "architecture-guardian"
+    }
+  ]
+}
+

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WynIsBuff2 - Keyboard Test</title>
+    <style>
+        body { 
+            margin: 0; 
+            padding: 20px; 
+            font-family: monospace;
+            background: #222;
+            color: #0f0;
+        }
+        #game { 
+            border: 2px solid #0f0;
+            display: block;
+            margin: 20px auto;
+        }
+        #console {
+            max-width: 1024px;
+            margin: 0 auto;
+            height: 200px;
+            overflow-y: scroll;
+            background: #000;
+            border: 1px solid #0f0;
+            padding: 10px;
+            font-size: 12px;
+        }
+        .log { color: #0f0; }
+        .warn { color: #ff0; }
+        .error { color: #f00; }
+        .success { color: #0ff; font-weight: bold; }
+        #instructions {
+            text-align: center;
+            margin: 20px;
+            color: #ff0;
+        }
+    </style>
+</head>
+<body>
+    <div id="instructions">
+        <h2>KEYBOARD TEST MODE</h2>
+        <p>Press WASD or Arrow Keys to test movement</p>
+        <p>Watch the console below for detailed feedback</p>
+    </div>
+    <div id="game"></div>
+    <div id="console"></div>
+    
+    <script type="module">
+        // Intercept console to display in our custom console
+        const customConsole = document.getElementById('console');
+        const originalLog = console.log;
+        const originalWarn = console.warn;
+        const originalError = console.error;
+        
+        function addToConsole(message, type = 'log') {
+            const div = document.createElement('div');
+            div.className = type;
+            div.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            customConsole.appendChild(div);
+            customConsole.scrollTop = customConsole.scrollHeight;
+            
+            // Highlight important messages
+            if (message.includes('✅')) {
+                div.className = 'success';
+            }
+        }
+        
+        console.log = function(...args) {
+            originalLog.apply(console, args);
+            addToConsole(args.join(' '), 'log');
+        };
+        
+        console.warn = function(...args) {
+            originalWarn.apply(console, args);
+            addToConsole(args.join(' '), 'warn');
+        };
+        
+        console.error = function(...args) {
+            originalError.apply(console, args);
+            addToConsole(args.join(' '), 'error');
+        };
+        
+        // Load the game
+        console.log('Starting WynIsBuff2 in Keyboard Test Mode...');
+        
+        // Import main game
+        import('./src/main.js').then(() => {
+            console.log('Game loaded! Now try pressing keys...');
+            
+            // Add keyboard state monitor
+            document.addEventListener('keydown', (e) => {
+                if (['w','a','s','d','ArrowUp','ArrowDown','ArrowLeft','ArrowRight',' '].includes(e.key.toLowerCase())) {
+                    console.log(`🎮 Key pressed: ${e.key} (code: ${e.code})`);
+                }
+            });
+            
+            document.addEventListener('keyup', (e) => {
+                if (['w','a','s','d','ArrowUp','ArrowDown','ArrowLeft','ArrowRight',' '].includes(e.key.toLowerCase())) {
+                    console.log(`🎮 Key released: ${e.key} (code: ${e.code})`);
+                }
+            });
+        }).catch(err => {
+            console.error('Failed to load game:', err);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,46 @@
+name: Agentic Project Backlog
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'tasks/**/*.json'
+      - 'docs/make-all-better/*.md'
+
+jobs:
+  backlog:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+      pull-requests: write
+      projects: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Parse tasks and propose backlog items
+        uses: actions/github-script@v7
+        env:
+          PROJECT_NUMBER: ${{ secrets.AGENTIC_PROJECT_NUMBER }}
+          PROJECT_OWNER: ${{ secrets.AGENTIC_PROJECT_OWNER }}
+        with:
+          script: |
+            const fs = require('fs');
+            const path = require('path');
+            const taskFiles = fs.readdirSync('tasks').filter(f=>f.endsWith('.json'));
+            const items = [];
+            for (const f of taskFiles) {
+              try {
+                const data = JSON.parse(fs.readFileSync(path.join('tasks', f), 'utf8'));
+                (data.tasks||[]).forEach(t=>items.push({file:f,id:t.id,title:t.title}));
+              } catch {}
+            }
+            core.info(`Found ${items.length} tasks`);
+            // NOTE: This is a scaffold. To add to a GitHub Project (beta), use GraphQL mutations.
+            // Requires a fine-grained token with project write permissions and the project node id.
+            // See: https://docs.github.com/en/graphql/overview/explorer
+            // Here we create draft issues as placeholders.
+            for (const it of items) {
+              const title = `[Agentic Backlog] ${it.title}`;
+              await github.rest.issues.create({ owner: context.repo.owner, repo: context.repo.repo, title, body: `Source: tasks/${it.file}\nTask ID: ${it.id}` });
+            }
+

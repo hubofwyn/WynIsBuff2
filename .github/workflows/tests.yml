@@ -1,0 +1,60 @@
+name: Core Tests (Bun)
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: '1.2.21'
+      - name: Install deps
+        run: bun install --frozen-lockfile
+      - name: Run tests
+        run: bun tests/run-tests.cjs
+      - name: Build app for preview (for browser smoke)
+        run: bunx vite build --config vite/config.prod.mjs
+      - name: Start Vite preview (background)
+        run: |
+          nohup bunx vite preview --open=false --strictPort --port 4173 > .preview.log 2>&1 &
+          echo "VITE_PREVIEW_PID=$!" >> $GITHUB_ENV
+          echo "VITE_PREVIEW_PORT=4173" >> $GITHUB_ENV
+      - name: Run Playwright boot-browser smoke (if available)
+        env:
+          VITE_PREVIEW_PORT: 4173
+        run: node tests/agentic/boot-browser.smoke.cjs || true
+      - name: Stop preview
+        if: always()
+        run: |
+          if [ -n "$VITE_PREVIEW_PID" ]; then kill $VITE_PREVIEW_PID || true; fi
+      - name: Upload agentic summary
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: agentic-summary
+          path: .reports/agentic/summary.json
+      - name: Upload agentic screenshots (if any)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: agentic-screens
+          path: .reports/agentic/*.png
+          if-no-files-found: ignore
+      - name: Run asset usage audit
+        run: bun scripts/audit-asset-usage.mjs
+      - name: Gate on asset usage audit
+        run: |
+          node -e "const fs=require('fs');const r=JSON.parse(fs.readFileSync('.reports/assets/usage-audit.json','utf8'));if((r.unusedGeneratedConstants||[]).length||(r.missingManifestEntries||[]).length){console.error('Usage audit failed',r);process.exit(1);} else {console.log('Usage audit clean');}"
+      - name: Upload agentic summary
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: agentic-summary
+          path: .reports/agentic/summary.json

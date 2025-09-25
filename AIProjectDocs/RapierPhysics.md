@@ -24,7 +24,7 @@ Rapier is a high-performance physics engine written in Rust with JavaScript bind
 ## Version Information
 
 - **Package**: @dimforge/rapier2d-compat
-- **Version**: 0.14.0
+- **Version**: 0.18.2
 - **Official Documentation**: https://rapier.rs/docs/
 - **GitHub Repository**: https://github.com/dimforge/rapier
 

@@ -1,0 +1,1634 @@
+[
+  {
+    "file": "backdrop_factory_fg_1024_1.png",
+    "sizeKB": 1179.3,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": false
+  },
+  {
+    "file": "backdrop_factory_fg_1024_2.png",
+    "sizeKB": 1260,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": false
+  },
+  {
+    "file": "backdrop_factory_fg_1024_3.png",
+    "sizeKB": 1236.6,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": false
+  },
+  {
+    "file": "backdrop_factory_fg_1024_4.png",
+    "sizeKB": 1208.7,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": false
+  },
+  {
+    "file": "backdrop_factory_floor_1024_1.png",
+    "sizeKB": 1163,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": false
+  },
+  {
+    "file": "backdrop_factory_floor_1024_2.png",
+    "sizeKB": 1693.8,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "backdrop_factory_floor_1024_3.png",
+    "sizeKB": 1711.6,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "backdrop_factory_floor_1024_4.png",
+    "sizeKB": 1661.6,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "backdrop_factory_fore_1024_1.png",
+    "sizeKB": 1203.3,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": false
+  },
+  {
+    "file": "backdrop_factory_fore_1024_2.png",
+    "sizeKB": 1238.5,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": false
+  },
+  {
+    "file": "backdrop_factory_fore_1024_3.png",
+    "sizeKB": 1350.3,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": false
+  },
+  {
+    "file": "backdrop_factory_fore_1024_4.png",
+    "sizeKB": 1286.5,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": false
+  },
+  {
+    "file": "backdrop_factory_mid_1024_1.png",
+    "sizeKB": 1249.4,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": false
+  },
+  {
+    "file": "backdrop_factory_mid_1024_2.png",
+    "sizeKB": 1254.4,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": false
+  },
+  {
+    "file": "backdrop_factory_mid_1024_3.png",
+    "sizeKB": 1208.9,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": false
+  },
+  {
+    "file": "backdrop_factory_mid_1024_4.png",
+    "sizeKB": 1257.7,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": false
+  },
+  {
+    "file": "backdrop_factory_sky_1024_1.png",
+    "sizeKB": 1157.7,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": false
+  },
+  {
+    "file": "backdrop_factory_sky_1024_2.png",
+    "sizeKB": 1199.5,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": false
+  },
+  {
+    "file": "backdrop_factory_sky_1024_3.png",
+    "sizeKB": 1122,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": false
+  },
+  {
+    "file": "backdrop_factory_sky_1024_4.png",
+    "sizeKB": 1108.6,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": false
+  },
+  {
+    "file": "backdrop_mines_fg_1024_1.png",
+    "sizeKB": 1436.2,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": false
+  },
+  {
+    "file": "backdrop_mines_fg_1024_2.png",
+    "sizeKB": 1273.6,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": false
+  },
+  {
+    "file": "backdrop_mines_fg_1024_3.png",
+    "sizeKB": 1279.1,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": false
+  },
+  {
+    "file": "backdrop_mines_fg_1024_4.png",
+    "sizeKB": 1300.1,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": false
+  },
+  {
+    "file": "backdrop_mines_fore_1024_1.png",
+    "sizeKB": 1292.4,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": false
+  },
+  {
+    "file": "backdrop_mines_fore_1024_2.png",
+    "sizeKB": 1176.8,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": false
+  },
+  {
+    "file": "backdrop_mines_fore_1024_3.png",
+    "sizeKB": 1214.3,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": false
+  },
+  {
+    "file": "backdrop_mines_fore_1024_4.png",
+    "sizeKB": 1434.9,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": false
+  },
+  {
+    "file": "backdrop_mines_mid_1024_1.png",
+    "sizeKB": 1056.1,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": false
+  },
+  {
+    "file": "backdrop_mines_mid_1024_2.png",
+    "sizeKB": 1141.3,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": false
+  },
+  {
+    "file": "backdrop_mines_mid_1024_3.png",
+    "sizeKB": 1009.6,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": false
+  },
+  {
+    "file": "backdrop_mines_mid_1024_4.png",
+    "sizeKB": 1141,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": false
+  },
+  {
+    "file": "backdrop_mines_sky_1024_1.png",
+    "sizeKB": 1145.9,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": false
+  },
+  {
+    "file": "backdrop_mines_sky_1024_2.png",
+    "sizeKB": 1234.7,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": false
+  },
+  {
+    "file": "backdrop_mines_sky_1024_3.png",
+    "sizeKB": 1226.5,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": false
+  },
+  {
+    "file": "backdrop_mines_sky_1024_4.png",
+    "sizeKB": 1209.4,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": false
+  },
+  {
+    "file": "backdrop_protein_fg_1024_1.png",
+    "sizeKB": 1190.3,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": false
+  },
+  {
+    "file": "backdrop_protein_fg_1024_2.png",
+    "sizeKB": 1270.4,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": false
+  },
+  {
+    "file": "backdrop_protein_fg_1024_3.png",
+    "sizeKB": 1125.9,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": false
+  },
+  {
+    "file": "backdrop_protein_fg_1024_4.png",
+    "sizeKB": 1287.7,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": false
+  },
+  {
+    "file": "backdrop_protein_fore_1024_1.png",
+    "sizeKB": 1386.9,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": false
+  },
+  {
+    "file": "backdrop_protein_fore_1024_2.png",
+    "sizeKB": 1266.3,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": false
+  },
+  {
+    "file": "backdrop_protein_fore_1024_3.png",
+    "sizeKB": 1450,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": false
+  },
+  {
+    "file": "backdrop_protein_fore_1024_4.png",
+    "sizeKB": 1338.1,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": false
+  },
+  {
+    "file": "backdrop_protein_mid_1024_1.png",
+    "sizeKB": 1180,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": false
+  },
+  {
+    "file": "backdrop_protein_mid_1024_2.png",
+    "sizeKB": 1301.2,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": false
+  },
+  {
+    "file": "backdrop_protein_mid_1024_3.png",
+    "sizeKB": 1258.5,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": false
+  },
+  {
+    "file": "backdrop_protein_mid_1024_4.png",
+    "sizeKB": 1209.9,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": false
+  },
+  {
+    "file": "backdrop_protein_plant_1024_1.png",
+    "sizeKB": 1797.2,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "backdrop_protein_plant_1024_2.png",
+    "sizeKB": 1621.7,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "backdrop_protein_plant_1024_3.png",
+    "sizeKB": 1480.8,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "backdrop_protein_plant_1024_4.png",
+    "sizeKB": 1550.5,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "backdrop_protein_plant_512_1.png",
+    "sizeKB": 1538.5,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "backdrop_protein_plant_512_2.png",
+    "sizeKB": 1495.7,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "backdrop_protein_plant_512_3.png",
+    "sizeKB": 1562.5,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "backdrop_protein_plant_512_4.png",
+    "sizeKB": 1780.8,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "backdrop_protein_sky_1024_1.png",
+    "sizeKB": 1179.2,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": false
+  },
+  {
+    "file": "backdrop_protein_sky_1024_2.png",
+    "sizeKB": 1282.7,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": false
+  },
+  {
+    "file": "backdrop_protein_sky_1024_3.png",
+    "sizeKB": 1070.7,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": false
+  },
+  {
+    "file": "backdrop_protein_sky_1024_4.png",
+    "sizeKB": 1250,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": false
+  },
+  {
+    "file": "backdrop_skygym_fg_1024_1.png",
+    "sizeKB": 1274.2,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": false
+  },
+  {
+    "file": "backdrop_skygym_fg_1024_2.png",
+    "sizeKB": 1311,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": false
+  },
+  {
+    "file": "backdrop_skygym_fg_1024_3.png",
+    "sizeKB": 1244.3,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": false
+  },
+  {
+    "file": "backdrop_skygym_fg_1024_4.png",
+    "sizeKB": 1269,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": false
+  },
+  {
+    "file": "backdrop_skygym_fore_1024_1.png",
+    "sizeKB": 1393.8,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": false
+  },
+  {
+    "file": "backdrop_skygym_fore_1024_2.png",
+    "sizeKB": 1231.6,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": false
+  },
+  {
+    "file": "backdrop_skygym_fore_1024_3.png",
+    "sizeKB": 1306.9,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": false
+  },
+  {
+    "file": "backdrop_skygym_fore_1024_4.png",
+    "sizeKB": 1322.2,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": false
+  },
+  {
+    "file": "backdrop_skygym_mid_1024_1.png",
+    "sizeKB": 1125,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": false
+  },
+  {
+    "file": "backdrop_skygym_mid_1024_2.png",
+    "sizeKB": 1207.1,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": false
+  },
+  {
+    "file": "backdrop_skygym_mid_1024_3.png",
+    "sizeKB": 1241,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": false
+  },
+  {
+    "file": "backdrop_skygym_mid_1024_4.png",
+    "sizeKB": 1148,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": false
+  },
+  {
+    "file": "backdrop_skygym_sky_1024_1.png",
+    "sizeKB": 1128.1,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": false
+  },
+  {
+    "file": "backdrop_skygym_sky_1024_2.png",
+    "sizeKB": 1203.3,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": false
+  },
+  {
+    "file": "backdrop_skygym_sky_1024_3.png",
+    "sizeKB": 1065.2,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": false
+  },
+  {
+    "file": "backdrop_skygym_sky_1024_4.png",
+    "sizeKB": 1061.8,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": false
+  },
+  {
+    "file": "particle_dust_1024_1.png",
+    "sizeKB": 1783.3,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "particle_dust_1024_2.png",
+    "sizeKB": 1813.5,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "particle_dust_1024_3.png",
+    "sizeKB": 1436.1,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "particle_dust_1024_4.png",
+    "sizeKB": 1480.5,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "particle_flare_small_1024_1.png",
+    "sizeKB": 1416.2,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "particle_flare_small_1024_2.png",
+    "sizeKB": 1381.7,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "particle_flare_small_1024_3.png",
+    "sizeKB": 1479,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "particle_flare_small_1024_4.png",
+    "sizeKB": 1417,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "particle_spark_1024_1.png",
+    "sizeKB": 1601.8,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "particle_spark_1024_2.png",
+    "sizeKB": 1466.2,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "particle_spark_1024_3.png",
+    "sizeKB": 1920.7,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "particle_spark_1024_4.png",
+    "sizeKB": 1472,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "sprite_boss_emblem_1024_1.png",
+    "sizeKB": 1540.4,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "sprite_boss_emblem_1024_2.png",
+    "sizeKB": 1456.1,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "sprite_boss_emblem_1024_3.png",
+    "sizeKB": 1600.1,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "sprite_boss_emblem_1024_4.png",
+    "sizeKB": 1503.6,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "sprite_buff_dna_1024_1.png",
+    "sizeKB": 1557.1,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "sprite_buff_dna_1024_2.png",
+    "sizeKB": 1483.4,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "sprite_buff_dna_1024_3.png",
+    "sizeKB": 1588.7,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "sprite_buff_dna_1024_4.png",
+    "sizeKB": 1531.6,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "sprite_checkpoint_flag_1024_1.png",
+    "sizeKB": 1524.2,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "sprite_checkpoint_flag_1024_2.png",
+    "sizeKB": 1429.7,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "sprite_checkpoint_flag_1024_3.png",
+    "sizeKB": 1748.6,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "sprite_checkpoint_flag_1024_4.png",
+    "sizeKB": 1460.7,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "sprite_coin_1024_1.png",
+    "sizeKB": 1361.5,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "sprite_coin_1024_2.png",
+    "sizeKB": 1361.7,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "sprite_coin_1024_3.png",
+    "sizeKB": 1405.7,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "sprite_coin_1024_4.png",
+    "sizeKB": 1533.2,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "sprite_crate_heavy_1024_1.png",
+    "sizeKB": 1555,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "sprite_crate_heavy_1024_2.png",
+    "sizeKB": 1572.4,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "sprite_crate_heavy_1024_3.png",
+    "sizeKB": 1624.2,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "sprite_crate_heavy_1024_4.png",
+    "sizeKB": 1437.5,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "sprite_crusher_1024_1.png",
+    "sizeKB": 1411.6,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "sprite_crusher_1024_2.png",
+    "sizeKB": 1436.6,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "sprite_crusher_1024_3.png",
+    "sizeKB": 1398.8,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "sprite_crusher_1024_4.png",
+    "sizeKB": 1409.5,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "sprite_grit_shard_1024_1.png",
+    "sizeKB": 1804.2,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "sprite_grit_shard_1024_2.png",
+    "sizeKB": 1498.2,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "sprite_grit_shard_1024_3.png",
+    "sizeKB": 1901.8,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "sprite_grit_shard_1024_4.png",
+    "sizeKB": 1453.7,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "sprite_laser_emitter_1024_1.png",
+    "sizeKB": 1421.3,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "sprite_laser_emitter_1024_2.png",
+    "sizeKB": 1481.4,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "sprite_laser_emitter_1024_3.png",
+    "sizeKB": 1392.1,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "sprite_laser_emitter_1024_4.png",
+    "sizeKB": 1432.4,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "sprite_pipe_corner_1024_1.png",
+    "sizeKB": 1471.4,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "sprite_pipe_corner_1024_2.png",
+    "sizeKB": 1788,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "sprite_pipe_corner_1024_3.png",
+    "sizeKB": 1506.2,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "sprite_pipe_corner_1024_4.png",
+    "sizeKB": 1455.9,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "sprite_pipe_straight_1024_1.png",
+    "sizeKB": 1358.9,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "sprite_pipe_straight_1024_2.png",
+    "sizeKB": 1663,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "sprite_pipe_straight_1024_3.png",
+    "sizeKB": 1345.4,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "sprite_pipe_straight_1024_4.png",
+    "sizeKB": 1366.4,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "sprite_platform_industrial_1024_1.png",
+    "sizeKB": 1861.3,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "sprite_platform_industrial_1024_2.png",
+    "sizeKB": 1757.4,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "sprite_platform_industrial_1024_3.png",
+    "sizeKB": 1444.5,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "sprite_platform_industrial_1024_4.png",
+    "sizeKB": 1460.1,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "sprite_pulsar_boss_1024_1.png",
+    "sizeKB": 1766.7,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "sprite_pulsar_boss_1024_2.png",
+    "sizeKB": 1625.3,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "sprite_pulsar_boss_1024_3.png",
+    "sizeKB": 1540.9,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "sprite_pulsar_boss_1024_4.png",
+    "sizeKB": 1809.8,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "sprite_pulsar_boss_512_1.png",
+    "sizeKB": 1482.5,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "sprite_pulsar_boss_512_2.png",
+    "sizeKB": 1553.1,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "sprite_pulsar_boss_512_3.png",
+    "sizeKB": 1575.4,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "sprite_pulsar_boss_512_4.png",
+    "sizeKB": 1772.1,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "sprite_rail_boost_pad_1024_1.png",
+    "sizeKB": 1488.4,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "sprite_rail_boost_pad_1024_2.png",
+    "sizeKB": 1426.1,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "sprite_rail_boost_pad_1024_3.png",
+    "sizeKB": 2253.9,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "sprite_rail_boost_pad_1024_4.png",
+    "sizeKB": 2154.7,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "sprite_shock_grid_1024_1.png",
+    "sizeKB": 1343.3,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "sprite_shock_grid_1024_2.png",
+    "sizeKB": 1536,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "sprite_shock_grid_1024_3.png",
+    "sizeKB": 1574.4,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "sprite_shock_grid_1024_4.png",
+    "sizeKB": 1574.7,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "sprite_sign_warning_1024_1.png",
+    "sizeKB": 2289.5,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "sprite_sign_warning_1024_2.png",
+    "sizeKB": 2524.3,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "sprite_sign_warning_1024_3.png",
+    "sizeKB": 2215.5,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "sprite_sign_warning_1024_4.png",
+    "sizeKB": 1501.2,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "sprite_spikes_1024_1.png",
+    "sizeKB": 1470.4,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "sprite_spikes_1024_2.png",
+    "sizeKB": 1875.8,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "sprite_spikes_1024_3.png",
+    "sizeKB": 1511.8,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "sprite_spikes_1024_4.png",
+    "sizeKB": 1764.1,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "sprite_the_bulk_boss_1024_1.png",
+    "sizeKB": 1600.9,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "sprite_the_bulk_boss_1024_2.png",
+    "sizeKB": 1480.8,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "sprite_the_bulk_boss_1024_3.png",
+    "sizeKB": 1498.6,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "sprite_the_bulk_boss_1024_4.png",
+    "sizeKB": 1560.9,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "sprite_the_clumper_boss_1024_1.png",
+    "sizeKB": 1629.3,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "sprite_the_clumper_boss_1024_2.png",
+    "sizeKB": 1472.5,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "sprite_the_clumper_boss_1024_3.png",
+    "sizeKB": 1479.1,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "sprite_the_clumper_boss_1024_4.png",
+    "sizeKB": 1840.5,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "sprite_ui_pause_icon_1024_1.png",
+    "sizeKB": 1362.2,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "sprite_ui_pause_icon_1024_2.png",
+    "sizeKB": 2066.4,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "sprite_ui_pause_icon_1024_3.png",
+    "sizeKB": 1532.2,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "sprite_ui_pause_icon_1024_4.png",
+    "sizeKB": 1413.1,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "sprite_wyn_idle_1024_1.png",
+    "sizeKB": 1736.5,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "sprite_wyn_idle_1024_2.png",
+    "sizeKB": 1455.6,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "sprite_wyn_idle_1024_3.png",
+    "sizeKB": 1594.7,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "sprite_wyn_idle_1024_4.png",
+    "sizeKB": 1432.2,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "sprite_wyn_idle_512_1.png",
+    "sizeKB": 1412.8,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "sprite_wyn_idle_512_2.png",
+    "sizeKB": 1445.5,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "sprite_wyn_idle_512_3.png",
+    "sizeKB": 1528.3,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "sprite_wyn_idle_512_4.png",
+    "sizeKB": 1515.3,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "sprite_wyn_jump_1024_1.png",
+    "sizeKB": 1570.4,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "sprite_wyn_jump_1024_2.png",
+    "sizeKB": 1580.2,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "sprite_wyn_jump_1024_3.png",
+    "sizeKB": 1507.3,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "sprite_wyn_jump_1024_4.png",
+    "sizeKB": 1554.2,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "sprite_wyn_run_1024_1.png",
+    "sizeKB": 1469.7,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "sprite_wyn_run_1024_2.png",
+    "sizeKB": 1472.6,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "sprite_wyn_run_1024_3.png",
+    "sizeKB": 1501.6,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "sprite_wyn_run_1024_4.png",
+    "sizeKB": 1521.7,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "ui_badge_srank_1024_1.png",
+    "sizeKB": 1504.4,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "ui_badge_srank_1024_2.png",
+    "sizeKB": 1575.4,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "ui_badge_srank_1024_3.png",
+    "sizeKB": 1577,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "ui_badge_srank_1024_4.png",
+    "sizeKB": 1513,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "ui_button_primary_1024_1.png",
+    "sizeKB": 1417.2,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "ui_button_primary_1024_2.png",
+    "sizeKB": 1446.6,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "ui_button_primary_1024_3.png",
+    "sizeKB": 1375.2,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "ui_button_primary_1024_4.png",
+    "sizeKB": 1369.7,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "ui_icon_coin_1024_1.png",
+    "sizeKB": 1471.6,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "ui_icon_coin_1024_2.png",
+    "sizeKB": 1497.3,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "ui_icon_coin_1024_3.png",
+    "sizeKB": 1536,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "ui_icon_coin_1024_4.png",
+    "sizeKB": 1561.9,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "ui_icon_dna_1024_1.png",
+    "sizeKB": 1733.6,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "ui_icon_dna_1024_2.png",
+    "sizeKB": 1590.3,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "ui_icon_dna_1024_3.png",
+    "sizeKB": 1986.3,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "ui_icon_dna_1024_4.png",
+    "sizeKB": 1479.9,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "ui_icon_grit_1024_1.png",
+    "sizeKB": 1402.1,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "ui_icon_grit_1024_2.png",
+    "sizeKB": 1735.9,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "ui_icon_grit_1024_3.png",
+    "sizeKB": 1457.4,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  },
+  {
+    "file": "ui_icon_grit_1024_4.png",
+    "sizeKB": 1452.7,
+    "width": 1024,
+    "height": 1024,
+    "powerOfTwo": true,
+    "hasAlpha": true
+  }
+]

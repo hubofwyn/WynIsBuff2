@@ -1,0 +1,90 @@
+{
+  "version": 1,
+  "name": "get-more-buff",
+  "description": "High-impact fixes and integrations to complete Run→Rewards→Forge→Factory production loop with determinism and tests",
+  "tasks": [
+    {
+      "id": "events-constants",
+      "title": "Add BOSS_FIRST_CLEAR and normalize EventBus",
+      "dependsOn": [],
+      "acceptanceCriteria": [
+        "EventNames.BOSS_FIRST_CLEAR exists and equals 'boss:firstClear'",
+        "FactoryScene uses EventBus for cross-system events",
+        "Forge uses only clone:forgeStart/clone:forgeComplete"
+      ],
+      "files": ["src/constants/EventNames.js", "src/scenes/FactoryScene.js", "src/scenes/ResultsScene.js"],
+      "owner": "architecture-guardian"
+    },
+    {
+      "id": "boss-reward-wiring",
+      "title": "Instantiate BossRewardSystem and unify resources",
+      "dependsOn": ["events-constants"],
+      "acceptanceCriteria": [
+        "BossRewardSystem.getInstance() called at bootstrap (Boot/Hub)",
+        "PulsarController emits boss:defeated with {bossId, runScore, timeElapsed, hitsTaken} via EventBus",
+        "Rewards credited via unified resource manager"
+      ],
+      "files": ["src/modules/boss/BossRewardSystem.js", "src/modules/boss/PulsarController.js", "src/scenes/Boot.js", "src/scenes/HubScene.js", "src/core/EconomyManager.js"],
+      "owner": "architecture-guardian"
+    },
+    {
+      "id": "rng-determinism",
+      "title": "Clamp gaussian and add RNG tests",
+      "dependsOn": [],
+      "acceptanceCriteria": [
+        "DeterministicRNG.gaussian clamps u1 >= 1e-12",
+        "Tests cover gaussian/weighted/shuffle edge cases"
+      ],
+      "files": ["src/core/DeterministicRNG.js", "tests/determinism.test.cjs"],
+      "owner": "game-physics-expert"
+    },
+    {
+      "id": "factory-lanes",
+      "title": "Drive Factory from EnhancedCloneManager lanes",
+      "dependsOn": ["events-constants"],
+      "acceptanceCriteria": [
+        "FactoryScene renders lanes from EnhancedCloneManager",
+        "Shows effectiveRate, stability, decay",
+        "Production/collection computed from lanes"
+      ],
+      "files": ["src/scenes/FactoryScene.js", "src/modules/idle/EnhancedCloneManager.js"],
+      "owner": "architecture-guardian"
+    },
+    {
+      "id": "integration-tests",
+      "title": "Add real BossRewardSystem and Factory/lane tests",
+      "dependsOn": ["boss-reward-wiring", "factory-lanes"],
+      "acceptanceCriteria": [
+        "Integration tests import real BossRewardSystem + EventNames",
+        "Lane creation/decay/production flow tested",
+        "tests/run-tests.cjs requires new tests"
+      ],
+      "files": ["tests/run-tests.cjs", "tests/boss-reward.integration.cjs", "tests/factory-lanes.integration.cjs"],
+      "owner": "architecture-guardian"
+    },
+    {
+      "id": "save-load",
+      "title": "Persist defeated bosses and lanes/boosts centrally",
+      "dependsOn": ["boss-reward-wiring", "factory-lanes"],
+      "acceptanceCriteria": [
+        "BossRewardSystem serialize/deserialize invoked from a central save path",
+        "EnhancedCloneManager lanes/boosts persisted and offline production computed on load"
+      ],
+      "files": ["src/core/GameStateManager.js", "src/modules/boss/BossRewardSystem.js", "src/modules/idle/EnhancedCloneManager.js"],
+      "owner": "architecture-guardian"
+    },
+    {
+      "id": "polish",
+      "title": "Reduce logs in prod; style consistency",
+      "dependsOn": [],
+      "acceptanceCriteria": [
+        "Console noise gated behind NODE_ENV",
+        "Two-space indentation in new/modified web files",
+        "Alphabetized barrel exports"
+      ],
+      "files": ["src/features/core/index.js", "src/scenes/*.js", "src/modules/**/*.js"],
+      "owner": "architecture-guardian"
+    }
+  ]
+}
+

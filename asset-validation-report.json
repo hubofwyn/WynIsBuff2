@@ -1,0 +1,648 @@
+{
+  "timestamp": "2025-08-28T00:41:45.307Z",
+  "summary": {
+    "totalAssets": 48,
+    "validAssets": 46,
+    "invalidAssets": 2,
+    "missingAssets": 0,
+    "oversizedAssets": 0,
+    "corruptedAssets": 0
+  },
+  "details": {
+    "valid": [
+      {
+        "key": "background",
+        "path": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/assets/images/characters/mainlogo.png",
+        "valid": true,
+        "errors": [],
+        "warnings": [
+          "File signature does not match extension"
+        ],
+        "metadata": {
+          "fileSize": 2278083,
+          "fileSizeMB": 2.17,
+          "hash": "7b1f4bb825d95f511e273163363a8bc4"
+        }
+      },
+      {
+        "key": "logo",
+        "path": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/assets/images/characters/mainlogo.png",
+        "valid": true,
+        "errors": [],
+        "warnings": [
+          "File signature does not match extension"
+        ],
+        "metadata": {
+          "fileSize": 2278083,
+          "fileSizeMB": 2.17,
+          "hash": "7b1f4bb825d95f511e273163363a8bc4"
+        }
+      },
+      {
+        "key": "playerFull",
+        "path": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/assets/2D Pixel Dungeon Asset Pack v2.0/2D Pixel Dungeon Asset Pack/character and tileset/Dungeon_Character.png",
+        "valid": true,
+        "errors": [],
+        "warnings": [],
+        "metadata": {
+          "fileSize": 2503,
+          "fileSizeMB": 0,
+          "hash": "92326c93249f0c122d4455505ccaa327"
+        }
+      },
+      {
+        "key": "player",
+        "path": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/assets/2D Pixel Dungeon Asset Pack v2.0/2D Pixel Dungeon Asset Pack/character and tileset/Dungeon_Character.png",
+        "valid": true,
+        "errors": [],
+        "warnings": [],
+        "metadata": {
+          "fileSize": 2503,
+          "fileSizeMB": 0,
+          "hash": "92326c93249f0c122d4455505ccaa327"
+        }
+      },
+      {
+        "key": "dungeonTiles",
+        "path": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/assets/images/tilesets/Dungeon_Tileset.png",
+        "valid": true,
+        "errors": [],
+        "warnings": [],
+        "metadata": {
+          "fileSize": 6326,
+          "fileSizeMB": 0.01,
+          "hash": "de8da6d06c44e17a8360dd2a18e0e847"
+        }
+      },
+      {
+        "key": "arrow1",
+        "path": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/assets/images/ui/interface/arrow_1.png",
+        "valid": true,
+        "errors": [],
+        "warnings": [],
+        "metadata": {
+          "fileSize": 164,
+          "fileSizeMB": 0,
+          "hash": "b18f591af532f2fa9772117c9e1261e8"
+        }
+      },
+      {
+        "key": "arrow2",
+        "path": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/assets/images/ui/interface/arrow_2.png",
+        "valid": true,
+        "errors": [],
+        "warnings": [],
+        "metadata": {
+          "fileSize": 174,
+          "fileSizeMB": 0,
+          "hash": "bb64d5a2437e15a2f1eff62925a1c37c"
+        }
+      },
+      {
+        "key": "arrow3",
+        "path": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/assets/images/ui/interface/arrow_3.png",
+        "valid": true,
+        "errors": [],
+        "warnings": [],
+        "metadata": {
+          "fileSize": 160,
+          "fileSizeMB": 0,
+          "hash": "bceedf0e9ce436debd870504c0cb521c"
+        }
+      },
+      {
+        "key": "arrow4",
+        "path": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/assets/images/ui/interface/arrow_4.png",
+        "valid": true,
+        "errors": [],
+        "warnings": [],
+        "metadata": {
+          "fileSize": 174,
+          "fileSizeMB": 0,
+          "hash": "bb64d5a2437e15a2f1eff62925a1c37c"
+        }
+      },
+      {
+        "key": "squareLeft1",
+        "path": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/assets/images/ui/interface/square_left_1.png",
+        "valid": true,
+        "errors": [],
+        "warnings": [],
+        "metadata": {
+          "fileSize": 202,
+          "fileSizeMB": 0,
+          "hash": "5e7459f28b0b9276a0fd428c5af26cab"
+        }
+      },
+      {
+        "key": "squareLeft2",
+        "path": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/assets/images/ui/interface/square_left_2.png",
+        "valid": true,
+        "errors": [],
+        "warnings": [],
+        "metadata": {
+          "fileSize": 208,
+          "fileSizeMB": 0,
+          "hash": "3b5a4ab48e11d03e4412756f87208108"
+        }
+      },
+      {
+        "key": "squareLeft2_1",
+        "path": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/assets/images/ui/interface/square_left_2_1.png",
+        "valid": true,
+        "errors": [],
+        "warnings": [],
+        "metadata": {
+          "fileSize": 209,
+          "fileSizeMB": 0,
+          "hash": "3f0dba2c0abee7e8e6cd23bfaf2cfc27"
+        }
+      },
+      {
+        "key": "squareLeft2_2",
+        "path": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/assets/images/ui/interface/square_left_2_2.png",
+        "valid": true,
+        "errors": [],
+        "warnings": [],
+        "metadata": {
+          "fileSize": 215,
+          "fileSizeMB": 0,
+          "hash": "c5953bf012f9763079b8aec4cd27026d"
+        }
+      },
+      {
+        "key": "squareLeft2_3",
+        "path": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/assets/images/ui/interface/square_left_2_3.png",
+        "valid": true,
+        "errors": [],
+        "warnings": [],
+        "metadata": {
+          "fileSize": 203,
+          "fileSizeMB": 0,
+          "hash": "e639f7b0e521558070eb8319b8dafa0a"
+        }
+      },
+      {
+        "key": "squareLeft2_4",
+        "path": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/assets/images/ui/interface/square_left_2_4.png",
+        "valid": true,
+        "errors": [],
+        "warnings": [],
+        "metadata": {
+          "fileSize": 150,
+          "fileSizeMB": 0,
+          "hash": "2efb778852e4bb887d9c2ebd301f0c5b"
+        }
+      },
+      {
+        "key": "squareLeft3",
+        "path": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/assets/images/ui/interface/square_left_3.png",
+        "valid": true,
+        "errors": [],
+        "warnings": [],
+        "metadata": {
+          "fileSize": 192,
+          "fileSizeMB": 0,
+          "hash": "3e4ee13342a5c19c6ce8685e6d21b252"
+        }
+      },
+      {
+        "key": "squareLeft4",
+        "path": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/assets/images/ui/interface/square_left_4.png",
+        "valid": true,
+        "errors": [],
+        "warnings": [],
+        "metadata": {
+          "fileSize": 150,
+          "fileSizeMB": 0,
+          "hash": "2efb778852e4bb887d9c2ebd301f0c5b"
+        }
+      },
+      {
+        "key": "squareRight1",
+        "path": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/assets/images/ui/interface/square_right_1.png",
+        "valid": true,
+        "errors": [],
+        "warnings": [],
+        "metadata": {
+          "fileSize": 217,
+          "fileSizeMB": 0,
+          "hash": "0342ccd5c55ca3affa98368e0ce38e99"
+        }
+      },
+      {
+        "key": "squareRight2",
+        "path": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/assets/images/ui/interface/square_right_2.png",
+        "valid": true,
+        "errors": [],
+        "warnings": [],
+        "metadata": {
+          "fileSize": 215,
+          "fileSizeMB": 0,
+          "hash": "9895bfbbb71c11caf6b02ab6016aa49a"
+        }
+      },
+      {
+        "key": "squareRight2_1",
+        "path": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/assets/images/ui/interface/square_right_2_1.png",
+        "valid": true,
+        "errors": [],
+        "warnings": [],
+        "metadata": {
+          "fileSize": 209,
+          "fileSizeMB": 0,
+          "hash": "022390658344fc366df84133907a9d6d"
+        }
+      },
+      {
+        "key": "squareRight2_2",
+        "path": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/assets/images/ui/interface/square_right_2_2.png",
+        "valid": true,
+        "errors": [],
+        "warnings": [],
+        "metadata": {
+          "fileSize": 208,
+          "fileSizeMB": 0,
+          "hash": "3bd23657d4b1aff23b7018c6692d22f9"
+        }
+      },
+      {
+        "key": "squareRight2_3",
+        "path": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/assets/images/ui/interface/square_right_2_3.png",
+        "valid": true,
+        "errors": [],
+        "warnings": [],
+        "metadata": {
+          "fileSize": 194,
+          "fileSizeMB": 0,
+          "hash": "b3a4ad2a800fa98c549bef55e7fa5717"
+        }
+      },
+      {
+        "key": "squareRight2_4",
+        "path": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/assets/images/ui/interface/square_right_2_4.png",
+        "valid": true,
+        "errors": [],
+        "warnings": [],
+        "metadata": {
+          "fileSize": 150,
+          "fileSizeMB": 0,
+          "hash": "2efb778852e4bb887d9c2ebd301f0c5b"
+        }
+      },
+      {
+        "key": "squareRight3",
+        "path": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/assets/images/ui/interface/square_right_3.png",
+        "valid": true,
+        "errors": [],
+        "warnings": [],
+        "metadata": {
+          "fileSize": 198,
+          "fileSizeMB": 0,
+          "hash": "01b0fa56e5575c86a9c91257ab22243b"
+        }
+      },
+      {
+        "key": "squareRight4",
+        "path": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/assets/images/ui/interface/square_right_4.png",
+        "valid": true,
+        "errors": [],
+        "warnings": [],
+        "metadata": {
+          "fileSize": 150,
+          "fileSizeMB": 0,
+          "hash": "2efb778852e4bb887d9c2ebd301f0c5b"
+        }
+      },
+      {
+        "key": "squareUpDown1",
+        "path": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/assets/images/ui/interface/square_up_down_1.png",
+        "valid": true,
+        "errors": [],
+        "warnings": [],
+        "metadata": {
+          "fileSize": 165,
+          "fileSizeMB": 0,
+          "hash": "26bf7fef406c641b1c17e6abb7584bb1"
+        }
+      },
+      {
+        "key": "squareUpDown2",
+        "path": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/assets/images/ui/interface/square_up_down_2.png",
+        "valid": true,
+        "errors": [],
+        "warnings": [],
+        "metadata": {
+          "fileSize": 197,
+          "fileSizeMB": 0,
+          "hash": "190bc06e1095fc487fcee72953f1b3fa"
+        }
+      },
+      {
+        "key": "squareUpDown3",
+        "path": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/assets/images/ui/interface/square_up_down_3.png",
+        "valid": true,
+        "errors": [],
+        "warnings": [],
+        "metadata": {
+          "fileSize": 182,
+          "fileSizeMB": 0,
+          "hash": "7cf4e3ecfd9562db27e004b766b4a77e"
+        }
+      },
+      {
+        "key": "squareUpDown4",
+        "path": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/assets/images/ui/interface/square_up_down_4.png",
+        "valid": true,
+        "errors": [],
+        "warnings": [],
+        "metadata": {
+          "fileSize": 150,
+          "fileSizeMB": 0,
+          "hash": "2efb778852e4bb887d9c2ebd301f0c5b"
+        }
+      },
+      {
+        "key": "coin",
+        "path": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/assets/spritesheets/items/coin.png",
+        "valid": true,
+        "errors": [],
+        "warnings": [],
+        "metadata": {
+          "fileSize": 262,
+          "fileSizeMB": 0,
+          "hash": "88f615c8e949f17355d9007b9254394b"
+        }
+      },
+      {
+        "key": "chest",
+        "path": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/assets/spritesheets/items/chest.png",
+        "valid": true,
+        "errors": [],
+        "warnings": [],
+        "metadata": {
+          "fileSize": 454,
+          "fileSizeMB": 0,
+          "hash": "8bfbd12a59f1f4772998d45765eb0021"
+        }
+      },
+      {
+        "key": "collectibleProtein",
+        "path": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/assets/spritesheets/items/flasks/flasks_2_1.png",
+        "valid": true,
+        "errors": [],
+        "warnings": [],
+        "metadata": {
+          "fileSize": 238,
+          "fileSizeMB": 0,
+          "hash": "918194ff38ee773aaf23b524229a42e0"
+        }
+      },
+      {
+        "key": "collectibleDumbbell",
+        "path": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/assets/spritesheets/items/collectibles/dumbbell.png",
+        "valid": true,
+        "errors": [],
+        "warnings": [],
+        "metadata": {
+          "fileSize": 308,
+          "fileSizeMB": 0,
+          "hash": "5be5bfc8444ca48039aeecbc01d01283"
+        }
+      },
+      {
+        "key": "torch",
+        "path": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/assets/spritesheets/effects/torch/torch.png",
+        "valid": true,
+        "errors": [],
+        "warnings": [],
+        "metadata": {
+          "fileSize": 290,
+          "fileSizeMB": 0,
+          "hash": "7af15c4d8ed21f405a4bc44c72e5b37d"
+        }
+      },
+      {
+        "key": "axelface",
+        "path": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/assets/images/characters/axelface.png",
+        "valid": true,
+        "errors": [],
+        "warnings": [],
+        "metadata": {
+          "fileSize": 4682,
+          "fileSizeMB": 0,
+          "hash": "849a799ae86d10c375c4d7631108214d"
+        }
+      },
+      {
+        "key": "wynface",
+        "path": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/assets/images/characters/wynface.png",
+        "valid": true,
+        "errors": [],
+        "warnings": [],
+        "metadata": {
+          "fileSize": 10611,
+          "fileSizeMB": 0.01,
+          "hash": "7d9c9e10b086d707eb31e8082c1f87e8"
+        }
+      },
+      {
+        "key": "ilaSprite",
+        "path": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/assets/images/characters/ila_sprite.png",
+        "valid": true,
+        "errors": [],
+        "warnings": [],
+        "metadata": {
+          "fileSize": 251760,
+          "fileSizeMB": 0.24,
+          "hash": "0703fa4fc2139f85874fd9c0d485f5df"
+        }
+      },
+      {
+        "key": "axelSprite",
+        "path": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/assets/images/characters/axel_sprite.png",
+        "valid": true,
+        "errors": [],
+        "warnings": [],
+        "metadata": {
+          "fileSize": 209618,
+          "fileSizeMB": 0.2,
+          "hash": "f7b2d3cc5c608a56abd9a3266ddbcb4d"
+        }
+      },
+      {
+        "key": "wynSprite",
+        "path": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/assets/images/characters/wyn_sprite.png",
+        "valid": true,
+        "errors": [],
+        "warnings": [],
+        "metadata": {
+          "fileSize": 195276,
+          "fileSizeMB": 0.19,
+          "hash": "4bc099444bf162cb8096696e5586de18"
+        }
+      },
+      {
+        "key": "theWyn",
+        "path": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/assets/images/characters/thewyn.png",
+        "valid": true,
+        "errors": [],
+        "warnings": [],
+        "metadata": {
+          "fileSize": 3239094,
+          "fileSizeMB": 3.09,
+          "hash": "bcebe7100e050360af7ddde779317a0c"
+        }
+      },
+      {
+        "key": "buffBg",
+        "path": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/assets/images/backgrounds/buff-bg.png",
+        "valid": true,
+        "errors": [],
+        "warnings": [],
+        "metadata": {
+          "fileSize": 1202010,
+          "fileSizeMB": 1.15,
+          "hash": "1e59b0aa32b54189088526a6ec0130fb"
+        }
+      },
+      {
+        "key": "parallaxSky",
+        "path": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/assets/images/backgrounds/parallax-sky.png",
+        "valid": true,
+        "errors": [],
+        "warnings": [],
+        "metadata": {
+          "fileSize": 8064,
+          "fileSizeMB": 0.01,
+          "hash": "872dbbe3fbf81e78f77bb16eccff7651"
+        }
+      },
+      {
+        "key": "parallaxMountains",
+        "path": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/assets/images/backgrounds/parallax-mountains.png",
+        "valid": true,
+        "errors": [],
+        "warnings": [],
+        "metadata": {
+          "fileSize": 4364,
+          "fileSizeMB": 0,
+          "hash": "1bf1440b907ab1c75559bc3de83417a2"
+        }
+      },
+      {
+        "key": "parallaxForeground",
+        "path": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/assets/images/backgrounds/parallax-foreground.png",
+        "valid": true,
+        "errors": [],
+        "warnings": [],
+        "metadata": {
+          "fileSize": 2307,
+          "fileSizeMB": 0,
+          "hash": "4e0b818cdc8b38067c8c8ae9ca07ec72"
+        }
+      },
+      {
+        "key": "particleFlare",
+        "path": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/assets/images/particles/flares.png",
+        "valid": true,
+        "errors": [],
+        "warnings": [],
+        "metadata": {
+          "fileSize": 70,
+          "fileSizeMB": 0,
+          "hash": "b357a19c87624c7c4d131aeeb4ae677f"
+        }
+      },
+      {
+        "key": "particleWhite",
+        "path": "/home/verlyn13/Projects/hubofwyn/WynIsBuff2/assets/images/particles/white.png",
+        "valid": true,
+        "errors": [],
+        "warnings": [],
+        "metadata": {
+          "fileSize": 70,
+          "fileSizeMB": 0,
+          "hash": "b357a19c87624c7c4d131aeeb4ae677f"
+        }
+      }
+    ],
+    "invalid": [
+      {
+        "key": "music",
+        "path": "N/A",
+        "valid": false,
+        "errors": [
+          "No path specified"
+        ],
+        "warnings": [],
+        "metadata": {}
+      },
+      {
+        "key": "sfx",
+        "path": "N/A",
+        "valid": false,
+        "errors": [
+          "No path specified"
+        ],
+        "warnings": [],
+        "metadata": {}
+      }
+    ],
+    "missing": [],
+    "oversized": [],
+    "corrupted": [],
+    "warnings": [
+      "background: File signature does not match extension",
+      "logo: File signature does not match extension"
+    ]
+  },
+  "hashes": {
+    "background": "7b1f4bb825d95f511e273163363a8bc4",
+    "logo": "7b1f4bb825d95f511e273163363a8bc4",
+    "playerFull": "92326c93249f0c122d4455505ccaa327",
+    "player": "92326c93249f0c122d4455505ccaa327",
+    "dungeonTiles": "de8da6d06c44e17a8360dd2a18e0e847",
+    "arrow1": "b18f591af532f2fa9772117c9e1261e8",
+    "arrow2": "bb64d5a2437e15a2f1eff62925a1c37c",
+    "arrow3": "bceedf0e9ce436debd870504c0cb521c",
+    "arrow4": "bb64d5a2437e15a2f1eff62925a1c37c",
+    "squareLeft1": "5e7459f28b0b9276a0fd428c5af26cab",
+    "squareLeft2": "3b5a4ab48e11d03e4412756f87208108",
+    "squareLeft2_1": "3f0dba2c0abee7e8e6cd23bfaf2cfc27",
+    "squareLeft2_2": "c5953bf012f9763079b8aec4cd27026d",
+    "squareLeft2_3": "e639f7b0e521558070eb8319b8dafa0a",
+    "squareLeft2_4": "2efb778852e4bb887d9c2ebd301f0c5b",
+    "squareLeft3": "3e4ee13342a5c19c6ce8685e6d21b252",
+    "squareLeft4": "2efb778852e4bb887d9c2ebd301f0c5b",
+    "squareRight1": "0342ccd5c55ca3affa98368e0ce38e99",
+    "squareRight2": "9895bfbbb71c11caf6b02ab6016aa49a",
+    "squareRight2_1": "022390658344fc366df84133907a9d6d",
+    "squareRight2_2": "3bd23657d4b1aff23b7018c6692d22f9",
+    "squareRight2_3": "b3a4ad2a800fa98c549bef55e7fa5717",
+    "squareRight2_4": "2efb778852e4bb887d9c2ebd301f0c5b",
+    "squareRight3": "01b0fa56e5575c86a9c91257ab22243b",
+    "squareRight4": "2efb778852e4bb887d9c2ebd301f0c5b",
+    "squareUpDown1": "26bf7fef406c641b1c17e6abb7584bb1",
+    "squareUpDown2": "190bc06e1095fc487fcee72953f1b3fa",
+    "squareUpDown3": "7cf4e3ecfd9562db27e004b766b4a77e",
+    "squareUpDown4": "2efb778852e4bb887d9c2ebd301f0c5b",
+    "coin": "88f615c8e949f17355d9007b9254394b",
+    "chest": "8bfbd12a59f1f4772998d45765eb0021",
+    "collectibleProtein": "918194ff38ee773aaf23b524229a42e0",
+    "collectibleDumbbell": "5be5bfc8444ca48039aeecbc01d01283",
+    "torch": "7af15c4d8ed21f405a4bc44c72e5b37d",
+    "axelface": "849a799ae86d10c375c4d7631108214d",
+    "wynface": "7d9c9e10b086d707eb31e8082c1f87e8",
+    "ilaSprite": "0703fa4fc2139f85874fd9c0d485f5df",
+    "axelSprite": "f7b2d3cc5c608a56abd9a3266ddbcb4d",
+    "wynSprite": "4bc099444bf162cb8096696e5586de18",
+    "theWyn": "bcebe7100e050360af7ddde779317a0c",
+    "buffBg": "1e59b0aa32b54189088526a6ec0130fb",
+    "parallaxSky": "872dbbe3fbf81e78f77bb16eccff7651",
+    "parallaxMountains": "1bf1440b907ab1c75559bc3de83417a2",
+    "parallaxForeground": "4e0b818cdc8b38067c8c8ae9ca07ec72",
+    "particleFlare": "b357a19c87624c7c4d131aeeb4ae677f",
+    "particleWhite": "b357a19c87624c7c4d131aeeb4ae677f"
+  }
+}

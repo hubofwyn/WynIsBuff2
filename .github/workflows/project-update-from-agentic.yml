@@ -1,0 +1,65 @@
+name: Agentic Project Update from CI
+
+on:
+  workflow_run:
+    workflows: ["Agentic Tests (Bun)"]
+    types:
+      - completed
+
+jobs:
+  update-project:
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      issues: write
+      projects: write
+    steps:
+      - name: Download agentic summary artifact
+        uses: actions/github-script@v7
+        id: fetch
+        with:
+          script: |
+            const run_id = context.payload.workflow_run.id;
+            const artifacts = await github.rest.actions.listWorkflowRunArtifacts({ owner: context.repo.owner, repo: context.repo.repo, run_id });
+            const art = artifacts.data.artifacts.find(a=>a.name==='agentic-summary');
+            if (!art) { core.setFailed('agentic-summary artifact not found'); return; }
+            const zip = await github.rest.actions.downloadArtifact({ owner: context.repo.owner, repo: context.repo.repo, artifact_id: art.id, archive_format: 'zip' });
+            const fs = require('fs'); const path = require('path'); const zlib = require('zlib'); const { unzipSync } = require('zlib');
+            const tmp = path.join(process.cwd(), 'artifact.zip'); fs.writeFileSync(tmp, Buffer.from(zip.data));
+            core.setOutput('zipPath', tmp);
+      - name: Unzip artifact
+        run: |
+          unzip -o ${{ steps.fetch.outputs.zipPath }} -d .artifact
+      - name: Read summary
+        id: summary
+        run: |
+          echo "summary=$(cat .artifact/summary.json | tr -d '\n' | sed 's/\"/\\\"/g')" >> $GITHUB_OUTPUT
+      - name: Update project (scaffold)
+        uses: actions/github-script@v7
+        env:
+          PROJECT_NODE_ID: ${{ secrets.AGENTIC_PROJECT_NODE_ID }}
+          FIELD_NODE_ID: ${{ secrets.AGENTIC_FIELD_NODE_ID }}
+          MAP_PATH: tasks/project-map.json
+        with:
+          script: |
+            // Sample GraphQL mutation (requires PROJECT_NODE_ID, FIELD_NODE_ID, and item id mapping)
+            const summary = JSON.parse(`${{ steps.summary.outputs.summary }}`);
+            const result = summary.flaky ? 'Flaky' : (summary.runs.every(r=>r.ok)? `Pass (${summary.runs[0]?.durationMs||0}ms)` : 'Fail');
+            if (!process.env.PROJECT_NODE_ID || !process.env.FIELD_NODE_ID) {
+              core.info('Project secrets missing; skipping ProjectV2 update. Result: ' + result);
+              return;
+            }
+            const fs = require('fs');
+            let map = { items: [] };
+            try { map = JSON.parse(fs.readFileSync(process.env.MAP_PATH, 'utf8')); } catch {}
+            const mutation = `mutation UpdateProject($project:ID!,$item:ID!,$field:ID!,$text:String!){\n  updateProjectV2ItemFieldValue(input:{projectId:$project,itemId:$item,fieldId:$field,value:{text:$text}}){\n    projectV2Item{ id }\n  }\n}`;
+            for (const entry of (map.items||[])) {
+              if (!entry.itemNodeId) continue;
+              try {
+                await github.graphql(mutation, { project: process.env.PROJECT_NODE_ID, item: entry.itemNodeId, field: process.env.FIELD_NODE_ID, text: result });
+                core.info('Updated ProjectV2 item: '+entry.itemNodeId+' with result: '+result);
+              } catch (e) {
+                core.warning('Failed to update item: '+entry.itemNodeId+' '+(e.message||e));
+              }
+            }

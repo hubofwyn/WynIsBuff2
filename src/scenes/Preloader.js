@@ -1,7 +1,8 @@
 import { Scene } from 'phaser';
-import { AudioManager, GameStateManager } from '@features/core';
+import { AudioManager, GameStateManager, AssetHealthManager, EventSystem } from '@features/core';
 import { SceneKeys } from '../constants/SceneKeys.js';
 import { ImageAssets, ImagePaths, AudioAssets, AudioPaths, SpritesheetConfigs } from '../constants/Assets.js';
+import { EventNames } from '../constants/EventNames.js';
 
 export class Preloader extends Scene
 {
@@ -13,6 +14,27 @@ export class Preloader extends Scene
     init ()
     {
         const { width, height } = this.cameras.main;
+        
+        // Initialize asset health monitoring
+        this.eventSystem = new EventSystem();
+        this.assetHealthManager = AssetHealthManager.getInstance();
+        this.assetHealthManager.init(this, this.eventSystem);
+        
+        // Set up asset health monitoring listeners
+        this.eventSystem.on(EventNames.ASSET_CORRUPTED, (data) => {
+            console.warn('[Preloader] Asset corrupted:', data);
+            this.updateLoadingText(`Asset corrupted: ${data.key}, applying fallback...`);
+        });
+        
+        this.eventSystem.on(EventNames.ASSET_FALLBACK_APPLIED, (data) => {
+            console.log('[Preloader] Fallback applied:', data);
+            this.updateLoadingText(`Fallback applied for ${data.originalKey}`);
+        });
+        
+        this.eventSystem.on(EventNames.ASSET_RECOVERED, (data) => {
+            console.log('[Preloader] Asset recovered:', data);
+            this.updateLoadingText(`Asset recovered: ${data.key}`);
+        });
         
         // Create a professional gradient background
         this.cameras.main.setBackgroundColor('#0F1B2B');
@@ -165,6 +187,10 @@ export class Preloader extends Scene
         // TRIAGE FIX: Add error handlers for asset loading
         this.load.on('loaderror', (fileObj) => {
             console.error('[Preloader] Failed to load asset:', fileObj.key, fileObj.src);
+            // If logo fails, keep scene flow by drawing a placeholder later.
+            if (fileObj.key === ImageAssets.LOGO) {
+                this._logoLoadFailed = true;
+            }
         });
         
         this.load.on('filecomplete', (key) => {
@@ -177,16 +203,13 @@ export class Preloader extends Scene
             }
         });
 
-        // Load the custom game logo
+        // Minimal golden-path image loads (select GEN_* loaded explicitly)
         this.load.image(ImageAssets.LOGO, ImagePaths.LOGO);
-        
-        // Load player character sprite
-        // IMPORTANT: For character animations, we need to load as a spritesheet
-        // For single frame use, we'll still load the full image
-        this.load.image(ImageAssets.PLAYER_FULL, ImagePaths.PLAYER_FULL);
-        
-        // Load character sprite for animation - we'll extract frames from it
         this.load.spritesheet(ImageAssets.PLAYER, ImagePaths.PLAYER, SpritesheetConfigs.PLAYER);
+        // CharacterSelect portraits (use generated assets to ensure consistency)
+        this.load.image(ImageAssets.GEN_SPRITE_WYN_IDLE, ImagePaths.GEN_SPRITE_WYN_IDLE);
+        this.load.image(ImageAssets.GEN_SPRITE_PULSAR_BOSS, ImagePaths.GEN_SPRITE_PULSAR_BOSS);
+        this.load.image(ImageAssets.GEN_SPRITE_CLUMPER_BOSS, ImagePaths.GEN_SPRITE_CLUMPER_BOSS);
         
         // If you have separate animation frames in your spritesheets directory, load those instead
         // Example for player idle animation (adjust path as needed):
@@ -195,43 +218,11 @@ export class Preloader extends Scene
         //     frameHeight: 32
         // });
         
-        // Load tileset for potential use in level design
-        this.load.image(ImageAssets.DUNGEON_TILES, ImagePaths.DUNGEON_TILES);
-        
-        // Load UI elements
-        this.load.image(ImageAssets.ARROW1, ImagePaths.ARROW1);
-        this.load.image(ImageAssets.ARROW2, ImagePaths.ARROW2);
-        this.load.image(ImageAssets.ARROW3, ImagePaths.ARROW3);
-        this.load.image(ImageAssets.ARROW4, ImagePaths.ARROW4);
-        
-        // Load item sprites that might be useful
-        this.load.image(ImageAssets.COIN, ImagePaths.COIN);
-        this.load.image(ImageAssets.CHEST, ImagePaths.CHEST);
-        // Themed collectible icons for level1
-        this.load.image(ImageAssets.COLLECTIBLE_PROTEIN, ImagePaths.COLLECTIBLE_PROTEIN);
-        this.load.image(ImageAssets.COLLECTIBLE_DUMBBELL, ImagePaths.COLLECTIBLE_DUMBBELL);
-        
-        // Load torch effect for potential environment enhancement
-        this.load.image(ImageAssets.TORCH, ImagePaths.TORCH);
-        // Buff-themed boss placeholder
-        this.load.image(ImageAssets.AXELFACE, ImagePaths.AXELFACE);
-        // Secondary character: Wyn face placeholder
-        this.load.image(ImageAssets.WYNFACE, ImagePaths.WYNFACE);
-        // Preload additional character sprites
-        this.load.image(ImageAssets.ILA_SPRITE, ImagePaths.ILA_SPRITE);
-        this.load.image(ImageAssets.AXEL_SPRITE, ImagePaths.AXEL_SPRITE);
-        this.load.image(ImageAssets.WYN_SPRITE, ImagePaths.WYN_SPRITE);
-        // Buff-themed background for level1
-        this.load.image(ImageAssets.BUFF_BG, ImagePaths.BUFF_BG);
+        // (Pruned legacy UI/tiles/placeholder images)
         
         // Load particle assets
-        this.load.image(ImageAssets.PARTICLE_FLARE, ImagePaths.PARTICLE_FLARE);
         this.load.image(ImageAssets.PARTICLE_WHITE, ImagePaths.PARTICLE_WHITE);
-        
-        // Load parallax backgrounds
-        this.load.image(ImageAssets.PARALLAX_SKY, ImagePaths.PARALLAX_SKY);
-        this.load.image(ImageAssets.PARALLAX_MOUNTAINS, ImagePaths.PARALLAX_MOUNTAINS);
-        this.load.image(ImageAssets.PARALLAX_FOREGROUND, ImagePaths.PARALLAX_FOREGROUND);
+        // (Generated parallax backdrops autoloaded below)
         // Load audio assets (MP3 only; OGG fallback later)
         this.load.audio(AudioAssets.PROTEIN_PIXEL_ANTHEM, [AudioPaths.PROTEIN_PIXEL_ANTHEM]);
         this.load.audio(AudioAssets.HYPER_BUFF_BLITZ, [AudioPaths.HYPER_BUFF_BLITZ]);
@@ -257,10 +248,21 @@ export class Preloader extends Scene
         this.load.audio(AudioAssets.SFX_HOVER4, [AudioPaths.SFX_HOVER4]);
         // Special sound effects
         this.load.audio(AudioAssets.SFX_FART, [AudioPaths.SFX_FART]);
-        // Parallax background layers for level1
-        this.load.image(ImageAssets.PARALLAX_SKY, ImagePaths.PARALLAX_SKY);
-        this.load.image(ImageAssets.PARALLAX_MOUNTAINS, ImagePaths.PARALLAX_MOUNTAINS);
-        this.load.image(ImageAssets.PARALLAX_FOREGROUND, ImagePaths.PARALLAX_FOREGROUND);
+
+
+        // Auto-load all generated images from manifest (keys prefixed with GEN_)
+        try {
+            Object.entries(ImageAssets).forEach(([constName, assetKey]) => {
+                if (constName.startsWith('GEN_')) {
+                    const p = ImagePaths[constName];
+                    if (p) {
+                        this.load.image(assetKey, p);
+                    }
+                }
+            });
+        } catch (e) {
+            console.warn('[Preloader] Skipped autoload of generated images:', e?.message || e);
+        }
     }
 
     create ()
@@ -268,6 +270,26 @@ export class Preloader extends Scene
         // Clean up loading timer
         if (this.loadingDotsTimer) {
             this.loadingDotsTimer.destroy();
+        }
+
+        // If logo failed to load, create a simple placeholder texture so scenes can continue
+        try {
+            if (this._logoLoadFailed && this.textures && typeof this.textures.addCanvas === 'function') {
+                const canvas = document.createElement('canvas');
+                canvas.width = 256; canvas.height = 128;
+                const ctx = canvas.getContext('2d');
+                ctx.fillStyle = '#0F1B2B';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.fillStyle = '#00FF88';
+                ctx.font = 'bold 28px Arial';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText('WYN IS BUFF 2', canvas.width/2, canvas.height/2);
+                this.textures.addCanvas(ImageAssets.LOGO, canvas);
+                console.warn('[Preloader] Logo missing; added placeholder texture for LOGO');
+            }
+        } catch (e) {
+            console.warn('[Preloader] Failed to add placeholder logo texture:', e?.message || e);
         }
         
         //  When all the assets have loaded, it's often worth creating global objects here that the rest of the game can use.
@@ -288,6 +310,17 @@ export class Preloader extends Scene
             audio.setSFXVolume(settings.volumes.sfx || 0.9);
         }
         console.log('[Preloader] AudioManager initialized with persisted settings', settings.volumes);
+        
+        // Get asset health report
+        if (this.assetHealthManager) {
+            const healthReport = this.assetHealthManager.getHealthReport();
+            console.log('[Preloader] Asset health report:', healthReport);
+            
+            // Show warning if there are corrupted assets
+            if (healthReport.corruptedAssets.length > 0) {
+                console.warn(`[Preloader] ${healthReport.corruptedAssets.length} corrupted assets detected:`, healthReport.corruptedAssets);
+            }
+        }
         
         // Show completion animation before transitioning
         const { width, height } = this.cameras.main;
@@ -322,6 +355,25 @@ export class Preloader extends Scene
     update (time, delta)
     {
         // Placeholder update method for Preloader scene
+    }
+    
+    /**
+     * Update loading text with asset health information
+     * @param {string} message - Status message to display
+     */
+    updateLoadingText(message) {
+        if (this.loadingText) {
+            this.loadingText.setText(message);
+            
+            // Add a subtle flash animation for notifications
+            this.tweens.add({
+                targets: this.loadingText,
+                alpha: 0.5,
+                duration: 200,
+                yoyo: true,
+                ease: 'Power2.easeInOut'
+            });
+        }
     }
     
     createPlayerAnimations() {

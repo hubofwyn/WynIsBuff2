@@ -98,7 +98,10 @@ export class LevelCompletionManager {
             // Create a sensor collider for the trigger
             const triggerColliderDesc = RAPIER.ColliderDesc
                 .cuboid(triggerConfig.width / 2, triggerConfig.height / 2)
-                .setSensor(true); // Make it a sensor (no physical collision)
+                .setSensor(true) // Make it a sensor (no physical collision)
+                .setActiveEvents(
+                    (RAPIER.ActiveEvents?.INTERSECTION_EVENTS || 0)
+                );
                 
             const triggerCollider = this.world.createCollider(
                 triggerColliderDesc, 

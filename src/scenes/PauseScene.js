@@ -1,6 +1,7 @@
 import { Scene } from 'phaser';
 import { AudioManager } from '@features/core';
 import { UIConfig } from '../constants/UIConfig';
+import { createPrimaryButton, createSecondaryButton } from '../ui/UIButton.js';
 import { SceneKeys } from '../constants/SceneKeys.js';
 
 /**
@@ -41,46 +42,24 @@ export class PauseScene extends Scene {
         audio.setMusicVolume(audio.settings.musicVolume / 2);
 
         // Menu buttons
-        const buttons = [
-            { key: 'resume', label: 'Resume', yOffset: -20 },
-            { key: 'mainMenu', label: 'Main Menu', yOffset: 60 },
-            { key: 'settings', label: 'Settings', yOffset: 140 }
-        ];
-        buttons.forEach(btnCfg => {
-            const btn = this.add.text(
-                width / 2,
-                height / 2 + btnCfg.yOffset,
-                btnCfg.label,
-                UIConfig.menuButton
-            )
-                .setOrigin(0.5)
-                .setInteractive();
-
-            btn.on('pointerover', () => {
-                btn.setTint(UIConfig.menuButton.hoverTint);
-                AudioManager.getInstance().playSFX('hover');
-            });
-            btn.on('pointerout', () => btn.clearTint());
-            btn.on('pointerdown', () => {
-                AudioManager.getInstance().playSFX('click');
-                if (btnCfg.key === 'resume') {
-                    // Restore music volume
-                    audio.setMusicVolume(audio._prePauseMusicVolume);
-                    this.scene.stop();
-                    this.scene.resume(SceneKeys.GAME);
-                } else if (btnCfg.key === 'mainMenu') {
-                    // Restore music volume
-                    audio.setMusicVolume(audio._prePauseMusicVolume);
-                    this.scene.stop(SceneKeys.GAME);
-                    this.scene.start(SceneKeys.MAIN_MENU);
-                    this.scene.stop();
-                } else if (btnCfg.key === 'settings') {
-                    // Launch Settings scene and pause this scene
-                    this.scene.launch(SceneKeys.SETTINGS);
-                    this.scene.pause();
-                }
-            });
-        });
+        const resume = createPrimaryButton(this, width / 2, height / 2 - 20, 'Resume', () => {
+            AudioManager.getInstance().playSFX('click');
+            audio.setMusicVolume(audio._prePauseMusicVolume);
+            this.scene.stop();
+            this.scene.resume(SceneKeys.GAME);
+        }, { scale: 0.35 });
+        const settings = createSecondaryButton(this, width / 2, height / 2 + 60, 'Settings', () => {
+            AudioManager.getInstance().playSFX('click');
+            this.scene.launch(SceneKeys.SETTINGS);
+            this.scene.pause();
+        }, { scale: 0.35 });
+        const mainMenu = createSecondaryButton(this, width / 2, height / 2 + 140, 'Main Menu', () => {
+            AudioManager.getInstance().playSFX('click');
+            audio.setMusicVolume(audio._prePauseMusicVolume);
+            this.scene.stop(SceneKeys.GAME);
+            this.scene.start(SceneKeys.MAIN_MENU);
+            this.scene.stop();
+        }, { scale: 0.35 });
 
         // ESC key resumes
         this.input.keyboard.once('keydown-ESC', () => {

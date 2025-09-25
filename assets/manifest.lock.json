@@ -1,0 +1,485 @@
+{
+  "generatedAt": "2025-08-28T04:19:38.386Z",
+  "entries": [
+    {
+      "key": "background",
+      "path": "images/characters/mainlogo.png",
+      "sha256": "52fb69471e84625659908c48009b1863a89579ee994097b5031d97e49e55503f"
+    },
+    {
+      "key": "logo",
+      "path": "images/characters/mainlogo.png",
+      "sha256": "52fb69471e84625659908c48009b1863a89579ee994097b5031d97e49e55503f"
+    },
+    {
+      "key": "playerFull",
+      "path": "2D Pixel Dungeon Asset Pack v2.0/2D Pixel Dungeon Asset Pack/character and tileset/Dungeon_Character.png",
+      "sha256": "e51a3833e3ac0af2ee0891dd3767fd92f6ddf0d2754b38bfc50ddb308e4ac877"
+    },
+    {
+      "key": "player",
+      "path": "2D Pixel Dungeon Asset Pack v2.0/2D Pixel Dungeon Asset Pack/character and tileset/Dungeon_Character.png",
+      "sha256": "e51a3833e3ac0af2ee0891dd3767fd92f6ddf0d2754b38bfc50ddb308e4ac877"
+    },
+    {
+      "key": "dungeonTiles",
+      "path": "images/tilesets/Dungeon_Tileset.png",
+      "sha256": "b0da342a01f0e67fb57c095e2199b5e8935a836d65bc9c1af87163c40ce16a74"
+    },
+    {
+      "key": "arrow1",
+      "path": "images/ui/interface/arrow_1.png",
+      "sha256": "8a583f72631b0ddcb0647da8617994d661e8c270c55436c73d400018a5bd36ce"
+    },
+    {
+      "key": "arrow2",
+      "path": "images/ui/interface/arrow_2.png",
+      "sha256": "9766304392ddb2a098ca46c6f4f139be46a6501dd650e9b9d7716a19eb59b740"
+    },
+    {
+      "key": "arrow3",
+      "path": "images/ui/interface/arrow_3.png",
+      "sha256": "af76bd244490a1d571a34b5a34ed4fea26c01f948a1ee2d43013ec1a86b9b7b1"
+    },
+    {
+      "key": "arrow4",
+      "path": "images/ui/interface/arrow_4.png",
+      "sha256": "9766304392ddb2a098ca46c6f4f139be46a6501dd650e9b9d7716a19eb59b740"
+    },
+    {
+      "key": "squareLeft1",
+      "path": "images/ui/interface/square_left_1.png",
+      "sha256": "aa5e1bdcdb27a09df4af490b0c4d9a8d007c7055ca1148add8a09c130750db21"
+    },
+    {
+      "key": "squareLeft2",
+      "path": "images/ui/interface/square_left_2.png",
+      "sha256": "23c0bf721efe696aa1c9afcdf780aeb5a40561c041393db4422198c96e5592d1"
+    },
+    {
+      "key": "squareLeft2_1",
+      "path": "images/ui/interface/square_left_2_1.png",
+      "sha256": "ebfc34fbdbf89e97335a9cc2f0dd27cf4309477d8820fa3d418c77163a64e728"
+    },
+    {
+      "key": "squareLeft2_2",
+      "path": "images/ui/interface/square_left_2_2.png",
+      "sha256": "3b35bff78b3126eb26ed303152d08bb93dbe9b9a2e48c82b20435890aef5a20a"
+    },
+    {
+      "key": "squareLeft2_3",
+      "path": "images/ui/interface/square_left_2_3.png",
+      "sha256": "889b42a850391657e661b529bb948a282369fc8976873ce2815158be367409d8"
+    },
+    {
+      "key": "squareLeft2_4",
+      "path": "images/ui/interface/square_left_2_4.png",
+      "sha256": "1f1b1e50775baa84b670c88e32a1aed55a085fd756d8a4358c4370ea7a91f44a"
+    },
+    {
+      "key": "squareLeft3",
+      "path": "images/ui/interface/square_left_3.png",
+      "sha256": "8dcdcfcaf2fcf8bdd5498066cf1bcfb0026f4211ed70efb0bd8f43bed952cff5"
+    },
+    {
+      "key": "squareLeft4",
+      "path": "images/ui/interface/square_left_4.png",
+      "sha256": "1f1b1e50775baa84b670c88e32a1aed55a085fd756d8a4358c4370ea7a91f44a"
+    },
+    {
+      "key": "squareRight1",
+      "path": "images/ui/interface/square_right_1.png",
+      "sha256": "803c0c2c3ed6782a1b9695e45c232f9b0bc25573ae8e6c419a90131748177ad2"
+    },
+    {
+      "key": "squareRight2",
+      "path": "images/ui/interface/square_right_2.png",
+      "sha256": "0579a57d14e8d75190293dc2419944be75ac836dbc875a5f13800332913847e1"
+    },
+    {
+      "key": "squareRight2_1",
+      "path": "images/ui/interface/square_right_2_1.png",
+      "sha256": "c7664b44aec05f3fa30ade382ed2620968d97aa0e2e909b2d5d42b82ae98e5e8"
+    },
+    {
+      "key": "squareRight2_2",
+      "path": "images/ui/interface/square_right_2_2.png",
+      "sha256": "870f0f1b908d5e0b4abb5f1347ed2a6b95b06febf5373773bdfa78b360664ac4"
+    },
+    {
+      "key": "squareRight2_3",
+      "path": "images/ui/interface/square_right_2_3.png",
+      "sha256": "0593c322da6b8bed138628b8187c7eace8226061848a119e1f229b3b09e805d6"
+    },
+    {
+      "key": "squareRight2_4",
+      "path": "images/ui/interface/square_right_2_4.png",
+      "sha256": "1f1b1e50775baa84b670c88e32a1aed55a085fd756d8a4358c4370ea7a91f44a"
+    },
+    {
+      "key": "squareRight3",
+      "path": "images/ui/interface/square_right_3.png",
+      "sha256": "cc8c34bc939cd6ea2ebce05dd81ed780ea6bd1b2e8741b1ede8938f9ce029831"
+    },
+    {
+      "key": "squareRight4",
+      "path": "images/ui/interface/square_right_4.png",
+      "sha256": "1f1b1e50775baa84b670c88e32a1aed55a085fd756d8a4358c4370ea7a91f44a"
+    },
+    {
+      "key": "squareUpDown1",
+      "path": "images/ui/interface/square_up_down_1.png",
+      "sha256": "b08909101c21133034ff725d93c263ef9c30d2ea85fb446fdcacdef44bff303a"
+    },
+    {
+      "key": "squareUpDown2",
+      "path": "images/ui/interface/square_up_down_2.png",
+      "sha256": "7d84a8e0ce43b1f27b7ba4a6bb8da97ff950a0706f87c9c6f0cf82881c93a752"
+    },
+    {
+      "key": "squareUpDown3",
+      "path": "images/ui/interface/square_up_down_3.png",
+      "sha256": "7af44e9057b0f559a82f61b9f195262e8829b04c89a88039268fd528aeb5d957"
+    },
+    {
+      "key": "squareUpDown4",
+      "path": "images/ui/interface/square_up_down_4.png",
+      "sha256": "1f1b1e50775baa84b670c88e32a1aed55a085fd756d8a4358c4370ea7a91f44a"
+    },
+    {
+      "key": "coin",
+      "path": "spritesheets/items/coin.png",
+      "sha256": "cb0e37e2fa912b9d33bd4d07f629685eac01ce11cfdde7fbd698083cb6d342f7"
+    },
+    {
+      "key": "chest",
+      "path": "spritesheets/items/chest.png",
+      "sha256": "6e382f4620305b3ab2013a50cf7382e78a75c88726fa46d2c39056646b75e170"
+    },
+    {
+      "key": "collectibleProtein",
+      "path": "spritesheets/items/flasks/flasks_2_1.png",
+      "sha256": "f4f9f9755cf54ee3d65f344d4810603192b91f1b241971b8bc1abccead85fcdf"
+    },
+    {
+      "key": "collectibleDumbbell",
+      "path": "spritesheets/items/collectibles/dumbbell.png",
+      "sha256": "acb58a5b8d432f54507b0609ba8447c3269415f5a605e2b65d86877c7d1df4bd"
+    },
+    {
+      "key": "torch",
+      "path": "spritesheets/effects/torch/torch.png",
+      "sha256": "8981bb40ede661af0b191a6517242402154e8d78b20f1d3bfe77cb259ebe074f"
+    },
+    {
+      "key": "axelface",
+      "path": "images/characters/axelface.png",
+      "sha256": "5d2d56bcc674966c98f75beee6e7a558507c722664818fe216ad70dda21667fc"
+    },
+    {
+      "key": "wynface",
+      "path": "images/characters/wynface.png",
+      "sha256": "0b902a180cf124f18eeac635d641a4fdf0f829f2a9be6450a2521509bda2df0d"
+    },
+    {
+      "key": "ilaSprite",
+      "path": "images/characters/ila_sprite.png",
+      "sha256": "5d26bfbd8412c7431f8dc22dab8c0a695e640dd48070cadb2aa6045f4173dffe"
+    },
+    {
+      "key": "axelSprite",
+      "path": "images/characters/axel_sprite.png",
+      "sha256": "c0ba2c744938dbadd83d77fe158fdc1fd3b538d9c804398d89df25683aa7cc2b"
+    },
+    {
+      "key": "wynSprite",
+      "path": "images/characters/wyn_sprite.png",
+      "sha256": "62b7fcf4499d68ffe889f9f3cd0e79a6a0ac69edb4ced619016c394a7eb22bfa"
+    },
+    {
+      "key": "theWyn",
+      "path": "images/characters/thewyn.png",
+      "sha256": "8166d2969bc95173ab973be0ff904ea2ca7d33fbae808fdb8eaa78cee4b45d63"
+    },
+    {
+      "key": "buffBg",
+      "path": "images/backgrounds/buff-bg.png",
+      "sha256": "873bebc076a73fdd77cf9054d6c94b4c1372a627ad489bad0615fcb7aebc66a3"
+    },
+    {
+      "key": "parallaxSky",
+      "path": "images/backgrounds/parallax-sky.png",
+      "sha256": "4094262473c37b38c229c6d5a3f9b8ec4ab354bd44a79db2f92caa741f18f8eb"
+    },
+    {
+      "key": "parallaxMountains",
+      "path": "images/backgrounds/parallax-mountains.png",
+      "sha256": "f5f17c5e64a2c9214ad9c0379868b55e6623e4c0cf3af4788b409de03a2f61de"
+    },
+    {
+      "key": "parallaxForeground",
+      "path": "images/backgrounds/parallax-foreground.png",
+      "sha256": "03de340b534b294b38c74e62d2a4763d6938f8227c42cd661bad95806e693f8c"
+    },
+    {
+      "key": "particleFlare",
+      "path": "images/particles/flares.png",
+      "sha256": "497790947d4666760ce38f3c00e852c71fdb66cae849bae8e9ede352719e1581"
+    },
+    {
+      "key": "particleWhite",
+      "path": "images/particles/white.png",
+      "sha256": "497790947d4666760ce38f3c00e852c71fdb66cae849bae8e9ede352719e1581"
+    },
+    {
+      "key": "genBackdrop",
+      "path": "images/generated/backdrop_final.png",
+      "sha256": "e057904f5d23d9fd9b52cc98c53454581612de7c179230500586d5c8e6526e03"
+    },
+    {
+      "key": "genSprite",
+      "path": "images/generated/sprite_final.png",
+      "sha256": "4d9455454e425a8ee13ae71129749da48cb7b38977325a33003efe93142ab87c"
+    },
+    {
+      "key": "genBackdropProteinPlant",
+      "path": "images/generated/backdrop_protein_plant_final.png",
+      "sha256": "e057904f5d23d9fd9b52cc98c53454581612de7c179230500586d5c8e6526e03"
+    },
+    {
+      "key": "genSpritePulsarBoss",
+      "path": "images/generated/sprite_pulsar_boss_final.png",
+      "sha256": "fe16496ff2b0b5a161b793f4c6245bb3a00bf1fd17bbb36791fedccfdbe82272"
+    },
+    {
+      "key": "genSpriteWynIdle",
+      "path": "images/generated/sprite_wyn_idle_final.png",
+      "sha256": "d228d740842712778d7167b4d3c001649f2a2eca45f38bba2ad109ba39035270"
+    },
+    {
+      "key": "genSpriteClumperBoss",
+      "path": "images/generated/sprite_the_clumper_boss_final.png",
+      "sha256": "62841ce33ba577f1936dd9e27db768d283576a10a0cf1b604a4cdd13577e9f0c"
+    },
+    {
+      "key": "genSpriteBulkBoss",
+      "path": "images/generated/sprite_the_bulk_boss_final.png",
+      "sha256": "019a01956829d311af575e9ae63966307e8c1edcbdc0a1913ec88a41e817ee0d"
+    },
+    {
+      "key": "genBackdropFactoryFloor",
+      "path": "images/generated/backdrop_factory_floor_final.png",
+      "sha256": "2a3b0e14501e1562c9490b1646be8c4ad32d18c83e81f9d80958c4e91c248b6d"
+    },
+    {
+      "key": "genUiBadgeSrank",
+      "path": "images/generated/ui_badge_srank_final.png",
+      "sha256": "a28cfa5d6342314e5a852e3ed899e9b17fd3c6d29f55a4d285f1acd7c1d721ce"
+    },
+    {
+      "key": "genUiIconCoin",
+      "path": "images/generated/ui_icon_coin_final.png",
+      "sha256": "0c17ac2630843ab31490cbfe0e6ef422eaea9d3599db5d7f1ba046d38275915c"
+    },
+    {
+      "key": "genBackdropProteinFore",
+      "path": "images/generated/backdrop_protein_fore_final.png",
+      "sha256": "0369b4d947fb04f7bc64feb4d2c9dc43a19771fa7c54d195da9e8b96ab70b3c3"
+    },
+    {
+      "key": "genBackdropProteinSky",
+      "path": "images/generated/backdrop_protein_sky_final.png",
+      "sha256": "cbcad54de95112ec4f0987f0fc4ee356f60b2c50ffa2944b777c2ab76e64c8d5"
+    },
+    {
+      "key": "genBackdropSkygymSky",
+      "path": "images/generated/backdrop_skygym_sky_final.png",
+      "sha256": "a5a2753bd3c7b967bf9fb45a186856ac883f0d79c0c3afd7afe21f301eba656a"
+    },
+    {
+      "key": "genSpriteCoin",
+      "path": "images/generated/sprite_coin_final.png",
+      "sha256": "b38ac79a65967f4795fbdb889180726be84127f36057f1fce163788431d4ba21"
+    },
+    {
+      "key": "genSpriteLaserEmitter",
+      "path": "images/generated/sprite_laser_emitter_final.png",
+      "sha256": "2b16e81a7a221aeaea84a9372518a8736af0790ba243368d6580ac30fad08afd"
+    },
+    {
+      "key": "genSpritePipeCorner",
+      "path": "images/generated/sprite_pipe_corner_final.png",
+      "sha256": "aff2b1d7d6c44e75c6cafe2aedbf41fa65e3980f69f2f7126434a920318d7222"
+    },
+    {
+      "key": "genSpriteShockGrid",
+      "path": "images/generated/sprite_shock_grid_final.png",
+      "sha256": "3c36a565007da61c6ad27589a4771246c054a6db2aefc47ef2f480fa2dc08cff"
+    },
+    {
+      "key": "genSpriteUiPauseIcon",
+      "path": "images/generated/sprite_ui_pause_icon_final.png",
+      "sha256": "b049db0daffb4c52d828a3505ea5ca22d2ca535c9c17a06b3c5a7b0bd683f4dc"
+    },
+    {
+      "key": "genBackdropFactoryMid",
+      "path": "images/generated/backdrop_factory_mid_final.png",
+      "sha256": "8ed3e4c3de4cd89aab30a96a3dce48e7c361aebb2a0a2ffc395c2d89d678d726"
+    },
+    {
+      "key": "genBackdropMinesMid",
+      "path": "images/generated/backdrop_mines_mid_final.png",
+      "sha256": "423f560067fc1a48b10d7f2bb11da0ca249acdbbfce40b0df223a5a1b021f378"
+    },
+    {
+      "key": "genBackdropProteinMid",
+      "path": "images/generated/backdrop_protein_mid_final.png",
+      "sha256": "4d1bca6ef5c588c2a4159cf687e7a4b321506aeaaf3e0f221980057ab3fd59e7"
+    },
+    {
+      "key": "genBackdropProteinFg",
+      "path": "images/generated/backdrop_protein_fg_final.png",
+      "sha256": "890a28d81be7e662138a21e35f2cf957398c933a2ec7e29a0db10b4ad65ec2b8"
+    },
+    {
+      "key": "genBackdropFactoryFg",
+      "path": "images/generated/backdrop_factory_fg_final.png",
+      "sha256": "698890fb869bdea51e3aaf8257e0e3d022bc5dde73393fd267e5c8873658c2c0"
+    },
+    {
+      "key": "genBackdropFactoryFore",
+      "path": "images/generated/backdrop_factory_fore_final.png",
+      "sha256": "d19d3cad1dc9622402af7ab32214dbe1c26dae6fc9666b67345245ab41795058"
+    },
+    {
+      "key": "genBackdropFactorySky",
+      "path": "images/generated/backdrop_factory_sky_final.png",
+      "sha256": "214c3c24e3754ba56d3abeb567b23384d1aa75bc47b4598d8c53c6c8434b1724"
+    },
+    {
+      "key": "genBackdropMinesFg",
+      "path": "images/generated/backdrop_mines_fg_final.png",
+      "sha256": "90a4c8d8f72e47c151cfcea8c2a3e4564e00ab21b8dd82007fec963ff5bd6904"
+    },
+    {
+      "key": "genBackdropMinesFore",
+      "path": "images/generated/backdrop_mines_fore_final.png",
+      "sha256": "61bde84dc482974b5071de95440d89403c164c1887d9b0c7f49a21e1398781f2"
+    },
+    {
+      "key": "genBackdropMinesSky",
+      "path": "images/generated/backdrop_mines_sky_final.png",
+      "sha256": "d76c5d80fca7b3e929770f882d32d055e08decd7c8d1aa53a81cef39a05450f8"
+    },
+    {
+      "key": "genBackdropSkygymFg",
+      "path": "images/generated/backdrop_skygym_fg_final.png",
+      "sha256": "fba58db577ccbc9110cdc793e1a4a96b3ddc6978491555164f3af9af876a7645"
+    },
+    {
+      "key": "genBackdropSkygymFore",
+      "path": "images/generated/backdrop_skygym_fore_final.png",
+      "sha256": "294e375b7008b090d76a3a45fdc14bfef49c8906d1507e6dafbf54162e289757"
+    },
+    {
+      "key": "genBackdropSkygymMid",
+      "path": "images/generated/backdrop_skygym_mid_final.png",
+      "sha256": "e0c17f770a8ea858e1e556adbd7d79abb7abe1ffd3a7833394a096006e20f2d7"
+    },
+    {
+      "key": "genParticleDust",
+      "path": "images/generated/particle_dust_final.png",
+      "sha256": "404b2019822ed5874a53fa2f56828944373d8dade8eb274e7953c913c9b49fb2"
+    },
+    {
+      "key": "genParticleFlareSmall",
+      "path": "images/generated/particle_flare_small_final.png",
+      "sha256": "a97c554461b4a74abbbfa2211e99b4ff088cdc61aee2a760c3a96aaa1ee79d35"
+    },
+    {
+      "key": "genParticleSpark",
+      "path": "images/generated/particle_spark_final.png",
+      "sha256": "320eee70dc473a3c8a6dd26aa1afeb157cc7e2bec1ef975d0aefaaa5a6e1b58f"
+    },
+    {
+      "key": "genSpriteBossEmblem",
+      "path": "images/generated/sprite_boss_emblem_final.png",
+      "sha256": "4ae40a3d5a03148affe008f5e823e2850430c50c8f45075613018768910cff2d"
+    },
+    {
+      "key": "genSpriteBuffDna",
+      "path": "images/generated/sprite_buff_dna_final.png",
+      "sha256": "f49bd0eb574f8ba94f14955c5ab855497cb545e20db0f83d1291ce93aa395e83"
+    },
+    {
+      "key": "genSpriteCheckpointFlag",
+      "path": "images/generated/sprite_checkpoint_flag_final.png",
+      "sha256": "2eebd613ae8ca3d8ff8cfc47232295e62322422b08a1e1e97f6348e5fb294201"
+    },
+    {
+      "key": "genSpriteCrateHeavy",
+      "path": "images/generated/sprite_crate_heavy_final.png",
+      "sha256": "df633cc4f3a7037a96d42f1b21ddd2e12c7808376a23a1f1aaebf7685ff25317"
+    },
+    {
+      "key": "genSpriteCrusher",
+      "path": "images/generated/sprite_crusher_final.png",
+      "sha256": "f3c6b6819570f4b1638c03f08fff04b0b86dd7410d9839a3b30e334a63ee98eb"
+    },
+    {
+      "key": "genSpriteGritShard",
+      "path": "images/generated/sprite_grit_shard_final.png",
+      "sha256": "ff5fb1f9db4c4438c95ff6ba5bc9e27d836ab9f09cdbaf570cf5922555618a4e"
+    },
+    {
+      "key": "genSpritePipeStraight",
+      "path": "images/generated/sprite_pipe_straight_final.png",
+      "sha256": "f907c7c7c9482e6610d7f08ccb41422934f51fce556504eb1f917e9ed6fa2b5e"
+    },
+    {
+      "key": "genSpritePlatformIndustrial",
+      "path": "images/generated/sprite_platform_industrial_final.png",
+      "sha256": "347748f9225e65954f3e916fb763e9b30cabf56274974654df3dbd27fd892836"
+    },
+    {
+      "key": "genSpriteRailBoostPad",
+      "path": "images/generated/sprite_rail_boost_pad_final.png",
+      "sha256": "d261bfcc30c7e752e5db6f9cfde455d03569ca67992ae1ce785b89ff9d404658"
+    },
+    {
+      "key": "genSpriteSignWarning",
+      "path": "images/generated/sprite_sign_warning_final.png",
+      "sha256": "b632f12253ac43235defccbb4aa9dd8113a91a652eaf7a37ec9d8cfdfb87fa5b"
+    },
+    {
+      "key": "genSpriteSpikes",
+      "path": "images/generated/sprite_spikes_final.png",
+      "sha256": "fd525661e76dbc7a5f256f30c464d75d4a3d7384d6455643628c8f59c7de89e1"
+    },
+    {
+      "key": "genSpriteWynJump",
+      "path": "images/generated/sprite_wyn_jump_final.png",
+      "sha256": "f71b914a0ac0625ef5af0cf332b12da3879b99fb8a7d72fba69b46e379fb7d77"
+    },
+    {
+      "key": "genSpriteWynRun",
+      "path": "images/generated/sprite_wyn_run_final.png",
+      "sha256": "2dd17909d58c9cc8e2357616ae398499aede3a0fd6d729fa01852709eb4cecd3"
+    },
+    {
+      "key": "genUiButtonPrimary",
+      "path": "images/generated/ui_button_primary_final.png",
+      "sha256": "58ab2736b2d91a9164cf7d12dc0f3ecd853ba1733d9ea38de56753ff3c5d2e92"
+    },
+    {
+      "key": "genUiIconDna",
+      "path": "images/generated/ui_icon_dna_final.png",
+      "sha256": "d700e8df4fb5ba0c19646454456590605405d06ac8b5b50a15ed972af34c2f86"
+    },
+    {
+      "key": "genUiIconGrit",
+      "path": "images/generated/ui_icon_grit_final.png",
+      "sha256": "5fb9007a356111b70f18944f0335954a383919582447a8ebd6ddcc18105bd33f"
+    }
+  ]
+}

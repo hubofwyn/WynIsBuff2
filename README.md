@@ -20,7 +20,7 @@ Do you have what it takes to **witness pure, unfiltered, RAW BUFFNESS**? Can you
 
 ## 🚀💻 TECHNICAL STACK OF POWER
 - **Phaser 3.88.0** – HTML5 game framework so buffed it makes other frameworks look like they're still in TUTORIAL MODE!
-- **Rapier 0.14.0** – 2D physics engine with muscles so defined it calculates collision responses WHILE DOING ONE-HANDED PUSHUPS!
+- **Rapier 0.18.2** – 2D physics engine with muscles so defined it calculates collision responses WHILE DOING ONE-HANDED PUSHUPS!
 - **Vite 5.3.1** – Build tool so fast it BREAKS THE SOUND BARRIER and never, EVER skips leg day!
 - **JavaScript ES6+** – Programming language so buff it flexes its functions and makes other languages CRY PROTEIN TEARS!
  - **Howler.js** – Audio management for BGM & SFX with MP3/OGG support and stereo panning.

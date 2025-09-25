@@ -1,5 +1,7 @@
-import { EventNames } from '../../constants/EventNames';
-import { getLevelById } from '../../constants/LevelData';
+import { EventNames } from '../../constants/EventNames.js';
+import { getLevelById } from '../../constants/LevelData.js';
+import { ParallaxLayers } from '../../systems/ParallaxLayers.js';
+import { parallaxKeysFor } from './ParallaxMap.js';
 // Enemy controller for spawning buff-themed enemies
 import { EnemyController } from '@features/enemy';
 
@@ -159,6 +161,7 @@ export class LevelLoader {
         
         // Spawn boss for this level if configured
         if (levelConfig.boss) {
+            console.log('[LevelLoader] Boss config found:', levelConfig.boss);
             try {
                 if (levelConfig.boss.type === 'pulsating') {
                     // Import PulsatingBoss for level 1
@@ -180,6 +183,12 @@ export class LevelLoader {
                         console.error('[LevelLoader] Error importing PulsatingBoss:', error);
                     });
                 } else if (levelConfig.boss.active) {
+                    // Validate boss position data
+                    if (!levelConfig.boss.x || !levelConfig.boss.y) {
+                        console.warn('[LevelLoader] Boss config missing x or y position:', levelConfig.boss);
+                        return;
+                    }
+                    
                     // Original boss logic for other levels
                     import('../enemy/BossController.js').then(module => {
                         const { BossController } = module;
@@ -189,11 +198,21 @@ export class LevelLoader {
                             this.eventSystem,
                             levelConfig.boss.x,
                             levelConfig.boss.y,
-                            levelConfig.boss.key
+                            levelConfig.boss.key || 'axelface'
                         );
                         
                         // Store boss reference for updates and cleanup
                         this.scene.boss = boss;
+                        
+                        // Register boss for physics sync if scene has the registry
+                        if (this.scene.physicsSync && boss.body && boss.sprite) {
+                            this.scene.physicsSync.push({
+                                rb: boss.body,
+                                sprite: boss.sprite,
+                                type: 'boss'
+                            });
+                            console.log('[LevelLoader] Boss registered for physics sync');
+                        }
                         
                         console.log('[LevelLoader] Boss spawned at', levelConfig.boss.x, levelConfig.boss.y);
                     }).catch(error => {
@@ -223,6 +242,18 @@ export class LevelLoader {
         // Set background color if specified
         if (backgroundConfig.color) {
             this.scene.cameras.main.setBackgroundColor(backgroundConfig.color);
+        }
+        // Prefer generated parallax backdrops based on level id or theme
+        const levelId = this.currentLevelId || '';
+        const theme = (this.currentLevelConfig?.environment?.theme) || '';
+        const keys = parallaxKeysFor(levelId) || parallaxKeysFor(theme);
+        if (keys && keys.every(Boolean)) {
+            try {
+                ParallaxLayers.create(this.scene, keys, [0.1, 0.3, 0.6, 0.9]);
+                return; // Skip legacy background handling
+            } catch (e) {
+                console.warn('[LevelLoader] Parallax setup failed, falling back:', e?.message || e);
+            }
         }
         // Add static background image if specified
         if (backgroundConfig.image) {
