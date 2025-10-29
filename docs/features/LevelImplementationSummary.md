@@ -2,7 +2,7 @@
 
 ## Overview
 
-This document summarizes the implementation of the modular level system for WynIsBuff2. The implementation follows the architectural design outlined in the [Modular Level Architecture](./ModularLevelArchitecture.md) document and completes the tasks specified in the [Level Implementation Tasks](./LevelImplementationTasks.md) document.
+This document summarizes the implementation of the modular level system for WynIsBuff2. The implementation follows the architectural design outlined in the [Modular Level Architecture](../systems/ModularLevelArchitecture.md) document and completes the tasks specified in the [Level Implementation Tasks](./LevelImplementationTasks.md) document.
 
 ## Implemented Components
 
@@ -85,6 +85,6 @@ While the core level system is now implemented, there are a few areas that could
 
 ## Conclusion
 
-The modular level system implementation successfully completes Phase 2.2 of the [Revised MVP Implementation Plan](./RevisedMVPImplementationPlan.md). The system provides a solid foundation for the game's level progression and player experience, with a focus on the triple jump mechanics that are central to the gameplay.
+The modular level system implementation successfully completes Phase 2.2 of the [Revised MVP Implementation Plan](../archive/aiprojectdocs-historical/RevisedMVPImplementationPlan.md). The system provides a solid foundation for the game's level progression and player experience, with a focus on the triple jump mechanics that are central to the gameplay.
 
 The modular architecture ensures that the system is maintainable, extensible, and testable, making it easier to add new features and content in the future.

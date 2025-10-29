@@ -194,7 +194,7 @@ class GameStateManager {
 
 ## Resources
 
-- [ModularLevelArchitecture.md](./ModularLevelArchitecture.md): Overview of the modular level system architecture
-- [ModularLevelSystemImplementation.md](./ModularLevelSystemImplementation.md): Detailed implementation guide
+- [ModularLevelArchitecture.md](../systems/ModularLevelArchitecture.md): Overview of the modular level system architecture
+- [ModularLevelSystemImplementation.md](../systems/ModularLevelSystemImplementation.md): Detailed implementation guide
 - [LevelImplementationArchitecture.md](./LevelImplementationArchitecture.md): Original level implementation plan
-- [MVPLevelDesignGuide.md](./MVPLevelDesignGuide.md): Level design guidelines
+- [MVPLevelDesignGuide.md](../design/MVPLevelDesignGuide.md): Level design guidelines

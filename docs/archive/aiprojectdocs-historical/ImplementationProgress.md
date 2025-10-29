@@ -78,7 +78,7 @@ All planned components for the MVP have been successfully implemented. The game 
 5. Level selection and progress tracking
 6. Game state persistence using localStorage
 
-The implementation follows the architectural principles outlined in the [Architectural Overview](./ArchitecturalOverview.md), [Modular Architecture](./ModularArchitecture.md), and [Modular Level Architecture](./ModularLevelArchitecture.md) documentation.
+The implementation follows the architectural principles outlined in the [Architectural Overview](../../architecture/ArchitecturalOverview.md), [Modular Architecture](../../architecture/ModularArchitecture.md), and [Modular Level Architecture](../../systems/ModularLevelArchitecture.md) documentation.
 
 ## Next Steps
 

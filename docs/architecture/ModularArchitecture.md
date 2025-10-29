@@ -69,7 +69,7 @@ Additionally, three effect managers provide visual feedback:
 2. **CameraManager**: Handles screen shake and camera effects
 3. **ColorManager**: Handles color transitions for the player sprite
 
-For detailed documentation on the modular player controller architecture, see [ModularPlayerController.md](./ModularPlayerController.md).
+For detailed documentation on the modular player controller architecture, see [ModularPlayerController.md](../systems/ModularPlayerController.md).
 
 ```javascript
 // Example usage

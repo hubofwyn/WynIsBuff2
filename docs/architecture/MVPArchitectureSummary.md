@@ -11,7 +11,7 @@ As of the latest update, the following architectural components have been implem
 - ✅ **Event System** (Phase 1.1) - Completed
 - ✅ **Basic UI Manager** (Phase 1.2) - Completed
 
-For a detailed progress report, see the [Implementation Progress Tracker](./ImplementationProgress.md).
+For a detailed progress report, see the [Implementation Progress Tracker](../archive/aiprojectdocs-historical/ImplementationProgress.md).
 
 ## Core Architectural Components
 
@@ -147,4 +147,4 @@ This MVP architectural approach focuses on delivering the essential components t
 
 The first phase of the implementation plan has been successfully completed with the Event System and UI Manager now fully functional. The focus has now shifted to Phase 2, which involves refining the triple jump mechanics and implementing level designs that showcase these mechanics.
 
-For a detailed overview of the implementation progress and next steps, refer to the [Implementation Progress Tracker](./ImplementationProgress.md).
+For a detailed overview of the implementation progress and next steps, refer to the [Implementation Progress Tracker](../archive/aiprojectdocs-historical/ImplementationProgress.md).

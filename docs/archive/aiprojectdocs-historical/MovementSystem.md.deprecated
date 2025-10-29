@@ -2,8 +2,8 @@
 
 > **Note**: This document is deprecated. The movement system has been refactored into a modular architecture with specialized controllers. Please refer to the following documents for up-to-date information:
 >
-> - [ModularPlayerController.md](./ModularPlayerController.md) - Documentation for the new modular player controller architecture
-> - [TripleJumpRefinementImplementation.md](./TripleJumpRefinementImplementation.md) - Details on the triple jump refinement implementation
+> - [ModularPlayerController.md](../../systems/ModularPlayerController.md) - Documentation for the new modular player controller architecture
+> - [TripleJumpRefinementImplementation.md](../../features/TripleJumpRefinementImplementation.md) - Details on the triple jump refinement implementation
 
 The content below is kept for historical reference only.
 

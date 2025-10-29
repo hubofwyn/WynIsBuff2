@@ -14,7 +14,7 @@
 
 ## Overview
 
-This document outlines the architectural approach for implementing the level system in WynIsBuff2. The goal is to create a flexible, data-driven level system that supports the 5 focused levels described in the [MVP Level Design Guide](./MVPLevelDesignGuide.md), while enabling easy level transitions, collectibles, and completion triggers.
+This document outlines the architectural approach for implementing the level system in WynIsBuff2. The goal is to create a flexible, data-driven level system that supports the 5 focused levels described in the [MVP Level Design Guide](../design/MVPLevelDesignGuide.md), while enabling easy level transitions, collectibles, and completion triggers.
 
 ## Architectural Approach
 
@@ -250,4 +250,4 @@ The level implementation will be broken down into these steps:
    - Test and refine each level
    - Ensure proper progression
 
-This implementation plan aligns with the 2-day estimate for Phase 2.2 in the [Revised MVP Implementation Plan](./RevisedMVPImplementationPlan.md).
+This implementation plan aligns with the 2-day estimate for Phase 2.2 in the [Revised MVP Implementation Plan](../archive/aiprojectdocs-historical/RevisedMVPImplementationPlan.md).
