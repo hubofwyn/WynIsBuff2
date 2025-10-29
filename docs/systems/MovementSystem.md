@@ -1,8 +1,19 @@
 # Movement System Documentation
 
+**Current Implementation**: Rapier 0.19+ with KinematicCharacterController
+**Status**: Modern physics-based approach (October 2025)
+
+**⚠️ Note**: This document contains historical implementation patterns alongside current approaches. For Rapier 0.19+ specific details, see:
+- [RAPIER_019_MIGRATION.md](../technology/RAPIER_019_MIGRATION.md) - API migration guide
+- [RapierPhysics.md](../technology/RapierPhysics.md) - Current Rapier integration patterns
+- [PlayerController.js](../../src/modules/player/PlayerController.js) - Current implementation
+
 ## Table of Contents
 - [Overview](#overview)
-- [Implementation Details](#implementation-details)
+- [Modern Implementation (Current)](#modern-implementation-current)
+  - [Character Controller Approach](#character-controller-approach)
+  - [Physics-Based Ground Detection](#physics-based-ground-detection)
+- [Implementation Details (Historical)](#implementation-details-historical)
   - [Player Movement](#player-movement)
   - [Jumping Mechanics](#jumping-mechanics)
   - [Collision Detection](#collision-detection)
@@ -12,9 +23,81 @@
 
 ## Overview
 
-The movement system in WynIsBuff2 handles player movement, jumping, and ground detection using the Rapier physics engine integrated with Phaser. This document outlines the implementation details, recent improvements, and lessons learned during development.
+The movement system in WynIsBuff2 handles player movement, jumping, and ground detection using Rapier physics engine integrated with Phaser.
 
-## Implementation Details
+### Current Architecture (October 2025)
+
+WynIsBuff2 uses **Rapier's KinematicCharacterController** for robust player movement with physics-based ground detection. This replaces earlier manual collision detection approaches.
+
+**Key Components**:
+- `PlayerController.js` - Coordinates character movement and physics
+- `PhysicsManager.js` - Manages Rapier world and collision events
+- `InputManager.js` - Clean input snapshot system
+
+**See Also**: [ModularPlayerController.md](./ModularPlayerController.md) for complete architecture details.
+
+---
+
+## Modern Implementation (Current)
+
+### Character Controller Approach
+
+WynIsBuff2 uses Rapier's **KinematicCharacterController** for player movement:
+
+```javascript
+// Create character controller with offset for stability
+this.characterController = world.createCharacterController(0.01);
+
+// Configure features
+this.characterController.enableAutostep(0.5, 0.2, true);
+this.characterController.enableSnapToGround(0.3);
+
+// Each frame: compute collision-corrected movement
+const desiredMovement = new RAPIER.Vector2(dx, dy);
+this.characterController.computeColliderMovement(
+    this.collider,
+    desiredMovement
+);
+const correctedMovement = this.characterController.computedMovement();
+```
+
+**Benefits**:
+- Automatic slope handling
+- Step climbing
+- Smooth wall sliding
+- Snap-to-ground for better "feel"
+
+### Physics-Based Ground Detection
+
+**⚠️ Critical**: `isGrounded()` and `numGroundedColliders` were **removed in Rapier 0.19+**.
+
+**Modern approach** - Compare desired vs corrected movement:
+
+```javascript
+updateGroundState(desiredMovement, correctedMovement) {
+    const GROUND_THRESHOLD = 0.01;
+
+    // Check if falling movement was blocked
+    const isFalling = this.velocity.y > 0;
+    const verticalBlocked = isFalling &&
+        Math.abs(correctedMovement.y) < Math.abs(desiredMovement.y) - GROUND_THRESHOLD;
+
+    // Check if at rest
+    const atRest = Math.abs(this.velocity.y) < GROUND_THRESHOLD;
+
+    this.isGrounded = verticalBlocked || atRest;
+}
+```
+
+**Why this works**: When the character controller resolves collisions, it reduces downward movement if the ground blocks it. By comparing what we wanted vs. what we got, we can infer ground contact.
+
+**See**: [RAPIER_019_MIGRATION.md#3-ground-detection](../technology/RAPIER_019_MIGRATION.md#3-ground-detection) for complete details.
+
+---
+
+## Implementation Details (Historical)
+
+**Note**: The following sections describe earlier implementation approaches. They provide context for evolution but may not reflect current code.
 
 ### Player Movement
 
@@ -230,18 +313,37 @@ The following improvements were made to the movement system:
 
 ## Lessons Learned
 
-1. **Movement Speed Calibration**:
+### Rapier 0.19+ Migration (October 2025)
+
+1. **API Evolution**:
+   - Breaking changes in physics engines are inevitable
+   - Don't rely on undocumented properties like `numGroundedColliders`
+   - Use official high-level APIs (CharacterController) for future-proofing
+
+2. **Ground Detection**:
+   - Simple boolean checks (`.isGrounded()`) hide important physics details
+   - Physics-based detection (comparing desired vs corrected movement) is more robust
+   - Call timing matters: update ground state AFTER `computeColliderMovement()`
+
+3. **Debugging Strategies**:
+   - Property introspection (`Object.keys()`) reveals actual available APIs
+   - Console log analysis with state dumps identifies root causes quickly
+   - Circuit breakers prevent infinite error loops during debugging
+
+### General Movement (Historical)
+
+4. **Movement Speed Calibration**:
    - Initial movement speed (3) was too slow for satisfying gameplay
    - Direct velocity setting feels abrupt; acceleration provides smoother movement
    - Movement speed must be balanced with the game's scale and physics simulation
 
-2. **Jump Mechanics**:
+5. **Jump Mechanics**:
    - Jump force needs to be proportional to gravity and game scale
    - Variable jump heights add depth to platforming mechanics
    - Visual feedback helps players understand the triple jump system
 
-3. **Collision Detection**:
-   - Simple distance-based collision checks are insufficient for precise platforming
+6. **Collision Detection**:
+   - CharacterController is more reliable than manual position checks
    - Considering velocity direction improves ground detection accuracy
    - Coyote time significantly improves the feel of platforming games
 
