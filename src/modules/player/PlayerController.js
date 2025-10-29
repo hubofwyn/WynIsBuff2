@@ -554,10 +554,18 @@ export class PlayerController {
             // We just landed - start recovery period
             this.landingRecoveryTimer = PhysicsConfig.gameFeel.landingRecoveryTime;
             
-            // Emit landing event
+            // Emit landing event with properly structured data
             if (this.eventSystem) {
+                const position = this.body.translation();
                 this.eventSystem.emit(EventNames.PLAYER_LAND, {
-                    position: this.body.translation()
+                    position: {
+                        x: position.x,
+                        y: position.y
+                    },
+                    velocity: {
+                        x: this.velocity.x,
+                        y: this.velocity.y
+                    }
                 });
             }
         }
