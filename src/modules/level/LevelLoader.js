@@ -2,6 +2,7 @@ import { EventNames } from '../../constants/EventNames';
 import { getLevelById } from '../../constants/LevelData';
 // Enemy controller for spawning buff-themed enemies
 import { EnemyController } from '@features/enemy';
+import { LOG } from '../../observability/core/LogSystem.js';
 
 /**
  * LevelLoader class is responsible for loading level data and initializing level elements
@@ -47,7 +48,11 @@ export class LevelLoader {
      */
     log(message) {
         if (this.debugMode) {
-            console.log(`[LevelLoader] ${message}`);
+            LOG.dev('LEVELLOADER_DEBUG', {
+                subsystem: 'level',
+                message,
+                levelId: this.currentLevelId
+            });
         }
     }
     
@@ -63,7 +68,12 @@ export class LevelLoader {
             // Get level configuration
             const levelConfig = getLevelById(levelId);
             if (!levelConfig) {
-                console.error(`[LevelLoader] Level not found: ${levelId}`);
+                LOG.error('LEVELLOADER_LEVEL_NOT_FOUND', {
+                    subsystem: 'level',
+                    message: 'Level not found',
+                    levelId,
+                    hint: 'Check if levelId exists in LevelData.js'
+                });
                 return false;
             }
             
@@ -89,7 +99,13 @@ export class LevelLoader {
             this.log(`Level ${levelId} loaded successfully`);
             return true;
         } catch (error) {
-            console.error(`[LevelLoader] Error loading level ${levelId}:`, error);
+            LOG.error('LEVELLOADER_LOAD_ERROR', {
+                subsystem: 'level',
+                error,
+                message: 'Error loading level',
+                levelId,
+                hint: 'Check level configuration and factory initialization'
+            });
             return false;
         }
     }
@@ -152,7 +168,13 @@ export class LevelLoader {
                     }
                     this.scene.enemies.push(enemy);
                 } catch (error) {
-                    console.error('[LevelLoader] Error spawning enemy:', error);
+                    LOG.error('LEVELLOADER_ENEMY_SPAWN_ERROR', {
+                        subsystem: 'level',
+                        error,
+                        message: 'Error spawning enemy',
+                        enemyConfig: cfg,
+                        hint: 'Check enemy configuration and EnemyController initialization'
+                    });
                 }
             });
         }
@@ -174,10 +196,21 @@ export class LevelLoader {
                         
                         // Store boss reference for updates and cleanup
                         this.scene.pulsatingBoss = boss;
-                        
-                        console.log('[LevelLoader] Pulsating boss spawned at', levelConfig.boss.x, levelConfig.boss.y);
+
+                        LOG.dev('LEVELLOADER_PULSATING_BOSS_SPAWNED', {
+                            subsystem: 'level',
+                            message: 'Pulsating boss spawned',
+                            position: { x: levelConfig.boss.x, y: levelConfig.boss.y },
+                            levelId: this.currentLevelId
+                        });
                     }).catch(error => {
-                        console.error('[LevelLoader] Error importing PulsatingBoss:', error);
+                        LOG.error('LEVELLOADER_PULSATING_BOSS_IMPORT_ERROR', {
+                            subsystem: 'level',
+                            error,
+                            message: 'Error importing PulsatingBoss',
+                            levelId: this.currentLevelId,
+                            hint: 'Check if PulsatingBoss.js exists and exports PulsatingBoss class'
+                        });
                     });
                 } else if (levelConfig.boss.active) {
                     // Original boss logic for other levels
@@ -194,14 +227,33 @@ export class LevelLoader {
                         
                         // Store boss reference for updates and cleanup
                         this.scene.boss = boss;
-                        
-                        console.log('[LevelLoader] Boss spawned at', levelConfig.boss.x, levelConfig.boss.y);
+
+                        LOG.dev('LEVELLOADER_BOSS_SPAWNED', {
+                            subsystem: 'level',
+                            message: 'Boss spawned',
+                            position: { x: levelConfig.boss.x, y: levelConfig.boss.y },
+                            key: levelConfig.boss.key,
+                            levelId: this.currentLevelId
+                        });
                     }).catch(error => {
-                        console.error('[LevelLoader] Error importing BossController:', error);
+                        LOG.error('LEVELLOADER_BOSS_IMPORT_ERROR', {
+                            subsystem: 'level',
+                            error,
+                            message: 'Error importing BossController',
+                            levelId: this.currentLevelId,
+                            hint: 'Check if BossController.js exists and exports BossController class'
+                        });
                     });
                 }
             } catch (error) {
-                console.error('[LevelLoader] Error spawning boss:', error);
+                LOG.error('LEVELLOADER_BOSS_SPAWN_ERROR', {
+                    subsystem: 'level',
+                    error,
+                    message: 'Error spawning boss',
+                    bossConfig: levelConfig.boss,
+                    levelId: this.currentLevelId,
+                    hint: 'Check boss configuration and initialization'
+                });
             }
         }
         
@@ -335,7 +387,14 @@ export class LevelLoader {
                         break;
                 }
             } catch (error) {
-                console.error('[LevelLoader] Error creating decoration:', error);
+                LOG.error('LEVELLOADER_DECORATION_ERROR', {
+                    subsystem: 'level',
+                    error,
+                    message: 'Error creating decoration',
+                    decoration: deco,
+                    levelId: this.currentLevelId,
+                    hint: 'Check decoration configuration and asset availability'
+                });
             }
         });
     }

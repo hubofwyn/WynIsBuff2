@@ -143,8 +143,13 @@ export class Game extends Scene {
             const startX = levelConfig && levelConfig.playerStart ? levelConfig.playerStart.x : 512;
             const startY = levelConfig && levelConfig.playerStart ? levelConfig.playerStart.y : 300;
             const selectedKey = this.gameStateManager.getSelectedCharacter();
-            console.log('[Game] Creating player with character key:', selectedKey);
-            console.log('[Game] Available textures:', Object.keys(this.textures.list));
+            LOG.dev('GAME_PLAYER_CREATE', {
+                subsystem: 'scene',
+                scene: SceneKeys.GAME,
+                message: 'Creating player with character',
+                character: selectedKey,
+                availableTextures: Object.keys(this.textures.list)
+            });
             this.playerController = new PlayerController(
                 this,
                 this.physicsManager.getWorld(),
@@ -156,18 +161,30 @@ export class Game extends Scene {
             
             // DON'T register player with physics manager - player manages own sprite position
             // because it uses KinematicCharacterController for advanced movement
-            console.log('[Game] Player uses KinematicCharacterController, managing own sprite position');
-            
+            LOG.dev('GAME_PLAYER_CONTROLLER_MODE', {
+                subsystem: 'scene',
+                scene: SceneKeys.GAME,
+                message: 'Player uses KinematicCharacterController, managing own sprite position'
+            });
+
             // Listen for Pause events via InputManager (ESC key)
             this.eventSystem.on(EventNames.PAUSE, () => {
-                console.log('[Game] Pause event received, launching PauseScene');
+                LOG.dev('GAME_PAUSE_EVENT', {
+                    subsystem: 'scene',
+                    scene: SceneKeys.GAME,
+                    message: 'Pause event received, launching PauseScene'
+                });
                 // Pause the game and show pause overlay
                 this.scene.launch(SceneKeys.PAUSE);
                 this.scene.pause();
             });
             // Listen for Level Reset events via InputManager (R key)
             this.eventSystem.on(EventNames.LEVEL_RESET, () => {
-                console.log('[Game] Level reset event received, resetting level');
+                LOG.dev('GAME_LEVEL_RESET_EVENT', {
+                    subsystem: 'scene',
+                    scene: SceneKeys.GAME,
+                    message: 'Level reset event received, resetting level'
+                });
                 this.levelManager.resetLevel();
             });
             
@@ -397,8 +414,12 @@ export class Game extends Scene {
         });
         
         this.uiManager.addToGroup('levelCompleteUI', 'continueButton');
-        
-        console.log('[Game] UI elements created');
+
+        LOG.dev('GAME_UI_CREATED', {
+            subsystem: 'scene',
+            scene: SceneKeys.GAME,
+            message: 'UI elements created'
+        });
     }
     
     /**
@@ -409,7 +430,12 @@ export class Game extends Scene {
         this.eventSystem.on(EventNames.PLAYER_LAND, (data) => {
             // Screen shake is now handled by CameraManager
             if (this.cameraManager) {
-                console.log('[Game] Player landed, CameraManager handling effects');
+                LOG.dev('GAME_PLAYER_LAND', {
+                    subsystem: 'scene',
+                    scene: SceneKeys.GAME,
+                    message: 'Player landed, CameraManager handling effects',
+                    data
+                });
             }
             // Play landing sound
             AudioManager.getInstance().playSFX('land');
@@ -417,14 +443,26 @@ export class Game extends Scene {
         
         // Listen for player jump events
         this.eventSystem.on(EventNames.PLAYER_JUMP, (data) => {
-            console.log('[Game] Player jumped, effect managers handling feedback');
+            LOG.dev('GAME_PLAYER_JUMP', {
+                subsystem: 'scene',
+                scene: SceneKeys.GAME,
+                message: 'Player jumped, effect managers handling feedback',
+                data
+            });
             // Play jump sound effect
             AudioManager.getInstance().playSFX('jump');
         });
         
         // Listen for collectible collected events
         this.eventSystem.on(EventNames.COLLECTIBLE_COLLECTED, (data) => {
-            console.log('[Game] Collectible collected:', data);
+            LOG.dev('GAME_COLLECTIBLE_COLLECTED', {
+                subsystem: 'scene',
+                scene: SceneKeys.GAME,
+                message: 'Collectible collected',
+                totalCollected: data.totalCollected,
+                totalCollectibles: data.totalCollectibles,
+                position: data.position
+            });
             // Play pickup sound effect
             AudioManager.getInstance().playSFX('pickup');
             
@@ -452,8 +490,15 @@ export class Game extends Scene {
         
         // Listen for level complete events
         this.eventSystem.on(EventNames.LEVEL_COMPLETE, (data) => {
-            console.log('[Game] Level complete:', data);
-            
+            LOG.dev('GAME_LEVEL_COMPLETE', {
+                subsystem: 'scene',
+                scene: SceneKeys.GAME,
+                message: 'Level complete',
+                levelId: data.levelId,
+                collectiblesCollected: data.collectiblesCollected,
+                totalCollectibles: data.totalCollectibles
+            });
+
             // Save progress
             if (this.gameStateManager) {
                 this.gameStateManager.saveProgress(
@@ -481,8 +526,14 @@ export class Game extends Scene {
         
         // Listen for level loaded events
         this.eventSystem.on(EventNames.LEVEL_LOADED, (data) => {
-            console.log('[Game] Level loaded:', data);
-            
+            LOG.dev('GAME_LEVEL_LOADED', {
+                subsystem: 'scene',
+                scene: SceneKeys.GAME,
+                message: 'Level loaded',
+                levelName: data.name,
+                levelData: data
+            });
+
             // Update level name
             this.uiManager.updateText(
                 'levelName',
@@ -507,8 +558,14 @@ export class Game extends Scene {
         
         // Listen for player explode events
         this.eventSystem.on(EventNames.PLAYER_EXPLODE, (data) => {
-            console.log('[Game] Player exploded:', data);
-            
+            LOG.dev('GAME_PLAYER_EXPLODE', {
+                subsystem: 'scene',
+                scene: SceneKeys.GAME,
+                message: 'Player exploded',
+                reason: data.reason || 'Unknown',
+                data
+            });
+
             // Stop all gameplay
             this.scene.pause();
             
@@ -524,8 +581,14 @@ export class Game extends Scene {
         
         // Listen for scene transition events
         this.eventSystem.on(EventNames.SCENE_TRANSITION, (data) => {
-            console.log('[Game] Scene transition event:', data);
-            
+            LOG.dev('GAME_SCENE_TRANSITION', {
+                subsystem: 'scene',
+                scene: SceneKeys.GAME,
+                message: 'Scene transition event',
+                targetScene: data.scene || 'unknown',
+                data
+            });
+
             // Fade out current scene
             this.cameras.main.fadeOut(500, 0, 0, 0);
             
