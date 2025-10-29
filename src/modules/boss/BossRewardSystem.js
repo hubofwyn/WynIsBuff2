@@ -1,5 +1,6 @@
 import { BaseManager, EventBus, EconomyManager } from '@features/core';
 import { EventNames } from '../../constants/EventNames.js';
+import { LOG } from '../../observability/core/LogSystem.js';
 
 /**
  * BossRewardSystem - Manages rewards for defeating bosses
@@ -108,7 +109,12 @@ export class BossRewardSystem extends BaseManager {
     const bossConfig = this.bossRewards.get(bossId);
     if (!bossConfig) {
       if (this.debug) {
-        console.warn(`[BossRewardSystem] Unknown boss: ${bossId}`);
+        LOG.warn('BOSSREWARDSYSTEM_UNKNOWN_BOSS', {
+          subsystem: 'boss',
+          message: 'Unknown boss encountered',
+          bossId,
+          hint: 'Check boss ID configuration in BossRewardSystem.bossRewards map'
+        });
       }
       return;
     }
@@ -146,8 +152,15 @@ export class BossRewardSystem extends BaseManager {
     });
     
     if (this.debug) {
-      console.log(`[BossRewardSystem] ${bossConfig.name} defeated (${isFirstClear ? 'first clear' : 'repeat'})`);
-      console.log('[BossRewardSystem] Rewards granted:', grantedRewards);
+      LOG.dev('BOSSREWARDSYSTEM_REWARDS_GRANTED', {
+        subsystem: 'boss',
+        message: 'Boss defeated and rewards granted',
+        bossId,
+        bossName: bossConfig.name,
+        isFirstClear,
+        clearType: isFirstClear ? 'first clear' : 'repeat',
+        rewardsGranted: grantedRewards
+      });
     }
   }
 

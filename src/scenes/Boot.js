@@ -1,6 +1,7 @@
 import { Scene } from 'phaser';
 import { SceneKeys } from '../constants/SceneKeys.js';
 import { ImageAssets, ImagePaths } from '../constants/Assets.js';
+import { LOG } from '../observability/core/LogSystem.js';
 
 export class Boot extends Scene
 {
@@ -11,17 +12,30 @@ export class Boot extends Scene
 
     preload ()
     {
-        console.log('[Boot] Boot scene preload started');
+        LOG.dev('BOOT_PRELOAD_STARTED', {
+            subsystem: 'scene',
+            scene: SceneKeys.BOOT,
+            message: 'Boot scene preload started'
+        });
         // Skip asset loading for now to test scene flow
         // this.load.image(ImageAssets.BACKGROUND, 'assets/' + ImagePaths.BACKGROUND);
     }
 
     create ()
     {
-        console.log('[Boot] Boot scene created');
-        
+        LOG.dev('BOOT_CREATED', {
+            subsystem: 'scene',
+            scene: SceneKeys.BOOT,
+            message: 'Boot scene created'
+        });
+
         // Boot scene should transition to Preloader
-        console.log('[Boot] Transitioning to Preloader scene...');
+        LOG.dev('BOOT_TRANSITION_PRELOADER', {
+            subsystem: 'scene',
+            scene: SceneKeys.BOOT,
+            message: 'Transitioning to Preloader scene',
+            nextScene: SceneKeys.PRELOADER
+        });
         this.scene.start(SceneKeys.PRELOADER);
     }
     

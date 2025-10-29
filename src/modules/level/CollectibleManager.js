@@ -1,5 +1,6 @@
 import RAPIER from '@dimforge/rapier2d-compat';
 import { EventNames } from '../../constants/EventNames';
+import { LOG } from '../../observability/core/LogSystem.js';
 
 /**
  * CollectibleManager class is responsible for creating and managing collectibles
@@ -43,7 +44,10 @@ export class CollectibleManager {
      */
     log(message) {
         if (this.debugMode) {
-            console.log(`[CollectibleManager] ${message}`);
+            LOG.dev('COLLECTIBLEMANAGER_DEBUG', {
+                subsystem: 'level',
+                message
+            });
         }
     }
     
@@ -131,13 +135,26 @@ export class CollectibleManager {
                     
                     this.log(`Collectible ${index+1} created successfully`);
                 } catch (error) {
-                    console.error(`[CollectibleManager] Error creating collectible ${index+1}:`, error);
+                    LOG.error('COLLECTIBLEMANAGER_COLLECTIBLE_CREATE_ERROR', {
+                        subsystem: 'level',
+                        error,
+                        message: 'Error creating collectible',
+                        collectibleIndex: index + 1,
+                        collectibleConfig: config,
+                        hint: 'Check collectible configuration and physics world initialization'
+                    });
                 }
             });
             
             return this.collectibles;
         } catch (error) {
-            console.error('[CollectibleManager] Error in createCollectibles:', error);
+            LOG.error('COLLECTIBLEMANAGER_CREATE_BATCH_ERROR', {
+                subsystem: 'level',
+                error,
+                message: 'Error creating collectibles batch',
+                collectibleCount: collectibleConfigs?.length || 0,
+                hint: 'Check level configuration and physics world state'
+            });
             return [];
         }
     }
