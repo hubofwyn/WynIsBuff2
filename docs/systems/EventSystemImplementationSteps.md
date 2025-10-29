@@ -312,4 +312,4 @@ After implementing the Event System and UI Manager, proceed with:
 2. Refining the triple jump mechanics (Current Priority)
 3. Implementing level designs that showcase the mechanics
 
-These steps align with the Revised MVP Implementation Plan, focusing on delivering the core gameplay experience with minimal architectural overhead. For a complete overview of implementation progress, refer to the [Implementation Progress Tracker](./ImplementationProgress.md).
+These steps align with the Revised MVP Implementation Plan, focusing on delivering the core gameplay experience with minimal architectural overhead. For a complete overview of implementation progress, refer to the [Implementation Progress Tracker](../archive/aiprojectdocs-historical/ImplementationProgress.md).
