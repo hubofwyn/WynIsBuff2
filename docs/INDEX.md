@@ -50,9 +50,12 @@ Complete navigation hub for all WynIsBuff2 documentation.
 | Technology | Document | Purpose |
 |------------|----------|---------|
 | **Phaser 3** | [technology/PhaserFramework.md](technology/PhaserFramework.md) | Phaser 3 integration guide |
-| **Rapier Physics** | [technology/RapierPhysics.md](technology/RapierPhysics.md) | Physics engine integration |
-| **Rapier Physics** | [Rapier.md](../Rapier.md) | Rapier usage reference |
+| **Rapier Physics** | [technology/RapierPhysics.md](technology/RapierPhysics.md) | Physics engine integration (0.19+ API) |
+| **Rapier Physics** | [technology/RAPIER_019_MIGRATION.md](technology/RAPIER_019_MIGRATION.md) | **Migration guide for Rapier 0.19+ breaking changes** |
+| **Rapier Physics** | [design/rapier-updated-api-research.md](design/rapier-updated-api-research.md) | Deep dive: API evolution and character controllers |
 | **Vite** | [technology/ViteBuildTool.md](technology/ViteBuildTool.md) | Build system configuration |
+
+**Note**: Root `Rapier.md` is outdated template boilerplate (Rapier 0.14 API). Use docs above for current patterns.
 
 ### Systems & Features
 
