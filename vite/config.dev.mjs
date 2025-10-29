@@ -9,7 +9,8 @@ export default defineConfig({
         alias: {
             '@core': pathFromRoot('../src/core'),
             '@features': pathFromRoot('../src/features'),
-            '@scenes': pathFromRoot('../src/scenes')
+            '@scenes': pathFromRoot('../src/scenes'),
+            '@observability': pathFromRoot('../src/observability')
         }
     },
     base: './',
