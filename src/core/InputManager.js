@@ -3,6 +3,7 @@ import { EventNames } from '../constants/EventNames';
 import { GameStateManager } from './GameStateManager';
 import { BaseManager } from './BaseManager';
 import { createEmptyInputState } from '../types/InputState.js';
+import { LOG } from '../observability/core/LogSystem.js';
 
 /**
  * InputManager handles mapping of keyboard inputs to game events.
@@ -27,26 +28,40 @@ export class InputManager extends BaseManager {
      * @param {EventSystem} eventSystem - The central event bus
      */
     init(scene, eventSystem) {
-        console.log('[InputManager] Initializing...');
+        LOG.dev('INPUT_INIT_START', {
+            subsystem: 'input',
+            message: 'Initializing InputManager'
+        });
         this.scene = scene;
         this.eventSystem = eventSystem;
         const { keyboard } = this.scene.input;
-        
+
         // Arrow keys
         this.keys.cursors = keyboard.createCursorKeys();
-        console.log('[InputManager] Created cursor keys');
+        LOG.dev('INPUT_CURSOR_KEYS_CREATED', {
+            subsystem: 'input',
+            message: 'Created cursor keys'
+        });
         
         // WASD and SPACE keys for movement and jumping
         ['W', 'A', 'S', 'D', 'SPACE'].forEach(keyName => {
             this.keys[keyName] = keyboard.addKey(Phaser.Input.Keyboard.KeyCodes[keyName]);
         });
-        console.log('[InputManager] Created WASD and SPACE keys');
-        
+        LOG.dev('INPUT_WASD_KEYS_CREATED', {
+            subsystem: 'input',
+            message: 'Created WASD and SPACE keys',
+            keys: ['W', 'A', 'S', 'D', 'SPACE']
+        });
+
         // Reset key (R)
         this.keys.R = keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.R);
         // Duck key (C)
         this.keys.C = keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.C);
-        console.log('[InputManager] Created R and C keys');
+        LOG.dev('INPUT_ACTION_KEYS_CREATED', {
+            subsystem: 'input',
+            message: 'Created R and C keys',
+            keys: ['R', 'C']
+        });
 
         // Arrow key events
         this.keys.cursors.left.on('down', () => this.eventSystem.emit(EventNames.MOVE_LEFT));
@@ -72,15 +87,23 @@ export class InputManager extends BaseManager {
                 this.keys[action] = keyObj;
             }
         });
-        
+
         // Level reset (R)
         this.keys.R.on('down', () => this.eventSystem.emit(EventNames.LEVEL_RESET));
-        
-        console.log('[InputManager] All keys initialized:', Object.keys(this.keys));
-        
+
+        LOG.dev('INPUT_KEYS_INITIALIZED', {
+            subsystem: 'input',
+            message: 'All keys initialized',
+            keyCount: Object.keys(this.keys).length,
+            keys: Object.keys(this.keys)
+        });
+
         // Mark as initialized
         this.setInitialized();
-        console.log('[InputManager] Initialization complete');
+        LOG.dev('INPUT_INIT_COMPLETE', {
+            subsystem: 'input',
+            message: 'InputManager initialization complete'
+        });
     }
 
     /**
@@ -90,11 +113,26 @@ export class InputManager extends BaseManager {
     getSnapshot() {
         // Debug: Log occasionally
         if (Math.random() < 0.005) {
-            console.log('[InputManager] getSnapshot called, cursors:', !!this.keys.cursors, 'SPACE:', !!this.keys.SPACE);
+            LOG.dev('INPUT_SNAPSHOT_SAMPLE', {
+                subsystem: 'input',
+                message: 'getSnapshot called (sampled)',
+                state: {
+                    hasCursors: !!this.keys.cursors,
+                    hasSpace: !!this.keys.SPACE
+                }
+            });
         }
 
         if (!this.keys.cursors || !this.keys.SPACE) {
-            console.warn('[InputManager] Keys not initialized, returning empty state');
+            LOG.warn('INPUT_KEYS_NOT_INITIALIZED', {
+                subsystem: 'input',
+                message: 'Keys not initialized, returning empty state',
+                hint: 'Ensure InputManager.init() is called before getSnapshot()',
+                state: {
+                    hasCursors: !!this.keys.cursors,
+                    hasSpace: !!this.keys.SPACE
+                }
+            });
             return createEmptyInputState();
         }
 
