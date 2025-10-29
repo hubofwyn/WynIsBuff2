@@ -27,26 +27,18 @@ The game features a character that can move and perform triple jumps across plat
 
 ## Getting Started
 
-To run the project locally:
+For complete development setup instructions, see [CONTRIBUTING.md](../CONTRIBUTING.md#-getting-started).
 
+**Quick Start**:
 ```bash
-# Install dependencies
-npm install
-
-# Start development server
-npm run dev
+npm install && npm run dev
 ```
 
-The development server will run on http://localhost:8080 by default.
-
-To build for production:
-
-```bash
-# Create production build
-npm run build
-```
-
-The production build will be created in the `dist` folder.
+See [CONTRIBUTING.md](../CONTRIBUTING.md) for:
+- Detailed development workflow
+- Architecture patterns and conventions
+- Asset management and testing guidelines
+- Migration guide for existing code
 
 ## Project Structure
 
