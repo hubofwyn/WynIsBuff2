@@ -80,6 +80,10 @@ Complete navigation hub for all WynIsBuff2 documentation.
 - [game-settings.md](game-settings.md) - Game settings UI
 - [SUBTITLE_SYSTEM.md](SUBTITLE_SYSTEM.md) - Subtitle/caption system for accessibility
 
+#### Debugging & Diagnostics
+- [systems/INPUT_MOVEMENT_AUDIT.md](systems/INPUT_MOVEMENT_AUDIT.md) - Input and movement system technical audit
+- [systems/ERROR_HANDLING_LOGGING.md](systems/ERROR_HANDLING_LOGGING.md) - Error handling and logging architecture (LIVING DOCUMENT)
+
 ### Assets & Art
 
 **Asset creation and management guides**
@@ -158,8 +162,8 @@ Complete navigation hub for all WynIsBuff2 documentation.
 |----------|---------|
 | [DOC_ANALYSIS_SUMMARY.md](../DOC_ANALYSIS_SUMMARY.md) | Documentation health overview |
 | [DOCUMENTATION_QUALITY_STANDARDS.md](../DOCUMENTATION_QUALITY_STANDARDS.md) | Quality standards and gates |
-| [NEXT_SESSION_PLAN.md](../NEXT_SESSION_PLAN.md) | Documentation improvement roadmap |
-| [SESSION_1_COMPLETE.md](../SESSION_1_COMPLETE.md) | Session 1 completion summary |
+| [assets/ASSET_TRIAGE_PLAN.md](../assets/ASSET_TRIAGE_PLAN.md) | Asset hygiene and cleanup plan |
+| [docs/archive/sessions/README.md](../docs/archive/sessions/README.md) | Archived session documents |
 | [scripts/README.md](../scripts/README.md) | Documentation analysis tools |
 
 ---
@@ -270,6 +274,7 @@ WynIsBuff2/
 | Work with assets | [ASSET_MANAGEMENT.md](../ASSET_MANAGEMENT.md) |
 | Understand physics | [technology/RapierPhysics.md](technology/RapierPhysics.md) |
 | Design a level | [level-progression-plan.md](level-progression-plan.md) |
+| Debug "too many errors" | [systems/ERROR_HANDLING_LOGGING.md](systems/ERROR_HANDLING_LOGGING.md) |
 | Use the agent system | [AGENTS.md](../AGENTS.md) |
 | Check documentation health | [DOC_ANALYSIS_SUMMARY.md](../DOC_ANALYSIS_SUMMARY.md) |
 
