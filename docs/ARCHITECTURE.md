@@ -239,46 +239,21 @@ export class GameScene extends Scene {
 
 ## 💾 Asset Management Architecture
 
-### Asset Pipeline
+Assets use a code generation pipeline to eliminate magic strings:
 
 ```
-manifest.json → generate-assets.js → Assets.js → Scene Loading
-     ↓                ↓                  ↓           ↓
-   Source         Code Generator     Constants    Runtime
-   of Truth       (npm script)       Export       Usage
+manifest.json → npm run generate-assets → Assets.js constants → Scene loading
 ```
 
-### Asset Categories
+**Key Constants**: `ImageAssets`, `ImagePaths`, `AudioAssets`, `AudioPaths`, `SpritesheetConfigs`
 
-1. **Images** (`ImageAssets`, `ImagePaths`)
-   - Sprites, backgrounds, UI elements
-   - Spritesheets with frame configurations
-
-2. **Audio** (`AudioAssets`, `AudioPaths`)
-   - Music tracks (background music)
-   - SFX variants (land, pickup, UI sounds)
-
-3. **Configuration** (`SpritesheetConfigs`)
-   - Frame dimensions and spacing
-   - Animation parameters
-
-### Asset Loading Strategy
-
+**Example Usage**:
 ```javascript
-// Preloader centralizes all asset loading
-preload() {
-    // Load using generated constants
-    this.load.image(ImageAssets.PLAYER, ImagePaths.PLAYER);
-    this.load.audio(AudioAssets.JUMP_SFX, AudioPaths.JUMP_SFX);
-    
-    // Spritesheets with configuration
-    this.load.spritesheet(
-        ImageAssets.PLAYER_ANIMATIONS, 
-        ImagePaths.PLAYER_ANIMATIONS,
-        SpritesheetConfigs.PLAYER_ANIMATIONS
-    );
-}
+this.load.image(ImageAssets.PLAYER, ImagePaths.PLAYER);
+this.load.audio(AudioAssets.JUMP_SFX, AudioPaths.JUMP_SFX);
 ```
+
+See [ASSET_MANAGEMENT.md](../ASSET_MANAGEMENT.md) for complete workflow and guidelines.
 
 ## 🧩 Module Dependency Graph
 
@@ -303,38 +278,6 @@ preload() {
                 │ ├─AudioManager ├─effects/         │
                 │ └─...          └─enemy/           │
                 └───────────────────────────────────┘
-```
-
-## 🔒 Backwards Compatibility
-
-### Legacy Support Strategy
-
-During the refactor, we maintain compatibility through:
-
-1. **Legacy Wrappers** - Old managers delegate to new implementations
-2. **Barrel Exports** - New import paths work alongside old ones
-3. **Deprecation Warnings** - Guide developers to new patterns
-4. **Migration Tools** - Scripts and documentation for updating
-
-### Deprecation Process
-
-```javascript
-// modules/LevelManager.js (Legacy wrapper)
-// LEGACY COMPATIBILITY WRAPPER - DEPRECATED
-// Use @features/level instead for new code
-import { LevelManager as ModularLevelManager } from './level/LevelManager';
-
-export class LevelManager {
-    constructor(scene, world, eventSystem) {
-        console.warn('[LevelManager] Using legacy wrapper. Migrate to @features/level');
-        this.levelManager = new ModularLevelManager(scene, world, eventSystem);
-    }
-    
-    // Delegate all calls to new implementation
-    loadLevel(levelId) {
-        return this.levelManager.loadLevel(levelId);
-    }
-}
 ```
 
 ## 📈 Performance Considerations
