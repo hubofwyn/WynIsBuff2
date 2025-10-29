@@ -8,6 +8,7 @@ import { JumpController } from './JumpController';
 import { MovementController } from './MovementController';
 import { CollisionController } from './CollisionController';
 import { WallJumpController } from './WallJumpController';
+import { LOG } from '../../observability/core/LogSystem.js';
 
 /**
  * PlayerController class for modern 2D platformer using KinematicCharacterController
@@ -50,7 +51,11 @@ export class PlayerController {
         this.create(x, y);
         
         // Set up input handlers
-        console.log('[PlayerController] About to setup controls, inputManager available:', !!this.scene.inputManager);
+        LOG.dev('PLAYER_SETUP_CONTROLS', {
+            subsystem: 'player',
+            message: 'Setting up player controls',
+            inputManagerAvailable: !!this.scene.inputManager
+        });
         this.setupControls();
         
         // Emit player spawn event
@@ -61,7 +66,11 @@ export class PlayerController {
             });
         }
         
-        console.log('[PlayerController] Initialized with KinematicCharacterController');
+        LOG.info('PLAYER_INITIALIZED', {
+            subsystem: 'player',
+            message: 'Player initialized with KinematicCharacterController',
+            position: { x, y }
+        });
     }
     
     /**
@@ -71,19 +80,32 @@ export class PlayerController {
      */
     create(x, y) {
         try {
-            console.log('[PlayerController] Creating modern character controller...');
-            
+            LOG.dev('PLAYER_CREATE_START', {
+                subsystem: 'player',
+                message: 'Creating modern character controller',
+                position: { x, y }
+            });
+
             // Player dimensions in pixels
             const playerWidth = 32;   // Smaller, more precise hitbox
             const playerHeight = 48;  // Taller for platformer character feel
-            
+
             // Create visual representation
             if (this.scene.textures.exists(this.textureKey)) {
-                console.log('[PlayerController] Using texture:', this.textureKey);
+                LOG.dev('PLAYER_TEXTURE_LOADED', {
+                    subsystem: 'player',
+                    message: 'Using texture for player sprite',
+                    textureKey: this.textureKey
+                });
                 this.sprite = this.scene.add.sprite(x, y, this.textureKey);
                 this.sprite.setDisplaySize(playerWidth, playerHeight);
             } else {
-                console.log('[PlayerController] Texture not found:', this.textureKey, 'using rectangle');
+                LOG.warn('PLAYER_TEXTURE_MISSING', {
+                    subsystem: 'player',
+                    message: 'Texture not found, using fallback rectangle',
+                    textureKey: this.textureKey,
+                    hint: 'Check if texture is loaded in Preloader scene'
+                });
                 this.sprite = this.scene.add.rectangle(x, y, playerWidth, playerHeight, 0x00ff00);
             }
             this.sprite.setDepth(100);
@@ -98,7 +120,11 @@ export class PlayerController {
                 .setTranslation(pixelsToMeters(x), pixelsToMeters(y));
             
             this.body = this.world.createRigidBody(bodyDesc);
-            console.log('[PlayerController] Kinematic body created at:', pixelsToMeters(x), pixelsToMeters(y));
+            LOG.dev('PLAYER_BODY_CREATED', {
+                subsystem: 'player',
+                message: 'Kinematic body created',
+                positionMeters: { x: pixelsToMeters(x), y: pixelsToMeters(y) }
+            });
             
             // Create capsule collider for smooth movement over edges
             const halfHeight = pixelsToMeters(playerHeight / 2) - PhysicsConfig.player.radius;
@@ -127,10 +153,18 @@ export class PlayerController {
             }
             
             this.characterController.setMaxSlopeClimbAngle(PhysicsConfig.player.maxSlopeClimbAngle);
-            
-            console.log('[PlayerController] Modern character controller created successfully');
+
+            LOG.info('PLAYER_CREATE_SUCCESS', {
+                subsystem: 'player',
+                message: 'Modern character controller created successfully'
+            });
         } catch (error) {
-            console.error('[PlayerController] Error in create:', error);
+            LOG.error('PLAYER_CREATE_ERROR', {
+                subsystem: 'player',
+                error,
+                message: 'Error creating player character controller',
+                hint: 'Check Rapier world initialization and PhysicsConfig settings'
+            });
         }
     }
     
@@ -142,8 +176,11 @@ export class PlayerController {
         const inputManager = this.scene.inputManager;
 
         if (!inputManager || !inputManager.keys) {
-            console.warn('[PlayerController] InputManager not available!');
-            console.warn('[PlayerController] Creating fallback direct keyboard controls');
+            LOG.warn('PLAYER_INPUT_FALLBACK', {
+                subsystem: 'player',
+                message: 'InputManager not available, creating fallback direct keyboard controls',
+                hint: 'InputManager should be initialized before PlayerController'
+            });
 
             // Emergency fallback - direct key polling
             this.cursors = this.scene.input.keyboard.createCursorKeys();
@@ -156,15 +193,20 @@ export class PlayerController {
             this.spaceKey = this.scene.input.keyboard.addKey('SPACE');
             this.duckKey = this.scene.input.keyboard.addKey('C');
         } else {
-            console.log('[PlayerController] InputManager confirmed available');
+            LOG.dev('PLAYER_INPUT_READY', {
+                subsystem: 'player',
+                message: 'InputManager confirmed available, using snapshot-based input architecture'
+            });
             // Store reference to InputManager (not individual keys)
             this.inputManager = inputManager;
         }
 
-        console.log('[PlayerController] ──────────────────────────────────');
-        console.log('[PlayerController] INPUT: Snapshot-based (modern)');
-        console.log('[PlayerController] Consuming InputState per frame');
-        console.log('[PlayerController] ──────────────────────────────────');
+        LOG.dev('PLAYER_INPUT_ARCHITECTURE', {
+            subsystem: 'player',
+            message: 'Player input configured',
+            architecture: 'snapshot-based',
+            mode: 'consuming InputState per frame'
+        });
 
         this.isDucking = false;
     }
@@ -176,12 +218,28 @@ export class PlayerController {
     update(deltaTime) {
         // Guard clauses
         if (!this.body || !this.characterController || !this.collider || !this.sprite) {
-            console.warn('[PlayerController] Missing essential components');
+            LOG.warn('PLAYER_MISSING_COMPONENTS', {
+                subsystem: 'player',
+                message: 'Missing essential player components',
+                components: {
+                    body: !!this.body,
+                    controller: !!this.characterController,
+                    collider: !!this.collider,
+                    sprite: !!this.sprite
+                },
+                hint: 'Player may not have been properly initialized'
+            });
             return;
         }
 
         if (this.errorCount > 5) {
-            console.warn('[PlayerController] Too many errors, player disabled');
+            LOG.fatal('PLAYER_CIRCUIT_BREAKER', {
+                subsystem: 'player',
+                message: 'Too many errors, player disabled',
+                errorCount: this.errorCount,
+                threshold: 5,
+                hint: 'Check recent player update errors. May indicate physics or input issues.'
+            });
             return;
         }
 
@@ -191,7 +249,12 @@ export class PlayerController {
             const dt = clampedDelta / 1000;
 
             if (!Number.isFinite(dt) || dt <= 0) {
-                console.warn('[PlayerController] Invalid deltaTime:', deltaTime);
+                LOG.warn('PLAYER_INVALID_DELTA', {
+                    subsystem: 'player',
+                    message: 'Invalid deltaTime in player update',
+                    deltaTime,
+                    hint: 'Check game loop timing'
+                });
                 return;
             }
 
@@ -207,11 +270,21 @@ export class PlayerController {
 
                 // Debug: Log input state occasionally
                 if (Math.random() < 0.01) {
-                    console.log('[PlayerController] InputState:', inputState);
+                    LOG.dev('PLAYER_INPUT_STATE', {
+                        subsystem: 'player',
+                        message: 'Input state snapshot',
+                        inputState
+                    });
                 }
             } else {
                 // Fallback: Create snapshot from direct key polling
-                console.warn('[PlayerController] Using fallback input polling, inputManager:', !!this.inputManager, 'getSnapshot:', !!this.inputManager?.getSnapshot);
+                LOG.warn('PLAYER_FALLBACK_INPUT', {
+                    subsystem: 'player',
+                    message: 'Using fallback input polling',
+                    hasInputManager: !!this.inputManager,
+                    hasGetSnapshot: !!this.inputManager?.getSnapshot,
+                    hint: 'InputManager should provide getSnapshot() method'
+                });
                 inputState = this.createFallbackInputState();
             }
 
@@ -226,7 +299,12 @@ export class PlayerController {
 
             // Validate movement
             if (!desiredMovement || !Number.isFinite(desiredMovement.x) || !Number.isFinite(desiredMovement.y)) {
-                console.warn('[PlayerController] Invalid movement vector');
+                LOG.warn('PLAYER_INVALID_MOVEMENT', {
+                    subsystem: 'player',
+                    message: 'Invalid movement vector calculated',
+                    desiredMovement,
+                    hint: 'Check movement calculation logic'
+                });
                 return;
             }
 
@@ -239,7 +317,9 @@ export class PlayerController {
 
             // Debug: Log ground detection
             if (Math.random() < 0.01) {
-                console.log('[PlayerController] Ground Detection:', {
+                LOG.dev('PLAYER_GROUND_DETECTION', {
+                    subsystem: 'player',
+                    message: 'Ground detection state',
                     isGrounded: this.isGrounded,
                     isFalling: this.velocity.y > 0,
                     desiredY: desiredMovement.y,
@@ -251,7 +331,12 @@ export class PlayerController {
             }
 
             if (!correctedMovement || !Number.isFinite(correctedMovement.x) || !Number.isFinite(correctedMovement.y)) {
-                console.warn('[PlayerController] Invalid corrected movement');
+                LOG.warn('PLAYER_INVALID_CORRECTED_MOVEMENT', {
+                    subsystem: 'player',
+                    message: 'Invalid corrected movement from character controller',
+                    correctedMovement,
+                    hint: 'Check character controller physics computation'
+                });
                 return;
             }
 
@@ -272,22 +357,24 @@ export class PlayerController {
 
         } catch (error) {
             this.errorCount = (this.errorCount || 0) + 1;
-            console.error(`[PlayerController] ═══════════════════════════════════════════`);
-            console.error(`[PlayerController] ERROR ${this.errorCount}/5 in update loop`);
-            console.error(`[PlayerController] Error Type: ${error.name}`);
-            console.error(`[PlayerController] Error Message: ${error.message}`);
-            console.error(`[PlayerController] Stack Trace:`);
-            console.error(error.stack);
-            console.error(`[PlayerController] State at error:`);
-            console.error(`  - body: ${!!this.body}`);
-            console.error(`  - characterController: ${!!this.characterController}`);
-            console.error(`  - collider: ${!!this.collider}`);
-            console.error(`  - sprite: ${!!this.sprite}`);
-            console.error(`  - inputManager: ${!!this.inputManager}`);
-            console.error(`  - velocity: (${this.velocity?.x || 'N/A'}, ${this.velocity?.y || 'N/A'})`);
-            console.error(`  - isGrounded: ${this.isGrounded}`);
-            console.error(`  - deltaTime: ${arguments[0]}`);
-            console.error(`[PlayerController] ═══════════════════════════════════════════`);
+            LOG.error('PLAYER_UPDATE_ERROR', {
+                subsystem: 'player',
+                error,
+                message: `Player update error ${this.errorCount}/5`,
+                errorCount: this.errorCount,
+                threshold: 5,
+                state: {
+                    hasBody: !!this.body,
+                    hasController: !!this.characterController,
+                    hasCollider: !!this.collider,
+                    hasSprite: !!this.sprite,
+                    hasInputManager: !!this.inputManager,
+                    velocity: { x: this.velocity?.x || 'N/A', y: this.velocity?.y || 'N/A' },
+                    isGrounded: this.isGrounded,
+                    deltaTime: arguments[0]
+                },
+                hint: 'Check player physics state. Verify character controller and body are valid.'
+            });
 
             // Emergency fallback
             try {
@@ -295,9 +382,12 @@ export class PlayerController {
                     this.updateSpritePosition();
                 }
             } catch (fallbackError) {
-                console.error('[PlayerController] Fallback sprite sync failed:');
-                console.error(`  Error: ${fallbackError.message}`);
-                console.error(`  Stack: ${fallbackError.stack}`);
+                LOG.error('PLAYER_FALLBACK_ERROR', {
+                    subsystem: 'player',
+                    error: fallbackError,
+                    message: 'Emergency fallback sprite sync failed',
+                    hint: 'Player controller in critical state'
+                });
             }
         }
     }
@@ -407,7 +497,13 @@ export class PlayerController {
 
         // Validate
         if (!Number.isFinite(targetSpeed) || !Number.isFinite(acceleration)) {
-            console.warn('[PlayerController] Invalid movement params');
+            LOG.warn('PLAYER_INVALID_MOVEMENT_PARAMS', {
+                subsystem: 'player',
+                message: 'Invalid movement parameters calculated',
+                targetSpeed,
+                acceleration,
+                hint: 'Check PhysicsConfig movement settings'
+            });
             return new RAPIER.Vector2(0, 0);
         }
 
@@ -723,8 +819,11 @@ export class PlayerController {
         if (this.sprite) {
             this.sprite.setRotation(0);
         }
-        
-        console.log('[PlayerController] Player state reset');
+
+        LOG.info('PLAYER_STATE_RESET', {
+            subsystem: 'player',
+            message: 'Player state reset to initial values'
+        });
     }
     
     /**
@@ -793,7 +892,10 @@ export class PlayerController {
         if (this.scene.inputManager) {
             this.scene.inputManager.destroy();
         }
-        
-        console.log('[PlayerController] Resources cleaned up');
+
+        LOG.info('PLAYER_RESOURCES_CLEANUP', {
+            subsystem: 'player',
+            message: 'Player resources cleaned up and destroyed'
+        });
     }
 }
