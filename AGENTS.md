@@ -1,7 +1,6 @@
-# WynIsBuff2 - Codex AI Agent Instructions
+# WynIsBuff2 - AI Agent Orchestration System
 
-This file provides project-specific instructions for Codex AI agents working on WynIsBuff2.
-It complements the global configuration at ~/.codex/AGENTS.md.
+This file provides project-specific instructions for AI agents working on WynIsBuff2, including specialized agent routing and architectural enforcement.
 
 ## Project Overview
 
@@ -114,41 +113,7 @@ The project includes intelligent agent routing via AgentOrchestrator:
 - Manual testing for gameplay feel
 - CommonJS format required (.cjs extension)
 
-## Codex Profile Recommendations
-
-- **speed profile**: Quick fixes, asset updates, simple features
-- **depth profile**: Architecture changes, complex physics, system design
-- **agent profile**: CI/CD automation, batch operations
-
-## Common Codex Commands for This Project
-
-```bash
-# Quick fixes
-codex "fix the jump height constant"
-
-# Feature development
-codex --profile depth "implement wall-jump mechanic following existing patterns"
-
-# Asset management
-codex "add new coin sprite to assets and regenerate constants"
-
-# Testing
-codex "write tests for the new PowerUpManager"
-
-# Performance
-codex --profile depth "optimize collision detection in PhysicsManager"
-```
-
-## Integration with Claude Code
-
-This project is compatible with both Codex and Claude Code. Both tools should:
-1. Follow the same import patterns (@features/*)
-2. Use generated constants from Assets.js
-3. Extend BaseManager for new managers
-4. Follow event naming conventions
-5. Run tests before completing tasks
-
-## Notes for AI Agents
+## AI Agent Guidelines
 
 - The project has strong conventions - follow existing patterns
 - Always check CLAUDE.md for detailed architecture rules
