@@ -1,5 +1,6 @@
 import { BaseController } from '../../core/BaseController.js';
 import { EventNames } from '../../constants/EventNames.js';
+import { LOG } from '../../observability/core/LogSystem.js';
 
 /**
  * BossController: Controls the jumping boss enemy at the top of levels
@@ -47,8 +48,14 @@ export class BossController extends BaseController {
         this.createSprite();
         this.createPhysicsBody();
         this.scheduleNextJump();
-        
-        console.log('[BossController] Boss initialized at', this.x, this.y);
+
+        LOG.dev('BOSSCONTROLLER_INITIALIZED', {
+            subsystem: 'enemy',
+            message: 'Boss controller initialized',
+            position: { x: this.x, y: this.y },
+            spriteKey: this.spriteKey,
+            size: this.bossParams.size
+        });
     }
     
     createSprite() {
@@ -111,8 +118,13 @@ export class BossController extends BaseController {
         const interval = minInterval + Math.random() * (maxInterval - minInterval);
         
         this.nextJumpTime = Date.now() + interval;
-        
-        console.log(`[BossController] Next jump scheduled in ${Math.round(interval)}ms`);
+
+        LOG.dev('BOSSCONTROLLER_JUMP_SCHEDULED', {
+            subsystem: 'enemy',
+            message: 'Next boss jump scheduled',
+            intervalMs: Math.round(interval),
+            nextJumpTime: this.nextJumpTime
+        });
     }
     
     performJump() {
@@ -142,13 +154,19 @@ export class BossController extends BaseController {
         });
         
         // Emit boss jump event for potential sound effects
-        this.eventSystem.emit(EventNames.BOSS_JUMP, { 
-            x: this.x, 
-            y: this.y, 
-            force: jumpForce 
+        this.eventSystem.emit(EventNames.BOSS_JUMP, {
+            x: this.x,
+            y: this.y,
+            force: jumpForce
         });
-        
-        console.log('[BossController] Boss jumped with force', jumpForce);
+
+        LOG.dev('BOSSCONTROLLER_JUMPED', {
+            subsystem: 'enemy',
+            message: 'Boss performed jump',
+            jumpForce,
+            horizontalDrift,
+            position: { x: this.x, y: this.y }
+        });
     }
     
     checkGroundContact() {
@@ -183,12 +201,17 @@ export class BossController extends BaseController {
         });
         
         // Emit landing event
-        this.eventSystem.emit(EventNames.BOSS_LAND, { 
-            x: this.x, 
-            y: this.y 
+        this.eventSystem.emit(EventNames.BOSS_LAND, {
+            x: this.x,
+            y: this.y
         });
-        
-        console.log('[BossController] Boss landed');
+
+        LOG.dev('BOSSCONTROLLER_LANDED', {
+            subsystem: 'enemy',
+            message: 'Boss landed',
+            position: { x: this.x, y: this.y },
+            groundY: this.groundY
+        });
     }
     
     update(time, delta) {
@@ -265,7 +288,10 @@ export class BossController extends BaseController {
         if (this.body) {
             this.world.removeRigidBody(this.body);
         }
-        
-        console.log('[BossController] Boss destroyed');
+
+        LOG.dev('BOSSCONTROLLER_DESTROYED', {
+            subsystem: 'enemy',
+            message: 'Boss controller destroyed'
+        });
     }
 }

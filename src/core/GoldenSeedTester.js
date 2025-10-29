@@ -1,4 +1,5 @@
 import { BaseManager, DeterministicRNG, PhysicsManager } from '@features/core';
+import { LOG } from '../observability/core/LogSystem.js';
 
 /**
  * GoldenSeedTester - Framework for deterministic testing with golden seed 1138
@@ -52,7 +53,12 @@ export class GoldenSeedTester extends BaseManager {
     } = options;
     
     if (this.debug) {
-      console.log(`[GoldenSeedTester] Starting recording with seed ${seed}`);
+      LOG.dev('GOLDENSEED_RECORD_START', {
+        subsystem: 'testing',
+        message: 'Starting golden seed recording',
+        seed,
+        maxFrames
+      });
     }
     
     // Initialize RNG with golden seed
@@ -143,7 +149,12 @@ export class GoldenSeedTester extends BaseManager {
     
     // Log milestone frames
     if (this.debug && this.currentFrame % 60 === 0) {
-      console.log(`[GoldenSeedTester] Recorded frame ${this.currentFrame}`);
+      LOG.dev('GOLDENSEED_FRAME_MILESTONE', {
+        subsystem: 'testing',
+        message: 'Recorded frame milestone',
+        currentFrame: this.currentFrame,
+        maxFrames: this.maxFrames
+      });
     }
   }
 
@@ -168,9 +179,13 @@ export class GoldenSeedTester extends BaseManager {
     };
     
     if (this.debug) {
-      console.log(`[GoldenSeedTester] Recording complete: ${snapshot.totalFrames} frames`);
+      LOG.dev('GOLDENSEED_RECORD_COMPLETE', {
+        subsystem: 'testing',
+        message: 'Recording complete',
+        totalFrames: snapshot.totalFrames
+      });
     }
-    
+
     return snapshot;
   }
 
@@ -181,13 +196,21 @@ export class GoldenSeedTester extends BaseManager {
   startValidation(snapshot) {
     if (!snapshot || !snapshot.frames) {
       if (this.debug) {
-        console.error('[GoldenSeedTester] Invalid snapshot');
+        LOG.error('GOLDENSEED_INVALID_SNAPSHOT', {
+          subsystem: 'testing',
+          message: 'Invalid snapshot provided for validation',
+          hint: 'Ensure snapshot has frames array and was properly recorded'
+        });
       }
       return false;
     }
     
     if (this.debug) {
-      console.log(`[GoldenSeedTester] Starting validation against ${snapshot.totalFrames} frames`);
+      LOG.dev('GOLDENSEED_VALIDATION_START', {
+        subsystem: 'testing',
+        message: 'Starting golden seed validation',
+        totalFrames: snapshot.totalFrames
+      });
     }
     
     // Initialize RNG with same seed
@@ -257,15 +280,27 @@ export class GoldenSeedTester extends BaseManager {
     if (errors.length > 0) {
       this.validationErrors.push(...errors);
       if (this.debug) {
-        console.error(`[GoldenSeedTester] Frame ${this.currentFrame} validation failed:`, errors);
+        LOG.error('GOLDENSEED_VALIDATION_FAILED', {
+          subsystem: 'testing',
+          message: 'Frame validation failed',
+          frame: this.currentFrame,
+          errorCount: errors.length,
+          errors,
+          hint: 'Check game state, RNG state, and metrics for determinism issues'
+        });
       }
     }
-    
+
     this.currentFrame++;
-    
+
     // Log progress
     if (this.debug && this.currentFrame % 60 === 0) {
-      console.log(`[GoldenSeedTester] Validated frame ${this.currentFrame}/${this.validationSnapshot.frames.length}`);
+      LOG.dev('GOLDENSEED_VALIDATION_PROGRESS', {
+        subsystem: 'testing',
+        message: 'Validation progress milestone',
+        currentFrame: this.currentFrame,
+        totalFrames: this.validationSnapshot.frames.length
+      });
     }
     
     return errors.length === 0;
@@ -292,9 +327,20 @@ export class GoldenSeedTester extends BaseManager {
     
     if (this.debug) {
       if (report.success) {
-        console.log(`[GoldenSeedTester] ✅ Validation PASSED! All ${report.framesValidated} frames match.`);
+        LOG.info('GOLDENSEED_VALIDATION_PASSED', {
+          subsystem: 'testing',
+          message: '✅ Validation PASSED! All frames match',
+          framesValidated: report.framesValidated
+        });
       } else {
-        console.error(`[GoldenSeedTester] ❌ Validation FAILED! ${this.validationErrors.length} errors found.`);
+        LOG.error('GOLDENSEED_VALIDATION_COMPLETE_FAILED', {
+          subsystem: 'testing',
+          message: '❌ Validation FAILED!',
+          errorCount: this.validationErrors.length,
+          framesValidated: report.framesValidated,
+          totalFrames: this.validationSnapshot.frames.length,
+          hint: 'Review errorSummary in report for patterns. Check RNG, state management, and input handling.'
+        });
       }
     }
     
@@ -343,7 +389,12 @@ export class GoldenSeedTester extends BaseManager {
       return JSON.parse(json);
     } catch (error) {
       if (this.debug) {
-        console.error('[GoldenSeedTester] Failed to parse snapshot:', error);
+        LOG.error('GOLDENSEED_PARSE_ERROR', {
+          subsystem: 'testing',
+          error,
+          message: 'Failed to parse snapshot JSON',
+          hint: 'Check JSON format and integrity. Snapshot may be corrupted.'
+        });
       }
       return null;
     }
