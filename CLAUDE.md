@@ -123,10 +123,10 @@ this.eventSystem.on(EventNames.LEVEL_COMPLETE, this.handleComplete);
 
 | Technology | Version | Purpose |
 |------------|---------|---------|
-| Phaser 3 | 3.88.2 | Game framework |
-| Rapier | 0.14.0 | 2D physics (via PhysicsManager) |
+| Phaser 3 | 3.90.x | Game framework |
+| Rapier (compat) | 0.19.x | 2D physics (via PhysicsManager) |
 | Howler | 2.2.4 | Audio (via AudioManager) |
-| Vite | 5.4.19 | Build tool |
+| Vite | 7.1.x | Build tool |
 
 ## Testing
 

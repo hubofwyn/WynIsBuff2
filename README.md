@@ -56,10 +56,10 @@ npm test              # Run tests
 
 | Technology | Version | Purpose |
 |------------|---------|---------|
-| Phaser 3 | 3.88.2 | HTML5 game framework |
-| Rapier | 0.14.0 | 2D physics engine |
+| Phaser 3 | 3.90.x | HTML5 game framework |
+| Rapier (compat) | 0.19.x | 2D physics engine |
 | Howler.js | 2.2.4 | Audio management |
-| Vite | 5.4.19 | Build tool |
+| Vite | 7.1.x | Build tool |
 | JavaScript | ES6+ | Language |
 
 ## Project Structure
@@ -193,3 +193,6 @@ Read [CONTRIBUTING.md](CONTRIBUTING.md) for:
 ---
 
 **WynIsBuff2** - Where buffness meets clean, maintainable code.
+## Scope
+
+This README introduces the project, controls, technology stack, and links to the rest of the docs. For contribution workflow, see CONTRIBUTING.md. For system design, see docs/ARCHITECTURE.md. For assets, see ASSET_MANAGEMENT.md.

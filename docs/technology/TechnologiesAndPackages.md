@@ -27,24 +27,24 @@
 
 ### Phaser
 
-- **Version**: 3.88.0
+- **Version**: 3.90.x
 - **Description**: Phaser is a fast, free, and fun open source HTML5 game framework that offers WebGL and Canvas rendering across desktop and mobile web browsers.
-- **Official Documentation**: https://newdocs.phaser.io/docs/3.88.0
+- **Official Documentation**: https://newdocs.phaser.io/docs/3.90.0
 - **Usage in Project**: Provides the core game engine functionality including scene management, sprite handling, animation system, input handling, and rendering.
 
 ### Rapier Physics
 
 - **Package**: @dimforge/rapier2d-compat
-- **Version**: 0.14.0
+- **Version**: 0.19.x
 - **Description**: Rapier is a set of 2D and 3D physics engines written in Rust, with JavaScript bindings. It's used for realistic physics simulations in games.
 - **Official Documentation**: https://rapier.rs/docs/
 - **Usage in Project**: Provides the physics simulation for the game, including rigid bodies, colliders, and physics-based movement.
 
 ### Vite
 
-- **Version**: 5.3.1
+- **Version**: 7.1.x
 - **Description**: Vite is a modern frontend build tool that provides a faster and leaner development experience.
-- **Official Documentation**: https://vitejs.dev/
+- **Official Documentation**: https://vite.dev/
 - **Usage in Project**: Used for bundling the game assets and code, providing a development server with hot module replacement, and building production-ready bundles.
 
 ## Project Dependencies
@@ -53,15 +53,16 @@
 
 | Package | Version | Description | Usage |
 |---------|---------|-------------|-------|
-| @dimforge/rapier2d-compat | 0.14.0 | 2D physics engine with JavaScript bindings | Provides physics simulation for the game |
-| phaser | 3.88.0 | HTML5 game framework | Core game engine |
+| @dimforge/rapier2d-compat | 0.19.x | 2D physics engine with JavaScript bindings | Provides physics simulation for the game |
+| phaser | 3.90.x | HTML5 game framework | Core game engine |
+| howler | 2.2.4 | Audio library for JavaScript | Audio management via AudioManager |
 
 ### Development Dependencies
 
 | Package | Version | Description | Usage |
 |---------|---------|-------------|-------|
-| terser | 5.31.0 | JavaScript parser, mangler and compressor | Used for minifying JavaScript in production builds |
-| vite | 5.3.1 | Frontend build tool | Used for development server and production builds |
+| terser | 5.44.x | JavaScript parser, mangler and compressor | Used for minifying JavaScript in production builds |
+| vite | 7.1.x | Frontend build tool | Used for development server and production builds |
 
 ## Project Structure
 

@@ -88,10 +88,10 @@ npm run typecheck        # TypeScript checking (if configured)
 ## Project-Specific Context
 
 ### Tech Stack:
-- Phaser 3.88.2 (game framework)
-- Rapier 0.14.0 (physics via PhysicsManager)
+- Phaser 3.90.x (game framework)
+- Rapier 0.19.x (physics via PhysicsManager)
 - Howler 2.2.4 (audio via AudioManager)
-- Vite 5.4.19 (build tool)
+- Vite 7.1.x (build tool)
 
 ### Key Directories:
 - `src/constants/` - Generated and manual constants
