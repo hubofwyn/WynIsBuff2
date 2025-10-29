@@ -1,9 +1,11 @@
 # WynIsBuff2 - Error Handling & Logging System
 
-**Document Version**: 1.0
+**Document Version**: 1.1
 **Last Updated**: 2025-10-29
 **Status**: 🟡 **LIVING DOCUMENT** - Evolves with system improvements
-**Related**: [INPUT_MOVEMENT_AUDIT.md](./INPUT_MOVEMENT_AUDIT.md), [ARCHITECTURE.md](../ARCHITECTURE.md)
+**Related**: [INPUT_MOVEMENT_AUDIT.md](./INPUT_MOVEMENT_AUDIT.md), [ARCHITECTURE.md](../ARCHITECTURE.md), [Observability.md](../architecture/Observability.md)
+
+**⚠️ MIGRATION NOTICE**: Logging system is transitioning to structured observability. See Section 5 for current standards.
 
 ---
 
@@ -61,7 +63,8 @@ WynIsBuff2 employs a **multi-layered error handling architecture** with defensiv
 | Try-catch blocks in src/ | 17 | ✅ Good coverage |
 | Circuit breakers | 2 | ✅ **VALIDATED** - Prevented crashes during migration |
 | Silent failure points | 3+ | 🟡 Lower priority (physics now stable) |
-| Logging statements | 150+ | ✅ Extensive + enhanced state dumps |
+| **Structured logging migration** | **147/293 (50%)** | 🟡 **IN PROGRESS** - Core systems complete |
+| Logging statements | 293 total | ✅ Extensive + migrating to structured format |
 | Error handling documentation | 100% | ✅ **DOCUMENTED + VALIDATED** |
 | **Rapier 0.19+ Migration** | **Complete** | ✅ **RESOLVED** - All physics errors fixed |
 
@@ -340,42 +343,78 @@ try {
 
 ## 5. Logging Standards
 
-### 5.1 Current Logging Patterns
+### 5.1 Structured Logging System (🟢 **ACTIVE MIGRATION** - October 2025)
 
-**Volume**: 150+ console statements across 71 files
+**Status**: Migrating from console.* to structured LogSystem
 
-**By Type:**
-- `console.log`: ~90 statements (initialization, progression, debug)
-- `console.warn`: ~25 statements (degradation, invalid states)
-- `console.error`: ~40+ statements (failures, exceptions)
+**Progress**: 147/293 statements migrated (50%)
+- ✅ PhysicsManager.js, PlayerController.js (complete)
+- ✅ InputManager.js, AudioManager.js, GameStateManager.js (complete)
+- 🟡 Game.js, LevelLoader.js, remaining utilities (in progress)
 
-### 5.2 Module Prefix Conventions
+**Architecture**: Centralized LogSystem with bounded buffers
+- Location: `src/observability/core/LogSystem.js`
+- Buffer: 2000 entries max (circular buffer)
+- Performance: <0.5ms overhead per frame
+- Import: `import { LOG } from '../observability/core/LogSystem.js';`
 
-**Standard Format**: `[ModuleName] Message`
+### 5.2 Structured Logging API
 
-**Examples:**
+**New Standard Format**:
 ```javascript
-console.log('[PlayerController] Initialized with KinematicCharacterController');
-console.warn('[InputManager] Keys not initialized, returning empty state');
-console.error('[PhysicsManager] Error in update (5/10):', error);
+LOG.error('ERROR_CODE_NAME', {
+    subsystem: 'physics',
+    error,
+    message: 'Human-readable description',
+    state: { /* diagnostic data */ },
+    hint: 'How to fix or debug this issue'
+});
 ```
 
-**Consistency Status**: 🟡 **Mostly Consistent**
-- Core systems use prefixes consistently
-- Some utility files lack prefixes
-- Error messages sometimes only log raw error object
+**Log Levels**:
+| Level | Method | When to Use | Sampling |
+|-------|--------|-------------|----------|
+| ERROR | `LOG.error()` | Failures, exceptions, data loss | 100% |
+| WARN | `LOG.warn()` | Degradation, fallbacks, unexpected states | 100% |
+| INFO | `LOG.info()` | Important state changes | 100% |
+| DEV | `LOG.dev()` | Normal flow, initialization, debug | 1% sampling |
 
-### 5.3 Log Levels Guide
+**Error Code Naming**: `SUBSYSTEM_DESCRIPTION`
+- Examples: `PHYSICS_INIT_ERROR`, `PLAYER_UPDATE_ERROR`, `GAMESTATE_SAVE_PROGRESS_ERROR`
+- Machine-parsable for AI agent debugging
+- Enables pattern matching and automated analysis
 
-| Level | When to Use | Example |
-|-------|-------------|---------|
-| `console.log` | Normal flow, initialization, success states | `[Manager] Initialized successfully` |
-| `console.warn` | Degradation, fallbacks, unexpected but handled | `[Manager] Using fallback mechanism` |
-| `console.error` | Failures, exceptions, data loss | `[Manager] Critical operation failed` |
+**Migrated Examples**:
+```javascript
+// OLD (deprecated):
+console.error('[PhysicsManager] Error in update:', error);
 
-**Issue: No formal convention for log levels**
-- Sometimes warnings are used for error conditions
-- No "info" vs "debug" distinction
+// NEW (structured):
+LOG.error('PHYSICS_UPDATE_ERROR', {
+    subsystem: 'physics',
+    error,
+    message: 'Physics update error 5/10',
+    errorCount: 5,
+    threshold: 10,
+    state: { hasWorld: !!this.world, bodyCount: this.bodyToSprite.size },
+    hint: 'Check Rapier body state. May indicate invalid body configuration.'
+});
+```
+
+### 5.3 Legacy Console Logging (🔴 **DEPRECATED**)
+
+**DO NOT use console.* in new code** - use LOG.* methods instead
+
+**Legacy Pattern** (being phased out):
+```javascript
+console.log('[ModuleName] Message');  // ❌ Deprecated
+console.warn('[ModuleName] Warning'); // ❌ Deprecated
+console.error('[ModuleName] Error:', error); // ❌ Deprecated
+```
+
+**Remaining Legacy Files** (not yet migrated):
+- ~146 console statements across scene/utility files
+- Migration ongoing - see STATUS_OBSERVABILITY.json for tracking
 
 ### 5.4 Conditional Logging
 

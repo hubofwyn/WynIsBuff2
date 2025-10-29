@@ -2,6 +2,7 @@ import { BaseManager } from './BaseManager.js';
 import { EconomyManager } from './EconomyManager.js';
 import { EventBus } from './EventBus.js';
 import { EventNames } from '../constants/EventNames.js';
+import { LOG } from '../observability/core/LogSystem.js';
 
 /**
  * GameStateManager class handles game state persistence,
@@ -49,25 +50,38 @@ export class GameStateManager extends BaseManager {
         try {
             // Check if localStorage is available
             if (typeof localStorage === 'undefined') {
-                console.warn('[GameStateManager] localStorage is not available, progress will not be saved');
+                LOG.warn('GAMESTATE_NO_LOCALSTORAGE', {
+                    subsystem: 'gamestate',
+                    message: 'localStorage not available, progress will not be saved',
+                    hint: 'Check browser environment. localStorage may be disabled or unavailable in this context.'
+                });
                 this.initialized = false;
                 this._initialized = false;
                 // Default character selection
                 this.selectedCharacter = 'axelSprite';
                 return;
             }
-            
+
             // Try to access localStorage to make sure it's working
             localStorage.getItem('test');
-            
-            console.log('[GameStateManager] Initialized successfully');
+
+            LOG.dev('GAMESTATE_INIT_SUCCESS', {
+                subsystem: 'gamestate',
+                message: 'GameStateManager initialized successfully',
+                defaultCharacter: 'axelSprite'
+            });
             this.initialized = true;
             this._initialized = true;
             // Load selected character if present
             const stored = localStorage.getItem(this.charKey);
             this.selectedCharacter = stored || 'axelSprite';
         } catch (error) {
-            console.error('[GameStateManager] Error initializing:', error);
+            LOG.error('GAMESTATE_INIT_ERROR', {
+                subsystem: 'gamestate',
+                error,
+                message: 'Error initializing GameStateManager',
+                hint: 'Check localStorage permissions. Browser may block localStorage access.'
+            });
             this.initialized = false;
             this._initialized = false;
         }
@@ -99,11 +113,23 @@ export class GameStateManager extends BaseManager {
             
             // Save progress
             localStorage.setItem(this.storageKey, JSON.stringify(progress));
-            
-            console.log(`[GameStateManager] Progress saved for level ${levelId}`);
+
+            LOG.dev('GAMESTATE_PROGRESS_SAVED', {
+                subsystem: 'gamestate',
+                message: 'Level progress saved',
+                levelId,
+                collectiblesCollected,
+                totalCollectibles
+            });
             return true;
         } catch (error) {
-            console.error('[GameStateManager] Error saving progress:', error);
+            LOG.error('GAMESTATE_SAVE_PROGRESS_ERROR', {
+                subsystem: 'gamestate',
+                error,
+                message: 'Error saving level progress',
+                levelId,
+                hint: 'Check localStorage quota. Storage may be full.'
+            });
             return false;
         }
     }
@@ -124,7 +150,12 @@ export class GameStateManager extends BaseManager {
             // Parse progress or return empty object if not found
             return progressJson ? JSON.parse(progressJson) : {};
         } catch (error) {
-            console.error('[GameStateManager] Error loading progress:', error);
+            LOG.error('GAMESTATE_LOAD_PROGRESS_ERROR', {
+                subsystem: 'gamestate',
+                error,
+                message: 'Error loading game progress',
+                hint: 'Check localStorage data integrity. Data may be corrupted.'
+            });
             return {};
         }
     }
@@ -143,7 +174,13 @@ export class GameStateManager extends BaseManager {
             const progress = this.loadProgress();
             return progress[levelId] && progress[levelId].completed;
         } catch (error) {
-            console.error('[GameStateManager] Error checking level completion:', error);
+            LOG.error('GAMESTATE_CHECK_COMPLETION_ERROR', {
+                subsystem: 'gamestate',
+                error,
+                message: 'Error checking level completion',
+                levelId,
+                hint: 'Check progress data integrity.'
+            });
             return false;
         }
     }
@@ -162,7 +199,13 @@ export class GameStateManager extends BaseManager {
             const progress = this.loadProgress();
             return progress[levelId] || null;
         } catch (error) {
-            console.error('[GameStateManager] Error getting level progress:', error);
+            LOG.error('GAMESTATE_GET_LEVEL_PROGRESS_ERROR', {
+                subsystem: 'gamestate',
+                error,
+                message: 'Error getting level progress',
+                levelId,
+                hint: 'Check progress data structure.'
+            });
             return null;
         }
     }
@@ -178,11 +221,16 @@ export class GameStateManager extends BaseManager {
         
         try {
             const progress = this.loadProgress();
-            return Object.keys(progress).filter(levelId => 
+            return Object.keys(progress).filter(levelId =>
                 progress[levelId] && progress[levelId].completed
             );
         } catch (error) {
-            console.error('[GameStateManager] Error getting completed levels:', error);
+            LOG.error('GAMESTATE_GET_COMPLETED_ERROR', {
+                subsystem: 'gamestate',
+                error,
+                message: 'Error getting completed levels',
+                hint: 'Check progress data structure.'
+            });
             return [];
         }
     }
@@ -210,7 +258,12 @@ export class GameStateManager extends BaseManager {
             
             return { collected, total };
         } catch (error) {
-            console.error('[GameStateManager] Error getting total collectibles:', error);
+            LOG.error('GAMESTATE_GET_COLLECTIBLES_ERROR', {
+                subsystem: 'gamestate',
+                error,
+                message: 'Error getting total collectibles',
+                hint: 'Check progress data structure.'
+            });
             return { collected: 0, total: 0 };
         }
     }
@@ -228,10 +281,18 @@ export class GameStateManager extends BaseManager {
             localStorage.removeItem(this.storageKey);
             // Reset character selection as well
             localStorage.removeItem(this.charKey);
-            console.log('[GameStateManager] Progress reset');
+            LOG.dev('GAMESTATE_PROGRESS_RESET', {
+                subsystem: 'gamestate',
+                message: 'All progress reset'
+            });
             return true;
         } catch (error) {
-            console.error('[GameStateManager] Error resetting progress:', error);
+            LOG.error('GAMESTATE_RESET_PROGRESS_ERROR', {
+                subsystem: 'gamestate',
+                error,
+                message: 'Error resetting progress',
+                hint: 'Check localStorage access permissions.'
+            });
             return false;
         }
     }
@@ -246,7 +307,13 @@ export class GameStateManager extends BaseManager {
             try {
                 localStorage.setItem(this.charKey, key);
             } catch (error) {
-                console.error('[GameStateManager] Error persisting character selection:', error);
+                LOG.error('GAMESTATE_PERSIST_CHARACTER_ERROR', {
+                    subsystem: 'gamestate',
+                    error,
+                    message: 'Error persisting character selection',
+                    character: key,
+                    hint: 'Check localStorage quota and permissions.'
+                });
             }
         }
     }
@@ -276,7 +343,12 @@ export class GameStateManager extends BaseManager {
             this.settings = settings;
             return true;
         } catch (error) {
-            console.error('[GameStateManager] Error saving settings:', error);
+            LOG.error('GAMESTATE_SAVE_SETTINGS_ERROR', {
+                subsystem: 'gamestate',
+                error,
+                message: 'Error saving settings',
+                hint: 'Check localStorage quota and permissions.'
+            });
             return false;
         }
     }
@@ -306,16 +378,30 @@ export class GameStateManager extends BaseManager {
                     return parsed.settings;
                 }
                 // Migrate or reset on version mismatch
-                console.warn(`[GameStateManager] Settings schema mismatch: found ${parsed.schemaVersion}, expected ${GameStateManager.SETTINGS_SCHEMA_VERSION}. Resetting to defaults.`);
+                LOG.warn('GAMESTATE_SETTINGS_VERSION_MISMATCH', {
+                    subsystem: 'gamestate',
+                    message: 'Settings schema version mismatch, resetting to defaults',
+                    foundVersion: parsed.schemaVersion,
+                    expectedVersion: GameStateManager.SETTINGS_SCHEMA_VERSION,
+                    hint: 'Settings schema was updated. User settings have been reset.'
+                });
                 this.resetSettings();
                 return defaults;
             }
             // Legacy unversioned settings
-            console.info('[GameStateManager] Loading legacy settings, upgrading schema');
+            LOG.info('GAMESTATE_LEGACY_SETTINGS_UPGRADE', {
+                subsystem: 'gamestate',
+                message: 'Loading legacy settings and upgrading schema'
+            });
             this.saveSettings(parsed);
             return parsed;
         } catch (error) {
-            console.error('[GameStateManager] Error loading settings:', error);
+            LOG.error('GAMESTATE_LOAD_SETTINGS_ERROR', {
+                subsystem: 'gamestate',
+                error,
+                message: 'Error loading settings',
+                hint: 'Check localStorage data integrity. Settings may be corrupted.'
+            });
             return defaults;
         }
     }
@@ -331,10 +417,18 @@ export class GameStateManager extends BaseManager {
         try {
             localStorage.removeItem(this.settingsKey);
             this.settings = this.loadSettings();
-            console.log('[GameStateManager] Settings reset to defaults');
+            LOG.dev('GAMESTATE_SETTINGS_RESET', {
+                subsystem: 'gamestate',
+                message: 'Settings reset to defaults'
+            });
             return true;
         } catch (error) {
-            console.error('[GameStateManager] Error resetting settings:', error);
+            LOG.error('GAMESTATE_RESET_SETTINGS_ERROR', {
+                subsystem: 'gamestate',
+                error,
+                message: 'Error resetting settings',
+                hint: 'Check localStorage access permissions.'
+            });
             return false;
         }
     }
@@ -369,11 +463,20 @@ export class GameStateManager extends BaseManager {
             
             localStorage.setItem(this.idleStateKey, JSON.stringify(saveData));
             localStorage.setItem(this.lastSaveKey, Date.now().toString());
-            
-            console.log('[GameStateManager] Idle state saved');
+
+            LOG.dev('GAMESTATE_IDLE_STATE_SAVED', {
+                subsystem: 'gamestate',
+                message: 'Idle state saved',
+                timestamp: saveData.timestamp
+            });
             return true;
         } catch (error) {
-            console.error('[GameStateManager] Error saving idle state:', error);
+            LOG.error('GAMESTATE_SAVE_IDLE_ERROR', {
+                subsystem: 'gamestate',
+                error,
+                message: 'Error saving idle state',
+                hint: 'Check localStorage quota and permissions.'
+            });
             return false;
         }
     }
@@ -391,7 +494,12 @@ export class GameStateManager extends BaseManager {
             const stateJson = localStorage.getItem(this.idleStateKey);
             return stateJson ? JSON.parse(stateJson) : null;
         } catch (error) {
-            console.error('[GameStateManager] Error loading idle state:', error);
+            LOG.error('GAMESTATE_LOAD_IDLE_ERROR', {
+                subsystem: 'gamestate',
+                error,
+                message: 'Error loading idle state',
+                hint: 'Check localStorage data integrity.'
+            });
             return null;
         }
     }
@@ -410,7 +518,12 @@ export class GameStateManager extends BaseManager {
             localStorage.setItem(this.resourcesKey, JSON.stringify(resources));
             return true;
         } catch (error) {
-            console.error('[GameStateManager] Error saving resources:', error);
+            LOG.error('GAMESTATE_SAVE_RESOURCES_ERROR', {
+                subsystem: 'gamestate',
+                error,
+                message: 'Error saving resources',
+                hint: 'Check localStorage quota and permissions.'
+            });
             return false;
         }
     }
@@ -428,7 +541,12 @@ export class GameStateManager extends BaseManager {
             const resourcesJson = localStorage.getItem(this.resourcesKey);
             return resourcesJson ? JSON.parse(resourcesJson) : { buffCoins: 0, buffGems: 0, dna: 0, timeEchoes: 0 };
         } catch (error) {
-            console.error('[GameStateManager] Error loading resources:', error);
+            LOG.error('GAMESTATE_LOAD_RESOURCES_ERROR', {
+                subsystem: 'gamestate',
+                error,
+                message: 'Error loading resources',
+                hint: 'Check localStorage data integrity.'
+            });
             return { buffCoins: 0, buffGems: 0, dna: 0, timeEchoes: 0 };
         }
     }
@@ -447,11 +565,16 @@ export class GameStateManager extends BaseManager {
             localStorage.setItem(this.upgradesKey, JSON.stringify(upgrades));
             return true;
         } catch (error) {
-            console.error('[GameStateManager] Error saving upgrades:', error);
+            LOG.error('GAMESTATE_SAVE_UPGRADES_ERROR', {
+                subsystem: 'gamestate',
+                error,
+                message: 'Error saving upgrades',
+                hint: 'Check localStorage quota and permissions.'
+            });
             return false;
         }
     }
-    
+
     /**
      * Load upgrades state
      * @returns {Object} Upgrades object or empty object if not found
@@ -460,16 +583,21 @@ export class GameStateManager extends BaseManager {
         if (!this.initialized) {
             return {};
         }
-        
+
         try {
             const upgradesJson = localStorage.getItem(this.upgradesKey);
             return upgradesJson ? JSON.parse(upgradesJson) : {};
         } catch (error) {
-            console.error('[GameStateManager] Error loading upgrades:', error);
+            LOG.error('GAMESTATE_LOAD_UPGRADES_ERROR', {
+                subsystem: 'gamestate',
+                error,
+                message: 'Error loading upgrades',
+                hint: 'Check localStorage data integrity.'
+            });
             return {};
         }
     }
-    
+
     /**
      * Save automation state
      * @param {Object} automation - Automation settings and active automations
@@ -479,16 +607,21 @@ export class GameStateManager extends BaseManager {
         if (!this.initialized) {
             return false;
         }
-        
+
         try {
             localStorage.setItem(this.automationKey, JSON.stringify(automation));
             return true;
         } catch (error) {
-            console.error('[GameStateManager] Error saving automation:', error);
+            LOG.error('GAMESTATE_SAVE_AUTOMATION_ERROR', {
+                subsystem: 'gamestate',
+                error,
+                message: 'Error saving automation',
+                hint: 'Check localStorage quota and permissions.'
+            });
             return false;
         }
     }
-    
+
     /**
      * Load automation state
      * @returns {Object} Automation object or empty object if not found
@@ -497,16 +630,21 @@ export class GameStateManager extends BaseManager {
         if (!this.initialized) {
             return {};
         }
-        
+
         try {
             const automationJson = localStorage.getItem(this.automationKey);
             return automationJson ? JSON.parse(automationJson) : {};
         } catch (error) {
-            console.error('[GameStateManager] Error loading automation:', error);
+            LOG.error('GAMESTATE_LOAD_AUTOMATION_ERROR', {
+                subsystem: 'gamestate',
+                error,
+                message: 'Error loading automation',
+                hint: 'Check localStorage data integrity.'
+            });
             return {};
         }
     }
-    
+
     /**
      * Save factory state
      * @param {Object} factory - Factory production lines and upgrades
@@ -516,16 +654,21 @@ export class GameStateManager extends BaseManager {
         if (!this.initialized) {
             return false;
         }
-        
+
         try {
             localStorage.setItem(this.factoryKey, JSON.stringify(factory));
             return true;
         } catch (error) {
-            console.error('[GameStateManager] Error saving factory:', error);
+            LOG.error('GAMESTATE_SAVE_FACTORY_ERROR', {
+                subsystem: 'gamestate',
+                error,
+                message: 'Error saving factory',
+                hint: 'Check localStorage quota and permissions.'
+            });
             return false;
         }
     }
-    
+
     /**
      * Load factory state
      * @returns {Object} Factory object or empty object if not found
@@ -534,16 +677,21 @@ export class GameStateManager extends BaseManager {
         if (!this.initialized) {
             return {};
         }
-        
+
         try {
             const factoryJson = localStorage.getItem(this.factoryKey);
             return factoryJson ? JSON.parse(factoryJson) : {};
         } catch (error) {
-            console.error('[GameStateManager] Error loading factory:', error);
+            LOG.error('GAMESTATE_LOAD_FACTORY_ERROR', {
+                subsystem: 'gamestate',
+                error,
+                message: 'Error loading factory',
+                hint: 'Check localStorage data integrity.'
+            });
             return {};
         }
     }
-    
+
     /**
      * Save prestige state
      * @param {Object} prestige - Prestige currency and bonuses
@@ -553,16 +701,21 @@ export class GameStateManager extends BaseManager {
         if (!this.initialized) {
             return false;
         }
-        
+
         try {
             localStorage.setItem(this.prestigeKey, JSON.stringify(prestige));
             return true;
         } catch (error) {
-            console.error('[GameStateManager] Error saving prestige:', error);
+            LOG.error('GAMESTATE_SAVE_PRESTIGE_ERROR', {
+                subsystem: 'gamestate',
+                error,
+                message: 'Error saving prestige',
+                hint: 'Check localStorage quota and permissions.'
+            });
             return false;
         }
     }
-    
+
     /**
      * Load prestige state
      * @returns {Object} Prestige object or default values if not found
@@ -571,16 +724,21 @@ export class GameStateManager extends BaseManager {
         if (!this.initialized) {
             return { prestigePoints: 0, totalPrestiges: 0, bonuses: {} };
         }
-        
+
         try {
             const prestigeJson = localStorage.getItem(this.prestigeKey);
             return prestigeJson ? JSON.parse(prestigeJson) : { prestigePoints: 0, totalPrestiges: 0, bonuses: {} };
         } catch (error) {
-            console.error('[GameStateManager] Error loading prestige:', error);
+            LOG.error('GAMESTATE_LOAD_PRESTIGE_ERROR', {
+                subsystem: 'gamestate',
+                error,
+                message: 'Error loading prestige',
+                hint: 'Check localStorage data integrity.'
+            });
             return { prestigePoints: 0, totalPrestiges: 0, bonuses: {} };
         }
     }
-    
+
     /**
      * Save achievements state
      * @param {Object} achievements - Unlocked achievements and progress
@@ -590,16 +748,21 @@ export class GameStateManager extends BaseManager {
         if (!this.initialized) {
             return false;
         }
-        
+
         try {
             localStorage.setItem(this.achievementsKey, JSON.stringify(achievements));
             return true;
         } catch (error) {
-            console.error('[GameStateManager] Error saving achievements:', error);
+            LOG.error('GAMESTATE_SAVE_ACHIEVEMENTS_ERROR', {
+                subsystem: 'gamestate',
+                error,
+                message: 'Error saving achievements',
+                hint: 'Check localStorage quota and permissions.'
+            });
             return false;
         }
     }
-    
+
     /**
      * Load achievements state
      * @returns {Object} Achievements object or empty object if not found
@@ -608,12 +771,17 @@ export class GameStateManager extends BaseManager {
         if (!this.initialized) {
             return { unlocked: [], progress: {} };
         }
-        
+
         try {
             const achievementsJson = localStorage.getItem(this.achievementsKey);
             return achievementsJson ? JSON.parse(achievementsJson) : { unlocked: [], progress: {} };
         } catch (error) {
-            console.error('[GameStateManager] Error loading achievements:', error);
+            LOG.error('GAMESTATE_LOAD_ACHIEVEMENTS_ERROR', {
+                subsystem: 'gamestate',
+                error,
+                message: 'Error loading achievements',
+                hint: 'Check localStorage data integrity.'
+            });
             return { unlocked: [], progress: {} };
         }
     }
@@ -631,7 +799,12 @@ export class GameStateManager extends BaseManager {
             const timestamp = localStorage.getItem(this.lastSaveKey);
             return timestamp ? parseInt(timestamp, 10) : null;
         } catch (error) {
-            console.error('[GameStateManager] Error getting last save time:', error);
+            LOG.error('GAMESTATE_GET_LAST_SAVE_ERROR', {
+                subsystem: 'gamestate',
+                error,
+                message: 'Error getting last save time',
+                hint: 'Check localStorage data integrity.'
+            });
             return null;
         }
     }
@@ -723,11 +896,19 @@ export class GameStateManager extends BaseManager {
             // localStorage.removeItem(this.prestigeKey);
             localStorage.removeItem(this.achievementsKey);
             localStorage.removeItem(this.lastSaveKey);
-            
-            console.log('[GameStateManager] Idle progress reset');
+
+            LOG.dev('GAMESTATE_IDLE_RESET', {
+                subsystem: 'gamestate',
+                message: 'Idle progress reset'
+            });
             return true;
         } catch (error) {
-            console.error('[GameStateManager] Error resetting idle progress:', error);
+            LOG.error('GAMESTATE_RESET_IDLE_ERROR', {
+                subsystem: 'gamestate',
+                error,
+                message: 'Error resetting idle progress',
+                hint: 'Check localStorage access permissions.'
+            });
             return false;
         }
     }
@@ -763,11 +944,16 @@ export class GameStateManager extends BaseManager {
             
             return true;
         } catch (error) {
-            console.error('[GameStateManager] Error in central save:', error);
+            LOG.error('GAMESTATE_CENTRAL_SAVE_ERROR', {
+                subsystem: 'gamestate',
+                error,
+                message: 'Error in central save',
+                hint: 'Check localStorage quota and permissions. Manager serialization may have failed.'
+            });
             return false;
         }
     }
-    
+
     /**
      * Central load method - coordinates all manager loads
      * @returns {boolean} Success status
@@ -776,29 +962,37 @@ export class GameStateManager extends BaseManager {
         try {
             const saveDataJson = localStorage.getItem('wynisbuff2_managers');
             if (!saveDataJson) {
-                console.log('[GameStateManager] No save data found');
+                LOG.dev('GAMESTATE_NO_SAVE_DATA', {
+                    subsystem: 'gamestate',
+                    message: 'No save data found for managers'
+                });
                 return false;
             }
-            
+
             const saveData = JSON.parse(saveDataJson);
             const managers = this.getManagerInstances();
-            
+
             // Deserialize data for each manager
             for (const [name, manager] of Object.entries(managers)) {
                 if (manager && typeof manager.deserialize === 'function' && saveData[name]) {
                     manager.deserialize(saveData[name]);
                 }
             }
-            
+
             // Emit load complete event
             EventBus.getInstance().emit(EventNames.custom('load', 'complete'), {
                 timestamp: Date.now(),
                 managers: Object.keys(saveData)
             });
-            
+
             return true;
         } catch (error) {
-            console.error('[GameStateManager] Error in central load:', error);
+            LOG.error('GAMESTATE_CENTRAL_LOAD_ERROR', {
+                subsystem: 'gamestate',
+                error,
+                message: 'Error in central load',
+                hint: 'Check localStorage data integrity. Manager deserialization may have failed.'
+            });
             return false;
         }
     }
@@ -834,10 +1028,14 @@ export class GameStateManager extends BaseManager {
         } catch (e) {
             // Some managers may not be available yet
             if (process.env.NODE_ENV !== 'production') {
-                console.log('[GameStateManager] Some managers not available for save/load:', e.message);
+                LOG.dev('GAMESTATE_MANAGERS_UNAVAILABLE', {
+                    subsystem: 'gamestate',
+                    message: 'Some managers not available for save/load',
+                    error: e.message
+                });
             }
         }
-        
+
         return managers;
     }
 }

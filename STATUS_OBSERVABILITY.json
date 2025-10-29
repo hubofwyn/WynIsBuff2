@@ -68,18 +68,18 @@
     "3": {
       "name": "Logging Migration",
       "status": "in_progress",
-      "completion": 36,
+      "completion": 50,
       "dependencies": ["2"],
       "estimatedHours": 6,
       "filesAffected": 17,
       "priority": "high",
       "progress": {
         "totalConsoleStatements": 293,
-        "migrated": 106,
-        "remaining": 187,
-        "criticalErrorsMigrated": 106,
-        "filesCompleted": ["PhysicsManager.js", "PlayerController.js", "InputManager.js", "AudioManager.js"],
-        "filesCriticalComplete": ["PhysicsManager.js", "Game.js", "PlayerController.js", "InputManager.js", "AudioManager.js"]
+        "migrated": 147,
+        "remaining": 146,
+        "criticalErrorsMigrated": 147,
+        "filesCompleted": ["PhysicsManager.js", "PlayerController.js", "InputManager.js", "AudioManager.js", "GameStateManager.js"],
+        "filesCriticalComplete": ["PhysicsManager.js", "Game.js", "PlayerController.js", "InputManager.js", "AudioManager.js", "GameStateManager.js"]
       }
     },
     "4": {
