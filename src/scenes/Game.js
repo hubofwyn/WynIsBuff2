@@ -7,12 +7,17 @@ import { EventNames } from '../constants/EventNames';
 import { SceneKeys } from '../constants/SceneKeys.js';
 import { AudioAssets, ImageAssets } from '../constants/Assets.js';
 import { PhysicsConfig } from '../constants/PhysicsConfig.js';
+import { LOG } from '../observability/core/LogSystem.js';
 
 export class Game extends Scene {
     constructor() {
         super(SceneKeys.GAME);
-        console.log('[Game] Constructor called');
-        
+        LOG.dev('GAME_SCENE_CONSTRUCTOR', {
+            subsystem: 'scene',
+            scene: SceneKeys.GAME,
+            message: 'Game scene constructor called'
+        });
+
         // Game managers
         this.eventSystem = null;
         this.physicsManager = null;
@@ -31,8 +36,13 @@ export class Game extends Scene {
     }
 
     init(data) {
-        console.log('[Game] Init called with data:', data);
-        
+        LOG.info('GAME_SCENE_INIT', {
+            subsystem: 'scene',
+            scene: SceneKeys.GAME,
+            message: 'Game scene initialized',
+            data
+        });
+
         // If a level ID is provided, use it
         if (data && data.levelId) {
             this.currentLevelId = data.levelId;
@@ -40,11 +50,20 @@ export class Game extends Scene {
     }
 
     preload() {
-        console.log('[Game] Preload called');
+        LOG.dev('GAME_SCENE_PRELOAD', {
+            subsystem: 'scene',
+            scene: SceneKeys.GAME,
+            message: 'Game scene preload called'
+        });
     }
 
     async create() {
-            console.log('[Game] Create method started');
+            LOG.info('GAME_SCENE_CREATE_START', {
+                subsystem: 'scene',
+                scene: SceneKeys.GAME,
+                message: 'Game scene create started',
+                levelId: this.currentLevelId
+            });
             // Play in-level music
             const audio = AudioManager.getInstance();
             audio.stopMusic(AudioAssets.PROTEIN_PIXEL_ANTHEM);
@@ -89,7 +108,7 @@ export class Game extends Scene {
             this.particleManager = new ParticleManager(this, this.eventSystem);
             this.cameraManager = new CameraManager(this, this.eventSystem);
             this.colorManager = new ColorManager(this, this.eventSystem);
-            console.log('[Game] Effect managers initialized');
+            LOG.dev('GAME_EFFECT_MANAGERS_READY', { subsystem: 'scene', scene: SceneKeys.GAME, message: 'Effect managers initialized' });
             
             // Add visual enhancements
             this.createVisualEnhancements();
@@ -158,9 +177,19 @@ export class Game extends Scene {
                 levelId: this.currentLevelId
             });
             
-            console.log('[Game] Create method completed successfully');
+            LOG.info('GAME_SCENE_CREATE_COMPLETE', {
+                subsystem: 'scene',
+                scene: SceneKeys.GAME,
+                message: 'Game scene create completed successfully'
+            });
         } catch (error) {
-            console.error('[Game] Error in create method:', error);
+            LOG.error('GAME_SCENE_CREATE_ERROR', {
+                subsystem: 'scene',
+                scene: SceneKeys.GAME,
+                error,
+                message: 'Error in Game scene create method',
+                hint: 'Check manager initialization order. Verify all assets are loaded.'
+            });
             // Display error on screen for easier debugging
             this.add.text(512, 400, 'ERROR: ' + error.message, {
                 fontFamily: 'Arial', fontSize: 16, color: '#ff0000',
@@ -537,7 +566,13 @@ export class Game extends Scene {
                     try {
                         enemy.update(time, delta);
                     } catch (err) {
-                        console.error('[Game] Error updating enemy:', err);
+                        LOG.error('GAME_ENEMY_UPDATE_ERROR', {
+                            subsystem: 'scene',
+                            scene: SceneKeys.GAME,
+                            error: err,
+                            message: 'Error updating enemy',
+                            hint: 'Check enemy controller update method'
+                        });
                     }
                 });
             }
@@ -547,7 +582,13 @@ export class Game extends Scene {
                 try {
                     this.boss.update(time, delta);
                 } catch (err) {
-                    console.error('[Game] Error updating boss:', err);
+                    LOG.error('GAME_BOSS_UPDATE_ERROR', {
+                        subsystem: 'scene',
+                        scene: SceneKeys.GAME,
+                        error: err,
+                        message: 'Error updating boss',
+                        hint: 'Check boss controller update method'
+                    });
                 }
             }
             
@@ -564,11 +605,23 @@ export class Game extends Scene {
                         }
                     }
                 } catch (err) {
-                    console.error('[Game] Error updating pulsating boss:', err);
+                    LOG.error('GAME_PULSATING_BOSS_UPDATE_ERROR', {
+                        subsystem: 'scene',
+                        scene: SceneKeys.GAME,
+                        error: err,
+                        message: 'Error updating pulsating boss',
+                        hint: 'Check pulsating boss controller update method'
+                    });
                 }
             }
         } catch (error) {
-            console.error('[Game] Error in update:', error);
+            LOG.error('GAME_UPDATE_ERROR', {
+                subsystem: 'scene',
+                scene: SceneKeys.GAME,
+                error,
+                message: 'Error in Game scene update loop',
+                hint: 'Check physics manager and entity updates'
+            });
         }
     }
 }
