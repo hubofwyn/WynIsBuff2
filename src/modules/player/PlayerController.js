@@ -3,6 +3,7 @@ import RAPIER from '@dimforge/rapier2d-compat';
 import { EventNames } from '../../constants/EventNames';
 import { PhysicsConfig } from '../../constants/PhysicsConfig.js';
 import { PIXELS_PER_METER, pixelsToMeters, metersToPixels } from '../../constants/PhysicsConstants.js';
+import { createEmptyInputState } from '../../types/InputState.js';
 import { JumpController } from './JumpController';
 import { MovementController } from './MovementController';
 import { CollisionController } from './CollisionController';
@@ -134,116 +135,106 @@ export class PlayerController {
     }
     
     /**
-     * Set up keyboard controls
+     * Set up keyboard controls - Modern InputState snapshot architecture
      */
     setupControls() {
-        // Get InputManager singleton instance
+        // Verify InputManager is available
         const inputManager = this.scene.inputManager;
-        
-        if (inputManager && inputManager.keys) {
-            console.log('[PlayerController] Using InputManager keys');
-            const keys = inputManager.keys;
-            this.cursors = keys.cursors;
-            this.wasd = {
-                up: keys.W,
-                down: keys.S,
-                left: keys.A,
-                right: keys.D
-            };
-            this.spaceKey = keys.SPACE;
-            this.duckKey = keys.C;
-        } else {
-            console.log('[PlayerController] InputManager not available, creating direct keyboard controls');
-            // Direct keyboard controls as fallback
+
+        if (!inputManager || !inputManager.keys) {
+            console.warn('[PlayerController] InputManager not available!');
+            console.warn('[PlayerController] Creating fallback direct keyboard controls');
+
+            // Emergency fallback - direct key polling
             this.cursors = this.scene.input.keyboard.createCursorKeys();
             this.wasd = {
-                up: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W),
-                down: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S),
-                left: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A),
-                right: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D)
+                up: this.scene.input.keyboard.addKey('W'),
+                down: this.scene.input.keyboard.addKey('S'),
+                left: this.scene.input.keyboard.addKey('A'),
+                right: this.scene.input.keyboard.addKey('D')
             };
-            this.spaceKey = this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
-            this.duckKey = this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.C);
+            this.spaceKey = this.scene.input.keyboard.addKey('SPACE');
+            this.duckKey = this.scene.input.keyboard.addKey('C');
+        } else {
+            console.log('[PlayerController] InputManager confirmed available');
+            // Store reference to InputManager (not individual keys)
+            this.inputManager = inputManager;
         }
-        
-        console.log('[PlayerController] Controls setup complete:', {
-            cursors: !!this.cursors,
-            wasd: !!this.wasd,
-            spaceKey: !!this.spaceKey,
-            duckKey: !!this.duckKey
-        });
-        
-        // Test key accessibility immediately
-        if (this.cursors) {
-            console.log('[PlayerController] Cursor keys object:', this.cursors);
-        }
-        if (this.wasd) {
-            console.log('[PlayerController] WASD keys object:', this.wasd);
-        }
-        
-        // Track ducking state
+
+        console.log('[PlayerController] ──────────────────────────────────');
+        console.log('[PlayerController] INPUT: Snapshot-based (modern)');
+        console.log('[PlayerController] Consuming InputState per frame');
+        console.log('[PlayerController] ──────────────────────────────────');
+
         this.isDucking = false;
     }
     
     /**
-     * Modern character controller update using KinematicCharacterController
+     * Modern character controller update - Snapshot-based input architecture
      * @param {number} deltaTime - Frame time in milliseconds
      */
     update(deltaTime) {
-        // TRIAGE FIX: Early exit guards to prevent crashes
+        // Guard clauses
         if (!this.body || !this.characterController || !this.collider || !this.sprite) {
-            console.warn('[PlayerController] Missing essential components, skipping update');
+            console.warn('[PlayerController] Missing essential components');
             return;
         }
-        
-        // Circuit breaker: disable if too many errors
+
         if (this.errorCount > 5) {
             console.warn('[PlayerController] Too many errors, player disabled');
             return;
         }
-        
+
         try {
-            // TRIAGE FIX: Clamp deltaTime to prevent physics explosions
-            const clampedDelta = Math.min(deltaTime, 50); // Cap at 50ms (20 FPS minimum)
-            const dt = clampedDelta / 1000; // Convert to seconds
-            
-            // TRIAGE FIX: Validate dt is finite
+            // Sanitize delta time
+            const clampedDelta = Math.min(deltaTime, 50);
+            const dt = clampedDelta / 1000;
+
             if (!Number.isFinite(dt) || dt <= 0) {
                 console.warn('[PlayerController] Invalid deltaTime:', deltaTime);
                 return;
             }
-            
-            // Update game feel timers
+
+            // ═══════════════════════════════════════════════════════════
+            // GET INPUT SNAPSHOT (MODERN PATH)
+            // ═══════════════════════════════════════════════════════════
+
+            let inputState;
+
+            if (this.inputManager && this.inputManager.getSnapshot) {
+                // Modern: Get clean snapshot
+                inputState = this.inputManager.getSnapshot();
+            } else {
+                // Fallback: Create snapshot from direct key polling
+                console.warn('[PlayerController] Using fallback input polling');
+                inputState = this.createFallbackInputState();
+            }
+
+            // ═══════════════════════════════════════════════════════════
+            // GAME LOGIC (SNAPSHOT-DRIVEN)
+            // ═══════════════════════════════════════════════════════════
+
             this.updateTimers(dt);
-            
-            // Check ground state using character controller
             this.updateGroundState();
-            
-            // Handle input and calculate desired movement
-            const desiredMovement = this.calculateMovement(dt);
-            
-            // TRIAGE FIX: Validate movement vector
+
+            // Calculate movement from clean input data
+            const desiredMovement = this.calculateMovementFromInput(inputState, dt);
+
+            // Validate movement
             if (!desiredMovement || !Number.isFinite(desiredMovement.x) || !Number.isFinite(desiredMovement.y)) {
-                console.warn('[PlayerController] Invalid movement vector, skipping movement');
+                console.warn('[PlayerController] Invalid movement vector');
                 return;
             }
-            
-            // Use character controller to compute collision-aware movement
-            this.characterController.computeColliderMovement(
-                this.collider,
-                desiredMovement
-            );
-            
-            // Get the final, collision-corrected movement
+
+            // Physics integration
+            this.characterController.computeColliderMovement(this.collider, desiredMovement);
             const correctedMovement = this.characterController.computedMovement();
-            
-            // TRIAGE FIX: Validate corrected movement
+
             if (!correctedMovement || !Number.isFinite(correctedMovement.x) || !Number.isFinite(correctedMovement.y)) {
-                console.warn('[PlayerController] Invalid corrected movement, using zero movement');
+                console.warn('[PlayerController] Invalid corrected movement');
                 return;
             }
-            
-            // Apply the movement to the kinematic body
+
             const currentPosition = this.body.translation();
             if (currentPosition) {
                 this.body.setNextKinematicTranslation({
@@ -251,37 +242,53 @@ export class PlayerController {
                     y: currentPosition.y + correctedMovement.y
                 });
             }
-            
-            // Update velocity based on actual movement for next frame
+
             this.updateVelocityFromMovement(correctedMovement, dt);
-            
-            // Handle landing detection and recovery
             this.handleLandingDetection();
-            
-            // Update sprite position to match physics body
             this.updateSpritePosition();
-            
-            // Handle ducking
-            this.handleDucking();
-            
-            // Reset error count on successful update
+            this.handleDuckingFromInput(inputState);
+
             this.errorCount = 0;
-            
+
         } catch (error) {
             this.errorCount = (this.errorCount || 0) + 1;
-            console.error(`[PlayerController] Error in update (${this.errorCount}/5):`, error);
-            
-            // Emergency fallback: try to at least update sprite position
+            console.error(`[PlayerController] Error (${this.errorCount}/5):`, error);
+
+            // Emergency fallback
             try {
                 if (this.body && this.sprite) {
                     this.updateSpritePosition();
                 }
             } catch (fallbackError) {
-                console.error('[PlayerController] Fallback update also failed:', fallbackError);
+                console.error('[PlayerController] Fallback failed:', fallbackError);
             }
         }
     }
-    
+
+    /**
+     * Create fallback input state from direct key polling
+     * @returns {InputState}
+     */
+    createFallbackInputState() {
+        if (!this.cursors || !this.wasd || !this.spaceKey) {
+            return createEmptyInputState();
+        }
+
+        const justDown = Phaser.Input.Keyboard.JustDown;
+        const justUp = Phaser.Input.Keyboard.JustUp;
+
+        return {
+            left: this.cursors.left.isDown || this.wasd.left.isDown,
+            right: this.cursors.right.isDown || this.wasd.right.isDown,
+            up: this.cursors.up.isDown || this.wasd.up.isDown,
+            down: this.cursors.down.isDown || this.wasd.down.isDown,
+            jump: this.spaceKey.isDown || this.cursors.up.isDown,
+            jumpPressed: justDown(this.spaceKey) || justDown(this.cursors.up),
+            jumpReleased: justUp(this.spaceKey) || justUp(this.cursors.up),
+            duck: this.duckKey.isDown || this.cursors.down.isDown,
+        };
+    }
+
     /**
      * Update game feel timers (coyote time, jump buffer, landing recovery)
      * @param {number} dt - Delta time in seconds
@@ -321,141 +328,140 @@ export class PlayerController {
     }
     
     /**
-     * Calculate desired movement based on input and physics
+     * Calculate movement from InputState snapshot
+     *
+     * @param {InputState} input - Clean input data (no Phaser types)
      * @param {number} dt - Delta time in seconds
-     * @returns {RAPIER.Vector2} Desired movement vector in meters
+     * @returns {RAPIER.Vector2} Desired movement in meters
      */
-    calculateMovement(dt) {
+    calculateMovementFromInput(input, dt) {
         const movement = new RAPIER.Vector2(0, 0);
-        
-        // Handle horizontal input
-        let horizontalInput = 0;
-        if (this.cursors.left.isDown || this.wasd.left.isDown) {
-            horizontalInput = -1;
-            console.log('[PlayerController] Moving left');
-        } else if (this.cursors.right.isDown || this.wasd.right.isDown) {
-            horizontalInput = 1;
-            console.log('[PlayerController] Moving right');
-        }
-        
-        // Apply horizontal movement with proper acceleration
+
+        // ═══════════════════════════════════════════════════════════
+        // HORIZONTAL INPUT (from snapshot)
+        // ═══════════════════════════════════════════════════════════
+
+        // Convert boolean inputs to signed axis (-1, 0, 1)
+        const horizontalInput = (input.left ? -1 : 0) + (input.right ? 1 : 0);
+
+        // Calculate target speed
         const targetSpeed = horizontalInput * PhysicsConfig.movement.walkSpeed;
-        const acceleration = this.isGrounded ? 
-            PhysicsConfig.movement.groundAcceleration : 
+
+        // Choose acceleration based on ground state
+        const acceleration = this.isGrounded ?
+            PhysicsConfig.movement.groundAcceleration :
             PhysicsConfig.movement.airAcceleration * PhysicsConfig.movement.airControlFactor;
-            
-        // TRIAGE FIX: Validate values are finite
+
+        // Validate
         if (!Number.isFinite(targetSpeed) || !Number.isFinite(acceleration)) {
-            console.warn('[PlayerController] Invalid movement values, using defaults');
+            console.warn('[PlayerController] Invalid movement params');
             return new RAPIER.Vector2(0, 0);
         }
-        
-        // Apply landing recovery reduction
-        const recoveryMultiplier = this.landingRecoveryTimer > 0 ? 
+
+        // Apply landing recovery
+        const recoveryMultiplier = this.landingRecoveryTimer > 0 ?
             PhysicsConfig.gameFeel.landingSpeedMultiplier : 1.0;
-        
+
         if (horizontalInput !== 0) {
-            // Accelerate towards target speed
+            // Accelerate toward target
             const speedDiff = (targetSpeed * recoveryMultiplier) - this.velocity.x;
             const maxAccel = acceleration * dt;
             this.velocity.x += Math.sign(speedDiff) * Math.min(Math.abs(speedDiff), maxAccel);
         } else {
-            // Decelerate when no input
-            const deceleration = this.isGrounded ? PhysicsConfig.movement.deceleration : PhysicsConfig.movement.airAcceleration;
+            // Decelerate to zero
+            const deceleration = this.isGrounded ?
+                PhysicsConfig.movement.deceleration :
+                PhysicsConfig.movement.airAcceleration;
             const decel = deceleration * dt;
+
             if (Math.abs(this.velocity.x) <= decel) {
                 this.velocity.x = 0;
             } else {
                 this.velocity.x -= Math.sign(this.velocity.x) * decel;
             }
         }
-        
-        // Handle jumping with modern game feel
-        this.handleJumpInput();
-        
-        // Debug key states occasionally
-        if (Math.random() < 0.01) { // 1% chance per frame to avoid spam
-            console.log('[PlayerController] Key states:', {
-                cursorsLeft: this.cursors?.left?.isDown,
-                cursorsRight: this.cursors?.right?.isDown,
-                wasdLeft: this.wasd?.left?.isDown,
-                wasdRight: this.wasd?.right?.isDown,
-                space: this.spaceKey?.isDown
-            });
-        }
-        
-        // Apply gravity (character controller doesn't do this automatically)
+
+        // ═══════════════════════════════════════════════════════════
+        // JUMP (snapshot-driven)
+        // ═══════════════════════════════════════════════════════════
+
+        this.handleJumpInputFromSnapshot(input);
+
+        // ═══════════════════════════════════════════════════════════
+        // GRAVITY & VERTICAL MOVEMENT
+        // ═══════════════════════════════════════════════════════════
+
         if (!this.isGrounded) {
             this.velocity.y += PhysicsConfig.gravityY * dt;
-            
-            // Cap fall speed
+
             if (this.velocity.y > PhysicsConfig.movement.maxFallSpeed) {
                 this.velocity.y = PhysicsConfig.movement.maxFallSpeed;
             }
         } else {
-            // Reset vertical velocity when grounded
             if (this.velocity.y > 0) {
                 this.velocity.y = 0;
             }
         }
-        
-        // Handle fast fall
-        if ((this.cursors.down.isDown || this.wasd.down.isDown) && this.velocity.y > 0) {
+
+        // Fast fall (snapshot-driven)
+        if (input.down && this.velocity.y > 0) {
             this.velocity.y *= PhysicsConfig.movement.fastFallMultiplier;
         }
-        
-        // TRIAGE FIX: Clamp velocities to prevent runaway physics
-        const maxSpeed = 50; // Maximum reasonable speed in m/s
+
+        // ═══════════════════════════════════════════════════════════
+        // SAFETY: Clamp velocities
+        // ═══════════════════════════════════════════════════════════
+
+        const maxSpeed = 50;
         this.velocity.x = Math.max(-maxSpeed, Math.min(maxSpeed, this.velocity.x));
         this.velocity.y = Math.max(-maxSpeed, Math.min(maxSpeed, this.velocity.y));
-        
-        // TRIAGE FIX: Ensure velocities are finite
+
         if (!Number.isFinite(this.velocity.x)) this.velocity.x = 0;
         if (!Number.isFinite(this.velocity.y)) this.velocity.y = 0;
-        
-        // Convert velocity to movement for this frame
+
+        // ═══════════════════════════════════════════════════════════
+        // CONVERT TO MOVEMENT
+        // ═══════════════════════════════════════════════════════════
+
         movement.x = this.velocity.x * dt;
         movement.y = this.velocity.y * dt;
-        
+
         return movement;
     }
     
     /**
-     * Handle jump input with modern game feel mechanics
+     * Handle jump input from snapshot
+     * @param {InputState} input
      */
-    handleJumpInput() {
-        const jumpPressed = this.spaceKey.isDown;
-        const jumpJustPressed = Phaser.Input.Keyboard.JustDown(this.spaceKey);
-        
-        // Jump buffering - remember jump input for a short time
-        if (jumpJustPressed) {
+    handleJumpInputFromSnapshot(input) {
+        // Jump buffering - remember jump intent
+        if (input.jumpPressed) {
             this.jumpBufferTimer = PhysicsConfig.gameFeel.jumpBufferTime;
         }
-        
-        // Can jump if grounded OR within coyote time
+
+        // Can jump if grounded OR coyote time active
         const canJump = this.isGrounded || this.coyoteTimer > 0;
-        
-        // Execute jump if we can jump and have buffered input
+
+        // Execute jump
         if (canJump && this.jumpBufferTimer > 0) {
-            this.velocity.y = -PhysicsConfig.movement.jumpVelocity; // Negative for upward
+            this.velocity.y = -PhysicsConfig.movement.jumpVelocity;
             this.jumpBufferTimer = 0;
             this.coyoteTimer = 0;
-            
-            // Start landing recovery timer for when we land
             this.landingRecoveryTimer = 0;
-            
-            // Emit jump event
+
+            // Emit feedback event (NOT control event!)
             if (this.eventSystem) {
                 this.eventSystem.emit(EventNames.PLAYER_JUMP, {
                     position: this.body.translation(),
-                    velocity: this.velocity
+                    velocity: { x: this.velocity.x, y: this.velocity.y }
                 });
             }
         }
-        
-        // Variable jump height - cut jump short if released early
-        if (!jumpPressed && this.velocity.y < 0) {
-            const minJumpVel = -PhysicsConfig.movement.jumpVelocity * PhysicsConfig.gameFeel.variableJumpMinHeight;
+
+        // Variable jump height
+        if (input.jumpReleased && this.velocity.y < 0) {
+            const minJumpVel = -PhysicsConfig.movement.jumpVelocity *
+                               PhysicsConfig.gameFeel.variableJumpMinHeight;
             if (this.velocity.y < minJumpVel) {
                 this.velocity.y = minJumpVel;
             }
@@ -529,58 +535,61 @@ export class PlayerController {
     }
     
     /**
-     * Handle ducking mechanics
+     * Handle ducking from input snapshot
+     * @param {InputState} input
      */
-    handleDucking() {
+    handleDuckingFromInput(input) {
         if (!this.sprite || !this.body || !this.collider) return;
-        
+
         const wasDucking = this.isDucking;
-        this.isDucking = this.duckKey.isDown;
-        
-        // Apply duck transformation
+        this.isDucking = input.duck;
+
+        // ═══════════════════════════════════════════════════════════
+        // CRITICAL FIX: Use METERS, not pixels!
+        // ═══════════════════════════════════════════════════════════
+
         if (this.isDucking && !wasDucking) {
-            // Start ducking - rotate 90 degrees clockwise
+            // Start ducking
             this.sprite.setRotation(Math.PI / 2);
-            
-            // Update physics collider to match ducked shape
+
             // Remove old collider
             this.world.removeCollider(this.collider);
-            
-            // Create new horizontal collider
-            const playerColliderDesc = RAPIER.ColliderDesc
-                .cuboid(32, 32) // Swapped dimensions for horizontal shape
-                .setFriction(0.1)
-                .setDensity(2.0)
-                .setRestitution(0.15);
-                
-            this.collider = this.world.createCollider(
-                playerColliderDesc,
-                this.body
-            );
-            
-            // Emit duck event
+
+            // Create SHORTER capsule in METERS
+            const duckPixelHeight = 24;  // Duck height in pixels
+            const duckHalfHeight = pixelsToMeters(duckPixelHeight / 2) - PhysicsConfig.player.radius;
+
+            const colliderDesc = RAPIER.ColliderDesc
+                .capsule(duckHalfHeight, PhysicsConfig.player.radius)  // ✅ METERS
+                .setFriction(PhysicsConfig.player.friction)
+                .setRestitution(PhysicsConfig.player.restitution)
+                .setDensity(PhysicsConfig.player.density);
+
+            this.collider = this.world.createCollider(colliderDesc, this.body);
+
             if (this.eventSystem) {
                 this.eventSystem.emit(EventNames.PLAYER_DUCK, {
                     position: this.body.translation()
                 });
             }
+
         } else if (!this.isDucking && wasDucking) {
-            // Stop ducking - return to normal
+            // Stop ducking
             this.sprite.setRotation(0);
-            
-            // Restore original collider
+
+            // Restore original capsule
             this.world.removeCollider(this.collider);
-            
-            const playerColliderDesc = RAPIER.ColliderDesc
-                .cuboid(32, 32) // Original square dimensions
-                .setFriction(0.1)
-                .setDensity(2.0)
-                .setRestitution(0.15);
-                
-            this.collider = this.world.createCollider(
-                playerColliderDesc,
-                this.body
-            );
+
+            const standPixelHeight = 48;  // Standing height
+            const standHalfHeight = pixelsToMeters(standPixelHeight / 2) - PhysicsConfig.player.radius;
+
+            const colliderDesc = RAPIER.ColliderDesc
+                .capsule(standHalfHeight, PhysicsConfig.player.radius)  // ✅ METERS
+                .setFriction(PhysicsConfig.player.friction)
+                .setRestitution(PhysicsConfig.player.restitution)
+                .setDensity(PhysicsConfig.player.density);
+
+            this.collider = this.world.createCollider(colliderDesc, this.body);
         }
     }
     

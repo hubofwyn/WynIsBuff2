@@ -21,12 +21,19 @@ export const PhysicsConfig = {
         friction: 1.0,              // High friction for immediate stops/starts
         restitution: 0.0,           // No bounce for predictable landings
         density: 1.0,               // Standard density
-        
+
+        // Dimensions in PIXELS (convert to meters when needed)
+        pixelWidth: 32,             // Standing width in pixels
+        pixelHeight: 48,            // Standing height in pixels
+        pixelHeightDuck: 24,        // Ducking height in pixels
+        radiusPixels: 16,           // Capsule radius in pixels
+
         // Character controller settings (in meters)
         radius: pixelsToMeters(16), // 16 pixel radius = 0.16 meters
         height: pixelsToMeters(48), // 48 pixel height = 0.48 meters
+        heightDuck: pixelsToMeters(24), // 24 pixel duck height = 0.24 meters
         offset: 0.01,               // Small offset to prevent sticking
-        
+
         // Modern platformer controller features
         enableAutostep: true,
         autostepMaxHeight: 0.1,     // Can step over 10cm obstacles

@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import { EventNames } from '../constants/EventNames';
 import { GameStateManager } from './GameStateManager';
 import { BaseManager } from './BaseManager';
+import { createEmptyInputState } from '../types/InputState.js';
 
 /**
  * InputManager handles mapping of keyboard inputs to game events.
@@ -80,6 +81,31 @@ export class InputManager extends BaseManager {
         // Mark as initialized
         this.setInitialized();
         console.log('[InputManager] Initialization complete');
+    }
+
+    /**
+     * Get a snapshot of the current input state for this frame
+     * @returns {InputState} Immutable input state snapshot
+     */
+    getSnapshot() {
+        if (!this.keys.cursors || !this.keys.SPACE) {
+            console.warn('[InputManager] Keys not initialized, returning empty state');
+            return createEmptyInputState();
+        }
+
+        const justDown = Phaser.Input.Keyboard.JustDown;
+        const justUp = Phaser.Input.Keyboard.JustUp;
+
+        return {
+            left: this.keys.cursors.left.isDown || this.keys.A.isDown,
+            right: this.keys.cursors.right.isDown || this.keys.D.isDown,
+            up: this.keys.cursors.up.isDown || this.keys.W.isDown,
+            down: this.keys.cursors.down.isDown || this.keys.S.isDown,
+            jump: this.keys.SPACE.isDown || this.keys.cursors.up.isDown,
+            jumpPressed: justDown(this.keys.SPACE) || justDown(this.keys.cursors.up),
+            jumpReleased: justUp(this.keys.SPACE) || justUp(this.keys.cursors.up),
+            duck: this.keys.C.isDown || this.keys.cursors.down.isDown,
+        };
     }
 
     /**

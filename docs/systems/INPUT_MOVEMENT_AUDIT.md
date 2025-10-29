@@ -1,16 +1,22 @@
 # WynIsBuff2 - Input & Movement System Audit
 
-**Document Version**: 1.0
-**Last Updated**: 2025-10-28
-**Status**: 🔴 Non-Functional - Requires Debugging
+**Document Version**: 2.0
+**Last Updated**: 2025-10-29
+**Status**: ✅ **FUNCTIONAL** - Modern InputState Snapshot Architecture
 
 ---
 
 ## Executive Summary
 
-This document provides a comprehensive technical audit of WynIsBuff2's input and movement systems, tracing the complete data flow from physical keyboard input to on-screen physics-based motion. The system integrates **Phaser 3.90** (input/rendering), **Rapier 2D 0.19.2** (physics), and a custom **EventBus** (event handling).
+This document provides a comprehensive technical audit of WynIsBuff2's **modern snapshot-based input architecture**, tracing the complete data flow from physical keyboard input to on-screen physics-based motion. The system integrates **Phaser 3.90** (input/rendering), **Rapier 2D 0.19.2** (physics), and a clean **InputState snapshot pattern**.
 
-**Current Status**: The input-to-movement pipeline is non-functional. This audit serves as a diagnostic reference for debugging and future improvements.
+**Current Architecture**: The system now uses an **InputState snapshot pattern** where InputManager creates immutable, frame-based input snapshots that PlayerController consumes as pure data. This architecture is:
+- ✅ **Testable** (mock InputState for unit tests)
+- ✅ **Deterministic** (single source of truth per frame)
+- ✅ **Multi-input ready** (keyboard, gamepad, touch)
+- ✅ **Replay-able** (record/playback for debugging)
+
+**Critical Bug Fixed**: Ducking collider now correctly uses **METERS** instead of PIXELS (was causing physics explosions)
 
 ---
 
@@ -28,49 +34,74 @@ This document provides a comprehensive technical audit of WynIsBuff2's input and
 
 ---
 
-## 1. System Architecture Overview
+## 1. System Architecture Overview (2025 - Snapshot Pattern)
 
-### Core Components
+### 🎯 Modern Architecture: InputState Snapshot Pattern
 
+The system now follows a **clean data flow architecture** where input is captured as immutable snapshots:
+
+```mermaid
+flowchart TD
+    subgraph L1[Layer 1 · Input Detection]
+      A[Browser Input<br/>Keyboard/Gamepad/Touch] --> B[Phaser Input System]
+      B --> C[InputManager<br/>getSnapshot every frame]
+      C -->|InputState| D
+    end
+
+    subgraph L2[Layer 2 · Game Logic]
+      D[PlayerController.update] --> E[calculateMovementFromInput]
+      E --> F[handleJumpInputFromSnapshot]
+      E --> G[Velocity Integration<br/>Accel/Decel/Gravity]
+      F --> H[EventBus: PLAYER_JUMP<br/>feedback only]
+      G --> I[desiredMovement meters]
+    end
+
+    subgraph L3[Layer 3 · Physics]
+      I --> J[Rapier KinematicCharacterController<br/>computeColliderMovement]
+      J --> K[PhysicsManager fixed timestep<br/>world.step]
+      K --> L[body.setNextKinematicTranslation]
+    end
+
+    subgraph L4[Layer 4 · Rendering]
+      L --> M[updateSpritePosition<br/>meters → pixels]
+      M --> N[Phaser Renderer]
+    end
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│                      GAME SCENE (Game.js)                        │
-│  - Orchestrates all subsystems                                   │
-│  - Runs update() loop at ~60 FPS                                 │
-└─────────────────────────────────────────────────────────────────┘
-           │                    │                    │
-           ▼                    ▼                    ▼
-    ┌──────────────┐   ┌──────────────┐   ┌──────────────┐
-    │ InputManager │   │   EventBus   │   │PhysicsManager│
-    │  (Singleton) │   │  (Singleton) │   │  (Singleton) │
-    └──────────────┘   └──────────────┘   └──────────────┘
-           │                    │                    │
-           └────────────────────┼────────────────────┘
-                                │
-                                ▼
-                    ┌────────────────────────┐
-                    │   PlayerController     │
-                    │ - Reads keyboard state │
-                    │ - Calculates movement  │
-                    │ - Applies to physics   │
-                    └────────────────────────┘
-                                │
-                                ▼
-                    ┌────────────────────────┐
-                    │  Rapier Physics World  │
-                    │ - Collision detection  │
-                    │ - Position updates     │
-                    └────────────────────────┘
+
+### Per-Frame Data Flow
+
+```mermaid
+sequenceDiagram
+    participant Frame as Game Loop
+    participant IM as InputManager
+    participant PC as PlayerController
+    participant RCC as Rapier CharController
+    participant PM as PhysicsManager
+    participant REN as Renderer
+
+    Frame->>IM: getSnapshot()
+    IM-->>Frame: InputState
+    Frame->>PC: update(dt, InputState)
+    PC->>PC: calculateMovementFromInput()
+    alt jumpPressed & allowed
+      PC->>EventBus: emit PLAYER_JUMP feedback
+    end
+    PC->>RCC: computeColliderMovement(desiredMovement)
+    RCC-->>PC: computedMovement
+    PC->>PM: setNextKinematicTranslation()
+    PM->>PM: world.step() 0..N times
+    PC->>REN: updateSpritePosition()
 ```
 
 ### Architectural Patterns
 
 | Pattern | Usage | Purpose |
 |---------|-------|---------|
-| **Singleton** | All managers extend `BaseManager` | Ensure single instance across game |
-| **Event-Driven** | `EventBus` → `EventSystem` → Listeners | Decouple input from game logic |
+| **InputState Snapshot** | `InputManager.getSnapshot()` | Immutable frame-based input data |
+| **Pure Functions** | `calculateMovementFromInput(input, dt)` | Testable, deterministic movement |
 | **Fixed Timestep** | Accumulator in `PhysicsManager` | Deterministic 60Hz physics |
-| **Kinematic Character Controller** | Rapier's `CharacterController` | Manual position control with collision handling |
+| **Kinematic Character Controller** | Rapier's `CharacterController` | Manual position control with collision |
+| **Units Separation** | Pixels for rendering, Meters for physics | Prevent physics explosions |
 
 ---
 
