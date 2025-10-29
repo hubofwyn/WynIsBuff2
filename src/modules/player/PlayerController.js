@@ -235,14 +235,18 @@ export class PlayerController {
             this.characterController.computeColliderMovement(this.collider, desiredMovement);
             const correctedMovement = this.characterController.computedMovement();
 
-            // Debug: Log ground detection (occasionally)
+            // Debug: Log ground detection and characterController properties
             if (Math.random() < 0.01) {
+                console.log('[PlayerController] CharacterController properties:',
+                    Object.getOwnPropertyNames(this.characterController)
+                );
                 console.log('[PlayerController] Ground Detection:', {
                     numGroundedColliders: this.characterController.numGroundedColliders,
                     isGrounded: this.isGrounded,
                     coyoteTimer: this.coyoteTimer,
                     jumpBufferTimer: this.jumpBufferTimer,
-                    velocityY: this.velocity.y
+                    velocityY: this.velocity.y,
+                    correctedY: correctedMovement.y
                 });
             }
 
