@@ -235,6 +235,17 @@ export class PlayerController {
             this.characterController.computeColliderMovement(this.collider, desiredMovement);
             const correctedMovement = this.characterController.computedMovement();
 
+            // Debug: Log ground detection (occasionally)
+            if (Math.random() < 0.01) {
+                console.log('[PlayerController] Ground Detection:', {
+                    numGroundedColliders: this.characterController.numGroundedColliders,
+                    isGrounded: this.isGrounded,
+                    coyoteTimer: this.coyoteTimer,
+                    jumpBufferTimer: this.jumpBufferTimer,
+                    velocityY: this.velocity.y
+                });
+            }
+
             if (!correctedMovement || !Number.isFinite(correctedMovement.x) || !Number.isFinite(correctedMovement.y)) {
                 console.warn('[PlayerController] Invalid corrected movement');
                 return;
