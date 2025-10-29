@@ -112,10 +112,9 @@ export class PhysicsManager extends BaseManager {
             });
         } else {
             // Fallback for collision event handling if contactPairEvents is not available
-            console.warn('[PhysicsManager] contactPairEvents is not available, using fallback collision detection.');
-            this.world.bodies.forEach(body => {
-                // Implement fallback collision detection logic here
-            });
+            console.warn('[PhysicsManager] contactPairEvents is not available, using manual collision detection in update loop.');
+            // Note: Collision detection will be handled manually in the update() method if needed
+            // For basic platformer gameplay, contact detection via characterController is sufficient
         }
         
         console.log('[PhysicsManager] Collision events set up');
@@ -284,24 +283,25 @@ export class PhysicsManager extends BaseManager {
     updateGameObjects(interpolation = 0) {
         try {
             // Update all sprites based on their physics bodies with proper scaling
-            this.world.bodies.forEach(body => {
+            // Use forEachRigidBody() for Rapier 0.19+ compatibility
+            this.world.forEachRigidBody(body => {
                 const sprite = this.bodyToSprite.get(body.handle);
-                
+
                 if (sprite) {
                     const position = body.translation();
                     const rotation = body.rotation();
-                    
+
                     // Convert physics position (meters) to render position (pixels)
                     const pixelX = metersToPixels(position.x);
                     const pixelY = metersToPixels(position.y);
-                    
+
                     // Store previous position if not exists
                     if (!sprite.prevX) {
                         sprite.prevX = pixelX;
                         sprite.prevY = pixelY;
                         sprite.prevRotation = rotation;
                     }
-                    
+
                     // Interpolate between previous and current position for smooth rendering
                     if (interpolation > 0 && interpolation < 1) {
                         sprite.x = sprite.prevX + (pixelX - sprite.prevX) * interpolation;
@@ -312,7 +312,7 @@ export class PhysicsManager extends BaseManager {
                         sprite.x = pixelX;
                         sprite.y = pixelY;
                         sprite.rotation = rotation;
-                        
+
                         // Update previous values for next frame
                         sprite.prevX = pixelX;
                         sprite.prevY = pixelY;
