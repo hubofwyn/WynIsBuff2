@@ -331,12 +331,12 @@ export class PlayerController {
     
     /**
      * Update ground state using character controller
-     * Rapier 0.19+ API: use numGroundedColliders() instead of isGrounded()
+     * Rapier 0.19+ API: use numGroundedColliders property (not method)
      */
     updateGroundState() {
         const wasGrounded = this.isGrounded;
-        // Rapier 0.19+ API: numGroundedColliders() returns count of ground contacts
-        this.isGrounded = this.characterController.numGroundedColliders() > 0;
+        // Rapier 0.19+ API: numGroundedColliders is a property (not a method!)
+        this.isGrounded = this.characterController.numGroundedColliders > 0;
 
         // Handle coyote time - grace period after leaving ground
         if (wasGrounded && !this.isGrounded) {
