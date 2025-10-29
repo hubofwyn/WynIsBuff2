@@ -4,16 +4,54 @@
 
 This documentation provides comprehensive information about the technologies, frameworks, and tools used in the WynIsBuff2 game project. It serves as a reference for developers working on the project.
 
-## Documentation Files
+## Documentation Organization
 
-| File | Description |
-|------|-------------|
-| [TechnologiesAndPackages.md](./TechnologiesAndPackages.md) | Overview of all technologies and packages used in the project, including versions and project structure |
-| [PhaserFramework.md](./PhaserFramework.md) | Detailed documentation on the Phaser game framework, its core concepts, and implementation in this project |
-| [RapierPhysics.md](./RapierPhysics.md) | In-depth guide to the Rapier physics engine integration, including initialization, rigid bodies, and collision detection |
-| [ViteBuildTool.md](./ViteBuildTool.md) | Information about the Vite build tool, configuration, and build process for development and production |
-| [MovementSystem.md](./MovementSystem.md) | Comprehensive documentation of the player movement system, including recent improvements, implementation details, and lessons learned |
-| [ModularArchitecture.md](./ModularArchitecture.md) | Documentation of the modular architecture implemented in the game, including module structure, integration with Phaser, and best practices |
+**Note**: As of October 28, 2025, AIProjectDocs content has been reorganized into topic-based directories under `docs/`. This README now serves as an index pointing to the new locations.
+
+### Documentation Categories
+
+**Architecture Documentation** → [docs/architecture/](../docs/architecture/)
+- [ArchitecturalAssessment.md](../docs/architecture/ArchitecturalAssessment.md)
+- [ArchitecturalOverview.md](../docs/architecture/ArchitecturalOverview.md)
+- [ModularArchitecture.md](../docs/architecture/ModularArchitecture.md)
+- [MVPArchitectureSummary.md](../docs/architecture/MVPArchitectureSummary.md)
+
+**Technology Stack** → [docs/technology/](../docs/technology/)
+- [PhaserFramework.md](../docs/technology/PhaserFramework.md)
+- [RapierPhysics.md](../docs/technology/RapierPhysics.md)
+- [ViteBuildTool.md](../docs/technology/ViteBuildTool.md)
+- [TechnologiesAndPackages.md](../docs/technology/TechnologiesAndPackages.md)
+
+**Core Systems** → [docs/systems/](../docs/systems/)
+- [EventSystem.md](../docs/systems/EventSystem.md)
+- [EventSystemImplementationSteps.md](../docs/systems/EventSystemImplementationSteps.md)
+- [ModularPlayerController.md](../docs/systems/ModularPlayerController.md)
+- [MovementSystem.md](../docs/systems/MovementSystem.md)
+- [ModularLevelArchitecture.md](../docs/systems/ModularLevelArchitecture.md)
+- [ModularLevelSystemImplementation.md](../docs/systems/ModularLevelSystemImplementation.md)
+- [UIManager.md](../docs/systems/UIManager.md)
+
+**Feature Implementations** → [docs/features/](../docs/features/)
+- [TripleJumpRefinementPlan.md](../docs/features/TripleJumpRefinementPlan.md)
+- [TripleJumpRefinementImplementation.md](../docs/features/TripleJumpRefinementImplementation.md)
+- [LevelImplementationArchitecture.md](../docs/features/LevelImplementationArchitecture.md)
+- [LevelImplementationSummary.md](../docs/features/LevelImplementationSummary.md)
+- [LevelImplementationTasks.md](../docs/features/LevelImplementationTasks.md)
+
+**Game Design & Art** → [docs/design/](../docs/design/)
+- [GameDesignPrinciples.md](../docs/design/GameDesignPrinciples.md)
+- [MVPLevelDesignGuide.md](../docs/design/MVPLevelDesignGuide.md)
+- [SillyMechanicsIdeas.md](../docs/design/SillyMechanicsIdeas.md)
+- [ArtStyleAndAssetPlan.md](../docs/design/ArtStyleAndAssetPlan.md)
+- [AssetManagementStrategy.md](../docs/design/AssetManagementStrategy.md)
+- [pixelart-style.md](../docs/design/pixelart-style.md)
+
+**Historical Archive** → [docs/archive/aiprojectdocs-historical/](../docs/archive/aiprojectdocs-historical/)
+- Superseded and historical documentation preserved for reference
+
+### Navigation
+
+For comprehensive documentation navigation, see [docs/INDEX.md](../docs/INDEX.md).
 
 ## Project Summary
 

@@ -39,9 +39,9 @@ Complete navigation hub for all WynIsBuff2 documentation.
 |----------|---------|
 | [ARCHITECTURE.md](ARCHITECTURE.md) | Complete system architecture |
 | [report-05122025.md](report-05122025.md) | Architecture assessment report (May 2025) |
-| [AIProjectDocs/ArchitecturalOverview.md](../AIProjectDocs/ArchitecturalOverview.md) | Detailed architectural vision |
-| [AIProjectDocs/ModularArchitecture.md](../AIProjectDocs/ModularArchitecture.md) | Modular design patterns |
-| [AIProjectDocs/GameDesignPrinciples.md](../AIProjectDocs/GameDesignPrinciples.md) | Core game design principles |
+| [architecture/ArchitecturalOverview.md](architecture/ArchitecturalOverview.md) | Detailed architectural vision |
+| [architecture/ModularArchitecture.md](architecture/ModularArchitecture.md) | Modular design patterns |
+| [design/GameDesignPrinciples.md](design/GameDesignPrinciples.md) | Core game design principles |
 
 ### Technical Stack
 
@@ -49,34 +49,34 @@ Complete navigation hub for all WynIsBuff2 documentation.
 
 | Technology | Document | Purpose |
 |------------|----------|---------|
-| **Phaser 3** | [AIProjectDocs/PhaserFramework.md](../AIProjectDocs/PhaserFramework.md) | Phaser 3 integration guide |
-| **Rapier Physics** | [AIProjectDocs/RapierPhysics.md](../AIProjectDocs/RapierPhysics.md) | Physics engine integration |
+| **Phaser 3** | [technology/PhaserFramework.md](technology/PhaserFramework.md) | Phaser 3 integration guide |
+| **Rapier Physics** | [technology/RapierPhysics.md](technology/RapierPhysics.md) | Physics engine integration |
 | **Rapier Physics** | [Rapier.md](../Rapier.md) | Rapier usage reference |
-| **Vite** | [AIProjectDocs/ViteBuildTool.md](../AIProjectDocs/ViteBuildTool.md) | Build system configuration |
+| **Vite** | [technology/ViteBuildTool.md](technology/ViteBuildTool.md) | Build system configuration |
 
 ### Systems & Features
 
 **Individual system and feature documentation**
 
 #### Event System
-- [AIProjectDocs/EventSystem.md](../AIProjectDocs/EventSystem.md) - Event system architecture
-- [AIProjectDocs/EventSystemImplementationSteps.md](../AIProjectDocs/EventSystemImplementationSteps.md) - Implementation guide
+- [systems/EventSystem.md](systems/EventSystem.md) - Event system architecture
+- [systems/EventSystemImplementationSteps.md](systems/EventSystemImplementationSteps.md) - Implementation guide
 
 #### Player & Movement
-- [AIProjectDocs/ModularPlayerController.md](../AIProjectDocs/ModularPlayerController.md) - Player controller design
-- [AIProjectDocs/MovementSystem.md](../AIProjectDocs/MovementSystem.md) - Movement mechanics
-- [AIProjectDocs/TripleJumpRefinementPlan.md](../AIProjectDocs/TripleJumpRefinementPlan.md) - Triple jump design
-- [AIProjectDocs/TripleJumpRefinementImplementation.md](../AIProjectDocs/TripleJumpRefinementImplementation.md) - Triple jump implementation
+- [systems/ModularPlayerController.md](systems/ModularPlayerController.md) - Player controller design
+- [systems/MovementSystem.md](systems/MovementSystem.md) - Movement mechanics
+- [features/TripleJumpRefinementPlan.md](features/TripleJumpRefinementPlan.md) - Triple jump design
+- [features/TripleJumpRefinementImplementation.md](features/TripleJumpRefinementImplementation.md) - Triple jump implementation
 
 #### Level System
-- [AIProjectDocs/LevelImplementationArchitecture.md](../AIProjectDocs/LevelImplementationArchitecture.md) - Level architecture
-- [AIProjectDocs/ModularLevelArchitecture.md](../AIProjectDocs/ModularLevelArchitecture.md) - Modular level design
-- [AIProjectDocs/ModularLevelSystemImplementation.md](../AIProjectDocs/ModularLevelSystemImplementation.md) - Level implementation
+- [features/LevelImplementationArchitecture.md](features/LevelImplementationArchitecture.md) - Level architecture
+- [systems/ModularLevelArchitecture.md](systems/ModularLevelArchitecture.md) - Modular level design
+- [systems/ModularLevelSystemImplementation.md](systems/ModularLevelSystemImplementation.md) - Level implementation
 - [level-progression-plan.md](level-progression-plan.md) - Level progression design
 - [buffed_level_system_workflow.md](buffed_level_system_workflow.md) - Level workflow
 
 #### UI Systems
-- [AIProjectDocs/UIManager.md](../AIProjectDocs/UIManager.md) - UI management system
+- [systems/UIManager.md](systems/UIManager.md) - UI management system
 - [game-settings.md](game-settings.md) - Game settings UI
 - [SUBTITLE_SYSTEM.md](SUBTITLE_SYSTEM.md) - Subtitle/caption system for accessibility
 
@@ -88,9 +88,9 @@ Complete navigation hub for all WynIsBuff2 documentation.
 |----------|---------|
 | [ASSET_MANAGEMENT.md](../ASSET_MANAGEMENT.md) | Asset workflow and manifest system |
 | [assets.md](assets.md) | Asset organization guide |
-| [AIProjectDocs/ArtStyleAndAssetPlan.md](../AIProjectDocs/ArtStyleAndAssetPlan.md) | Art style guide |
-| [AIProjectDocs/AssetManagementStrategy.md](../AIProjectDocs/AssetManagementStrategy.md) | Asset management strategy |
-| [AIProjectDocs/pixelart-style.md](../AIProjectDocs/pixelart-style.md) | Pixel art guidelines |
+| [design/ArtStyleAndAssetPlan.md](design/ArtStyleAndAssetPlan.md) | Art style guide |
+| [design/AssetManagementStrategy.md](design/AssetManagementStrategy.md) | Asset management strategy |
+| [design/pixelart-style.md](design/pixelart-style.md) | Pixel art guidelines |
 
 ### Special Features
 
@@ -99,7 +99,7 @@ Complete navigation hub for all WynIsBuff2 documentation.
 | Feature | Document |
 |---------|----------|
 | Birthday Minigame | [birthday-minigame.md](birthday-minigame.md) |
-| Silly Mechanics | [AIProjectDocs/SillyMechanicsIdeas.md](../AIProjectDocs/SillyMechanicsIdeas.md) |
+| Silly Mechanics | [design/SillyMechanicsIdeas.md](design/SillyMechanicsIdeas.md) |
 
 ### Agent System
 
@@ -179,17 +179,17 @@ Start here if you're coding:
 
 Start here if you're designing features:
 
-1. [AIProjectDocs/GameDesignPrinciples.md](../AIProjectDocs/GameDesignPrinciples.md) - Design principles
-2. [AIProjectDocs/SillyMechanicsIdeas.md](../AIProjectDocs/SillyMechanicsIdeas.md) - Creative ideas
+1. [design/GameDesignPrinciples.md](design/GameDesignPrinciples.md) - Design principles
+2. [design/SillyMechanicsIdeas.md](design/SillyMechanicsIdeas.md) - Creative ideas
 3. [level-progression-plan.md](level-progression-plan.md) - Level design
 
 ### For Artists
 
 Start here if you're creating assets:
 
-1. [AIProjectDocs/ArtStyleAndAssetPlan.md](../AIProjectDocs/ArtStyleAndAssetPlan.md) - Art style guide
+1. [design/ArtStyleAndAssetPlan.md](design/ArtStyleAndAssetPlan.md) - Art style guide
 2. [ASSET_MANAGEMENT.md](../ASSET_MANAGEMENT.md) - Asset workflow
-3. [AIProjectDocs/pixelart-style.md](../AIProjectDocs/pixelart-style.md) - Pixel art guidelines
+3. [design/pixelart-style.md](design/pixelart-style.md) - Pixel art guidelines
 
 ### For AI Assistants
 
@@ -221,9 +221,14 @@ WynIsBuff2/
 ├── docs/                      # Main documentation
 │   ├── INDEX.md              # This file
 │   ├── ARCHITECTURE.md       # System architecture
-│   └── ...                   # Feature-specific docs
-├── AIProjectDocs/            # Legacy/detailed design docs
-│   └── ...                   # Architectural deep dives
+│   ├── architecture/         # Architecture docs
+│   ├── technology/           # Tech stack docs
+│   ├── systems/              # Core systems
+│   ├── features/             # Feature implementations
+│   ├── design/               # Game design & art
+│   └── archive/              # Historical content
+├── AIProjectDocs/            # Index only (content moved to docs/)
+│   └── README.md             # Index with references to new locations
 ├── .claude/                  # Claude Code configuration
 │   ├── agents/               # Agent definitions
 │   └── commands/             # Slash commands
@@ -233,16 +238,23 @@ WynIsBuff2/
 
 ### Consolidation Status
 
-**Current State** (as of Oct 28, 2025):
-- Main docs: `docs/` directory
-- Historical docs: `AIProjectDocs/` (to be consolidated)
+**Current State** (as of Oct 28, 2025 - Session 3 Complete):
+- ✅ Main docs: `docs/` directory with topic-based subdirectories
+- ✅ AIProjectDocs consolidated: 31 files reorganized into docs/
+  - architecture/ (4 files)
+  - technology/ (4 files)
+  - systems/ (7 files)
+  - features/ (5 files)
+  - design/ (6 files)
+  - archive/aiprojectdocs-historical/ (5 files)
 - Meta docs: Root level (process and tooling)
 - Config: `.claude/`, `.codex/`
 
-**Planned Consolidation** (Session 3):
-- Merge AIProjectDocs into docs/architecture/ and docs/features/
-- Archive historical/superseded content
-- Establish clear canonical sources
+**Organization Improvements**:
+- Topic-based directory structure
+- README.md in each category directory
+- All cross-references updated
+- Git history preserved via `git mv`
 
 ---
 
@@ -256,7 +268,7 @@ WynIsBuff2/
 | Understand the architecture | [ARCHITECTURE.md](ARCHITECTURE.md) |
 | Add a new feature | [CONTRIBUTING.md](../CONTRIBUTING.md) + [CLAUDE.md](../CLAUDE.md) |
 | Work with assets | [ASSET_MANAGEMENT.md](../ASSET_MANAGEMENT.md) |
-| Understand physics | [AIProjectDocs/RapierPhysics.md](../AIProjectDocs/RapierPhysics.md) |
+| Understand physics | [technology/RapierPhysics.md](technology/RapierPhysics.md) |
 | Design a level | [level-progression-plan.md](level-progression-plan.md) |
 | Use the agent system | [AGENTS.md](../AGENTS.md) |
 | Check documentation health | [DOC_ANALYSIS_SUMMARY.md](../DOC_ANALYSIS_SUMMARY.md) |
