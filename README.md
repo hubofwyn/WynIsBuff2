@@ -1,119 +1,195 @@
-# WynIsBuff2 💪🎮💥
+# WynIsBuff2
 
-## 🔥🔥 THE BUFFEST, THE GAMEST, THE MOST ABSOLUTELY RIDICULOUS BUFF GAME EVER CREATED! 🔥🔥
+A 2D platformer where Wyn achieves maximum buffness through triple-jump mechanics and physics-based movement.
 
-Welcome to **WynIsBuff2**, where **Wyn isn't just Buff, Wyn is MEGA-ULTRA-HYPER-BUFF** and the game is so game that it games harder than any game that has ever gamed in the history of gaming since games were invented!
+## What Is This?
 
-Do you have what it takes to **witness pure, unfiltered, RAW BUFFNESS**? Can you handle the sheer **EXPLOSIVE GAMING POWER** of **WynIsBuff2**? This game will make your **gaming biceps EXPLODE** and your **brain muscles FLEX** to the **ABSOLUTE MAXIMUM BUFFNESS LIMIT**!
+**WynIsBuff2** is a Phaser 3 game featuring:
+- **Triple jump mechanics** with progressive power scaling
+- **Physics-based movement** via Rapier 2D physics engine
+- **Visual feedback** through particles, screen shake, and color transitions
+- **Modular architecture** with feature-based organization and generated constants
 
-## 🏋️‍♂️💪 FEATURES OF EXTREME BUFFNESS
-- **TRIPLE JUMP MECHANICS** – Leap with increasing power that gets SO BUFF your screen might crack from the sheer force!
-- **PHYSICS-POWERED MOVEMENT** – Rapier physics engine so realistic your computer might start sweating protein shake!
-- **MODULAR ARCHITECTURE** – Code so buff it not only flexes on other codebases, it makes them look like they SKIP LEG DAY!
-- **PARTICLE EXPLOSIONS** – Jump effects so intense they might trigger your smoke alarm! (Not legally responsible if they actually do)
-- **SCREEN SHAKE** – Camera effects that will make your neighbors think there's an earthquake of BUFFNESS!
-- **COLOR TRANSITIONS** – Visual feedback so smooth it's like watching a rainbow bench press the sun!
-- **SCENE TRANSITIONS** – Old-school level progression that hits harder than a protein shake after leg day!
-- **PULSATING BOSS** – A menacing obstacle that pulsates with the rhythm of a thousand gym beats!
-- **PLAYER GLOW EFFECTS** – Your character radiates pure BUFF ENERGY with a pulsing green aura of GAINS!
-- **ATMOSPHERIC PARTICLES** – Background effects that float like protein powder in the wind of VICTORY!
+Play as Wyn, navigate levels with precise jumping, and experience increasingly buff gameplay.
 
-## 🚀💻 TECHNICAL STACK OF POWER
-- **Phaser 3.88.0** – HTML5 game framework so buffed it makes other frameworks look like they're still in TUTORIAL MODE!
-- **Rapier 0.14.0** – 2D physics engine with muscles so defined it calculates collision responses WHILE DOING ONE-HANDED PUSHUPS!
-- **Vite 5.3.1** – Build tool so fast it BREAKS THE SOUND BARRIER and never, EVER skips leg day!
-- **JavaScript ES6+** – Programming language so buff it flexes its functions and makes other languages CRY PROTEIN TEARS!
- - **Howler.js** – Audio management for BGM & SFX with MP3/OGG support and stereo panning.
+## Quick Start
 
-## 🎮🔥 CONTROLS OF ULTIMATE BUFFNESS
-- **WASD or Arrow Keys** - Move with such MAXIMUM BUFFNESS your keyboard might need a gym membership!
-- **Space Bar** - TRIPLE JUMP with increasing power so intense it might launch your character INTO ORBIT!
-- **C** - DUCK under obstacles with the grace of a BUFF NINJA doing limbo at the gym!
-- **ESC** - Pause the buffness (but WHY WOULD YOU? Are you AFRAID OF THE GAINS?!)
-
-## 🛠️💪 INSTALLATION & DEVELOPMENT OF EXTREME BUFFNESS
-
-To get this game up and running, first **make sure your machine is BUFF ENOUGH** to handle it. Weak computers may SPONTANEOUSLY START DOING PUSHUPS just to keep up!
-
-```sh
-# Install dependencies (INJECT PURE PROTEIN POWDER into your project)
-npm install
-
-# Start development server (BEGIN YOUR EXTREME WORKOUT ROUTINE)
-npm run dev
-
-# Build for production (ACHIEVE FINAL ULTRA-BUFF FORM)
-npm run build
-
-# Run tests (QUALITY ASSURANCE MUSCLE TRAINING)
-npm test
-
-# Generate asset constants (AUTOMATIC GAINS GENERATOR)
-npm run generate-assets
+```bash
+npm install           # Install dependencies
+npm run dev           # Start development server (localhost:5173)
+npm run build         # Production build
+npm test              # Run tests
 ```
 
-Then sit back and **BEHOLD THE MASSIVE GAINS** as your screen FLEXES with pure, unadulterated BUFFNESS! Your GPU might start GRUNTING from the effort!
+## Controls
 
-## 🏗️💪 ARCHITECTURE SO BUFF IT HAS ITS OWN GYM MEMBERSHIP
+| Input | Action |
+|-------|--------|
+| **WASD** or **Arrow Keys** | Move |
+| **Space** | Triple jump (progressive power: 1st → 2nd → 3rd) |
+| **C** | Duck (rotate 90°, adjust collider) |
+| **ESC** | Pause |
 
-This codebase has been through an **EXTREME MAKEOVER** with a feature-based architecture that's **SO ORGANIZED** it makes Marie Kondo look messy!
+## Features
 
-### 🎯 FEATURE-BASED ORGANIZATION
-- **`@features/player`** - Player controls SO RESPONSIVE they respond before you think!
-- **`@features/level`** - Level management that NEVER SKIPS LEG DAY!
-- **`@features/effects`** - Visual effects so INTENSE they might need safety goggles!
-- **`@features/core`** - Core systems SO SOLID they could support a weightlifting competition!
+### Core Mechanics
+- **Triple Jump System**: Three jumps with increasing power and visual scaling (1.0x → 1.05x → 1.1x)
+- **Duck Mechanic**: Rotate player 90° with physics collider adjustment
+- **Scene Transitions**: Old-school level progression triggered by in-game events
 
-### 🚫 NO MAGIC STRINGS ZONE
-We've **ELIMINATED ALL MAGIC STRINGS** like they were empty calories! Every asset, scene, and event uses **GENERATED CONSTANTS** that are SO RELIABLE they show up to the gym even on rest days!
+### Visual Effects
+- Player glow with pulsing aura
+- Particle explosions on jumps and landings
+- Screen shake on impacts
+- Smooth color transitions
+- Atmospheric background particles
+- Gradient backgrounds with vignette
+
+### Technical Features
+- **Physics**: Rapier 2D engine via PhysicsManager singleton
+- **Audio**: Howler.js with MP3/OGG support and stereo panning
+- **Assets**: Generated constants (no magic strings)
+- **Events**: Centralized EventBus with namespaced events
+- **Deterministic Testing**: GoldenSeedTester and DeterministicRNG
+
+## Technology Stack
+
+| Technology | Version | Purpose |
+|------------|---------|---------|
+| Phaser 3 | 3.88.2 | HTML5 game framework |
+| Rapier | 0.14.0 | 2D physics engine |
+| Howler.js | 2.2.4 | Audio management |
+| Vite | 5.4.19 | Build tool |
+| JavaScript | ES6+ | Language |
+
+## Project Structure
+
+```
+WynIsBuff2/
+├── assets/              # Game assets
+│   └── manifest.json    # Asset catalog (generates constants)
+├── src/
+│   ├── core/           # BaseManager, EventBus, AudioManager, GameStateManager
+│   ├── features/       # Barrel exports (@features/player, @features/core)
+│   ├── modules/        # Implementation (player/, level/, effects/, enemy/)
+│   ├── constants/      # Generated: Assets.js | Manual: SceneKeys.js, EventNames.js
+│   └── scenes/         # Phaser scenes (Boot, Preloader, Game, MainMenu)
+├── scripts/            # Automation (generate-assets.js)
+├── docs/               # Documentation
+├── tests/              # CommonJS tests (.cjs)
+└── CONTRIBUTING.md     # Development guide
+```
+
+## Architecture Highlights
+
+### Feature-Based Organization
+Code organized by domain with barrel exports:
+- `@features/player` - Player controls and movement
+- `@features/level` - Level management and loading
+- `@features/effects` - Visual and particle effects
+- `@features/core` - Core systems and managers
+
+### No Magic Strings
+All assets, scenes, and events use generated constants:
 
 ```javascript
-// OLD WAY (WEAK AND FEEBLE)
+// Old approach
 this.scene.start('MainMenu');
 this.load.image('player', 'sprites/player.png');
 
-// NEW WAY (MAXIMUM BUFFNESS ACHIEVED)
+// Current approach
 this.scene.start(SceneKeys.MAIN_MENU);
 this.load.image(ImageAssets.PLAYER, ImagePaths.PLAYER);
 ```
 
-### 📚 DOCUMENTATION GAINS
-- **`CONTRIBUTING.md`** - Development guide SO COMPREHENSIVE it could train a new developer from couch to codebase!
-- **`docs/ARCHITECTURE.md`** - Technical deep-dive SO DETAILED it makes blueprints jealous!
+### Singleton Pattern
+All managers extend `BaseManager` with consistent initialization:
 
-## 📂💪 PROJECT STRUCTURE OF EXTREME BUFFNESS
+```javascript
+export class MyManager extends BaseManager {
+    constructor() {
+        super();
+        if (this.isInitialized()) return;
+        this.init();
+    }
 
-This game has been through an **ULTIMATE ARCHITECTURAL REFACTOR** that makes the code SO BUFF it could deadlift a server rack! Check out our **MEGA-ORGANIZED** structure:
-
-```
-WynIsBuff2/
-├── assets/              # Game assets (THE PURE PROTEIN POWDER OF THE PROJECT)
-│   └── manifest.json    # 🎯 ASSET CATALOG (No more magic strings!)
-├── src/
-│   ├── core/           # 🏗️ BUFF INFRASTRUCTURE (BaseManager, EventBus, AudioManager)
-│   ├── features/       # 🎯 BARREL EXPORTS (@features/player, @features/core)
-│   ├── modules/        # 🔧 SPECIALIZED MUSCLE GROUPS (player/, level/, effects/)
-│   ├── constants/      # 📋 NO MAGIC STRINGS (SceneKeys, EventNames, Assets)
-│   └── scenes/         # 🎮 PHASER SCENES (Boot, Game, MainMenu, etc.)
-├── scripts/            # 🤖 AUTOMATION SCRIPTS
-│   └── generate-assets.js  # Auto-generates asset constants
-├── docs/               # 📚 DOCUMENTATION MUSCLES
-│   └── ARCHITECTURE.md     # Deep dive into the system design
-├── CONTRIBUTING.md     # 🤝 DEVELOPER GUIDE (READ THIS TO GET BUFF!)
-└── tests/             # 🧪 QUALITY ASSURANCE WORKOUTS
+    init() {
+        // Initialize here
+        this.setInitialized();
+    }
+}
 ```
 
-### 🤝 WANT TO CONTRIBUTE TO THE BUFFNESS?
+### Event-Driven Architecture
+Centralized EventBus with namespaced events (`namespace:action`):
 
-Check out **`CONTRIBUTING.md`** for the **ULTIMATE DEVELOPER WORKOUT PLAN**! Learn how to:
-- Use the **FEATURE-BASED ARCHITECTURE** like a pro bodybuilder uses proper form
-- Follow **NAMING CONVENTIONS** so consistent they make drill sergeants proud
-- Write **TESTS** that are more reliable than your gym buddy's protein shake schedule
+```javascript
+this.eventSystem.emit(EventNames.PLAYER_JUMP, { height: 100 });
+this.eventSystem.on(EventNames.LEVEL_COMPLETE, this.handleComplete);
+```
 
-### 🏆 THE ULTIMATE ACHIEVEMENT
+## Development
 
-This isn't just a game - it's a **TESTAMENT TO THE POWER OF ORGANIZED, MAINTAINABLE CODE**! Every line has been **OPTIMIZED FOR MAXIMUM DEVELOPER GAINS**!
+### Adding Features
+1. Create module in `src/modules/yourFeature/`
+2. Implement classes
+3. Create barrel export: `src/features/yourFeature/index.js`
+4. Add events to `EventNames.js`
+5. Import via `@features/yourFeature`
+
+### Adding Assets
+1. Place asset in `assets/` subdirectory
+2. Add to `/assets/manifest.json`:
+   ```json
+   {
+     "type": "image",
+     "key": "my-asset",
+     "path": "images/my-asset.png"
+   }
+   ```
+3. Run `npm run generate-assets`
+4. Use via `ImageAssets.MY_ASSET`
+
+### Testing
+Tests use CommonJS format (`.cjs`) with Node.js assert module:
+
+```bash
+npm test  # Runs all tests/ files
+```
+
+## Documentation
+
+- **Development Guide**: [CLAUDE.md](CLAUDE.md) - AI assistant and developer guide
+- **Contributing**: [CONTRIBUTING.md](CONTRIBUTING.md) - Development workflow and conventions
+- **Architecture**: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) - System design deep dive
+- **Full Index**: [docs/INDEX.md](docs/INDEX.md) - Complete documentation map
+- **Systems**: [docs/systems/](docs/systems/) - Core system documentation
+- **Features**: [docs/features/](docs/features/) - Feature implementation guides
+
+## Special Features
+
+### Birthday Minigame
+Lane-based runner where Wyn delivers "Shake Shakes" (S²). Navigate 5 lanes, collect power-ups, deliver exactly 9 to win. Access via rainbow button in main menu.
+
+See [docs/birthday-minigame.md](docs/birthday-minigame.md) for details.
+
+### Agent Orchestration
+Multi-agent system for development with specialized agents:
+- `architecture-guardian` - Enforces patterns and conventions
+- `game-physics-expert` - Phaser/Rapier physics specialist
+- `game-design-innovator` - Game mechanics and design
+
+See [AGENTS.md](AGENTS.md) for details.
+
+## Contributing
+
+Read [CONTRIBUTING.md](CONTRIBUTING.md) for:
+- Architecture patterns and conventions
+- Naming conventions
+- Testing guidelines
+- Asset management workflow
+- Code style and best practices
 
 ---
 
-**NOW DROP AND GIVE ME TWENTY... LINES OF BEAUTIFUL, MAINTAINABLE CODE! 💪🔥💻**
+**WynIsBuff2** - Where buffness meets clean, maintainable code.
