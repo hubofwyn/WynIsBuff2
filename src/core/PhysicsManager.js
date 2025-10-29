@@ -47,11 +47,15 @@ export class PhysicsManager extends BaseManager {
             console.log('[PhysicsManager] Initializing Rapier...');
             await RAPIER.init();
             console.log('[PhysicsManager] Rapier initialized successfully');
-            
+
             // Create physics world with gravity
             this.world = new RAPIER.World(new RAPIER.Vector2(gravityX, gravityY));
             console.log('[PhysicsManager] Rapier world created with gravity:', gravityX, gravityY);
-            
+
+            // Create event queue for collision events (required in Rapier 0.19+)
+            this.eventQueue = new RAPIER.EventQueue(true);
+            console.log('[PhysicsManager] Event queue created');
+
             // Set up collision event handling
             this.setupCollisionEvents();
             
@@ -217,22 +221,47 @@ export class PhysicsManager extends BaseManager {
             
             // Track physics timing
             const startTime = performance.now();
-            
+
             // Configure integration parameters for improved stability
-            const integrationParameters = new RAPIER.IntegrationParameters();
-            integrationParameters.dt = fixedTimeStep;
-            integrationParameters.max_velocity_iterations = PhysicsConfig.maxVelIterations;
-            integrationParameters.max_position_iterations = PhysicsConfig.maxPosIterations;
-            integrationParameters.erp = PhysicsConfig.erp; // Error reduction parameter
-            
-            // Step physics with proper integration parameters
+            this.world.integrationParameters.dt = fixedTimeStep;
+            this.world.integrationParameters.numSolverIterations = PhysicsConfig.maxVelIterations;
+            this.world.integrationParameters.numAdditionalFrictionIterations = PhysicsConfig.maxPosIterations;
+            this.world.integrationParameters.erp = PhysicsConfig.erp; // Error reduction parameter
+
+            // Step physics with event queue (Rapier 0.19+ API)
             while (this.accumulator >= fixedTimeStep && steps < maxStepsPerFrame) {
-                // Use enhanced step with integration parameters
-                this.world.step(integrationParameters);
+                // Pass eventQueue to step for collision event collection
+                this.world.step(this.eventQueue);
                 this.accumulator -= fixedTimeStep;
                 steps++;
             }
-            
+
+            // Process collision events from the event queue
+            this.eventQueue.drainCollisionEvents((handle1, handle2, started) => {
+                if (started) {
+                    // Collision started - emit event if eventSystem is available
+                    if (this.eventSystem) {
+                        const bodyA = this.world.getRigidBody(handle1);
+                        const bodyB = this.world.getRigidBody(handle2);
+
+                        if (bodyA && bodyB) {
+                            const positionA = bodyA.translation();
+                            const positionB = bodyB.translation();
+
+                            this.eventSystem.emit(EventNames.COLLISION_START, {
+                                bodyHandleA: handle1,
+                                bodyHandleB: handle2,
+                                positionA: { x: positionA.x, y: positionA.y },
+                                positionB: { x: positionB.x, y: positionB.y }
+                            });
+                        }
+                    }
+
+                    // Call registered collision handlers
+                    this.handleCollision(handle1, handle2);
+                }
+            });
+
             // Record physics metrics
             const physicsTime = performance.now() - startTime;
             
