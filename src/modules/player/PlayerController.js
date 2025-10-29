@@ -204,9 +204,14 @@ export class PlayerController {
             if (this.inputManager && this.inputManager.getSnapshot) {
                 // Modern: Get clean snapshot
                 inputState = this.inputManager.getSnapshot();
+
+                // Debug: Log input state occasionally
+                if (Math.random() < 0.01) {
+                    console.log('[PlayerController] InputState:', inputState);
+                }
             } else {
                 // Fallback: Create snapshot from direct key polling
-                console.warn('[PlayerController] Using fallback input polling');
+                console.warn('[PlayerController] Using fallback input polling, inputManager:', !!this.inputManager, 'getSnapshot:', !!this.inputManager?.getSnapshot);
                 inputState = this.createFallbackInputState();
             }
 
@@ -252,7 +257,22 @@ export class PlayerController {
 
         } catch (error) {
             this.errorCount = (this.errorCount || 0) + 1;
-            console.error(`[PlayerController] Error (${this.errorCount}/5):`, error);
+            console.error(`[PlayerController] ═══════════════════════════════════════════`);
+            console.error(`[PlayerController] ERROR ${this.errorCount}/5 in update loop`);
+            console.error(`[PlayerController] Error Type: ${error.name}`);
+            console.error(`[PlayerController] Error Message: ${error.message}`);
+            console.error(`[PlayerController] Stack Trace:`);
+            console.error(error.stack);
+            console.error(`[PlayerController] State at error:`);
+            console.error(`  - body: ${!!this.body}`);
+            console.error(`  - characterController: ${!!this.characterController}`);
+            console.error(`  - collider: ${!!this.collider}`);
+            console.error(`  - sprite: ${!!this.sprite}`);
+            console.error(`  - inputManager: ${!!this.inputManager}`);
+            console.error(`  - velocity: (${this.velocity?.x || 'N/A'}, ${this.velocity?.y || 'N/A'})`);
+            console.error(`  - isGrounded: ${this.isGrounded}`);
+            console.error(`  - deltaTime: ${arguments[0]}`);
+            console.error(`[PlayerController] ═══════════════════════════════════════════`);
 
             // Emergency fallback
             try {
@@ -260,7 +280,9 @@ export class PlayerController {
                     this.updateSpritePosition();
                 }
             } catch (fallbackError) {
-                console.error('[PlayerController] Fallback failed:', fallbackError);
+                console.error('[PlayerController] Fallback sprite sync failed:');
+                console.error(`  Error: ${fallbackError.message}`);
+                console.error(`  Stack: ${fallbackError.stack}`);
             }
         }
     }

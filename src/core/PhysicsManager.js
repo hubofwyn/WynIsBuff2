@@ -263,15 +263,28 @@ export class PhysicsManager extends BaseManager {
             
         } catch (error) {
             this.errorCount = (this.errorCount || 0) + 1;
-            console.error(`[PhysicsManager] Error in update (${this.errorCount}/10):`, error);
-            
+            console.error(`[PhysicsManager] ═══════════════════════════════════════════`);
+            console.error(`[PhysicsManager] ERROR ${this.errorCount}/10 in update loop`);
+            console.error(`[PhysicsManager] Error Type: ${error.name}`);
+            console.error(`[PhysicsManager] Error Message: ${error.message}`);
+            console.error(`[PhysicsManager] Stack Trace:`);
+            console.error(error.stack);
+            console.error(`[PhysicsManager] State at error:`);
+            console.error(`  - world: ${!!this.world}`);
+            console.error(`  - accumulator: ${this.accumulator}`);
+            console.error(`  - bodyToSprite.size: ${this.bodyToSprite?.size || 'N/A'}`);
+            console.error(`  - delta: ${arguments[0]}`);
+            console.error(`[PhysicsManager] ═══════════════════════════════════════════`);
+
             // TRIAGE FIX: Emergency fallback - try to at least update sprites
             try {
                 if (this.bodyToSprite && this.bodyToSprite.size > 0) {
                     this.updateGameObjects(0); // No interpolation in emergency mode
                 }
             } catch (fallbackError) {
-                console.error('[PhysicsManager] Fallback update also failed:', fallbackError);
+                console.error('[PhysicsManager] Fallback update also failed:');
+                console.error(`  Error: ${fallbackError.message}`);
+                console.error(`  Stack: ${fallbackError.stack}`);
             }
         }
     }
