@@ -227,6 +227,11 @@
         "path": "images/backgrounds/parallax-foreground.png",
         "description": "Parallax background layer - foreground"
       },
+      "scene1Background": {
+        "type": "image",
+        "path": "images/backgrounds/scene1.png",
+        "description": "Background image for first level (scene 1)"
+      },
       "particleFlare": {
         "type": "image",
         "path": "images/particles/flares.png",

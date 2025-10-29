@@ -5,7 +5,7 @@ import { PhysicsManager, EventSystem, InputManager, UIManager, GameStateManager,
 import { LevelManager } from '@features/level';
 import { EventNames } from '../constants/EventNames';
 import { SceneKeys } from '../constants/SceneKeys.js';
-import { AudioAssets } from '../constants/Assets.js';
+import { AudioAssets, ImageAssets } from '../constants/Assets.js';
 import { PhysicsConfig } from '../constants/PhysicsConfig.js';
 
 export class Game extends Scene {
@@ -173,13 +173,25 @@ export class Game extends Scene {
      * Create visual enhancements for better game feel
      */
     createVisualEnhancements() {
+        // Add background image for first level
+        if (this.currentLevelId === 'level1') {
+            const bg = this.add.image(512, 384, ImageAssets.SCENE1_BACKGROUND);
+            bg.setDepth(-100); // Behind everything
+
+            // Scale to cover the scene if needed
+            const scaleX = 1024 / bg.width;
+            const scaleY = 768 / bg.height;
+            const scale = Math.max(scaleX, scaleY);
+            bg.setScale(scale);
+        }
+
         // Add gradient background overlay
         const graphics = this.add.graphics();
-        
+
         // Create a subtle gradient from top to bottom
         const colors = [0x1a1a2e, 0x16213e, 0x0f3460];
         const alphas = [0.3, 0.2, 0.1];
-        
+
         for (let i = 0; i < 3; i++) {
             graphics.fillStyle(colors[i], alphas[i]);
             graphics.fillRect(0, i * 250, 1024, 250);

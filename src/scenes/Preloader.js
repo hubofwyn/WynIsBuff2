@@ -232,6 +232,10 @@ export class Preloader extends Scene
         this.load.image(ImageAssets.PARALLAX_SKY, ImagePaths.PARALLAX_SKY);
         this.load.image(ImageAssets.PARALLAX_MOUNTAINS, ImagePaths.PARALLAX_MOUNTAINS);
         this.load.image(ImageAssets.PARALLAX_FOREGROUND, ImagePaths.PARALLAX_FOREGROUND);
+
+        // Load level backgrounds
+        this.load.image(ImageAssets.SCENE1_BACKGROUND, ImagePaths.SCENE1_BACKGROUND);
+
         // Load audio assets (MP3 only; OGG fallback later)
         this.load.audio(AudioAssets.PROTEIN_PIXEL_ANTHEM, [AudioPaths.PROTEIN_PIXEL_ANTHEM]);
         this.load.audio(AudioAssets.HYPER_BUFF_BLITZ, [AudioPaths.HYPER_BUFF_BLITZ]);
