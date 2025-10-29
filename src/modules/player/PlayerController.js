@@ -220,7 +220,6 @@ export class PlayerController {
             // ═══════════════════════════════════════════════════════════
 
             this.updateTimers(dt);
-            this.updateGroundState();
 
             // Calculate movement from clean input data
             const desiredMovement = this.calculateMovementFromInput(inputState, dt);
@@ -235,18 +234,19 @@ export class PlayerController {
             this.characterController.computeColliderMovement(this.collider, desiredMovement);
             const correctedMovement = this.characterController.computedMovement();
 
-            // Debug: Log ground detection and characterController properties
+            // Update ground state AFTER physics (needs corrected movement for comparison)
+            this.updateGroundState(desiredMovement, correctedMovement);
+
+            // Debug: Log ground detection
             if (Math.random() < 0.01) {
-                console.log('[PlayerController] CharacterController properties:',
-                    Object.getOwnPropertyNames(this.characterController)
-                );
                 console.log('[PlayerController] Ground Detection:', {
-                    numGroundedColliders: this.characterController.numGroundedColliders,
                     isGrounded: this.isGrounded,
-                    coyoteTimer: this.coyoteTimer,
-                    jumpBufferTimer: this.jumpBufferTimer,
+                    isFalling: this.velocity.y > 0,
+                    desiredY: desiredMovement.y,
+                    correctedY: correctedMovement.y,
                     velocityY: this.velocity.y,
-                    correctedY: correctedMovement.y
+                    coyoteTimer: this.coyoteTimer,
+                    jumpBufferTimer: this.jumpBufferTimer
                 });
             }
 
@@ -346,12 +346,26 @@ export class PlayerController {
     
     /**
      * Update ground state using character controller
-     * Rapier 0.19+ API: use numGroundedColliders property (not method)
+     * Rapier 0.19+ API: Ground detection via movement comparison
+     *
+     * Since numGroundedColliders doesn't exist in Rapier 0.19+, we detect ground by:
+     * - Checking if we have near-zero vertical velocity (landed)
+     * - Or if downward movement was blocked (corrected < desired)
      */
-    updateGroundState() {
+    updateGroundState(desiredMovement, correctedMovement) {
         const wasGrounded = this.isGrounded;
-        // Rapier 0.19+ API: numGroundedColliders is a property (not a method!)
-        this.isGrounded = this.characterController.numGroundedColliders > 0;
+
+        // Rapier 0.19+ ground detection heuristics:
+        // 1. If falling and vertical movement was blocked/reduced, we hit ground
+        // 2. If velocity.y is near zero and we're not jumping, we're grounded
+        const GROUND_THRESHOLD = 0.01; // Small epsilon for floating point comparison
+
+        const isFalling = this.velocity.y > 0; // Positive Y = down in our physics
+        const verticalBlocked = isFalling &&
+                               Math.abs(correctedMovement.y) < Math.abs(desiredMovement.y) - GROUND_THRESHOLD;
+        const atRest = Math.abs(this.velocity.y) < GROUND_THRESHOLD;
+
+        this.isGrounded = verticalBlocked || atRest;
 
         // Handle coyote time - grace period after leaving ground
         if (wasGrounded && !this.isGrounded) {
