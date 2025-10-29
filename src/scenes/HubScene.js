@@ -4,6 +4,7 @@ import { EventNames } from '../constants/EventNames.js';
 import { GameStateManager, EventBus, EconomyManager } from '@features/core';
 import { BossRewardSystem } from '@features/boss';
 import { EnhancedCloneManager } from '@features/idle';
+import { LOG } from '../observability/core/LogSystem.js';
 
 /**
  * HubScene - Central hub for the idle/automation game
@@ -35,8 +36,12 @@ export class HubScene extends Scene {
     }
 
     create() {
-        console.log('[HubScene] Creating hub scene');
-        
+        LOG.dev('HUBSCENE_CREATED', {
+            subsystem: 'scene',
+            scene: SceneKeys.HUB,
+            message: 'Hub scene created - central hub for idle/automation game'
+        });
+
         // Emit hub entered event via EventBus
         this.eventBus.emit(EventNames.HUB_ENTERED);
         
@@ -388,7 +393,11 @@ export class HubScene extends Scene {
     }
 
     autoSave() {
-        console.log('[HubScene] Auto-saving...');
+        LOG.dev('HUBSCENE_AUTOSAVE', {
+            subsystem: 'scene',
+            scene: SceneKeys.HUB,
+            message: 'Performing auto-save of idle game state'
+        });
         // Will be implemented when managers are ready
         // this.gameStateManager.saveFullIdleState(this.getCurrentState());
     }

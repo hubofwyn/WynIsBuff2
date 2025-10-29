@@ -1,4 +1,5 @@
 import { EventNames } from '../../constants/EventNames';
+import { LOG } from '../../observability/core/LogSystem.js';
 
 /**
  * CollisionController class handles all collision-related functionality for the player
@@ -28,8 +29,12 @@ export class CollisionController {
             groundY: 700,        // Y position of the ground
             groundHeight: 50     // Height of the ground
         };
-        
-        console.log('[CollisionController] Initialized');
+
+        LOG.dev('COLLISIONCONTROLLER_INITIALIZED', {
+            subsystem: 'player',
+            message: 'CollisionController initialized',
+            params: this.collisionParams
+        });
     }
     
     /**
@@ -79,7 +84,12 @@ export class CollisionController {
             // Store previous ground state
             this._lastOnGround = this.isOnGround;
         } catch (error) {
-            console.error('[CollisionController] Error in processCollisions:', error);
+            LOG.error('COLLISIONCONTROLLER_PROCESS_COLLISIONS_ERROR', {
+                subsystem: 'player',
+                error,
+                message: 'Error during collision processing',
+                hint: 'Check player body state and platform array integrity'
+            });
         }
     }
     
