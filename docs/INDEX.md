@@ -84,8 +84,16 @@ Complete navigation hub for all WynIsBuff2 documentation.
 - [SUBTITLE_SYSTEM.md](SUBTITLE_SYSTEM.md) - Subtitle/caption system for accessibility
 
 #### Debugging & Diagnostics
+
+**🔵 ACTIVE: Observability System Integration in Progress**
+- [OBSERVABILITY_IMPLEMENTATION.md](../OBSERVABILITY_IMPLEMENTATION.md) - **Master implementation plan** for observability integration
+- [STATUS_OBSERVABILITY.json](../STATUS_OBSERVABILITY.json) - Real-time status tracking for implementation
+- [OBSERVABILITY_WORKFLOW.md](../OBSERVABILITY_WORKFLOW.md) - Agent workflow guide for implementation
+
+**Core Systems**
+- [architecture/Observability.md](architecture/Observability.md) - Agent-ready logging system architecture (reference)
+- [systems/ERROR_HANDLING_LOGGING.md](systems/ERROR_HANDLING_LOGGING.md) - Current error handling and logging (being integrated)
 - [systems/INPUT_MOVEMENT_AUDIT.md](systems/INPUT_MOVEMENT_AUDIT.md) - Input and movement system technical audit
-- [systems/ERROR_HANDLING_LOGGING.md](systems/ERROR_HANDLING_LOGGING.md) - Error handling and logging architecture (LIVING DOCUMENT)
 
 ### Assets & Art
 
@@ -278,6 +286,8 @@ WynIsBuff2/
 | Understand physics | [technology/RapierPhysics.md](technology/RapierPhysics.md) |
 | Design a level | [level-progression-plan.md](level-progression-plan.md) |
 | Debug "too many errors" | [systems/ERROR_HANDLING_LOGGING.md](systems/ERROR_HANDLING_LOGGING.md) |
+| Implement observability | [OBSERVABILITY_IMPLEMENTATION.md](../OBSERVABILITY_IMPLEMENTATION.md) |
+| Check observability status | [STATUS_OBSERVABILITY.json](../STATUS_OBSERVABILITY.json) |
 | Use the agent system | [AGENTS.md](../AGENTS.md) |
 | Check documentation health | [DOC_ANALYSIS_SUMMARY.md](../DOC_ANALYSIS_SUMMARY.md) |
 

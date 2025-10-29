@@ -47,10 +47,22 @@ class DocInsights:
     consolidation_candidates: List[Tuple[str, str, float]] = field(default_factory=list)
 
 class DocAnalyzer:
-    def __init__(self, db_path: str, knowledge_graph_path: str = None):
+    def __init__(self, db_path: str, knowledge_graph_path: str = None, ignored_prefixes: Tuple[str, ...] = None):
         self.conn = sqlite3.connect(db_path)
         self.conn.row_factory = sqlite3.Row
         self.kg = None
+        # Paths that should not count against health (archived/meta/generated)
+        self.ignored_prefixes = (
+            'docs/archive/',
+            '.claude/',
+            '.codex/',
+            'doc-analysis/',
+            'doc-analysis-docs/',
+            'doc-analysis-slim/',
+        )
+        if ignored_prefixes:
+            # Merge user-specified ignores
+            self.ignored_prefixes = tuple(set(self.ignored_prefixes) | set(ignored_prefixes))
 
         if knowledge_graph_path and Path(knowledge_graph_path).exists():
             with open(knowledge_graph_path, 'r', encoding='utf-8') as f:
@@ -114,7 +126,9 @@ class DocAnalyzer:
             )
             ORDER BY relative_path
         """
-        return [row['relative_path'] for row in self.conn.execute(query)]
+        orphans = [row['relative_path'] for row in self.conn.execute(query)]
+        # Filter ignored prefixes
+        return [f for f in orphans if not f.startswith(self.ignored_prefixes)]
 
     def _find_large_files(self, threshold: int = 1000) -> List[Tuple[str, int]]:
         """Find files with unusually high token counts"""
@@ -138,21 +152,80 @@ class DocAnalyzer:
             ORDER BY token_count ASC
             LIMIT 30
         """
-        return [(row['relative_path'], row['token_count'])
-                for row in self.conn.execute(query, (threshold,))]
+        stubs = [(row['relative_path'], row['token_count'])
+                 for row in self.conn.execute(query, (threshold,))]
+        # Filter ignored prefixes
+        stubs = [(f, t) for (f, t) in stubs if not f.startswith(self.ignored_prefixes)]
+        return stubs
 
     def _find_broken_references(self) -> List[Tuple[str, str]]:
-        """Find references to non-existent files"""
-        query = """
-            SELECT DISTINCT r.source, r.target
-            FROM relationships r
-            WHERE r.target NOT IN (
-                SELECT relative_path FROM documents
-            )
-            ORDER BY r.source, r.target
+        """Find references to non-existent files with smart normalization
+
+        Rules:
+        - Skip http(s) links
+        - Treat anchors (#section) as in-document references (ignored)
+        - Normalize relative paths against source's directory
+        - Resolve directory targets to README.md when present
+        - Compare against canonical document paths from `documents`
         """
-        return [(row['source'], row['target'])
-                for row in self.conn.execute(query)]
+        import posixpath
+
+        # Load document set
+        doc_set = {row['relative_path'] for row in self.conn.execute(
+            "SELECT relative_path FROM documents"
+        )}
+
+        broken: List[Tuple[str, str]] = []
+
+        for row in self.conn.execute("SELECT source, target FROM relationships"):
+            src = row['source']
+            tgt = row['target']
+
+            # Skip external URLs and mailto links
+            if tgt.startswith('http://') or tgt.startswith('https://') or tgt.startswith('mailto:'):
+                continue
+
+            # Strip anchor fragment
+            path_part = tgt.split('#', 1)[0]
+            if not path_part:
+                # Anchor-only reference
+                continue
+
+            base_dir = posixpath.dirname(src)
+            direct = posixpath.normpath(path_part)
+            relative = posixpath.normpath(posixpath.join(base_dir, path_part))
+
+            # If directory reference, try README.md within
+            # Directory targets → try README.md resolution for both candidates
+            if '.' not in posixpath.basename(direct):
+                candidate = posixpath.join(direct, 'README.md')
+                if candidate in doc_set:
+                    continue  # resolved to directory README
+            if '.' not in posixpath.basename(relative):
+                candidate = posixpath.join(relative, 'README.md')
+                if candidate in doc_set:
+                    continue
+                # Directory targets are treated as navigation hubs; ignore
+                continue
+
+            # If normalized exists in docs, it's valid
+            if direct in doc_set or relative in doc_set:
+                continue
+
+            # If file exists on disk (e.g., images), consider valid
+            try:
+                from pathlib import Path
+                if Path(direct).exists() or Path(relative).exists():
+                    continue
+            except Exception:
+                pass
+
+            # Otherwise, treat as broken (report original target for clarity)
+            broken.append((src, tgt))
+
+        # Sort for stable output
+        broken.sort(key=lambda x: (x[0], x[1]))
+        return broken
 
     def _token_distribution(self) -> Dict[str, int]:
         """Get distribution of token types"""
@@ -461,6 +534,7 @@ def main():
     parser.add_argument('--format', choices=['text', 'json'], default='text',
                        help='Output format')
     parser.add_argument('--export', help='Export report to file')
+    parser.add_argument('--ignore-prefix', action='append', default=[], help='Prefix to ignore for orphan/stub counts (can be repeated)')
 
     args = parser.parse_args()
 
@@ -468,7 +542,7 @@ def main():
         print(f"Error: Database not found: {args.db}", file=sys.stderr)
         return 1
 
-    with DocAnalyzer(args.db, args.kg) as analyzer:
+    with DocAnalyzer(args.db, args.kg, tuple(args.ignore_prefix)) as analyzer:
         insights = analyzer.generate_insights()
 
         if args.export:

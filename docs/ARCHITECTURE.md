@@ -4,6 +4,14 @@
 
 WynIsBuff2 implements a **feature-based architecture** with **barrel exports** to provide clean separation of concerns while maintaining backwards compatibility during refactoring.
 
+### Scope
+
+This document explains system architecture, design goals, event flows, and core managers. It does not replace onboarding or contribution workflow docs.
+
+- Read this to understand how systems fit together
+- For contribution workflow, see CONTRIBUTING.md
+- For asset generation/validation, see ASSET_MANAGEMENT.md
+
 ### Design Goals
 
 1. **Maintainability** - Clear separation between features and core systems

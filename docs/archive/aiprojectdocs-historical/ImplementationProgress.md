@@ -110,3 +110,4 @@ The implementation follows the architectural principles outlined in the [Archite
 | 3.2 Testing and Optimization | ⏳ Pending | 1 day | - | - |
 
 The MVP implementation is progressing ahead of schedule, with all planned gameplay features now complete. The focus will now shift to adding audio and visual polish to enhance the player experience.
+> Archived Notice: Historical progress log preserved for reference. Superseded by SESSION_* docs and docs/INDEX.md. For current roadmap, see IMPLEMENTATION_PLAN_V2.md and NEXT_SESSION_PLAN.md.

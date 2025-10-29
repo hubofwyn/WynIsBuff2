@@ -112,3 +112,4 @@ For the MVP, focus on these gameplay elements to deliver the core "buff" experie
 5. **Escalating Challenge**: Design the limited number of MVP levels with a clear difficulty progression that teaches players to master the movement system.
 
 By focusing on these core elements and the streamlined implementation plan, WynIsBuff2 can deliver a fun, cohesive MVP that captures the essence of the game's unique identity while establishing a solid foundation for future development.
+> Archived Notice: Early MVP recommendations preserved for reference. Superseded by docs/architecture/MVPArchitectureSummary.md and IMPLEMENTATION_PLAN_V2.md.

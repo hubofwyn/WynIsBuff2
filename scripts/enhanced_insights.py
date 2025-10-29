@@ -48,8 +48,8 @@ class CoverageGap:
 
 
 class EnhancedAnalyzer:
-    def __init__(self, db_path: str, kg_path: str = None):
-        self.analyzer = DocAnalyzer(db_path, kg_path)
+    def __init__(self, db_path: str, kg_path: str = None, ignore_prefixes: list = None):
+        self.analyzer = DocAnalyzer(db_path, kg_path, tuple(ignore_prefixes or []))
         self.insights = None
 
     def __enter__(self):
@@ -343,6 +343,7 @@ def main():
     )
     parser.add_argument('db_path', help='Path to doc_structure.db')
     parser.add_argument('--kg', help='Path to knowledge_graph.json (optional)')
+    parser.add_argument('--ignore-prefix', action='append', default=[], help='Prefix to ignore for orphan/stub counts (can be repeated)')
     parser.add_argument('--json', action='store_true', help='Output as JSON')
 
     args = parser.parse_args()
@@ -351,7 +352,7 @@ def main():
         print(f"Error: Database not found: {args.db_path}", file=sys.stderr)
         return 1
 
-    with EnhancedAnalyzer(args.db_path, args.kg) as analyzer:
+    with EnhancedAnalyzer(args.db_path, args.kg, args.ignore_prefix) as analyzer:
         insights, action_items, coverage_gaps = analyzer.generate_enhanced_insights()
 
         if args.json:

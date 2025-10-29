@@ -16,3 +16,4 @@ Task: Create a branded Welcome Screen to kick off the game.
   
 ## Change Log
 * WelcomeScene implemented and wired: displays title, prompt, and transitions to CharacterSelect on SPACE or click.
+> Archived Notice: This historical task is preserved for reference and superseded by the current documentation set. Start at docs/INDEX.md for canonical guidance. Related: CONTRIBUTING.md, docs/ARCHITECTURE.md, ASSET_MANAGEMENT.md.

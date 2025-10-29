@@ -22,6 +22,7 @@ import sqlite3
 import hashlib
 import argparse
 from pathlib import Path
+import posixpath
 from datetime import datetime
 from concurrent.futures import ProcessPoolExecutor, as_completed
 from collections import defaultdict, Counter
@@ -483,16 +484,38 @@ def safe_read(path: Path) -> Optional[str]:
         print(f"[WARN] Cannot read {path}: {e}")
         return None
 
-def extract_links(tokens: List[Token]) -> Set[str]:
-    """Extract document references from tokens"""
-    links = set()
+def extract_links(tokens: List[Token], rel_path: str) -> Set[str]:
+    """Extract document references from tokens and normalize relative paths.
+
+    - Skips external URLs (http/https)
+    - Skips pure anchors (e.g., #section)
+    - Normalizes ../ and ./ relative links against the current file directory
+    - Skips directory-only references (no extension), which often represent navigation hubs
+    """
+    links: Set[str] = set()
+    base_dir = posixpath.dirname(rel_path)
+
     for token in tokens:
         if token.token_type in (TokenType.REFERENCE, TokenType.URL):
-            # Clean and normalize
-            link = token.value.strip()
-            if link and not link.startswith(('http://', 'https://')):
-                # Likely a relative path
-                links.add(link)
+            raw = token.value.strip()
+            if not raw or raw.startswith(('http://', 'https://')):
+                continue
+            # Strip anchor fragment
+            path_part = raw.split('#', 1)[0]
+            if not path_part:
+                # Was an anchor-only reference
+                continue
+
+            # Normalize relative path against the current document directory
+            # Use posix normalization to keep repo-style paths
+            normalized = posixpath.normpath(posixpath.join(base_dir, path_part))
+
+            # Ignore directory-only references (no extension)
+            if '.' not in posixpath.basename(normalized):
+                continue
+
+            links.add(normalized)
+
     return links
 
 def extract_headers(tokens: List[Token]) -> List[str]:
@@ -517,7 +540,7 @@ def process_file(filepath: Path, root: Path) -> Optional[Document]:
         hash=compute_hash(content),
         modified=filepath.stat().st_mtime,
         tokens=tokens,
-        links=extract_links(tokens),
+        links=extract_links(tokens, rel_path),
         headers=extract_headers(tokens)
     )
     
