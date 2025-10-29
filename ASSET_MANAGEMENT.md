@@ -10,12 +10,27 @@ The WynIsBuff2 project uses a **centralized, auto-generated asset management sys
 assets/
 ├── manifest.json          # Single source of truth
 ├── images/               # Image assets
+│   └── characters/       # Custom character sprites (family photos)
+├── kenney/               # Kenney Platformer Pack Redux
+│   ├── spritesheets/     # Texture atlases (XML-based)
+│   ├── enemies/          # Enemy sprites (57 files)
+│   ├── items/            # Collectibles (24 files)
+│   ├── tiles/            # Platform tiles (72 files)
+│   ├── backgrounds/      # Background elements
+│   ├── particles/        # Particle effects
+│   ├── ground/           # Ground terrain
+│   └── hud/              # UI elements
 ├── sounds/               # Sound effects
 ├── audio/                # Music tracks
 └── spritesheets/         # Sprite animations
 
 src/constants/
 └── Assets.js             # Auto-generated constants (DO NOT EDIT)
+    ├── ImageAssets       # Image asset keys
+    ├── ImagePaths        # Image file paths
+    ├── AtlasXMLPaths     # XML atlas paths (for Kenney atlases)
+    ├── AudioAssets       # Audio asset keys
+    └── AudioPaths        # Audio file paths
 
 scripts/
 ├── generate-assets.js    # Generates Assets.js from manifest
@@ -90,13 +105,23 @@ npm run dev   # Starts at http://localhost:8080/
 
 4. **Use in code**:
    ```javascript
-   import { ImageAssets, ImagePaths } from '../constants/Assets.js';
-   
-   // In Preloader
+   import { ImageAssets, ImagePaths, AtlasXMLPaths } from '../constants/Assets.js';
+
+   // Standard image in Preloader
    this.load.image(ImageAssets.MY_NEW_ASSET, ImagePaths.MY_NEW_ASSET);
-   
-   // In Scene
+
+   // XML atlas in Preloader
+   this.load.atlasXML(
+     ImageAssets.KENNEY_ITEMS,
+     ImagePaths.KENNEY_ITEMS,
+     AtlasXMLPaths.KENNEY_ITEMS
+   );
+
+   // Use in Scene
    this.add.image(400, 300, ImageAssets.MY_NEW_ASSET);
+
+   // Use atlas frame in Scene
+   this.add.image(400, 300, ImageAssets.KENNEY_ITEMS, 'coinGold.png');
    ```
 
 ## Asset Types
@@ -105,11 +130,21 @@ npm run dev   # Starts at http://localhost:8080/
 - Standard images: PNG, JPG
 - Used for: backgrounds, UI elements, static sprites
 - Manifest type: `"image"`
+- Example: Custom character sprites (Wyn, Axel, Ila)
 
 ### Spritesheets
 - Multi-frame images for animation
 - Requires: `frameWidth`, `frameHeight` in manifest
 - Manifest type: `"spritesheet"`
+- Example: Player character animations
+
+### XML Atlases
+- Texture atlases with XML descriptor files
+- Used for: Kenney Platformer Pack assets
+- Requires: `atlasXML` path in manifest
+- Manifest type: `"atlasXML"`
+- Exported via: `AtlasXMLPaths` constant
+- Example: Kenney enemies, items, tiles
 
 ### Audio
 - Music: MP3/WAV in `audio/music/`
@@ -174,6 +209,44 @@ The project includes placeholder assets for quick development:
 5. **Optimize files**: Compress images before adding (PNG/JPG)
 6. **Version control**: Commit both assets and manifest together
 
+## Orphaned Assets Policy
+
+When `npm run validate-assets` reports orphaned files, handle them deliberately:
+
+- Keep (in use soon):
+  - Add entries to `assets/manifest.json`
+  - Run `npm run generate-assets`
+  - Reference via `ImageAssets/*`, `ImagePaths/*`, or audio equivalents
+
+- Archive (not in use):
+  - Move under `assets/archive/` preserving structure
+  - Add a note in `assets/archive/README.md` if context is useful
+
+- Remove (accidental/temporary):
+  - Delete from the repo if clearly unused
+
+Guidelines:
+- Prefer adding to manifest if the asset is intended for near-term use
+- Prefer archiving if uncertain — keeps the working set small and validation clean
+- Never reference raw paths in code; always use generated constants
+
+## Kenney Platformer Pack
+
+Professional 2D platformer assets from Kenney.nl for all non-character game elements:
+- 57 enemy sprites (barnacle, bee, fish, slime, snail, worm variants)
+- 24 collectibles (coins, gems, keys, flags, star)
+- 72 platform tiles (boxes, bricks, bridges, dirt, metal, planks, sand, stone, snow)
+- Backgrounds, particles, ground terrain, HUD elements
+
+**Custom character sprites (Wyn, Axel, Ila) remain the main playable characters.**
+
+See [assets/KENNEY_ASSETS.md](assets/KENNEY_ASSETS.md) for complete reference and usage examples.
+
+## Related Documentation
+
+- [assets/KENNEY_ASSETS.md](assets/KENNEY_ASSETS.md) — Complete Kenney asset reference and usage guide
+- [assets/ENEMY_ASSETS.md](assets/ENEMY_ASSETS.md) — Catalog and integration guide for enemy animations
+
 ## Support
 
 For issues with assets:
@@ -183,3 +256,6 @@ For issues with assets:
 4. Ensure files exist at specified paths
 
 The asset system is designed to be **bulletproof for local development** - if validation passes, the game will run!
+## Scope
+
+This document covers the asset pipeline (manifest, generation, validation) and how to work with assets safely and consistently. For general onboarding and development workflow, see CONTRIBUTING.md. For system design, see docs/ARCHITECTURE.md.

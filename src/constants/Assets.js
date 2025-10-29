@@ -54,6 +54,18 @@ export const ImageAssets = Object.freeze({
   PARALLAX_FOREGROUND: 'parallaxForeground',
   PARTICLE_FLARE: 'particleFlare',
   PARTICLE_WHITE: 'particleWhite',
+  KENNEY_ENEMIES: 'kenneyEnemies',
+  KENNEY_ITEMS: 'kenneyItems',
+  KENNEY_TILES: 'kenneyTiles',
+  KENNEY_GROUND: 'kenneyGround',
+  KENNEY_HUD: 'kenneyHud',
+  COIN_GOLD: 'coinGold',
+  COIN_SILVER: 'coinSilver',
+  COIN_BRONZE: 'coinBronze',
+  GEM_BLUE: 'gemBlue',
+  GEM_GREEN: 'gemGreen',
+  GEM_RED: 'gemRed',
+  GEM_YELLOW: 'gemYellow',
 });
 
 export const ImagePaths = Object.freeze({
@@ -103,6 +115,18 @@ export const ImagePaths = Object.freeze({
   PARALLAX_FOREGROUND: 'images/backgrounds/parallax-foreground.png',
   PARTICLE_FLARE: 'images/particles/flares.png',
   PARTICLE_WHITE: 'images/particles/white.png',
+  KENNEY_ENEMIES: 'kenney/spritesheets/spritesheet_enemies.png',
+  KENNEY_ITEMS: 'kenney/spritesheets/spritesheet_items.png',
+  KENNEY_TILES: 'kenney/spritesheets/spritesheet_tiles.png',
+  KENNEY_GROUND: 'kenney/spritesheets/spritesheet_ground.png',
+  KENNEY_HUD: 'kenney/spritesheets/spritesheet_hud.png',
+  COIN_GOLD: 'kenney/items/coinGold.png',
+  COIN_SILVER: 'kenney/items/coinSilver.png',
+  COIN_BRONZE: 'kenney/items/coinBronze.png',
+  GEM_BLUE: 'kenney/items/gemBlue.png',
+  GEM_GREEN: 'kenney/items/gemGreen.png',
+  GEM_RED: 'kenney/items/gemRed.png',
+  GEM_YELLOW: 'kenney/items/gemYellow.png',
 });
 
 export const AudioAssets = Object.freeze({
@@ -152,6 +176,14 @@ export const AudioPaths = Object.freeze({
   SFX_HOVER3: 'sounds/ui-hover/hover3.mp3',
   SFX_HOVER4: 'sounds/ui-hover/hover4.mp3',
   SFX_FART: 'sounds/land-effects/land4.mp3',
+});
+
+export const AtlasXMLPaths = Object.freeze({
+  KENNEY_ENEMIES: 'kenney/spritesheets/spritesheet_enemies.xml',
+  KENNEY_ITEMS: 'kenney/spritesheets/spritesheet_items.xml',
+  KENNEY_TILES: 'kenney/spritesheets/spritesheet_tiles.xml',
+  KENNEY_GROUND: 'kenney/spritesheets/spritesheet_ground.xml',
+  KENNEY_HUD: 'kenney/spritesheets/spritesheet_hud.xml',
 });
 
 export const SpritesheetConfigs = Object.freeze({

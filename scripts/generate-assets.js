@@ -149,6 +149,18 @@ function generateAssetsConstants() {
         
         output += `});\n\n`;
 
+        // Generate atlas XML paths for XML-based atlases
+        output += `export const AtlasXMLPaths = Object.freeze({\n`;
+
+        for (const [key, asset] of Object.entries(images)) {
+            if (asset.type === 'atlasXML' && asset.atlasXML) {
+                const constName = key.replace(/([A-Z])/g, '_$1').toUpperCase().replace(/^_/, '');
+                output += `  ${constName}: '${asset.atlasXML}',\n`;
+            }
+        }
+
+        output += `});\n\n`;
+
         // Generate spritesheet configs
         output += `export const SpritesheetConfigs = Object.freeze({\n`;
         

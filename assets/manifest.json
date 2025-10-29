@@ -236,6 +236,71 @@
         "type": "image",
         "path": "images/particles/white.png",
         "description": "White particle for tinting effects"
+      },
+      "kenneyEnemies": {
+        "type": "atlasXML",
+        "path": "kenney/spritesheets/spritesheet_enemies.png",
+        "atlasXML": "kenney/spritesheets/spritesheet_enemies.xml",
+        "description": "Kenney enemies sprite atlas (57 sprites)"
+      },
+      "kenneyItems": {
+        "type": "atlasXML",
+        "path": "kenney/spritesheets/spritesheet_items.png",
+        "atlasXML": "kenney/spritesheets/spritesheet_items.xml",
+        "description": "Kenney items sprite atlas (coins, gems, keys, flags)"
+      },
+      "kenneyTiles": {
+        "type": "atlasXML",
+        "path": "kenney/spritesheets/spritesheet_tiles.png",
+        "atlasXML": "kenney/spritesheets/spritesheet_tiles.xml",
+        "description": "Kenney platform tiles sprite atlas (72 tiles)"
+      },
+      "kenneyGround": {
+        "type": "atlasXML",
+        "path": "kenney/spritesheets/spritesheet_ground.png",
+        "atlasXML": "kenney/spritesheets/spritesheet_ground.xml",
+        "description": "Kenney ground terrain sprite atlas"
+      },
+      "kenneyHud": {
+        "type": "atlasXML",
+        "path": "kenney/spritesheets/spritesheet_hud.png",
+        "atlasXML": "kenney/spritesheets/spritesheet_hud.xml",
+        "description": "Kenney HUD/UI elements sprite atlas"
+      },
+      "coinGold": {
+        "type": "image",
+        "path": "kenney/items/coinGold.png",
+        "description": "Gold coin collectible (individual sprite)"
+      },
+      "coinSilver": {
+        "type": "image",
+        "path": "kenney/items/coinSilver.png",
+        "description": "Silver coin collectible (individual sprite)"
+      },
+      "coinBronze": {
+        "type": "image",
+        "path": "kenney/items/coinBronze.png",
+        "description": "Bronze coin collectible (individual sprite)"
+      },
+      "gemBlue": {
+        "type": "image",
+        "path": "kenney/items/gemBlue.png",
+        "description": "Blue gem collectible (individual sprite)"
+      },
+      "gemGreen": {
+        "type": "image",
+        "path": "kenney/items/gemGreen.png",
+        "description": "Green gem collectible (individual sprite)"
+      },
+      "gemRed": {
+        "type": "image",
+        "path": "kenney/items/gemRed.png",
+        "description": "Red gem collectible (individual sprite)"
+      },
+      "gemYellow": {
+        "type": "image",
+        "path": "kenney/items/gemYellow.png",
+        "description": "Yellow gem collectible (individual sprite)"
       }
     },
     "audio": {
