@@ -1,5 +1,6 @@
 import { CloneManager, EventBus } from '@features/core';
 import { EventNames } from '../../constants/EventNames.js';
+import { LOG } from '../../observability/core/LogSystem.js';
 
 /**
  * EnhancedCloneManager - Extends CloneManager with decay and offline calculation
@@ -106,7 +107,14 @@ export class EnhancedCloneManager extends CloneManager {
     this.startLaneProduction(lane.id);
     
     if (this.debug) {
-      console.log(`[EnhancedCloneManager] Created lane ${lane.id} with rate ${lane.baseRate}/s`);
+      LOG.dev('ENHANCEDCLONEMANAGER_LANE_CREATED', {
+        subsystem: 'idle',
+        message: 'Clone production lane created',
+        laneId: lane.id,
+        baseRate: lane.baseRate,
+        currentRate: lane.currentRate,
+        stability: lane.stability
+      });
     }
     
     return lane;
@@ -151,7 +159,15 @@ export class EnhancedCloneManager extends CloneManager {
       lane.lastDecayUpdate = now;
       
       if (this.debug && hoursSinceLastUpdate > 0.1) { // Log significant decay
-        console.log(`[EnhancedCloneManager] Lane ${laneId} decayed to ${lane.currentRate.toFixed(2)}/s`);
+        LOG.dev('ENHANCEDCLONEMANAGER_LANE_DECAYED', {
+          subsystem: 'idle',
+          message: 'Clone lane production decayed',
+          laneId,
+          currentRate: parseFloat(lane.currentRate.toFixed(2)),
+          baseRate: lane.baseRate,
+          hoursSinceLastUpdate: parseFloat(hoursSinceLastUpdate.toFixed(2)),
+          decayPercentage: parseFloat(((1 - lane.currentRate / lane.baseRate) * 100).toFixed(1))
+        });
       }
     }
   }
@@ -181,7 +197,14 @@ export class EnhancedCloneManager extends CloneManager {
     });
     
     if (this.debug) {
-      console.log(`[EnhancedCloneManager] Applied ${boostData.multiplier}x boost for ${boostData.duration / 60000} minutes`);
+      LOG.dev('ENHANCEDCLONEMANAGER_BOOST_APPLIED', {
+        subsystem: 'idle',
+        message: 'Production boost applied',
+        boostId: boostData.id,
+        multiplier: boostData.multiplier,
+        durationMinutes: boostData.duration / 60000,
+        target: boostData.laneId ? `lane_${boostData.laneId}` : 'global'
+      });
     }
     
     return boostData.id;
@@ -286,7 +309,14 @@ export class EnhancedCloneManager extends CloneManager {
     const cappedMs = Math.min(deltaMs, this.offlineCapHours * 3600000);
     
     if (this.debug) {
-      console.log(`[EnhancedCloneManager] Calculating offline for ${(cappedMs / 3600000).toFixed(2)} hours`);
+      LOG.dev('ENHANCEDCLONEMANAGER_OFFLINE_CALCULATION', {
+        subsystem: 'idle',
+        message: 'Calculating offline production',
+        offlineHours: parseFloat((cappedMs / 3600000).toFixed(2)),
+        cappedHours: this.offlineCapHours,
+        actualDeltaMs: deltaMs,
+        wasCapped: deltaMs > cappedMs
+      });
     }
     
     const totalProduction = {
@@ -383,7 +413,13 @@ export class EnhancedCloneManager extends CloneManager {
       if (boost.endTime < now) {
         this.activeBoosts.delete(boostId);
         if (this.debug) {
-          console.log(`[EnhancedCloneManager] Boost ${boostId} expired`);
+          LOG.dev('ENHANCEDCLONEMANAGER_BOOST_EXPIRED', {
+            subsystem: 'idle',
+            message: 'Production boost expired',
+            boostId,
+            multiplier: boost.multiplier,
+            durationMinutes: boost.duration / 60000
+          });
         }
       }
     }
@@ -434,7 +470,13 @@ export class EnhancedCloneManager extends CloneManager {
     });
     
     if (this.debug) {
-      console.log(`[EnhancedCloneManager] Lane ${laneId} refreshed to ${lane.baseRate}/s`);
+      LOG.dev('ENHANCEDCLONEMANAGER_LANE_REFRESHED', {
+        subsystem: 'idle',
+        message: 'Clone lane production refreshed',
+        laneId,
+        baseRate: lane.baseRate,
+        currentRate: lane.currentRate
+      });
     }
   }
 
@@ -480,7 +522,12 @@ export class EnhancedCloneManager extends CloneManager {
     if (this.lastUpdateTime < Date.now() - 60000) { // More than 1 minute offline
       const offline = this.calculateOfflineProduction(this.lastUpdateTime);
       if (this.debug) {
-        console.log('[EnhancedCloneManager] Offline production:', offline.production);
+        LOG.dev('ENHANCEDCLONEMANAGER_OFFLINE_PRODUCTION', {
+          subsystem: 'idle',
+          message: 'Offline production calculated and applied',
+          production: offline.production,
+          offlineHours: parseFloat((offline.offlineMs / 3600000).toFixed(2))
+        });
       }
     }
   }

@@ -4,6 +4,7 @@ import { EventNames } from '../constants/EventNames.js';
 import { UIConfig } from '../constants/UIConfig.js';
 import { AudioAssets } from '../constants/Assets.js';
 import { AudioManager } from '@features/core';
+import { LOG } from '../observability/core/LogSystem.js';
 
 /**
  * Birthday Minigame: "Wyn's 9th Birthday Shake Rush!"
@@ -80,7 +81,11 @@ export class BirthdayMinigame extends Scene {
         
         // Initialize audio manager if needed
         const audioManager = AudioManager.getInstance();
-        console.log('[BirthdayMinigame] AudioManager initialized:', audioManager);
+        LOG.dev('BIRTHDAYMINIGAME_AUDIO_INITIALIZED', {
+            subsystem: 'scene',
+            scene: SceneKeys.BIRTHDAY_MINIGAME,
+            message: 'AudioManager initialized for birthday minigame'
+        });
         
         // Set world bounds to match screen
         this.physics.world.setBounds(0, 0, 1024, 768);
@@ -207,7 +212,13 @@ export class BirthdayMinigame extends Scene {
             this.player.setScale(0.25);
         } else {
             // Fallback: create a simple Wyn representation
-            console.warn('[BirthdayMinigame] wynSprite texture not found, using fallback');
+            LOG.warn('BIRTHDAYMINIGAME_SPRITE_FALLBACK', {
+                subsystem: 'scene',
+                scene: SceneKeys.BIRTHDAY_MINIGAME,
+                message: 'wynSprite texture not found, using fallback rectangle',
+                textureKey: wynTexture,
+                hint: 'Ensure wynSprite is loaded in Preloader scene or check asset manifest'
+            });
             this.player = this.add.rectangle(0, 0, 40, 50, 0xFFD700);
         }
         
@@ -660,14 +671,22 @@ export class BirthdayMinigame extends Scene {
             // Resume Web Audio context if suspended (browser autoplay policy)
             if (this.sound.context && this.sound.context.state === 'suspended') {
                 this.sound.context.resume().then(() => {
-                    console.log('[BirthdayMinigame] Audio context resumed');
+                    LOG.dev('BIRTHDAYMINIGAME_AUDIO_CONTEXT_RESUMED', {
+                        subsystem: 'scene',
+                        scene: SceneKeys.BIRTHDAY_MINIGAME,
+                        message: 'Web Audio context resumed after browser autoplay policy'
+                    });
                 });
             }
             
             // Also try to unlock Howler audio
             if (window.Howler && window.Howler.ctx && window.Howler.ctx.state === 'suspended') {
                 window.Howler.ctx.resume().then(() => {
-                    console.log('[BirthdayMinigame] Howler context resumed');
+                    LOG.dev('BIRTHDAYMINIGAME_HOWLER_CONTEXT_RESUMED', {
+                        subsystem: 'scene',
+                        scene: SceneKeys.BIRTHDAY_MINIGAME,
+                        message: 'Howler audio context resumed'
+                    });
                 });
             }
             
@@ -679,12 +698,23 @@ export class BirthdayMinigame extends Scene {
             // Small delay to ensure audio context is ready
             this.time.delayedCall(100, () => {
                 audioManager.playMusic(AudioAssets.BIRTHDAY_SONG);
-                console.log('[BirthdayMinigame] Birthday music started');
+                LOG.dev('BIRTHDAYMINIGAME_MUSIC_STARTED', {
+                    subsystem: 'scene',
+                    scene: SceneKeys.BIRTHDAY_MINIGAME,
+                    message: 'Birthday music started',
+                    track: AudioAssets.BIRTHDAY_SONG
+                });
                 
                 // Check if music is actually playing
                 const musicTrack = audioManager.music[AudioAssets.BIRTHDAY_SONG];
                 if (musicTrack && !musicTrack.playing()) {
-                    console.warn('[BirthdayMinigame] Music failed to start - showing audio hint');
+                    LOG.warn('BIRTHDAYMINIGAME_MUSIC_FAILED_AUTOPLAY', {
+                        subsystem: 'scene',
+                        scene: SceneKeys.BIRTHDAY_MINIGAME,
+                        message: 'Music failed to start due to browser autoplay policy',
+                        track: AudioAssets.BIRTHDAY_SONG,
+                        hint: 'Showing audio permission hint to user. Music will start after user interaction.'
+                    });
                     // Show audio permission hint
                     const audioHint = this.add.text(512, 50, '🔇 Click anywhere to enable audio', {
                         fontSize: '18px',
@@ -701,7 +731,13 @@ export class BirthdayMinigame extends Scene {
                 }
             });
         } catch (error) {
-            console.error('[BirthdayMinigame] Failed to start music:', error);
+            LOG.error('BIRTHDAYMINIGAME_MUSIC_START_ERROR', {
+                subsystem: 'scene',
+                scene: SceneKeys.BIRTHDAY_MINIGAME,
+                error,
+                message: 'Failed to start birthday music',
+                hint: 'Check AudioManager initialization and audio asset loading. Verify browser audio context permissions.'
+            });
         }
         
         this.deliveryTimer = this.maxDeliveryTime;

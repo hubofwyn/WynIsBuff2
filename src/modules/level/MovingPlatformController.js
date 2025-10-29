@@ -1,5 +1,6 @@
 import RAPIER from '@dimforge/rapier2d-compat';
 import { EventNames } from '../../constants/EventNames';
+import { LOG } from '../../observability/core/LogSystem.js';
 
 /**
  * MovingPlatformController class is responsible for creating and managing moving platforms
@@ -40,7 +41,10 @@ export class MovingPlatformController {
      */
     log(message) {
         if (this.debugMode) {
-            console.log(`[MovingPlatformController] ${message}`);
+            LOG.dev('MOVINGPLATFORMCONTROLLER_DEBUG', {
+                subsystem: 'level',
+                message
+            });
         }
     }
     
@@ -120,13 +124,26 @@ export class MovingPlatformController {
                         });
                     }
                 } catch (error) {
-                    console.error(`[MovingPlatformController] Error creating moving platform ${index+1}:`, error);
+                    LOG.error('MOVINGPLATFORMCONTROLLER_PLATFORM_CREATE_ERROR', {
+                        subsystem: 'level',
+                        error,
+                        message: 'Error creating moving platform',
+                        platformIndex: index + 1,
+                        platformConfig: config,
+                        hint: 'Check platform configuration and physics world initialization'
+                    });
                 }
             });
             
             return this.movingPlatforms;
         } catch (error) {
-            console.error('[MovingPlatformController] Error in createMovingPlatforms:', error);
+            LOG.error('MOVINGPLATFORMCONTROLLER_CREATE_BATCH_ERROR', {
+                subsystem: 'level',
+                error,
+                message: 'Error creating moving platforms batch',
+                platformCount: movingPlatformConfigs?.length || 0,
+                hint: 'Check level configuration and physics world state'
+            });
             return [];
         }
     }
@@ -239,7 +256,13 @@ export class MovingPlatformController {
                     });
                 }
             } catch (error) {
-                console.error('[MovingPlatformController] Error updating moving platform:', error);
+                LOG.error('MOVINGPLATFORMCONTROLLER_UPDATE_ERROR', {
+                    subsystem: 'level',
+                    error,
+                    message: 'Error updating moving platform',
+                    platformId: platform.id,
+                    hint: 'Check platform body state and physics world integrity'
+                });
             }
         });
     }
