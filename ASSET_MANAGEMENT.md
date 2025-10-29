@@ -174,32 +174,6 @@ The project includes placeholder assets for quick development:
 5. **Optimize files**: Compress images before adding (PNG/JPG)
 6. **Version control**: Commit both assets and manifest together
 
-## Asset Statistics
-
-Current project stats:
-- **Total Assets**: 66
-- **Images**: 46
-- **Music**: 3
-- **Sound Effects**: 17
-- **Orphaned Files**: 196 (enemy animations not yet integrated)
-
-## Architecture Benefits
-
-- ✅ **Type Safety**: All assets have generated constants
-- ✅ **No Typos**: Constants prevent string typos
-- ✅ **Easy Refactoring**: Change paths in one place
-- ✅ **Validation**: Know immediately if assets are missing
-- ✅ **Documentation**: manifest.json self-documents all assets
-- ✅ **Clean Imports**: Use barrel exports pattern
-
-## Future Improvements
-
-- [ ] Add asset compression pipeline
-- [ ] Implement asset bundling for production
-- [ ] Add sprite atlas generation
-- [ ] Create asset preloading strategies
-- [ ] Add WebP support with PNG fallback
-
 ## Support
 
 For issues with assets:
