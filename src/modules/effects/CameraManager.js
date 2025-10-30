@@ -1,4 +1,5 @@
 import { EventNames } from '../../constants/EventNames';
+import { LOG } from '../../observability/core/LogSystem.js';
 
 /**
  * CameraManager class handles camera effects like screen shake
@@ -30,11 +31,16 @@ export class CameraManager {
         
         // Accessibility settings
         this.effectsEnabled = true;
-        
+
         // Set up event listeners
         this.setupEventListeners();
-        
-        console.log('[CameraManager] Initialized');
+
+        LOG.dev('CAMERAMANAGER_INITIALIZED', {
+            subsystem: 'effects',
+            message: 'CameraManager initialized with screen shake and camera effects',
+            defaultShakeConfig: this.defaultShakeConfig,
+            effectsEnabled: this.effectsEnabled
+        });
     }
     
     /**
@@ -193,6 +199,11 @@ export class CameraManager {
         this.quality = level;
         // Disable effects on 'Low'
         this.effectsEnabled = level !== 'Low';
-        console.log(`[CameraManager] Quality set to ${level}, effectsEnabled=${this.effectsEnabled}`);
+        LOG.dev('CAMERAMANAGER_QUALITY_SET', {
+            subsystem: 'effects',
+            message: 'Camera effects quality level changed',
+            qualityLevel: level,
+            effectsEnabled: this.effectsEnabled
+        });
     }
 }

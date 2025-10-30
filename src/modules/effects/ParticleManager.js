@@ -1,4 +1,5 @@
 import { EventNames } from '../../constants/EventNames';
+import { LOG } from '../../observability/core/LogSystem.js';
 
 /**
  * ParticleManager class handles the creation and management of particle effects
@@ -17,11 +18,14 @@ export class ParticleManager {
         
         // Initialize particle configurations
         this.initializeParticleConfigs();
-        
+
         // Set up event listeners
         this.setupEventListeners();
-        
-        console.log('[ParticleManager] Initialized');
+
+        LOG.dev('PARTICLEMANAGER_INITIALIZED', {
+            subsystem: 'effects',
+            message: 'ParticleManager initialized with BUFF edition particle effects'
+        });
     }
     
     /**
@@ -358,7 +362,11 @@ export class ParticleManager {
      */
     setQuality(level) {
         this.quality = level;
-        console.log(`[ParticleManager] Quality set to ${level}`);
+        LOG.dev('PARTICLEMANAGER_QUALITY_SET', {
+            subsystem: 'effects',
+            message: 'Particle quality level changed',
+            qualityLevel: level
+        });
         // Future: adjust particle config density or disable effects for 'Low'
     }
 }

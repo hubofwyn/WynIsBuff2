@@ -2,6 +2,7 @@ import RAPIER from '@dimforge/rapier2d-compat';
 import { EventNames } from '../../constants/EventNames';
 import { PhysicsConfig } from '../../constants/PhysicsConfig.js';
 import { pixelsToMeters } from '../../constants/PhysicsConstants.js';
+import { LOG } from '../../observability/core/LogSystem.js';
 
 /**
  * GroundFactory class is responsible for creating and managing the ground
@@ -42,7 +43,10 @@ export class GroundFactory {
      */
     log(message) {
         if (this.debugMode) {
-            console.log(`[GroundFactory] ${message}`);
+            LOG.dev('GROUNDFACTORY_DEBUG', {
+                subsystem: 'level',
+                message
+            });
         }
     }
     
@@ -116,7 +120,13 @@ export class GroundFactory {
             
             return this.ground;
         } catch (error) {
-            console.error('[GroundFactory] Error in createGround:', error);
+            LOG.error('GROUNDFACTORY_CREATE_GROUND_ERROR', {
+                subsystem: 'level',
+                error,
+                message: 'Error creating ground',
+                config,
+                hint: 'Check ground configuration and physics world state'
+            });
             return null;
         }
     }

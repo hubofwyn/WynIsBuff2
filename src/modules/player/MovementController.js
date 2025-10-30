@@ -1,4 +1,5 @@
 import { EventNames } from '../../constants/EventNames';
+import { LOG } from '../../observability/core/LogSystem.js';
 
 /**
  * MovementController class handles all movement-related functionality for the player
@@ -79,8 +80,17 @@ export class MovementController {
             momentumDecayRate: 0.95,
             lastSignificantMove: 0
         };
-        
-        console.log('[MovementController] Initialized');
+
+        LOG.dev('MOVEMENTCONTROLLER_INITIALIZED', {
+            subsystem: 'player',
+            message: 'MovementController initialized with BUFF momentum system',
+            params: {
+                groundMoveSpeed: this.groundParams.moveSpeed,
+                airMoveSpeed: this.airParams.moveSpeed,
+                maxFallSpeed: this.fallingParams.maxFallSpeed,
+                weightedFeel: this.buffParams.weightedFeel
+            }
+        });
     }
     
     /**
@@ -190,7 +200,17 @@ export class MovementController {
             // Apply the new velocity
             body.setLinvel({ x: newVelX, y: newVelY }, true);
         } catch (error) {
-            console.error('[MovementController] Error in handleBuffMovement:', error);
+            LOG.error('MOVEMENTCONTROLLER_BUFF_MOVEMENT_ERROR', {
+                subsystem: 'player',
+                error,
+                message: 'Error during buff movement calculation',
+                state: {
+                    isOnGround: this.isOnGround,
+                    isInLandingRecovery: this._isInLandingRecovery,
+                    currentMomentum: this.momentumState.currentMomentum
+                },
+                hint: 'Check player body state and physics parameters'
+            });
         }
     }
     
