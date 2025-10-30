@@ -12,6 +12,7 @@
 import { BaseManager } from './BaseManager.js';
 import { EventBus } from './EventBus.js';
 import { EventNames } from '../constants/EventNames.js';
+import { LOG } from '../observability/core/LogSystem.js';
 
 export class CloneManager extends BaseManager {
     constructor() {
@@ -858,7 +859,12 @@ export class CloneManager extends BaseManager {
                 this.totalClonesForged = data.totalClonesForged || 0;
                 this.highestGeneration = data.highestGeneration || 0;
             } catch (e) {
-                console.error('Failed to load saved clones:', e);
+                LOG.error('CLONEMANAGER_LOAD_FAILED', {
+                    subsystem: 'clone',
+                    message: 'Failed to load saved clones',
+                    error: e,
+                    errorMessage: e.message
+                });
             }
         }
     }

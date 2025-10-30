@@ -1,4 +1,5 @@
 import { BaseManager } from '../../core/BaseManager.js';
+import { LOG } from '../core/LogSystem.js';
 
 /**
  * DebugContext - Manages debug context and state providers
@@ -55,7 +56,11 @@ export class DebugContext extends BaseManager {
     registerProvider(provider) {
         const name = provider.getName();
         if (this.providers.has(name)) {
-            console.warn(`[DebugContext] Provider '${name}' already registered, replacing`);
+            LOG.warn('DEBUGCONTEXT_PROVIDER_REPLACED', {
+                subsystem: 'observability',
+                message: `Provider '${name}' already registered, replacing`,
+                providerName: name
+            });
         }
         this.providers.set(name, provider);
     }
@@ -130,7 +135,14 @@ export class DebugContext extends BaseManager {
                     snapshot[name] = state;
                 }
             } catch (error) {
-                console.error(`[DebugContext] Error capturing ${name}:`, error);
+                LOG.error('DEBUGCONTEXT_PROVIDER_CAPTURE_ERROR', {
+                    subsystem: 'observability',
+                    message: `Error capturing ${name}`,
+                    providerName: name,
+                    error,
+                    errorMessage: error.message,
+                    stack: error.stack
+                });
                 snapshot[name] = {
                     _error: error.message,
                     _errorStack: error.stack

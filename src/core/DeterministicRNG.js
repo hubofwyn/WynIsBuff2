@@ -1,4 +1,5 @@
 import { BaseManager } from '@features/core';
+import { LOG } from '../observability/core/LogSystem.js';
 
 /**
  * DeterministicRNG - Seedable random number generator with multiple streams
@@ -86,15 +87,20 @@ export class DeterministicRNG extends BaseManager {
     const s = this.streams.get(stream);
     if (!s) {
       if (process.env.NODE_ENV !== 'production') {
-        console.warn(`[DeterministicRNG] Stream '${stream}' not found, using 'main'`);
+        LOG.warn('DETERMINISTICRNG_STREAM_NOT_FOUND', {
+          subsystem: 'core',
+          message: `Stream '${stream}' not found, using 'main'`,
+          requestedStream: stream,
+          fallbackStream: 'main'
+        });
       }
       return this.next('main');
     }
-    
+
     // Linear Congruential Generator
     s.state = (this.a * s.state + this.c) % this.m;
     s.callCount++;
-    
+
     // Return normalized value [0, 1)
     return s.state / this.m;
   }

@@ -7,6 +7,8 @@
 
 /* eslint-disable import/no-extraneous-dependencies */
 
+import { LOG } from '../observability/core/LogSystem.js';
+
 // Determine the best available EventEmitter implementation.
 let EventEmitterClass = null;
 
@@ -58,8 +60,14 @@ if (!EventEmitterClass) {
         try {
           fn(payload);
         } catch (e) {
-          /* eslint-disable no-console */
-          console.error(`[EventBus] listener for '${event}' threw`, e);
+          LOG.error('EVENTBUS_LISTENER_ERROR', {
+            subsystem: 'core',
+            message: `EventBus listener for '${event}' threw error`,
+            event,
+            error: e,
+            errorMessage: e.message,
+            stack: e.stack
+          });
         }
       });
     }

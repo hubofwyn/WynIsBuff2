@@ -12,6 +12,7 @@
 import { BaseManager } from './BaseManager.js';
 import { EventBus } from './EventBus.js';
 import { EventNames } from '../constants/EventNames.js';
+import { LOG } from '../observability/core/LogSystem.js';
 
 export class EconomyManager extends BaseManager {
     constructor() {
@@ -575,7 +576,12 @@ export class EconomyManager extends BaseManager {
                 this.statistics = { ...this.statistics, ...data.statistics };
                 this.upgrades = { ...this.upgrades, ...data.upgrades };
             } catch (e) {
-                console.error('Failed to load saved economy:', e);
+                LOG.error('ECONOMYMANAGER_LOAD_FAILED', {
+                    subsystem: 'economy',
+                    message: 'Failed to load saved economy',
+                    error: e,
+                    errorMessage: e.message
+                });
             }
         }
     }

@@ -1,3 +1,5 @@
+import { LOG } from '../core/LogSystem.js';
+
 /**
  * Base class for state providers
  *
@@ -61,7 +63,14 @@ export class StateProvider {
             this.captureCount++;
             return state;
         } catch (error) {
-            console.error(`[StateProvider] Error capturing ${this.getName()}:`, error);
+            LOG.error('STATEPROVIDER_CAPTURE_ERROR', {
+                subsystem: 'observability',
+                message: `Error capturing ${this.getName()}`,
+                providerName: this.getName(),
+                error,
+                errorMessage: error.message,
+                stack: error.stack
+            });
             return {
                 _error: error.message,
                 _errorStack: error.stack
