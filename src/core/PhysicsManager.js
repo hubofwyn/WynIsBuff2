@@ -4,6 +4,7 @@ import { PhysicsConfig } from '../constants/PhysicsConfig';
 import { metersToPixels } from '../constants/PhysicsConstants.js';
 import { BaseManager } from './BaseManager';
 import { LOG } from '../observability/core/LogSystem.js';
+import { CrashDumpGenerator } from '../observability/utils/CrashDumpGenerator.js';
 
 /**
  * PhysicsManager class handles the Rapier physics world and synchronization
@@ -227,13 +228,35 @@ export class PhysicsManager extends BaseManager {
         
         // TRIAGE FIX: Circuit breaker for repeated errors
         if (this.errorCount > 10) {
+            // Generate comprehensive crash dump for analysis
+            const crashDump = CrashDumpGenerator.generate(
+                new Error('Physics circuit breaker triggered'),
+                {
+                    subsystem: 'physics',
+                    errorCount: this.errorCount,
+                    threshold: 10,
+                    recentErrors: LOG.getByCode('PHYSICS_UPDATE_ERROR', 10),
+                    physicsState: {
+                        bodyCount: this.bodyToSprite?.size || 0,
+                        worldStep: this.fixedTimeStep,
+                        accumulator: this.accumulator,
+                        isActive: this.isActive
+                    }
+                }
+            );
+
             LOG.fatal('PHYSICS_CIRCUIT_BREAKER', {
                 subsystem: 'physics',
                 message: 'Circuit breaker triggered: too many errors, physics disabled',
                 errorCount: this.errorCount,
                 threshold: 10,
-                hint: 'Check recent physics errors. May indicate Rapier API issues or invalid body state.'
+                hint: 'Check recent physics errors. May indicate Rapier API issues or invalid body state.',
+                crashDump,
+                crashDumpSummary: CrashDumpGenerator.generateSummary(crashDump)
             });
+
+            // Disable physics to prevent further errors
+            this.isActive = false;
             return;
         }
         

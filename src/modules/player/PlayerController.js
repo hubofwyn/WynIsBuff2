@@ -9,6 +9,7 @@ import { MovementController } from './MovementController';
 import { CollisionController } from './CollisionController';
 import { WallJumpController } from './WallJumpController';
 import { LOG } from '../../observability/core/LogSystem.js';
+import { CrashDumpGenerator } from '../../observability/utils/CrashDumpGenerator.js';
 
 /**
  * PlayerController class for modern 2D platformer using KinematicCharacterController
@@ -233,13 +234,37 @@ export class PlayerController {
         }
 
         if (this.errorCount > 5) {
+            // Generate comprehensive crash dump for analysis
+            const crashDump = CrashDumpGenerator.generate(
+                new Error('Player circuit breaker triggered'),
+                {
+                    subsystem: 'player',
+                    errorCount: this.errorCount,
+                    threshold: 5,
+                    recentErrors: LOG.getByCode('PLAYER_UPDATE_ERROR', 10),
+                    playerState: {
+                        position: this.getPosition(),
+                        velocity: this.getVelocity(),
+                        isGrounded: this.isGrounded(),
+                        hasBody: !!this.body,
+                        hasController: !!this.characterController,
+                        hasSprite: !!this.sprite
+                    }
+                }
+            );
+
             LOG.fatal('PLAYER_CIRCUIT_BREAKER', {
                 subsystem: 'player',
                 message: 'Too many errors, player disabled',
                 errorCount: this.errorCount,
                 threshold: 5,
-                hint: 'Check recent player update errors. May indicate physics or input issues.'
+                hint: 'Check recent player update errors. May indicate physics or input issues.',
+                crashDump,
+                crashDumpSummary: CrashDumpGenerator.generateSummary(crashDump)
             });
+
+            // Disable player to prevent further errors
+            this.isActive = false;
             return;
         }
 

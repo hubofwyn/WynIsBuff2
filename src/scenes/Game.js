@@ -14,6 +14,7 @@ import {
     PhysicsStateProvider,
     InputStateProvider
 } from '../observability/providers/index.js';
+import { ErrorPatternDetector } from '../observability/utils/ErrorPatternDetector.js';
 
 export class Game extends Scene {
     constructor() {
@@ -39,6 +40,7 @@ export class Game extends Scene {
 
         // Observability
         this.debugContext = null;
+        this.errorPatternDetector = null;
 
         // Level data
         this.currentLevelId = 'level1';
@@ -126,6 +128,13 @@ export class Game extends Scene {
                 message: 'Initializing DebugContext for automatic state capture'
             });
             this.debugContext = DebugContext.getInstance();
+
+            // Initialize ErrorPatternDetector for automatic error pattern detection
+            this.errorPatternDetector = new ErrorPatternDetector(LOG);
+            LOG.dev('GAME_ERROR_PATTERN_DETECTOR_INIT', {
+                subsystem: 'observability',
+                message: 'ErrorPatternDetector initialized for pattern analysis'
+            });
 
             // Add visual enhancements
             this.createVisualEnhancements();
@@ -677,12 +686,32 @@ export class Game extends Scene {
             this.debugContext.updateFrame(frameNumber, deltaSeconds);
         }
 
+        // Periodic error pattern detection (every 5 seconds = 300 frames at 60 FPS)
+        if (this.errorPatternDetector && this.game.loop.frame % 300 === 0) {
+            const patterns = this.errorPatternDetector.analyzeRecent(5000);
+
+            // Log if concerning patterns detected
+            if (patterns.repeatingErrors.length > 0 || patterns.cascades.length > 0) {
+                LOG.warn('ERROR_PATTERNS_DETECTED', {
+                    subsystem: 'observability',
+                    message: `Error patterns detected: ${patterns.repeatingErrors.length} repeating, ${patterns.cascades.length} cascades`,
+                    patterns: {
+                        repeatingCount: patterns.repeatingErrors.length,
+                        cascadeCount: patterns.cascades.length,
+                        severity: patterns.severity.level,
+                        errorRate: patterns.errorRate.errorsPerSecond
+                    },
+                    hint: 'Multiple errors occurring. Check logs for details or investigate specific error codes.'
+                });
+            }
+        }
+
         // Only proceed if physics is initialized
         if (!this.physicsManager || !this.physicsManager.isInitialized()) {
             return;
         }
 
-        try {
+        try{
             // Update physics (steps the world and updates sprites)
             this.physicsManager.update(delta);
             

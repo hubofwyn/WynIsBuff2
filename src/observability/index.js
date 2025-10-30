@@ -32,3 +32,7 @@ export { StateProvider } from './context/StateProvider.js';
 export { PlayerStateProvider } from './providers/PlayerStateProvider.js';
 export { PhysicsStateProvider } from './providers/PhysicsStateProvider.js';
 export { InputStateProvider } from './providers/InputStateProvider.js';
+
+// Utilities (Phase 5)
+export { CrashDumpGenerator } from './utils/CrashDumpGenerator.js';
+export { ErrorPatternDetector } from './utils/ErrorPatternDetector.js';
