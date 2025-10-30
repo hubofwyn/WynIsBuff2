@@ -2,6 +2,14 @@
 
 Welcome to the WynIsBuff2 development guide! This document explains our project structure, conventions, and development workflow.
 
+## Scope
+
+This guide focuses on day-to-day contribution flow: environment setup, folder structure, patterns, testing, and asset workflow. It is not a full architecture deep dive or art pipeline specification.
+
+- Use this when onboarding and contributing code
+- For system design, see docs/ARCHITECTURE.md
+- For asset pipeline details, see ASSET_MANAGEMENT.md
+
 ## 📋 Table of Contents
 
 - [Project Architecture](#project-architecture)

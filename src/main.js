@@ -13,10 +13,14 @@ import { RunScene } from './scenes/RunScene';
 import { ResultsScene } from './scenes/ResultsScene';
 import { HubScene } from './scenes/HubScene';
 import { FactoryScene } from './scenes/FactoryScene';
+import { LOG } from './observability/core/LogSystem.js';
 
 //  Find out more information about the Game Config at:
 //  https://newdocs.phaser.io/docs/3.70.0/Phaser.Types.Core.GameConfig
-console.log('[Main] Initializing Phaser game...');
+LOG.info('MAIN_PHASER_INITIALIZING', {
+    subsystem: 'bootstrap',
+    message: 'Initializing Phaser game'
+});
 
 const config = {
     type: Phaser.WEBGL,
@@ -80,12 +84,21 @@ const game = new Phaser.Game(config);
 
 // Add game event listeners for debugging
 game.events.on('ready', () => {
-    console.log('[Main] Phaser game is ready!');
+    LOG.info('MAIN_PHASER_READY', {
+        subsystem: 'bootstrap',
+        message: 'Phaser game is ready',
+        sceneCount: game.scene.scenes.length
+    });
 });
 
 // TRIAGE FIX: Handle WebGL context loss gracefully
 game.events.on('contextlost', (event) => {
-    console.warn('[Main] WebGL context lost - pausing game');
+    LOG.warn('MAIN_WEBGL_CONTEXT_LOST', {
+        subsystem: 'bootstrap',
+        message: 'WebGL context lost - pausing game',
+        activeScenes: game.scene.scenes.filter(s => s.scene.isActive()).length,
+        hint: 'Context loss may be due to GPU issues, browser tab management, or system memory pressure. Game will attempt to recover.'
+    });
     event.preventDefault(); // Prevent default browser behavior
     // Pause all scenes
     game.scene.scenes.forEach(scene => {
@@ -96,7 +109,11 @@ game.events.on('contextlost', (event) => {
 });
 
 game.events.on('contextrestored', () => {
-    console.log('[Main] WebGL context restored - resuming game');
+    LOG.info('MAIN_WEBGL_CONTEXT_RESTORED', {
+        subsystem: 'bootstrap',
+        message: 'WebGL context restored - resuming game',
+        pausedScenes: game.scene.scenes.filter(s => s.scene.isPaused()).length
+    });
     // Resume all paused scenes
     game.scene.scenes.forEach(scene => {
         if (scene.scene.isPaused()) {
@@ -105,6 +122,15 @@ game.events.on('contextrestored', () => {
     });
 });
 
-console.log('[Main] Phaser game instance created:', game);
+LOG.info('MAIN_PHASER_INSTANCE_CREATED', {
+    subsystem: 'bootstrap',
+    message: 'Phaser game instance created',
+    config: {
+        width: config.width,
+        height: config.height,
+        type: config.type === Phaser.WEBGL ? 'WEBGL' : 'CANVAS',
+        sceneCount: config.scene.length
+    }
+});
 
 export default game;

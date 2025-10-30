@@ -1,3 +1,5 @@
+> Archived Notice: This historical task is preserved for reference and superseded by the current documentation set. Start at docs/INDEX.md for canonical guidance. Related: CONTRIBUTING.md, docs/ARCHITECTURE.md, ASSET_MANAGEMENT.md.
+
 Status: DONE
 Owner: phaser-coder
 Scope: feature

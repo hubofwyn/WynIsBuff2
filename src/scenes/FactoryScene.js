@@ -3,6 +3,7 @@ import { SceneKeys } from '../constants/SceneKeys.js';
 import { EventNames } from '../constants/EventNames.js';
 import { GameStateManager, EventBus } from '@features/core';
 import { EnhancedCloneManager } from '@features/idle';
+import { LOG } from '../observability/core/LogSystem.js';
 
 /**
  * FactoryScene - Production and automation management
@@ -33,7 +34,11 @@ export class FactoryScene extends Scene {
     }
 
     create() {
-        console.log('[FactoryScene] Creating factory scene');
+        LOG.dev('FACTORYSCENE_CREATED', {
+            subsystem: 'scene',
+            scene: SceneKeys.FACTORY,
+            message: 'Factory scene created'
+        });
         
         // Emit factory entered event via EventBus
         this.eventBus.emit(EventNames.FACTORY_ENTERED);
@@ -473,7 +478,12 @@ export class FactoryScene extends Scene {
 
     selectProductionLine(index) {
         this.selectedLine = index;
-        console.log('[FactoryScene] Selected production line:', index);
+        LOG.dev('FACTORYSCENE_LINE_SELECTED', {
+            subsystem: 'scene',
+            scene: SceneKeys.FACTORY,
+            message: 'Production line selected',
+            lineIndex: index
+        });
         
         // Visual feedback
         this.productionLines.forEach((line, i) => {
@@ -514,8 +524,16 @@ export class FactoryScene extends Scene {
                 newLevel: line.data.level,
                 newRate: line.data.rate
             });
-            
-            console.log('[FactoryScene] Upgraded line', index, 'to level', line.data.level);
+
+            LOG.dev('FACTORYSCENE_LINE_UPGRADED', {
+                subsystem: 'scene',
+                scene: SceneKeys.FACTORY,
+                message: 'Production line upgraded',
+                lineIndex: index,
+                newLevel: line.data.level,
+                newRate: line.data.rate,
+                cost: line.data.upgradeCost
+            });
         } else {
             // Not enough resources
             this.showInsufficientFunds();
@@ -542,7 +560,11 @@ export class FactoryScene extends Scene {
     }
 
     activateProductionBoost() {
-        console.log('[FactoryScene] Production boost activated');
+        LOG.dev('FACTORYSCENE_BOOST_ACTIVATED', {
+            subsystem: 'scene',
+            scene: SceneKeys.FACTORY,
+            message: 'Production boost activated'
+        });
         
         // Emit boost event
         this.eventBus.emit(EventNames.PRODUCTION_BOOST_ACTIVE, {
@@ -584,8 +606,13 @@ export class FactoryScene extends Scene {
         
         // Emit collect event
         this.eventBus.emit(EventNames.FACTORY_COLLECT, totalCollected);
-        
-        console.log('[FactoryScene] Collected:', totalCollected);
+
+        LOG.dev('FACTORYSCENE_RESOURCES_COLLECTED', {
+            subsystem: 'scene',
+            scene: SceneKeys.FACTORY,
+            message: 'Resources collected from production lines',
+            totalCollected
+        });
     }
 
     toggleAutoCollect() {
@@ -594,8 +621,13 @@ export class FactoryScene extends Scene {
         this.autoCollectText.setText(
             this.autoCollectEnabled ? '✅ Auto-Collect' : '⬜ Auto-Collect'
         );
-        
-        console.log('[FactoryScene] Auto-collect:', this.autoCollectEnabled);
+
+        LOG.dev('FACTORYSCENE_AUTOCOLLECT_TOGGLED', {
+            subsystem: 'scene',
+            scene: SceneKeys.FACTORY,
+            message: 'Auto-collect toggled',
+            enabled: this.autoCollectEnabled
+        });
     }
 
     updateResourceDisplay() {

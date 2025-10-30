@@ -1,4 +1,5 @@
 import { EventNames } from '../../constants/EventNames';
+import { LOG } from '../../observability/core/LogSystem.js';
 
 /**
  * EnhancedMovementController - A Celeste-inspired movement system with precise physics
@@ -142,8 +143,20 @@ export class EnhancedMovementController {
         
         // Initialize state machine transitions
         this.initializeStateTransitions();
-        
-        console.log('[EnhancedMovementController] Initialized with Celeste-like physics');
+
+        LOG.dev('ENHANCEDMOVEMENTCONTROLLER_INITIALIZED', {
+            subsystem: 'player',
+            message: 'EnhancedMovementController initialized with Celeste-like physics',
+            features: {
+                inputBufferMs: this.inputBuffer.size,
+                fixedTimestepFps: 60,
+                momentumPreservation: this.momentum.preservationFactor,
+                coyoteTimeDuration: this.coyoteTime.duration,
+                dashDuration: this.dash.duration,
+                groundMaxSpeed: this.movementParams.ground.maxSpeed,
+                airMaxSpeed: this.movementParams.air.maxSpeed
+            }
+        });
     }
     
     /**
@@ -747,7 +760,14 @@ export class EnhancedMovementController {
         // Check if transition is valid
         const currentStateConfig = this.stateTransitions[this.state];
         if (!currentStateConfig || !currentStateConfig.canTransitionTo.includes(newState)) {
-            console.warn(`[EnhancedMovement] Invalid transition from ${this.state} to ${newState}`);
+            LOG.warn('ENHANCEDMOVEMENTCONTROLLER_INVALID_STATE_TRANSITION', {
+                subsystem: 'player',
+                message: 'Invalid state transition attempted',
+                currentState: this.state,
+                attemptedState: newState,
+                allowedTransitions: currentStateConfig?.canTransitionTo || [],
+                hint: 'Review state machine transition rules or fix state transition logic'
+            });
             return;
         }
         

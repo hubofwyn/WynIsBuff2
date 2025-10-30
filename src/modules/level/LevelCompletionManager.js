@@ -1,5 +1,6 @@
 import RAPIER from '@dimforge/rapier2d-compat';
 import { EventNames } from '../../constants/EventNames';
+import { LOG } from '../../observability/core/LogSystem.js';
 
 /**
  * LevelCompletionManager class is responsible for handling level completion logic
@@ -45,7 +46,10 @@ export class LevelCompletionManager {
      */
     log(message) {
         if (this.debugMode) {
-            console.log(`[LevelCompletionManager] ${message}`);
+            LOG.dev('LEVELCOMPLETIONMANAGER_DEBUG', {
+                subsystem: 'level',
+                message
+            });
         }
     }
     
@@ -114,10 +118,16 @@ export class LevelCompletionManager {
             };
             
             this.log('Level completion trigger created successfully');
-            
+
             return this.completionTrigger;
         } catch (error) {
-            console.error('[LevelCompletionManager] Error in createCompletionTrigger:', error);
+            LOG.error('LEVELCOMPLETIONMANAGER_CREATE_TRIGGER_ERROR', {
+                subsystem: 'level',
+                error,
+                message: 'Error creating level completion trigger',
+                triggerConfig,
+                hint: 'Check trigger configuration and physics world state'
+            });
             return null;
         }
     }

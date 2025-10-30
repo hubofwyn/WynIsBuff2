@@ -3,6 +3,8 @@ import { EventNames } from '../constants/EventNames';
 import { PhysicsConfig } from '../constants/PhysicsConfig';
 import { metersToPixels } from '../constants/PhysicsConstants.js';
 import { BaseManager } from './BaseManager';
+import { LOG } from '../observability/core/LogSystem.js';
+import { CrashDumpGenerator } from '../observability/utils/CrashDumpGenerator.js';
 
 /**
  * PhysicsManager class handles the Rapier physics world and synchronization
@@ -44,17 +46,30 @@ export class PhysicsManager extends BaseManager {
         this.scene = scene;
         this.eventSystem = eventSystem;
         try {
-            console.log('[PhysicsManager] Initializing Rapier...');
+            LOG.info('PHYSICS_INIT_START', {
+                subsystem: 'physics',
+                message: 'Initializing Rapier physics engine'
+            });
             await RAPIER.init();
-            console.log('[PhysicsManager] Rapier initialized successfully');
+            LOG.info('PHYSICS_INIT_SUCCESS', {
+                subsystem: 'physics',
+                message: 'Rapier initialized successfully'
+            });
 
             // Create physics world with gravity
             this.world = new RAPIER.World(new RAPIER.Vector2(gravityX, gravityY));
-            console.log('[PhysicsManager] Rapier world created with gravity:', gravityX, gravityY);
+            LOG.info('PHYSICS_WORLD_CREATED', {
+                subsystem: 'physics',
+                message: 'Rapier world created',
+                gravity: { x: gravityX, y: gravityY }
+            });
 
             // Create event queue for collision events (required in Rapier 0.19+)
             this.eventQueue = new RAPIER.EventQueue(true);
-            console.log('[PhysicsManager] Event queue created');
+            LOG.dev('PHYSICS_EVENT_QUEUE', {
+                subsystem: 'physics',
+                message: 'Event queue created'
+            });
 
             // Set up collision event handling
             this.setupCollisionEvents();
@@ -70,7 +85,13 @@ export class PhysicsManager extends BaseManager {
             
             return true;
         } catch (error) {
-            console.error('[PhysicsManager] Error initializing physics:', error);
+            LOG.error('PHYSICS_INIT_ERROR', {
+                subsystem: 'physics',
+                error,
+                message: 'Failed to initialize physics engine',
+                hint: 'Check if Rapier WASM files are accessible. Verify gravity values are valid.',
+                gravity: { x: gravityX, y: gravityY }
+            });
             return false;
         }
     }
@@ -116,12 +137,19 @@ export class PhysicsManager extends BaseManager {
             });
         } else {
             // Fallback for collision event handling if contactPairEvents is not available
-            console.warn('[PhysicsManager] contactPairEvents is not available, using manual collision detection in update loop.');
+            LOG.warn('PHYSICS_NO_CONTACT_EVENTS', {
+                subsystem: 'physics',
+                message: 'contactPairEvents not available, using manual collision detection',
+                hint: 'For basic platformer gameplay, character controller contact detection is sufficient'
+            });
             // Note: Collision detection will be handled manually in the update() method if needed
             // For basic platformer gameplay, contact detection via characterController is sufficient
         }
-        
-        console.log('[PhysicsManager] Collision events set up');
+
+        LOG.dev('PHYSICS_COLLISION_SETUP', {
+            subsystem: 'physics',
+            message: 'Collision events set up'
+        });
     }
     
     /**
@@ -154,7 +182,13 @@ export class PhysicsManager extends BaseManager {
             try {
                 handler(bodyHandleA, bodyHandleB);
             } catch (error) {
-                console.error('[PhysicsManager] Error in collision handler:', error);
+                LOG.error('PHYSICS_COLLISION_HANDLER_ERROR', {
+                    subsystem: 'physics',
+                    error,
+                    message: 'Error in collision handler',
+                    bodyHandles: { A: bodyHandleA, B: bodyHandleB },
+                    hint: 'Check collision handler implementation for errors'
+                });
             }
         });
     }
@@ -194,14 +228,48 @@ export class PhysicsManager extends BaseManager {
         
         // TRIAGE FIX: Circuit breaker for repeated errors
         if (this.errorCount > 10) {
-            console.warn('[PhysicsManager] Too many errors, physics disabled');
+            // Generate comprehensive crash dump for analysis
+            const crashDump = CrashDumpGenerator.generate(
+                new Error('Physics circuit breaker triggered'),
+                {
+                    subsystem: 'physics',
+                    errorCount: this.errorCount,
+                    threshold: 10,
+                    recentErrors: LOG.getByCode('PHYSICS_UPDATE_ERROR', 10),
+                    physicsState: {
+                        bodyCount: this.bodyToSprite?.size || 0,
+                        worldStep: this.fixedTimeStep,
+                        accumulator: this.accumulator,
+                        isActive: this.isActive
+                    }
+                }
+            );
+
+            LOG.fatal('PHYSICS_CIRCUIT_BREAKER', {
+                subsystem: 'physics',
+                message: 'Circuit breaker triggered: too many errors, physics disabled',
+                errorCount: this.errorCount,
+                threshold: 10,
+                hint: 'Check recent physics errors. May indicate Rapier API issues or invalid body state.',
+                crashDump,
+                crashDumpSummary: CrashDumpGenerator.generateSummary(crashDump)
+            });
+
+            // Disable physics to prevent further errors
+            this.isActive = false;
             return;
         }
         
         try {
             // TRIAGE FIX: Validate delta is a finite number
             if (!Number.isFinite(delta) || delta < 0 || delta > 1000) {
-                console.warn('[PhysicsManager] Invalid delta:', delta, 'using fallback');
+                LOG.warn('PHYSICS_INVALID_DELTA', {
+                    subsystem: 'physics',
+                    message: 'Invalid delta time received, using fallback',
+                    invalidDelta: delta,
+                    fallbackDelta: 16.67,
+                    hint: 'Check game loop timing. Delta should be between 0-1000ms.'
+                });
                 delta = 16.67; // Fallback to 60fps
             }
             
@@ -278,7 +346,13 @@ export class PhysicsManager extends BaseManager {
             // Reset accumulator if we hit max steps (prevents permanent lag)
             if (steps >= maxStepsPerFrame) {
                 this.accumulator = 0;
-                console.warn('[PhysicsManager] Frame budget exceeded, resetting accumulator');
+                LOG.warn('PHYSICS_FRAME_BUDGET_EXCEEDED', {
+                    subsystem: 'physics',
+                    message: 'Frame budget exceeded, resetting accumulator',
+                    steps: steps,
+                    maxSteps: maxStepsPerFrame,
+                    hint: 'Physics simulation running slowly. Consider optimizing collision shapes or reducing body count.'
+                });
             }
             
             // Calculate interpolation factor for smooth rendering
@@ -292,18 +366,20 @@ export class PhysicsManager extends BaseManager {
             
         } catch (error) {
             this.errorCount = (this.errorCount || 0) + 1;
-            console.error(`[PhysicsManager] ═══════════════════════════════════════════`);
-            console.error(`[PhysicsManager] ERROR ${this.errorCount}/10 in update loop`);
-            console.error(`[PhysicsManager] Error Type: ${error.name}`);
-            console.error(`[PhysicsManager] Error Message: ${error.message}`);
-            console.error(`[PhysicsManager] Stack Trace:`);
-            console.error(error.stack);
-            console.error(`[PhysicsManager] State at error:`);
-            console.error(`  - world: ${!!this.world}`);
-            console.error(`  - accumulator: ${this.accumulator}`);
-            console.error(`  - bodyToSprite.size: ${this.bodyToSprite?.size || 'N/A'}`);
-            console.error(`  - delta: ${arguments[0]}`);
-            console.error(`[PhysicsManager] ═══════════════════════════════════════════`);
+            LOG.error('PHYSICS_UPDATE_ERROR', {
+                subsystem: 'physics',
+                error,
+                message: `Physics update error ${this.errorCount}/10`,
+                errorCount: this.errorCount,
+                threshold: 10,
+                state: {
+                    hasWorld: !!this.world,
+                    accumulator: this.accumulator,
+                    bodyCount: this.bodyToSprite?.size || 0,
+                    delta: arguments[0]
+                },
+                hint: 'Check Rapier body state. Verify all bodies have valid translations. May indicate invalid body configuration.'
+            });
 
             // TRIAGE FIX: Emergency fallback - try to at least update sprites
             try {
@@ -311,9 +387,12 @@ export class PhysicsManager extends BaseManager {
                     this.updateGameObjects(0); // No interpolation in emergency mode
                 }
             } catch (fallbackError) {
-                console.error('[PhysicsManager] Fallback update also failed:');
-                console.error(`  Error: ${fallbackError.message}`);
-                console.error(`  Stack: ${fallbackError.stack}`);
+                LOG.error('PHYSICS_FALLBACK_ERROR', {
+                    subsystem: 'physics',
+                    error: fallbackError,
+                    message: 'Emergency fallback update also failed',
+                    hint: 'Physics system in critical state. Consider restarting scene.'
+                });
             }
         }
     }
@@ -363,7 +442,13 @@ export class PhysicsManager extends BaseManager {
                 }
             });
         } catch (error) {
-            console.error('[PhysicsManager] Error in updateGameObjects:', error);
+            LOG.error('PHYSICS_UPDATE_GAMEOBJECTS_ERROR', {
+                subsystem: 'physics',
+                error,
+                message: 'Error updating game objects from physics bodies',
+                bodyCount: this.bodyToSprite?.size || 0,
+                hint: 'Check body-sprite synchronization. Verify all bodies have valid translation() method.'
+            });
         }
     }
     

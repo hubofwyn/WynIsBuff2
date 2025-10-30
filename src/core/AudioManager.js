@@ -2,6 +2,7 @@ import { Howl, Howler } from 'howler';
 // Using the new path alias introduced in Step 2
 import { BaseManager } from './BaseManager.js';
 import { AudioAssets, AudioPaths } from '../constants/Assets.js';
+import { LOG } from '../observability/core/LogSystem.js';
 
 // Background music sources
 const bgmList = {
@@ -66,7 +67,11 @@ export class AudioManager extends BaseManager {
         // Set master volume
         Howler.volume(this.settings.masterVolume);
         this._initSounds();
-        console.log('[AudioManager] Initialized with settings', this.settings);
+        LOG.dev('AUDIO_INIT_COMPLETE', {
+            subsystem: 'audio',
+            message: 'AudioManager initialized',
+            settings: this.settings
+        });
         // Mark as initialised for BaseManager consumers
         this.setInitialized();
     }
@@ -92,24 +97,51 @@ export class AudioManager extends BaseManager {
     _initSounds() {
         // Setup background music
         Object.entries(bgmList).forEach(([key, src]) => {
-            console.log(`[AudioManager] Loading music: ${key} from ${src}`);
+            LOG.dev('AUDIO_LOADING_MUSIC', {
+                subsystem: 'audio',
+                message: 'Loading music track',
+                track: key,
+                src: src
+            });
             this.music[key] = new Howl({
                 src: [`assets/${src}`],
                 html5: true,
                 loop: true,
                 volume: this.settings.musicVolume,
                 preload: true,
-                onload: () => console.log(`[AudioManager] Successfully loaded: ${key}`),
+                onload: () => LOG.dev('AUDIO_MUSIC_LOADED', {
+                    subsystem: 'audio',
+                    message: 'Music track loaded successfully',
+                    track: key
+                }),
                 onloaderror: (id, err) => {
-                    console.error(`[AudioManager] Failed to load ${key}:`, err);
+                    LOG.error('AUDIO_MUSIC_LOAD_ERROR', {
+                        subsystem: 'audio',
+                        error: err,
+                        message: 'Failed to load music track',
+                        track: key,
+                        src: src,
+                        hint: 'Check if audio file exists at assets/' + src
+                    });
                     // Try fallback if available
                     if (src.endsWith('.mp3')) {
                         const fallbackSrc = src.replace('.mp3', '.ogg');
-                        console.log(`[AudioManager] Trying fallback: ${fallbackSrc}`);
+                        LOG.dev('AUDIO_TRYING_FALLBACK', {
+                            subsystem: 'audio',
+                            message: 'Trying fallback audio format',
+                            track: key,
+                            fallbackSrc: fallbackSrc
+                        });
                     }
                 },
                 onplayerror: (id, err) => {
-                    console.error(`[AudioManager] Playback error for ${key}:`, err);
+                    LOG.error('AUDIO_PLAYBACK_ERROR', {
+                        subsystem: 'audio',
+                        error: err,
+                        message: 'Playback error for music track',
+                        track: key,
+                        hint: 'May require user interaction to unlock audio. Check browser autoplay policy.'
+                    });
                     // Unlock audio on next user interaction
                     window.Howler.ctx && window.Howler.ctx.resume();
                 }
@@ -121,7 +153,14 @@ export class AudioManager extends BaseManager {
                 src: [`assets/${src}`],
                 volume: this.settings.sfxVolume,
                 preload: true,
-                onloaderror: (id, err) => console.warn(`[AudioManager] Failed to load SFX ${src}:`, err)
+                onloaderror: (id, err) => LOG.warn('AUDIO_SFX_LOAD_ERROR', {
+                    subsystem: 'audio',
+                    error: err,
+                    message: 'Failed to load SFX',
+                    sfxKey: key,
+                    src: src,
+                    hint: 'Check if SFX file exists at assets/' + src
+                })
             }));
         });
     }
@@ -132,21 +171,42 @@ export class AudioManager extends BaseManager {
      */
     playMusic(key) {
         const track = this.music[key];
-        console.log(`[AudioManager] playMusic called for: ${key}`, track);
+        LOG.dev('AUDIO_PLAY_MUSIC_CALLED', {
+            subsystem: 'audio',
+            message: 'playMusic called',
+            track: key,
+            trackExists: !!track
+        });
         if (track) {
             // Handle browser autoplay policy
             if (window.Howler && window.Howler.ctx && window.Howler.ctx.state === 'suspended') {
-                console.log('[AudioManager] Resuming suspended audio context');
+                LOG.dev('AUDIO_RESUMING_CONTEXT', {
+                    subsystem: 'audio',
+                    message: 'Resuming suspended audio context',
+                    track: key
+                });
                 window.Howler.ctx.resume().then(() => {
                     this._playTrack(track, key);
                 }).catch(err => {
-                    console.warn('[AudioManager] Could not resume audio context:', err);
+                    LOG.warn('AUDIO_RESUME_FAILED', {
+                        subsystem: 'audio',
+                        error: err,
+                        message: 'Could not resume audio context',
+                        track: key,
+                        hint: 'User interaction may be required to unlock audio'
+                    });
                 });
             } else {
                 this._playTrack(track, key);
             }
         } else {
-            console.error(`[AudioManager] Track not found: ${key}`);
+            LOG.error('AUDIO_TRACK_NOT_FOUND', {
+                subsystem: 'audio',
+                message: 'Music track not found',
+                track: key,
+                availableTracks: Object.keys(this.music),
+                hint: 'Check if track key exists in bgmList. Available tracks: ' + Object.keys(this.music).join(', ')
+            });
         }
     }
 
@@ -156,13 +216,26 @@ export class AudioManager extends BaseManager {
      */
     _playTrack(track, key) {
         if (!track.playing()) {
-            console.log(`[AudioManager] Starting playback of: ${key}`);
+            LOG.dev('AUDIO_STARTING_PLAYBACK', {
+                subsystem: 'audio',
+                message: 'Starting music playback',
+                track: key
+            });
             const id = track.play();
             if (id === undefined) {
-                console.warn(`[AudioManager] Failed to play ${key} - may need user interaction`);
+                LOG.warn('AUDIO_PLAY_FAILED', {
+                    subsystem: 'audio',
+                    message: 'Failed to play music track',
+                    track: key,
+                    hint: 'User interaction may be required. Check browser autoplay policy.'
+                });
             }
         } else {
-            console.log(`[AudioManager] ${key} is already playing`);
+            LOG.dev('AUDIO_ALREADY_PLAYING', {
+                subsystem: 'audio',
+                message: 'Music track is already playing',
+                track: key
+            });
         }
     }
 
@@ -185,7 +258,13 @@ export class AudioManager extends BaseManager {
     playSFX(key, pan = 0) {
         const arr = this.sfx[key];
         if (!arr || arr.length === 0) {
-            console.warn(`[AudioManager] No SFX for key: ${key}`);
+            LOG.warn('AUDIO_SFX_NOT_FOUND', {
+                subsystem: 'audio',
+                message: 'No SFX found for key',
+                sfxKey: key,
+                availableKeys: Object.keys(this.sfx),
+                hint: 'Check if SFX key exists in sfxList. Available keys: ' + Object.keys(this.sfx).join(', ')
+            });
             return;
         }
         const howl = arr[Math.floor(Math.random() * arr.length)];

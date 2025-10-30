@@ -1,5 +1,6 @@
 import RAPIER from '@dimforge/rapier2d-compat';
 import { EventNames } from '../../constants/EventNames';
+import { LOG } from '../../observability/core/LogSystem.js';
 
 /**
  * WallDashController - Advanced wall interaction and dash mechanics
@@ -93,8 +94,11 @@ export class WallDashController {
             dashTrail: null,
             impactEffect: null
         };
-        
-        console.log('[WallDashController] Initialized with Rapier collision integration');
+
+        LOG.dev('WALLDASHCONTROLLER_INITIALIZED', {
+            subsystem: 'player',
+            message: 'WallDashController initialized with Rapier collision integration'
+        });
     }
     
     /**

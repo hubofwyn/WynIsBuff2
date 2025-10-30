@@ -1,5 +1,6 @@
 import { EventNames } from '../../constants/EventNames';
 import { SceneKeys } from '../../constants/SceneKeys';
+import { LOG } from '../../observability/core/LogSystem.js';
 
 /**
  * JumpController class handles all jump-related functionality for the player
@@ -69,8 +70,11 @@ export class JumpController {
                 3: { squashX: 1.12, squashY: 0.88, duration: 200 }
             }
         };
-        
-        console.log('[JumpController] Initialized');
+
+        LOG.dev('JUMPCONTROLLER_INITIALIZED', {
+            subsystem: 'player',
+            message: 'JumpController initialized with triple-jump and coyote time'
+        });
     }
     
     /**

@@ -1,3 +1,5 @@
+import { LOG } from '../observability/core/LogSystem.js';
+
 export const EventNames = {
     // Game state events
     GAME_INIT: 'game:init',
@@ -220,7 +222,12 @@ export const DeprecatedEventNames = Object.freeze({
     get: (deprecatedName) => {
         const newName = DeprecatedEventNames[deprecatedName];
         if (newName && process.env.NODE_ENV !== 'production') {
-            console.warn(`[EventNames] Deprecated event name "${deprecatedName}" used. Please use EventNames.${Object.keys(EventNames).find(key => EventNames[key] === newName)} instead.`);
+            LOG.warn('EVENTNAMES_DEPRECATED_USAGE', {
+                subsystem: 'core',
+                message: `Deprecated event name "${deprecatedName}" used`,
+                deprecatedName,
+                recommendedUsage: `EventNames.${Object.keys(EventNames).find(key => EventNames[key] === newName)}`
+            });
         }
         return newName || deprecatedName;
     }

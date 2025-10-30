@@ -1,5 +1,6 @@
 import RAPIER from '@dimforge/rapier2d-compat';
 import { EventNames } from '../../constants/EventNames';
+import { LOG } from '../../observability/core/LogSystem.js';
 
 /**
  * EnhancedJumpController - Advanced jump system with proper buffering,
@@ -117,8 +118,11 @@ export class EnhancedJumpController {
             earlyGroundDetection: 2,   // Pixels before actual ground contact
             interpolation: true        // Smooth visual interpolation
         };
-        
-        console.log('[EnhancedJumpController] Initialized with advanced jump physics');
+
+        LOG.dev('ENHANCEDJUMPCONTROLLER_INITIALIZED', {
+            subsystem: 'player',
+            message: 'EnhancedJumpController initialized with advanced jump physics'
+        });
     }
     
     /**

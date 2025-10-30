@@ -1,9 +1,9 @@
 {
-  "timestamp": "2025-10-29T01:59:36.173Z",
+  "timestamp": "2025-10-29T02:24:55.414Z",
   "stats": {
-    "total_files": 127,
-    "total_size": 626726,
-    "total_lines": 18521
+    "total_files": 129,
+    "total_size": 643062,
+    "total_lines": 19137
   },
   "issues": {
     "outdated": [
@@ -119,6 +119,14 @@
         ]
       },
       {
+        "file": "SESSION_3_COMPLETE.md",
+        "pattern": "deprecated",
+        "count": 1,
+        "sample": [
+          "deprecated"
+        ]
+      },
+      {
         "file": "SESSION_3_NOTES.md",
         "pattern": "in progress",
         "count": 1,
@@ -140,6 +148,15 @@
         "count": 1,
         "sample": [
           "In Progress"
+        ]
+      },
+      {
+        "file": "SESSION_4_PROGRESS.md",
+        "pattern": "old.*architecture",
+        "count": 2,
+        "sample": [
+          "OLD→NEW architecture",
+          "old→new architecture"
         ]
       },
       {
@@ -172,14 +189,6 @@
         "count": 1,
         "sample": [
           "olders, modules, and public APIs follow baseline architecture"
-        ]
-      },
-      {
-        "file": "docs/ARCHITECTURE.md",
-        "pattern": "deprecated",
-        "count": 1,
-        "sample": [
-          "DEPRECATED"
         ]
       },
       {
@@ -228,13 +237,6 @@
     ],
     "duplicates": [
       {
-        "title": "Testing",
-        "files": [
-          "AGENTS.md",
-          "AGENTS.md"
-        ]
-      },
-      {
         "title": "Find orphans",
         "files": [
           "DOC_ANALYSIS_SUMMARY.md",
@@ -268,76 +270,6 @@
         "text": "Phaser Studio"
       },
       {
-        "file": "docs/architecture/MVPArchitectureSummary.md",
-        "link": "./ImplementationProgress.md",
-        "text": "Implementation Progress Tracker"
-      },
-      {
-        "file": "docs/architecture/MVPArchitectureSummary.md",
-        "link": "./ImplementationProgress.md",
-        "text": "Implementation Progress Tracker"
-      },
-      {
-        "file": "docs/architecture/ModularArchitecture.md",
-        "link": "./ModularPlayerController.md",
-        "text": "ModularPlayerController.md"
-      },
-      {
-        "file": "docs/archive/aiprojectdocs-historical/ImplementationProgress.md",
-        "link": "./ArchitecturalOverview.md",
-        "text": "Architectural Overview"
-      },
-      {
-        "file": "docs/archive/aiprojectdocs-historical/ImplementationProgress.md",
-        "link": "./ModularArchitecture.md",
-        "text": "Modular Architecture"
-      },
-      {
-        "file": "docs/archive/aiprojectdocs-historical/ImplementationProgress.md",
-        "link": "./ModularLevelArchitecture.md",
-        "text": "Modular Level Architecture"
-      },
-      {
-        "file": "docs/features/LevelImplementationArchitecture.md",
-        "link": "./MVPLevelDesignGuide.md",
-        "text": "MVP Level Design Guide"
-      },
-      {
-        "file": "docs/features/LevelImplementationArchitecture.md",
-        "link": "./RevisedMVPImplementationPlan.md",
-        "text": "Revised MVP Implementation Plan"
-      },
-      {
-        "file": "docs/features/LevelImplementationSummary.md",
-        "link": "./ModularLevelArchitecture.md",
-        "text": "Modular Level Architecture"
-      },
-      {
-        "file": "docs/features/LevelImplementationSummary.md",
-        "link": "./RevisedMVPImplementationPlan.md",
-        "text": "Revised MVP Implementation Plan"
-      },
-      {
-        "file": "docs/features/LevelImplementationTasks.md",
-        "link": "./ModularLevelArchitecture.md",
-        "text": "ModularLevelArchitecture.md"
-      },
-      {
-        "file": "docs/features/LevelImplementationTasks.md",
-        "link": "./ModularLevelSystemImplementation.md",
-        "text": "ModularLevelSystemImplementation.md"
-      },
-      {
-        "file": "docs/features/LevelImplementationTasks.md",
-        "link": "./MVPLevelDesignGuide.md",
-        "text": "MVPLevelDesignGuide.md"
-      },
-      {
-        "file": "docs/systems/EventSystemImplementationSteps.md",
-        "link": "./ImplementationProgress.md",
-        "text": "Implementation Progress Tracker"
-      },
-      {
         "file": "AIProjectDocs/README.md",
         "link": "../CONTRIBUTING.md#-getting-started",
         "text": "CONTRIBUTING.md"
@@ -360,9 +292,9 @@
   "all_files": [
     {
       "path": "AGENTS.md",
-      "size": 5054,
-      "lines": 157,
-      "modified": "2025-10-11T03:04:01.527Z"
+      "size": 4071,
+      "lines": 122,
+      "modified": "2025-10-29T02:16:46.145Z"
     },
     {
       "path": "AIPROJECTDOCS_CATEGORIZATION.md",
@@ -372,9 +304,9 @@
     },
     {
       "path": "ASSET_MANAGEMENT.md",
-      "size": 5923,
-      "lines": 211,
-      "modified": "2025-10-11T03:04:01.530Z"
+      "size": 5142,
+      "lines": 185,
+      "modified": "2025-10-29T02:18:05.126Z"
     },
     {
       "path": "CHANGELOG.md",
@@ -384,9 +316,9 @@
     },
     {
       "path": "CLAUDE.md",
-      "size": 12469,
-      "lines": 332,
-      "modified": "2025-10-11T03:04:01.530Z"
+      "size": 5742,
+      "lines": 201,
+      "modified": "2025-10-29T02:07:40.617Z"
     },
     {
       "path": "CODEX.md",
@@ -396,9 +328,9 @@
     },
     {
       "path": "CONTRIBUTING.md",
-      "size": 12538,
-      "lines": 437,
-      "modified": "2025-10-11T03:04:01.530Z"
+      "size": 10192,
+      "lines": 344,
+      "modified": "2025-10-29T02:13:20.303Z"
     },
     {
       "path": "DOCUMENTATION_QUALITY_STANDARDS.md",
@@ -444,9 +376,9 @@
     },
     {
       "path": "README.md",
-      "size": 6854,
-      "lines": 119,
-      "modified": "2025-10-11T03:04:01.531Z"
+      "size": 6154,
+      "lines": 196,
+      "modified": "2025-10-29T02:09:47.981Z"
     },
     {
       "path": "Rapier.md",
@@ -473,6 +405,12 @@
       "modified": "2025-10-29T01:38:44.243Z"
     },
     {
+      "path": "SESSION_3_COMPLETE.md",
+      "size": 16681,
+      "lines": 483,
+      "modified": "2025-10-29T02:03:55.937Z"
+    },
+    {
       "path": "SESSION_3_NOTES.md",
       "size": 2681,
       "lines": 99,
@@ -483,6 +421,12 @@
       "size": 6816,
       "lines": 265,
       "modified": "2025-10-29T01:48:06.341Z"
+    },
+    {
+      "path": "SESSION_4_PROGRESS.md",
+      "size": 12567,
+      "lines": 398,
+      "modified": "2025-10-29T02:20:02.278Z"
     },
     {
       "path": "STATUS_REPORT.md",
@@ -516,9 +460,9 @@
     },
     {
       "path": "docs/ARCHITECTURE.md",
-      "size": 15023,
-      "lines": 411,
-      "modified": "2025-10-11T03:04:01.611Z"
+      "size": 13380,
+      "lines": 354,
+      "modified": "2025-10-29T02:15:32.928Z"
     },
     {
       "path": "docs/INDEX.md",
@@ -552,15 +496,15 @@
     },
     {
       "path": "docs/architecture/MVPArchitectureSummary.md",
-      "size": 6614,
+      "size": 6682,
       "lines": 150,
-      "modified": "2025-10-11T03:04:01.528Z"
+      "modified": "2025-10-29T01:59:57.352Z"
     },
     {
       "path": "docs/architecture/ModularArchitecture.md",
-      "size": 6878,
+      "size": 6887,
       "lines": 182,
-      "modified": "2025-10-11T03:04:01.529Z"
+      "modified": "2025-10-29T02:00:08.393Z"
     },
     {
       "path": "docs/architecture/README.md",
@@ -576,9 +520,9 @@
     },
     {
       "path": "docs/archive/aiprojectdocs-historical/ImplementationProgress.md",
-      "size": 5563,
+      "size": 5609,
       "lines": 112,
-      "modified": "2025-10-11T03:04:01.528Z"
+      "modified": "2025-10-29T02:00:24.976Z"
     },
     {
       "path": "docs/archive/aiprojectdocs-historical/LevelManagerWrapperIssue.md",
@@ -936,21 +880,21 @@
     },
     {
       "path": "docs/features/LevelImplementationArchitecture.md",
-      "size": 7456,
+      "size": 7498,
       "lines": 253,
-      "modified": "2025-10-11T03:04:01.528Z"
+      "modified": "2025-10-29T02:01:00.860Z"
     },
     {
       "path": "docs/features/LevelImplementationSummary.md",
-      "size": 4063,
+      "size": 4106,
       "lines": 90,
-      "modified": "2025-10-11T03:04:01.528Z"
+      "modified": "2025-10-29T02:01:14.657Z"
     },
     {
       "path": "docs/features/LevelImplementationTasks.md",
-      "size": 7246,
+      "size": 7272,
       "lines": 200,
-      "modified": "2025-10-11T03:04:01.528Z"
+      "modified": "2025-10-29T02:00:46.943Z"
     },
     {
       "path": "docs/features/README.md",
@@ -1002,9 +946,9 @@
     },
     {
       "path": "docs/systems/EventSystemImplementationSteps.md",
-      "size": 8694,
+      "size": 8728,
       "lines": 316,
-      "modified": "2025-10-11T03:04:01.528Z"
+      "modified": "2025-10-29T02:01:45.937Z"
     },
     {
       "path": "docs/systems/ModularLevelArchitecture.md",

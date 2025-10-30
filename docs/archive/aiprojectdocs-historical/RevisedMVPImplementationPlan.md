@@ -332,3 +332,4 @@ This revised implementation plan focuses on delivering the essential architectur
 **Next Steps**: The focus has now shifted to Phase 2.1 - Triple Jump Refinement, which involves enhancing the visual feedback for jumps, refining the jump physics, and optimizing the jump detection and response timing.
 
 For a detailed overview of the implementation progress and next steps, refer to the [Implementation Progress Tracker](./ImplementationProgress.md).
+> Archived Notice: Superseded by IMPLEMENTATION_PLAN_V2.md and docs/INDEX.md. Refer there for the current plan.

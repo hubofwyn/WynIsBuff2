@@ -7,12 +7,25 @@ import { EventNames } from '../constants/EventNames';
 import { SceneKeys } from '../constants/SceneKeys.js';
 import { AudioAssets, ImageAssets } from '../constants/Assets.js';
 import { PhysicsConfig } from '../constants/PhysicsConfig.js';
+import { LOG } from '../observability/core/LogSystem.js';
+import { DebugContext } from '../observability/context/DebugContext.js';
+import {
+    PlayerStateProvider,
+    PhysicsStateProvider,
+    InputStateProvider
+} from '../observability/providers/index.js';
+import { ErrorPatternDetector } from '../observability/utils/ErrorPatternDetector.js';
+import { DebugAPI } from '../observability/api/DebugAPI.js';
 
 export class Game extends Scene {
     constructor() {
         super(SceneKeys.GAME);
-        console.log('[Game] Constructor called');
-        
+        LOG.dev('GAME_SCENE_CONSTRUCTOR', {
+            subsystem: 'scene',
+            scene: SceneKeys.GAME,
+            message: 'Game scene constructor called'
+        });
+
         // Game managers
         this.eventSystem = null;
         this.physicsManager = null;
@@ -25,14 +38,24 @@ export class Game extends Scene {
         this.particleManager = null;
         this.cameraManager = null;
         this.colorManager = null;
-        
+
+        // Observability
+        this.debugContext = null;
+        this.errorPatternDetector = null;
+        this.debugAPI = null;
+
         // Level data
         this.currentLevelId = 'level1';
     }
 
     init(data) {
-        console.log('[Game] Init called with data:', data);
-        
+        LOG.info('GAME_SCENE_INIT', {
+            subsystem: 'scene',
+            scene: SceneKeys.GAME,
+            message: 'Game scene initialized',
+            data
+        });
+
         // If a level ID is provided, use it
         if (data && data.levelId) {
             this.currentLevelId = data.levelId;
@@ -40,11 +63,20 @@ export class Game extends Scene {
     }
 
     preload() {
-        console.log('[Game] Preload called');
+        LOG.dev('GAME_SCENE_PRELOAD', {
+            subsystem: 'scene',
+            scene: SceneKeys.GAME,
+            message: 'Game scene preload called'
+        });
     }
 
     async create() {
-            console.log('[Game] Create method started');
+            LOG.info('GAME_SCENE_CREATE_START', {
+                subsystem: 'scene',
+                scene: SceneKeys.GAME,
+                message: 'Game scene create started',
+                levelId: this.currentLevelId
+            });
             // Play in-level music
             const audio = AudioManager.getInstance();
             audio.stopMusic(AudioAssets.PROTEIN_PIXEL_ANTHEM);
@@ -89,8 +121,39 @@ export class Game extends Scene {
             this.particleManager = new ParticleManager(this, this.eventSystem);
             this.cameraManager = new CameraManager(this, this.eventSystem);
             this.colorManager = new ColorManager(this, this.eventSystem);
-            console.log('[Game] Effect managers initialized');
-            
+            LOG.dev('GAME_EFFECT_MANAGERS_READY', { subsystem: 'scene', scene: SceneKeys.GAME, message: 'Effect managers initialized' });
+
+            // Initialize DebugContext for automatic context injection
+            // This happens after core systems ready but before player creation
+            LOG.info('GAME_DEBUGCONTEXT_INIT', {
+                subsystem: 'observability',
+                message: 'Initializing DebugContext for automatic state capture'
+            });
+            this.debugContext = DebugContext.getInstance();
+
+            // Initialize ErrorPatternDetector for automatic error pattern detection
+            this.errorPatternDetector = new ErrorPatternDetector(LOG);
+            LOG.dev('GAME_ERROR_PATTERN_DETECTOR_INIT', {
+                subsystem: 'observability',
+                message: 'ErrorPatternDetector initialized for pattern analysis'
+            });
+
+            // Initialize DebugAPI for agent-friendly debugging
+            this.debugAPI = new DebugAPI(LOG, this.debugContext, this.errorPatternDetector);
+            LOG.dev('GAME_DEBUG_API_INIT', {
+                subsystem: 'observability',
+                message: 'DebugAPI initialized for agent-assisted debugging'
+            });
+
+            // Make DebugAPI globally accessible for console debugging
+            if (typeof window !== 'undefined') {
+                window.debugAPI = this.debugAPI;
+                LOG.dev('GAME_DEBUG_API_GLOBAL', {
+                    subsystem: 'observability',
+                    message: 'DebugAPI exposed as window.debugAPI for console access'
+                });
+            }
+
             // Add visual enhancements
             this.createVisualEnhancements();
             // Apply persisted graphics and accessibility settings
@@ -124,8 +187,13 @@ export class Game extends Scene {
             const startX = levelConfig && levelConfig.playerStart ? levelConfig.playerStart.x : 512;
             const startY = levelConfig && levelConfig.playerStart ? levelConfig.playerStart.y : 300;
             const selectedKey = this.gameStateManager.getSelectedCharacter();
-            console.log('[Game] Creating player with character key:', selectedKey);
-            console.log('[Game] Available textures:', Object.keys(this.textures.list));
+            LOG.dev('GAME_PLAYER_CREATE', {
+                subsystem: 'scene',
+                scene: SceneKeys.GAME,
+                message: 'Creating player with character',
+                character: selectedKey,
+                availableTextures: Object.keys(this.textures.list)
+            });
             this.playerController = new PlayerController(
                 this,
                 this.physicsManager.getWorld(),
@@ -137,18 +205,77 @@ export class Game extends Scene {
             
             // DON'T register player with physics manager - player manages own sprite position
             // because it uses KinematicCharacterController for advanced movement
-            console.log('[Game] Player uses KinematicCharacterController, managing own sprite position');
-            
+            LOG.dev('GAME_PLAYER_CONTROLLER_MODE', {
+                subsystem: 'scene',
+                scene: SceneKeys.GAME,
+                message: 'Player uses KinematicCharacterController, managing own sprite position'
+            });
+
+            // Register state providers for automatic context injection
+            // This provides rich debugging context in all logs
+            LOG.dev('GAME_REGISTERING_STATE_PROVIDERS', {
+                subsystem: 'observability',
+                message: 'Registering state providers for context capture'
+            });
+
+            try {
+                // Register player state provider
+                if (this.playerController) {
+                    const playerProvider = new PlayerStateProvider(this.playerController);
+                    this.debugContext.registerProvider(playerProvider);
+                }
+
+                // Register physics state provider
+                if (this.physicsManager) {
+                    const physicsProvider = new PhysicsStateProvider(this.physicsManager);
+                    this.debugContext.registerProvider(physicsProvider);
+                }
+
+                // Register input state provider
+                if (this.inputManager) {
+                    const inputProvider = new InputStateProvider(this.inputManager);
+                    this.debugContext.registerProvider(inputProvider);
+                }
+
+                // Connect DebugContext to LogSystem for automatic injection
+                LOG.setContextProvider(this.debugContext);
+
+                LOG.info('GAME_STATE_PROVIDERS_REGISTERED', {
+                    subsystem: 'observability',
+                    message: 'State providers registered and connected to LogSystem',
+                    providers: [
+                        this.playerController ? 'player' : null,
+                        this.physicsManager ? 'physics' : null,
+                        this.inputManager ? 'input' : null
+                    ].filter(Boolean)
+                });
+            } catch (error) {
+                LOG.error('GAME_STATE_PROVIDER_REGISTRATION_ERROR', {
+                    subsystem: 'observability',
+                    error,
+                    message: 'Error registering state providers',
+                    hint: 'Context injection will be disabled, but logging will continue to work'
+                });
+            }
+
             // Listen for Pause events via InputManager (ESC key)
             this.eventSystem.on(EventNames.PAUSE, () => {
-                console.log('[Game] Pause event received, launching PauseScene');
+                LOG.dev('GAME_PAUSE_EVENT', {
+                    subsystem: 'scene',
+                    scene: SceneKeys.GAME,
+                    message: 'Pause event received, launching PauseScene'
+                });
                 // Pause the game and show pause overlay
                 this.scene.launch(SceneKeys.PAUSE);
                 this.scene.pause();
             });
             // Listen for Level Reset events via InputManager (R key)
             this.eventSystem.on(EventNames.LEVEL_RESET, () => {
-                console.log('[Game] Level reset event received, resetting level');
+                LOG.dev('GAME_LEVEL_RESET_EVENT', {
+                    subsystem: 'scene',
+                    scene: SceneKeys.GAME,
+                    message: 'Level reset event received, resetting level'
+                });
                 this.levelManager.resetLevel();
             });
             
@@ -158,9 +285,19 @@ export class Game extends Scene {
                 levelId: this.currentLevelId
             });
             
-            console.log('[Game] Create method completed successfully');
+            LOG.info('GAME_SCENE_CREATE_COMPLETE', {
+                subsystem: 'scene',
+                scene: SceneKeys.GAME,
+                message: 'Game scene create completed successfully'
+            });
         } catch (error) {
-            console.error('[Game] Error in create method:', error);
+            LOG.error('GAME_SCENE_CREATE_ERROR', {
+                subsystem: 'scene',
+                scene: SceneKeys.GAME,
+                error,
+                message: 'Error in Game scene create method',
+                hint: 'Check manager initialization order. Verify all assets are loaded.'
+            });
             // Display error on screen for easier debugging
             this.add.text(512, 400, 'ERROR: ' + error.message, {
                 fontFamily: 'Arial', fontSize: 16, color: '#ff0000',
@@ -368,8 +505,12 @@ export class Game extends Scene {
         });
         
         this.uiManager.addToGroup('levelCompleteUI', 'continueButton');
-        
-        console.log('[Game] UI elements created');
+
+        LOG.dev('GAME_UI_CREATED', {
+            subsystem: 'scene',
+            scene: SceneKeys.GAME,
+            message: 'UI elements created'
+        });
     }
     
     /**
@@ -380,7 +521,12 @@ export class Game extends Scene {
         this.eventSystem.on(EventNames.PLAYER_LAND, (data) => {
             // Screen shake is now handled by CameraManager
             if (this.cameraManager) {
-                console.log('[Game] Player landed, CameraManager handling effects');
+                LOG.dev('GAME_PLAYER_LAND', {
+                    subsystem: 'scene',
+                    scene: SceneKeys.GAME,
+                    message: 'Player landed, CameraManager handling effects',
+                    data
+                });
             }
             // Play landing sound
             AudioManager.getInstance().playSFX('land');
@@ -388,14 +534,26 @@ export class Game extends Scene {
         
         // Listen for player jump events
         this.eventSystem.on(EventNames.PLAYER_JUMP, (data) => {
-            console.log('[Game] Player jumped, effect managers handling feedback');
+            LOG.dev('GAME_PLAYER_JUMP', {
+                subsystem: 'scene',
+                scene: SceneKeys.GAME,
+                message: 'Player jumped, effect managers handling feedback',
+                data
+            });
             // Play jump sound effect
             AudioManager.getInstance().playSFX('jump');
         });
         
         // Listen for collectible collected events
         this.eventSystem.on(EventNames.COLLECTIBLE_COLLECTED, (data) => {
-            console.log('[Game] Collectible collected:', data);
+            LOG.dev('GAME_COLLECTIBLE_COLLECTED', {
+                subsystem: 'scene',
+                scene: SceneKeys.GAME,
+                message: 'Collectible collected',
+                totalCollected: data.totalCollected,
+                totalCollectibles: data.totalCollectibles,
+                position: data.position
+            });
             // Play pickup sound effect
             AudioManager.getInstance().playSFX('pickup');
             
@@ -423,8 +581,15 @@ export class Game extends Scene {
         
         // Listen for level complete events
         this.eventSystem.on(EventNames.LEVEL_COMPLETE, (data) => {
-            console.log('[Game] Level complete:', data);
-            
+            LOG.dev('GAME_LEVEL_COMPLETE', {
+                subsystem: 'scene',
+                scene: SceneKeys.GAME,
+                message: 'Level complete',
+                levelId: data.levelId,
+                collectiblesCollected: data.collectiblesCollected,
+                totalCollectibles: data.totalCollectibles
+            });
+
             // Save progress
             if (this.gameStateManager) {
                 this.gameStateManager.saveProgress(
@@ -452,8 +617,14 @@ export class Game extends Scene {
         
         // Listen for level loaded events
         this.eventSystem.on(EventNames.LEVEL_LOADED, (data) => {
-            console.log('[Game] Level loaded:', data);
-            
+            LOG.dev('GAME_LEVEL_LOADED', {
+                subsystem: 'scene',
+                scene: SceneKeys.GAME,
+                message: 'Level loaded',
+                levelName: data.name,
+                levelData: data
+            });
+
             // Update level name
             this.uiManager.updateText(
                 'levelName',
@@ -478,8 +649,14 @@ export class Game extends Scene {
         
         // Listen for player explode events
         this.eventSystem.on(EventNames.PLAYER_EXPLODE, (data) => {
-            console.log('[Game] Player exploded:', data);
-            
+            LOG.dev('GAME_PLAYER_EXPLODE', {
+                subsystem: 'scene',
+                scene: SceneKeys.GAME,
+                message: 'Player exploded',
+                reason: data.reason || 'Unknown',
+                data
+            });
+
             // Stop all gameplay
             this.scene.pause();
             
@@ -495,8 +672,14 @@ export class Game extends Scene {
         
         // Listen for scene transition events
         this.eventSystem.on(EventNames.SCENE_TRANSITION, (data) => {
-            console.log('[Game] Scene transition event:', data);
-            
+            LOG.dev('GAME_SCENE_TRANSITION', {
+                subsystem: 'scene',
+                scene: SceneKeys.GAME,
+                message: 'Scene transition event',
+                targetScene: data.scene || 'unknown',
+                data
+            });
+
             // Fade out current scene
             this.cameras.main.fadeOut(500, 0, 0, 0);
             
@@ -513,12 +696,40 @@ export class Game extends Scene {
     }
 
     update(time, delta) {
+        // Update DebugContext frame tracking
+        // This enables frame-accurate context snapshots for all logs
+        if (this.debugContext) {
+            const frameNumber = this.game.loop.frame;
+            const deltaSeconds = delta / 1000;
+            this.debugContext.updateFrame(frameNumber, deltaSeconds);
+        }
+
+        // Periodic error pattern detection (every 5 seconds = 300 frames at 60 FPS)
+        if (this.errorPatternDetector && this.game.loop.frame % 300 === 0) {
+            const patterns = this.errorPatternDetector.analyzeRecent(5000);
+
+            // Log if concerning patterns detected
+            if (patterns.repeatingErrors.length > 0 || patterns.cascades.length > 0) {
+                LOG.warn('ERROR_PATTERNS_DETECTED', {
+                    subsystem: 'observability',
+                    message: `Error patterns detected: ${patterns.repeatingErrors.length} repeating, ${patterns.cascades.length} cascades`,
+                    patterns: {
+                        repeatingCount: patterns.repeatingErrors.length,
+                        cascadeCount: patterns.cascades.length,
+                        severity: patterns.severity.level,
+                        errorRate: patterns.errorRate.errorsPerSecond
+                    },
+                    hint: 'Multiple errors occurring. Check logs for details or investigate specific error codes.'
+                });
+            }
+        }
+
         // Only proceed if physics is initialized
         if (!this.physicsManager || !this.physicsManager.isInitialized()) {
             return;
         }
-        
-        try {
+
+        try{
             // Update physics (steps the world and updates sprites)
             this.physicsManager.update(delta);
             
@@ -537,7 +748,13 @@ export class Game extends Scene {
                     try {
                         enemy.update(time, delta);
                     } catch (err) {
-                        console.error('[Game] Error updating enemy:', err);
+                        LOG.error('GAME_ENEMY_UPDATE_ERROR', {
+                            subsystem: 'scene',
+                            scene: SceneKeys.GAME,
+                            error: err,
+                            message: 'Error updating enemy',
+                            hint: 'Check enemy controller update method'
+                        });
                     }
                 });
             }
@@ -547,7 +764,13 @@ export class Game extends Scene {
                 try {
                     this.boss.update(time, delta);
                 } catch (err) {
-                    console.error('[Game] Error updating boss:', err);
+                    LOG.error('GAME_BOSS_UPDATE_ERROR', {
+                        subsystem: 'scene',
+                        scene: SceneKeys.GAME,
+                        error: err,
+                        message: 'Error updating boss',
+                        hint: 'Check boss controller update method'
+                    });
                 }
             }
             
@@ -564,11 +787,23 @@ export class Game extends Scene {
                         }
                     }
                 } catch (err) {
-                    console.error('[Game] Error updating pulsating boss:', err);
+                    LOG.error('GAME_PULSATING_BOSS_UPDATE_ERROR', {
+                        subsystem: 'scene',
+                        scene: SceneKeys.GAME,
+                        error: err,
+                        message: 'Error updating pulsating boss',
+                        hint: 'Check pulsating boss controller update method'
+                    });
                 }
             }
         } catch (error) {
-            console.error('[Game] Error in update:', error);
+            LOG.error('GAME_UPDATE_ERROR', {
+                subsystem: 'scene',
+                scene: SceneKeys.GAME,
+                error,
+                message: 'Error in Game scene update loop',
+                hint: 'Check physics manager and entity updates'
+            });
         }
     }
 }

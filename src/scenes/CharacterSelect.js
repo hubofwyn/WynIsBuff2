@@ -3,6 +3,7 @@ import { GameStateManager, EventSystem, AudioManager } from '@features/core';
 import { EventNames } from '../constants/EventNames';
 import { UIConfig } from '../constants/UIConfig';
 import { SceneKeys } from '../constants/SceneKeys.js';
+import { LOG } from '../observability/core/LogSystem.js';
 
 /**
  * CharacterSelectScene allows the player to choose their character before gameplay.
@@ -24,8 +25,13 @@ export class CharacterSelect extends Scene {
         
         // Initialize selection after GameStateManager is fully ready
         this.selection = this.gameState.getSelectedCharacter();
-        console.log('[CharacterSelect] Current selection:', this.selection);
-        
+        LOG.dev('CHARACTERSELECT_CREATED', {
+            subsystem: 'scene',
+            scene: SceneKeys.CHARACTER_SELECT,
+            message: 'Character selection scene created',
+            currentSelection: this.selection
+        });
+
         // Enhanced gradient background matching the WelcomeScene
         const gradientBg = this.add.graphics();
         gradientBg.fillGradientStyle(0x0f1b2b, 0x1a1a2e, 0x16213e, 0x0f3460, 1);

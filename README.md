@@ -50,6 +50,7 @@ npm test              # Run tests
 - **Audio**: Howler.js with MP3/OGG support and stereo panning
 - **Assets**: Generated constants (no magic strings)
 - **Events**: Centralized EventBus with namespaced events
+- **Observability**: Structured logging with automatic context capture and agent-friendly debugging API
 - **Deterministic Testing**: GoldenSeedTester and DeterministicRNG
 
 ## Technology Stack
@@ -157,9 +158,46 @@ Tests use CommonJS format (`.cjs`) with Node.js assert module:
 npm test  # Runs all tests/ files
 ```
 
+### Observability & Debugging
+
+WynIsBuff2 includes a comprehensive observability system with structured logging and agent-friendly debugging tools.
+
+**Browser Console Commands:**
+```javascript
+// Check system health
+window.debugAPI.getSummary()
+
+// View recent logs
+window.debugAPI.getRecentLogs(60000)  // Last 60 seconds
+
+// Analyze subsystem
+window.debugAPI.analyzeSubsystem('physics')
+
+// Get error suggestions
+window.debugAPI.getSuggestions('PHYSICS_UPDATE_ERROR')
+
+// Export report
+window.debugAPI.exportForAnalysis({ format: 'markdown' })
+```
+
+**In Code:**
+```javascript
+import { LOG } from '@observability';
+
+// Structured logging (replaces console.*)
+LOG.info('PLAYER_SPAWN', {
+    subsystem: 'player',
+    message: 'Player spawned',
+    position: { x, y }
+});
+```
+
+See [docs/guides/DEBUGGING.md](docs/guides/DEBUGGING.md) for complete guide.
+
 ## Documentation
 
 - **Development Guide**: [CLAUDE.md](CLAUDE.md) - AI assistant and developer guide
+- **Debugging Guide**: [docs/guides/DEBUGGING.md](docs/guides/DEBUGGING.md) - Observability and debugging
 - **Contributing**: [CONTRIBUTING.md](CONTRIBUTING.md) - Development workflow and conventions
 - **Architecture**: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) - System design deep dive
 - **Full Index**: [docs/INDEX.md](docs/INDEX.md) - Complete documentation map

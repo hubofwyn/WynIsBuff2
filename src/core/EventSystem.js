@@ -1,4 +1,5 @@
 import { EventBus } from './EventBus.js';
+import { LOG } from '../observability/core/LogSystem.js';
 
 /**
  * EventSystem provides a debug-enabled wrapper around EventBus
@@ -20,7 +21,12 @@ export class EventSystem {
     
     emit(event, data) {
         if (this.debugMode) {
-            console.log(`[EventSystem] Event emitted: ${event}`, data);
+            LOG.dev('EVENTSYSTEM_EVENT_EMITTED', {
+                subsystem: 'core',
+                message: 'Event emitted',
+                event,
+                data
+            });
         }
         this.eventBus.emit(event, data);
     }

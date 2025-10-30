@@ -10,62 +10,41 @@ This documentation provides comprehensive information about the technologies, fr
 
 ### Documentation Categories
 
-**Architecture Documentation** → [docs/architecture/](../docs/architecture/)
-- [ArchitecturalAssessment.md](../docs/architecture/ArchitecturalAssessment.md)
-- [ArchitecturalOverview.md](../docs/architecture/ArchitecturalOverview.md)
-- [ModularArchitecture.md](../docs/architecture/ModularArchitecture.md)
-- [MVPArchitectureSummary.md](../docs/architecture/MVPArchitectureSummary.md)
+- Architecture Documentation → docs/architecture/README.md
+  - ArchitecturalAssessment.md, ArchitecturalOverview.md, ModularArchitecture.md, MVPArchitectureSummary.md
 
-**Technology Stack** → [docs/technology/](../docs/technology/)
-- [PhaserFramework.md](../docs/technology/PhaserFramework.md)
-- [RapierPhysics.md](../docs/technology/RapierPhysics.md)
-- [ViteBuildTool.md](../docs/technology/ViteBuildTool.md)
-- [TechnologiesAndPackages.md](../docs/technology/TechnologiesAndPackages.md)
+- Technology Stack → docs/technology/README.md
+  - PhaserFramework.md, RapierPhysics.md, ViteBuildTool.md, TechnologiesAndPackages.md
 
-**Core Systems** → [docs/systems/](../docs/systems/)
-- [EventSystem.md](../docs/systems/EventSystem.md)
-- [EventSystemImplementationSteps.md](../docs/systems/EventSystemImplementationSteps.md)
-- [ModularPlayerController.md](../docs/systems/ModularPlayerController.md)
-- [MovementSystem.md](../docs/systems/MovementSystem.md)
-- [ModularLevelArchitecture.md](../docs/systems/ModularLevelArchitecture.md)
-- [ModularLevelSystemImplementation.md](../docs/systems/ModularLevelSystemImplementation.md)
-- [UIManager.md](../docs/systems/UIManager.md)
+- Core Systems → docs/systems/README.md
+  - EventSystem.md, EventSystemImplementationSteps.md, ModularPlayerController.md, MovementSystem.md, ModularLevelArchitecture.md, ModularLevelSystemImplementation.md, UIManager.md
 
-**Feature Implementations** → [docs/features/](../docs/features/)
-- [TripleJumpRefinementPlan.md](../docs/features/TripleJumpRefinementPlan.md)
-- [TripleJumpRefinementImplementation.md](../docs/features/TripleJumpRefinementImplementation.md)
-- [LevelImplementationArchitecture.md](../docs/features/LevelImplementationArchitecture.md)
-- [LevelImplementationSummary.md](../docs/features/LevelImplementationSummary.md)
-- [LevelImplementationTasks.md](../docs/features/LevelImplementationTasks.md)
+- Feature Implementations → docs/features/README.md
+  - TripleJumpRefinementPlan.md, TripleJumpRefinementImplementation.md, LevelImplementationArchitecture.md, LevelImplementationSummary.md, LevelImplementationTasks.md
 
-**Game Design & Art** → [docs/design/](../docs/design/)
-- [GameDesignPrinciples.md](../docs/design/GameDesignPrinciples.md)
-- [MVPLevelDesignGuide.md](../docs/design/MVPLevelDesignGuide.md)
-- [SillyMechanicsIdeas.md](../docs/design/SillyMechanicsIdeas.md)
-- [ArtStyleAndAssetPlan.md](../docs/design/ArtStyleAndAssetPlan.md)
-- [AssetManagementStrategy.md](../docs/design/AssetManagementStrategy.md)
-- [pixelart-style.md](../docs/design/pixelart-style.md)
+- Game Design & Art → docs/design/README.md
+  - GameDesignPrinciples.md, MVPLevelDesignGuide.md, SillyMechanicsIdeas.md, ArtStyleAndAssetPlan.md, AssetManagementStrategy.md, pixelart-style.md
 
-**Historical Archive** → [docs/archive/aiprojectdocs-historical/](../docs/archive/aiprojectdocs-historical/)
-- Superseded and historical documentation preserved for reference
+- Historical Archive → docs/archive/aiprojectdocs-historical/README.md
+  - Superseded and historical documentation preserved for reference
 
 ### Navigation
 
-For comprehensive documentation navigation, see [docs/INDEX.md](../docs/INDEX.md).
+For comprehensive documentation navigation, see docs/INDEX.md
 
 ## Project Summary
 
 **WynIsBuff2** is a 2D game built with the following core technologies:
 
-- **Phaser 3.88.0**: HTML5 game framework providing the core game engine functionality
-- **Rapier 0.14.0**: 2D physics engine for realistic physics simulations
-- **Vite 5.3.1**: Modern build tool for fast development and optimized production builds
+- **Phaser 3.90.x**: HTML5 game framework providing the core game engine functionality
+- **Rapier 0.17.x**: 2D physics engine for realistic physics simulations
+- **Vite 7.x**: Modern build tool for fast development and optimized production builds
 
 The game features a character that can move and perform triple jumps across platforms, with physics-based interactions powered by the Rapier physics engine.
 
 ## Getting Started
 
-For complete development setup instructions, see [CONTRIBUTING.md](../CONTRIBUTING.md#-getting-started).
+For complete development setup instructions, see [CONTRIBUTING.md](../CONTRIBUTING.md#getting-started).
 
 **Quick Start**:
 ```bash
@@ -95,6 +74,6 @@ See [CONTRIBUTING.md](../CONTRIBUTING.md) for:
 
 ## Additional Resources
 
-- [Phaser Documentation](https://newdocs.phaser.io/docs/3.88.0)
+- [Phaser Documentation](https://newdocs.phaser.io/docs/3.90.0)
 - [Rapier Documentation](https://rapier.rs/docs/)
 - [Vite Documentation](https://vitejs.dev/)

@@ -2,6 +2,7 @@ import RAPIER from '@dimforge/rapier2d-compat';
 import { EventNames } from '../../constants/EventNames';
 import { PhysicsConfig } from '../../constants/PhysicsConfig.js';
 import { pixelsToMeters } from '../../constants/PhysicsConstants.js';
+import { LOG } from '../../observability/core/LogSystem.js';
 
 /**
  * PlatformFactory class is responsible for creating and managing static platforms
@@ -42,7 +43,10 @@ export class PlatformFactory {
      */
     log(message) {
         if (this.debugMode) {
-            console.log(`[PlatformFactory] ${message}`);
+            LOG.dev('PLATFORMFACTORY_DEBUG', {
+                subsystem: 'level',
+                message
+            });
         }
     }
     
@@ -126,13 +130,26 @@ export class PlatformFactory {
                         });
                     }
                 } catch (error) {
-                    console.error(`[PlatformFactory] Error creating platform ${index+1}:`, error);
+                    LOG.error('PLATFORMFACTORY_PLATFORM_CREATE_ERROR', {
+                        subsystem: 'level',
+                        error,
+                        message: 'Error creating platform',
+                        platformIndex: index + 1,
+                        platformConfig: config,
+                        hint: 'Check platform configuration and physics world initialization'
+                    });
                 }
             });
             
             return this.platforms;
         } catch (error) {
-            console.error('[PlatformFactory] Error in createPlatforms:', error);
+            LOG.error('PLATFORMFACTORY_CREATE_BATCH_ERROR', {
+                subsystem: 'level',
+                error,
+                message: 'Error creating platforms batch',
+                platformCount: platformConfigs?.length || 0,
+                hint: 'Check level configuration and physics world state'
+            });
             return [];
         }
     }

@@ -1,5 +1,6 @@
 import { BaseManager, EventBus } from '@features/core';
 import { EventNames } from '../constants/EventNames.js';
+import { LOG } from '../observability/core/LogSystem.js';
 
 /**
  * Enhanced PerformanceMonitor - Comprehensive performance tracking and metrics
@@ -121,7 +122,13 @@ export class PerformanceMonitor extends BaseManager {
         this.playTimeStart = Date.now();
         
         if (this.debug) {
-            console.log('[PerformanceMonitor] Initialized with scene:', scene.scene.key);
+            LOG.dev('PERFORMANCEMONITOR_INITIALIZED', {
+                subsystem: 'performance',
+                message: 'Performance monitor initialized with scene',
+                sceneKey: scene.scene.key,
+                supportsPerformance: this.supportsPerformance,
+                supportsMemory: this.supportsMemory
+            });
         }
     }
     
@@ -295,7 +302,15 @@ export class PerformanceMonitor extends BaseManager {
         this.metricsCollection.lastCollection = now;
         
         if (this.debug) {
-            console.log('[PerformanceMonitor] Metrics collected:', sample);
+            LOG.dev('PERFORMANCEMONITOR_METRICS_COLLECTED', {
+                subsystem: 'performance',
+                message: 'Performance metrics sample collected',
+                fps: sample.fps,
+                deltaTime: sample.deltaTime,
+                memoryUsage: sample.memoryUsage,
+                physicsTime: sample.physicsTime,
+                sampleCount: this.metricsCollection.samples.length
+            });
         }
     }
     
@@ -323,7 +338,14 @@ export class PerformanceMonitor extends BaseManager {
         }
         
         if (this.debug) {
-            console.log('[PerformanceMonitor] Run completed. Total runs:', this.gameMetrics.runsCompleted);
+            LOG.dev('PERFORMANCEMONITOR_RUN_COMPLETED', {
+                subsystem: 'performance',
+                message: 'Run completed',
+                totalRuns: this.gameMetrics.runsCompleted,
+                averageRunTime: this.gameMetrics.averageRunTime,
+                runTime: data.runTime,
+                runScore: data.runScore
+            });
         }
     }
     
@@ -331,7 +353,12 @@ export class PerformanceMonitor extends BaseManager {
         this.gameMetrics.bossesDefeated++;
         
         if (this.debug) {
-            console.log('[PerformanceMonitor] Boss defeated. Total bosses:', this.gameMetrics.bossesDefeated);
+            LOG.dev('PERFORMANCEMONITOR_BOSS_DEFEATED', {
+                subsystem: 'performance',
+                message: 'Boss defeated',
+                totalBosses: this.gameMetrics.bossesDefeated,
+                bossData: data
+            });
         }
     }
     
@@ -339,13 +366,26 @@ export class PerformanceMonitor extends BaseManager {
         this.gameMetrics.clonesForged++;
         
         if (this.debug) {
-            console.log('[PerformanceMonitor] Clone forged. Total clones:', this.gameMetrics.clonesForged);
+            LOG.dev('PERFORMANCEMONITOR_CLONE_FORGED', {
+                subsystem: 'performance',
+                message: 'Clone forged',
+                totalClones: this.gameMetrics.clonesForged,
+                cloneData: data
+            });
         }
     }
     
     handlePerformanceWarning(data) {
         if (this.debug) {
-            console.warn(`[PerformanceMonitor] Performance warning: ${data.type}`, data);
+            LOG.warn('PERFORMANCEMONITOR_WARNING', {
+                subsystem: 'performance',
+                message: 'Performance warning detected',
+                warningType: data.type,
+                value: data.value,
+                threshold: data.threshold,
+                timestamp: data.timestamp,
+                hint: 'Monitor performance metrics to identify bottlenecks. Consider optimization if warnings persist.'
+            });
         }
     }
     
@@ -479,7 +519,10 @@ export class PerformanceMonitor extends BaseManager {
         this.playTimeStart = Date.now();
         
         if (this.debug) {
-            console.log('[PerformanceMonitor] Game metrics reset');
+            LOG.dev('PERFORMANCEMONITOR_METRICS_RESET', {
+                subsystem: 'performance',
+                message: 'Game metrics reset for new session'
+            });
         }
     }
     
@@ -549,7 +592,14 @@ export class PerformanceMonitor extends BaseManager {
         this.playTimeStart = Date.now();
         
         if (this.debug) {
-            console.log('[PerformanceMonitor] State deserialized:', state);
+            LOG.dev('PERFORMANCEMONITOR_STATE_DESERIALIZED', {
+                subsystem: 'performance',
+                message: 'Performance monitor state deserialized',
+                runsCompleted: state.gameMetrics?.runsCompleted,
+                bossesDefeated: state.gameMetrics?.bossesDefeated,
+                clonesForged: state.gameMetrics?.clonesForged,
+                memoryPeak: state.memoryPeak
+            });
         }
     }
     

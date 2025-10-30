@@ -1,4 +1,5 @@
 import { EventNames } from '../../constants/EventNames.js';
+import { LOG } from '../../observability/core/LogSystem.js';
 
 /**
  * WallJumpController class handles wall detection and wall jump mechanics
@@ -53,8 +54,17 @@ export class WallJumpController {
         this.wallJumpDirectionLock = 0;
         this.wallJumpLockTimer = 0;
         this.lastWallJumpTime = 0;
-        
-        console.log('[WallJumpController] Initialized with enhanced wall jump physics');
+
+        LOG.dev('WALLJUMPCONTROLLER_INITIALIZED', {
+            subsystem: 'player',
+            message: 'WallJumpController initialized with enhanced wall jump physics',
+            params: {
+                horizontalForce: this.wallJumpParams.horizontalForce,
+                verticalForce: this.wallJumpParams.verticalForce,
+                wallSlideSpeed: this.wallJumpParams.wallSlideSpeed,
+                directionLockTime: this.wallJumpParams.directionLockTime
+            }
+        });
     }
     
     /**
@@ -286,8 +296,15 @@ export class WallJumpController {
                 sprite: sprite
             });
         }
-        
-        console.log(`[WallJumpController] Wall jump executed - direction: ${direction}`);
+
+        LOG.dev('WALLJUMPCONTROLLER_WALL_JUMP_EXECUTED', {
+            subsystem: 'player',
+            message: 'Wall jump executed',
+            direction: direction,
+            wallSide: direction > 0 ? 'left' : 'right',
+            position: body.translation(),
+            velocity: body.linvel()
+        });
     }
     
     /**

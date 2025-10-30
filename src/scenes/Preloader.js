@@ -2,6 +2,7 @@ import { Scene } from 'phaser';
 import { AudioManager, GameStateManager } from '@features/core';
 import { SceneKeys } from '../constants/SceneKeys.js';
 import { ImageAssets, ImagePaths, AudioAssets, AudioPaths, SpritesheetConfigs } from '../constants/Assets.js';
+import { LOG } from '../observability/core/LogSystem.js';
 
 export class Preloader extends Scene
 {
@@ -164,7 +165,15 @@ export class Preloader extends Scene
         
         // TRIAGE FIX: Add error handlers for asset loading
         this.load.on('loaderror', (fileObj) => {
-            console.error('[Preloader] Failed to load asset:', fileObj.key, fileObj.src);
+            LOG.error('PRELOADER_ASSET_LOAD_ERROR', {
+                subsystem: 'scene',
+                scene: SceneKeys.PRELOADER,
+                error: fileObj,
+                message: 'Failed to load asset',
+                assetKey: fileObj.key,
+                assetSrc: fileObj.src,
+                hint: 'Check asset path and file existence. Verify manifest.json configuration.'
+            });
         });
         
         this.load.on('filecomplete', (key) => {
@@ -291,7 +300,12 @@ export class Preloader extends Scene
             audio.setMusicVolume(settings.volumes.music || 0.7);
             audio.setSFXVolume(settings.volumes.sfx || 0.9);
         }
-        console.log('[Preloader] AudioManager initialized with persisted settings', settings.volumes);
+        LOG.dev('PRELOADER_AUDIO_SETTINGS_APPLIED', {
+            subsystem: 'scene',
+            scene: SceneKeys.PRELOADER,
+            message: 'AudioManager initialized with persisted settings',
+            volumes: settings.volumes || 'default'
+        });
         
         // Show completion animation before transitioning
         const { width, height } = this.cameras.main;

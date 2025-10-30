@@ -1,5 +1,6 @@
 import { EventNames } from '../constants/EventNames';
 import { BaseManager } from './BaseManager';
+import { LOG } from '../observability/core/LogSystem.js';
 
 /**
  * UIManager class handles all UI-related functionality including
@@ -374,7 +375,12 @@ export class UIManager extends BaseManager {
      * @param {boolean} enabled
      */
     applyHighContrast(enabled) {
-        console.log(`[UIManager] High contrast mode: ${enabled}`);
+        LOG.dev('UIMANAGER_HIGH_CONTRAST_APPLIED', {
+            subsystem: 'ui',
+            message: 'High contrast accessibility mode toggled',
+            enabled,
+            affectedElements: this.elements.size
+        });
         // Apply CSS contrast filter to game canvas
         const canvas = this.scene.sys.game.canvas;
         if (canvas && canvas.style) {
@@ -404,7 +410,12 @@ export class UIManager extends BaseManager {
      * @param {boolean} enabled
      */
     showSubtitles(enabled) {
-        console.log(`[UIManager] Subtitles enabled: ${enabled}`);
+        LOG.dev('UIMANAGER_SUBTITLES_TOGGLED', {
+            subsystem: 'ui',
+            message: 'Subtitle accessibility feature toggled',
+            enabled,
+            hasContainer: !!this.subtitleContainer
+        });
         this.subtitlesEnabled = enabled;
         
         if (!this.scene) return;

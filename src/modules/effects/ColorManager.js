@@ -1,4 +1,5 @@
 import { EventNames } from '../../constants/EventNames';
+import { LOG } from '../../observability/core/LogSystem.js';
 
 /**
  * ColorManager class handles color transitions and effects for game objects,
@@ -25,11 +26,15 @@ export class ColorManager {
         
         // Active color transitions
         this.activeTransitions = new Map();
-        
+
         // Set up event listeners
         this.setupEventListeners();
-        
-        console.log('[ColorManager] Initialized');
+
+        LOG.dev('COLORMANAGER_INITIALIZED', {
+            subsystem: 'effects',
+            message: 'ColorManager initialized with color transition and accessibility features',
+            colorConfigs: this.colorConfigs
+        });
     }
     
     /**
@@ -351,7 +356,12 @@ export class ColorManager {
      */
     applyPalette(palette) {
         this.currentPalette = palette;
-        console.log(`[ColorManager] Applying palette: ${palette}`);
+        LOG.dev('COLORMANAGER_PALETTE_APPLIED', {
+            subsystem: 'effects',
+            message: 'Color-blind accessibility palette applied',
+            palette,
+            previousPalette: this.currentPalette
+        });
         // Apply CSS-based filter on game canvas as a simple palette simulation
         const canvas = this.scene.sys.game.canvas;
         if (canvas && canvas.style) {
