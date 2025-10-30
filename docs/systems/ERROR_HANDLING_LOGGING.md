@@ -1491,15 +1491,15 @@ console.log('[PlayerController] CharacterController properties:',
 
 WynIsBuff2's observability system transforms logging from passive record-keeping into active diagnostic infrastructure. The system enables AI agents and developers to perform autonomous debugging, root cause analysis, and automated remediation.
 
-**Implementation Status**: Phases 0-5 Complete (Production-Ready)
+**Implementation Status**: Phases 0-7 Complete (Production-Ready)
 - ✅ Phase 0: Foundation & Planning
 - ✅ Phase 1: Core Infrastructure (LogSystem, BoundedBuffer)
 - ✅ Phase 2: Context System (DebugContext, StateProviders)
 - ✅ Phase 3: Logging Migration (278/293 files, 95%)
 - ✅ Phase 3.5: DebugContext Integration (Game scene)
 - ✅ Phase 5: Error Integration (CrashDumpGenerator, ErrorPatternDetector)
-- ⏳ Phase 6: Documentation (in progress)
-- ⏳ Phase 7: Agent Tools & API
+- ✅ Phase 6: Documentation Consolidation
+- ✅ Phase 7: Agent Tools & API (DebugAPI, QueryBuilder, LogAnalyzer, ExportFormatter, ErrorSuggestions)
 - ⏳ Phase 8: Testing & Validation
 - ⏳ Phase 9: Production Deployment
 
@@ -1788,7 +1788,152 @@ LOG.error('LEVEL_LOAD_PLATFORM_ERROR', {
 console.error('Error:', error); // ❌ No structure, no context, no subsystem
 ```
 
-### 11.8 Documentation References
+### 11.8 Agent Tools & API (Phase 7)
+
+**Purpose**: Enhanced agent-friendly debugging and analysis capabilities.
+
+#### DebugAPI (`src/observability/api/DebugAPI.js`)
+
+Unified interface for agent debugging operations:
+
+```javascript
+import { DebugAPI } from '@observability';
+
+const api = new DebugAPI(LOG, debugContext, errorPatternDetector);
+
+// Advanced queries
+const results = api.query({
+    subsystem: 'physics',
+    level: 'error',
+    timeRange: { last: 60000 },
+    includeContext: true
+});
+
+// Subsystem analysis
+const health = api.analyzeSubsystem('physics');
+console.log('Physics health:', health.health, health.status);
+
+// System summary
+const summary = api.getSummary();
+console.log('Overall health:', summary.overallHealth);
+
+// Export for analysis
+const exportData = api.exportForAnalysis({
+    includePatterns: true,
+    includeGameState: true
+});
+```
+
+**Available in Console**: `window.debugAPI` (initialized by Game scene)
+
+#### QueryBuilder (`src/observability/api/QueryBuilder.js`)
+
+Fluent query interface:
+
+```javascript
+import { QueryBuilder } from '@observability';
+
+const errors = new QueryBuilder(LOG)
+    .level('error')
+    .subsystem('physics')
+    .inLastMinutes(5)
+    .withContext()
+    .sortByTimeDesc()
+    .limit(10)
+    .execute();
+
+// Convenience methods
+const recentErrors = new QueryBuilder(LOG)
+    .criticalOnly()  // errors + fatals
+    .inLastSeconds(30)
+    .count();  // Get count only
+```
+
+#### LogAnalyzer (`src/observability/api/LogAnalyzer.js`)
+
+Statistical and correlation analysis:
+
+```javascript
+import { LogAnalyzer } from '@observability';
+
+const analyzer = new LogAnalyzer();
+const logs = LOG.buffer.getAll();
+
+// Statistics
+const stats = analyzer.getStatistics(logs);
+console.log('By level:', stats.byLevel);
+console.log('Top subsystems:', stats.topSubsystems);
+
+// Health metrics
+const health = analyzer.getSubsystemHealth('physics', logs);
+console.log('Health:', health.health, health.status, health.trend);
+
+// Trends
+const trends = analyzer.getTrends(logs, 60000); // 1-minute buckets
+console.log('Trend:', trends.trend);
+
+// Causal relationships
+const relationships = analyzer.findCausalRelationships(logs);
+console.log('Error cascades:', relationships);
+```
+
+#### ExportFormatter (`src/observability/api/ExportFormatter.js`)
+
+Rich export formats:
+
+```javascript
+import { ExportFormatter } from '@observability';
+
+const formatter = new ExportFormatter();
+const logs = LOG.buffer.getAll();
+
+// Rich JSON
+const json = formatter.toJSON(logs, {
+    includeStats: true,
+    includeAnalysis: true,
+    patterns: errorPatternDetector.analyzeRecent(60000)
+});
+
+// Markdown report
+const markdown = formatter.toMarkdown(logs, json.analysis);
+
+// CSV export
+const csv = formatter.toCSV(logs);
+
+// Summary only
+const summary = formatter.toSummary(logs);
+```
+
+#### ErrorSuggestions (`src/observability/api/ErrorSuggestions.js`)
+
+Knowledge base for error resolution:
+
+```javascript
+import { ErrorSuggestions } from '@observability';
+
+const suggestions = new ErrorSuggestions();
+
+// Get suggestions for error code
+const fixes = suggestions.getSuggestions('PHYSICS_UPDATE_ERROR');
+console.log('Suggestions:', fixes.suggestions);
+console.log('Related codes:', fixes.relatedCodes);
+
+// Search knowledge base
+const results = suggestions.search('physics');
+
+// Get all categories
+const categories = suggestions.getCategories();
+// ['physics', 'player', 'input', 'level', 'persistence', 'audio']
+```
+
+**Knowledge Base Includes**:
+- Common error codes (PHYSICS_*, PLAYER_*, INPUT_*, etc.)
+- Severity ratings (low, medium, high, critical)
+- Step-by-step fix suggestions
+- Related error codes
+- Documentation links
+
+### 11.9 Documentation References
 
 **Primary Documentation**:
 - [OBSERVABILITY_IMPLEMENTATION.md](../../OBSERVABILITY_IMPLEMENTATION.md) - Master implementation plan

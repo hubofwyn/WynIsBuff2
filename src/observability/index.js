@@ -36,3 +36,10 @@ export { InputStateProvider } from './providers/InputStateProvider.js';
 // Utilities (Phase 5)
 export { CrashDumpGenerator } from './utils/CrashDumpGenerator.js';
 export { ErrorPatternDetector } from './utils/ErrorPatternDetector.js';
+
+// API Module (Phase 7)
+export { DebugAPI } from './api/DebugAPI.js';
+export { QueryBuilder } from './api/QueryBuilder.js';
+export { LogAnalyzer } from './api/LogAnalyzer.js';
+export { ExportFormatter } from './api/ExportFormatter.js';
+export { ErrorSuggestions } from './api/ErrorSuggestions.js';

@@ -3,7 +3,7 @@
 **Quick Reference Guide for Developers and AI Agents**
 
 **Last Updated**: October 29, 2025
-**System Version**: Phases 0-5 Complete
+**System Version**: Phases 0-7 Complete
 
 ---
 
@@ -386,6 +386,304 @@ console.log('Recent errors by subsystem:', bySubsystem);
 
 ---
 
+## Phase 7: Agent-Friendly Debugging API
+
+**New in Phase 7**: Advanced debugging tools designed for both developers and AI agents.
+
+### Quick Access (Browser Console)
+
+The DebugAPI is globally available in the browser console:
+
+```javascript
+// Get system health summary
+window.debugAPI.getSummary();
+
+// Query recent errors
+window.debugAPI.getRecentLogs(60000);  // Last 60 seconds
+
+// Analyze a specific subsystem
+window.debugAPI.analyzeSubsystem('physics');
+
+// Get suggestions for an error
+window.debugAPI.getSuggestions('PHYSICS_UPDATE_ERROR');
+```
+
+### Advanced Querying with QueryBuilder
+
+Build complex queries using a fluent API:
+
+```javascript
+import { QueryBuilder, LOG } from '@observability';
+
+// Get physics errors from last 5 minutes with context
+const recentPhysicsErrors = new QueryBuilder(LOG)
+    .level('error')
+    .subsystem('physics')
+    .inLastMinutes(5)
+    .withContext()
+    .sortByTimeDesc()
+    .limit(10)
+    .execute();
+
+// Count warnings in last 30 seconds
+const warningCount = new QueryBuilder(LOG)
+    .level('warn')
+    .inLastSeconds(30)
+    .count();
+
+// Get most recent player circuit breaker event
+const circuitBreaker = new QueryBuilder(LOG)
+    .code('PLAYER_CIRCUIT_BREAKER')
+    .withContext()
+    .last();
+
+// Get all critical errors with context
+const critical = new QueryBuilder(LOG)
+    .criticalOnly()
+    .withContext()
+    .sortByTimeDesc()
+    .execute();
+```
+
+**Available Query Methods**:
+- `level(level)` - Filter by log level
+- `subsystem(subsystem)` - Filter by subsystem
+- `code(code)` - Filter by error code
+- `inLast(milliseconds)` - Time window filter
+- `inLastSeconds(seconds)` - Shorthand for seconds
+- `inLastMinutes(minutes)` - Shorthand for minutes
+- `withContext()` - Include game state context
+- `withoutContext()` - Exclude context (smaller output)
+- `errorsOnly()` - Shorthand for level('error')
+- `warningsOnly()` - Shorthand for level('warn')
+- `criticalOnly()` - Shorthand for level('fatal')
+- `limit(count)` - Limit results
+- `sortByTimeAsc()` / `sortByTimeDesc()` - Sort by timestamp
+
+**Execution Methods**:
+- `execute()` - Returns array of matching logs
+- `count()` - Returns count only
+- `first()` - Returns first match or null
+- `last()` - Returns last match or null
+
+### Statistical Analysis with LogAnalyzer
+
+Analyze log patterns and trends:
+
+```javascript
+import { LogAnalyzer, QueryBuilder, LOG } from '@observability';
+
+const analyzer = new LogAnalyzer();
+
+// Get recent errors
+const errors = new QueryBuilder(LOG)
+    .errorsOnly()
+    .inLastMinutes(10)
+    .execute();
+
+// Get statistics
+const stats = analyzer.getStatistics(errors);
+console.log('Error breakdown:', stats.byLevel);
+console.log('Top subsystems:', stats.topSubsystems);
+console.log('Top error codes:', stats.topCodes);
+
+// Find causal relationships
+const relationships = analyzer.findCausalRelationships(errors);
+relationships.forEach(rel => {
+    console.log(`${rel.cause.code} may cause ${rel.effect.code} (${rel.timeDiff}ms apart)`);
+});
+
+// Check subsystem health (0-100 score)
+const health = analyzer.getSubsystemHealth('physics', errors, 60000);
+console.log(`Physics health: ${health.health}/100 (${health.status})`);
+console.log(`Error rate: ${health.errorRate} errors/minute`);
+console.log(`Trend: ${health.trend}`);
+
+// Analyze trends over time
+const trends = analyzer.getTrends(errors, 10000);  // 10-second buckets
+console.log(`Trend: ${trends.trend}`);  // 'improving', 'degrading', or 'stable'
+
+// Get recommendations
+const recommendations = analyzer.generateRecommendations({
+    statistics: stats,
+    health: health,
+    trends: trends
+});
+console.log('Recommendations:', recommendations);
+```
+
+**Health Scoring**:
+- **90-100**: Healthy (green status)
+- **70-89**: Warning (yellow status)
+- **0-69**: Critical (red status)
+
+Health calculated as: `100 - (errorRate × 100) - (warningRate × 25)`
+
+### Exporting with ExportFormatter
+
+Generate reports in multiple formats:
+
+```javascript
+import { ExportFormatter, QueryBuilder, LOG } from '@observability';
+
+const formatter = new ExportFormatter();
+
+// Get errors to export
+const errors = new QueryBuilder(LOG)
+    .errorsOnly()
+    .inLastMinutes(10)
+    .withContext()
+    .execute();
+
+// Rich JSON export with metadata
+const json = formatter.toJSON(errors, {
+    includeStatistics: true,
+    includeAnalysis: true,
+    includeRecommendations: true
+});
+console.log(json);
+
+// Human-readable Markdown report
+const markdown = formatter.toMarkdown(errors, {
+    statistics: analyzer.getStatistics(errors),
+    health: analyzer.getSubsystemHealth('physics', errors)
+});
+console.log(markdown);
+// Copy to clipboard: copy(markdown);
+
+// CSV for spreadsheet analysis
+const csv = formatter.toCSV(errors);
+// timestamp,level,subsystem,code,message,frame
+
+// Compact JSON (no context, smaller)
+const compact = formatter.toCompactJSON(errors);
+
+// Summary only (no individual logs)
+const summary = formatter.toSummary(errors, {
+    includePatterns: true,
+    includeRecommendations: true
+});
+
+// Console-friendly output
+formatter.toConsole(errors, 20);  // Print last 20 to console
+```
+
+**Export Use Cases**:
+- **JSON**: Automated analysis, long-term storage
+- **Markdown**: Bug reports, documentation, team sharing
+- **CSV**: Excel/Google Sheets analysis, charting
+- **Compact**: Quick exports, minimal data
+- **Summary**: Executive overview, health dashboards
+- **Console**: Quick debug output, testing
+
+### Error Resolution with ErrorSuggestions
+
+Get instant help for common errors:
+
+```javascript
+import { ErrorSuggestions } from '@observability';
+
+const suggestions = new ErrorSuggestions();
+
+// Get suggestions for specific error
+const help = suggestions.getSuggestions('PHYSICS_UPDATE_ERROR');
+console.log('Category:', help.category);       // 'physics'
+console.log('Severity:', help.severity);       // 'high'
+console.log('Confidence:', help.confidence);   // 'high'
+console.log('Suggestions:', help.suggestions);
+console.log('Related errors:', help.relatedCodes);
+console.log('Documentation:', help.documentation);
+
+// Get suggestions for error pattern
+const pattern = { type: 'repeating', code: 'PLAYER_UPDATE_ERROR', count: 15 };
+const patternHelp = suggestions.getSuggestionsForPattern(pattern);
+
+// Get all suggestions for subsystem
+const physicsHelp = suggestions.getSuggestionsForSubsystem('physics');
+
+// Search knowledge base
+const results = suggestions.search('rapier');
+
+// Get all available categories
+const categories = suggestions.getCategories();
+// ['physics', 'player', 'input', 'level', 'persistence', 'audio', 'initialization']
+```
+
+**Known Error Codes** (15+ in knowledge base):
+- **Physics**: `PHYSICS_INIT_ERROR`, `PHYSICS_UPDATE_ERROR`, `PHYSICS_CIRCUIT_BREAKER`, `PHYSICS_FRAME_BUDGET_EXCEEDED`
+- **Player**: `PLAYER_UPDATE_ERROR`, `PLAYER_CIRCUIT_BREAKER`, `PLAYER_MOVEMENT_NAN`
+- **Input**: `INPUT_MANAGER_ERROR`
+- **Level**: `LEVEL_LOAD_ERROR`, `LEVEL_LOAD_PLATFORM_ERROR`
+- **Storage**: `GAMESTATE_SAVE_PROGRESS_ERROR`
+- **Audio**: `AUDIO_MANAGER_ERROR`
+- **Generic**: `INIT_ERROR`
+
+### Complete Debugging Workflow (Phase 7)
+
+**Scenario**: Physics issues reported, need comprehensive analysis
+
+```javascript
+// Step 1: Get system health overview
+const summary = window.debugAPI.getSummary();
+console.log('Overall health:', summary.overallHealth);
+console.log('Critical subsystems:', summary.subsystems.filter(s => s.status === 'critical'));
+
+// Step 2: Analyze physics subsystem in detail
+const physicsAnalysis = window.debugAPI.analyzeSubsystem('physics', 120000);
+console.log('Physics health:', physicsAnalysis.health);
+console.log('Error count:', physicsAnalysis.errorCount);
+console.log('Detected patterns:', physicsAnalysis.patterns);
+
+// Step 3: Get specific recommendations
+if (physicsAnalysis.errorCount > 0) {
+    const topError = physicsAnalysis.patterns.repeatingErrors[0];
+    const suggestions = window.debugAPI.getSuggestions(topError.code);
+    console.log('How to fix:', suggestions.suggestions);
+}
+
+// Step 4: Export comprehensive report
+const report = window.debugAPI.exportForAnalysis({
+    format: 'markdown',
+    timeWindow: 300000,  // Last 5 minutes
+    includePatterns: true,
+    includeRecommendations: true
+});
+
+// Step 5: Copy to clipboard for bug report
+copy(report);
+```
+
+### Browser Console Quick Reference
+
+Common commands you can run directly in the browser console:
+
+```javascript
+// Health check
+window.debugAPI.getSummary()
+
+// Recent errors
+window.debugAPI.getRecentLogs(60000)
+
+// Subsystem analysis
+window.debugAPI.analyzeSubsystem('physics')
+window.debugAPI.analyzeSubsystem('player')
+
+// Get help
+window.debugAPI.getSuggestions('PHYSICS_UPDATE_ERROR')
+
+// Export report
+copy(window.debugAPI.exportForAnalysis({ format: 'markdown', timeWindow: 300000 }))
+
+// Time-range analysis
+window.debugAPI.analyzeTimeWindow(120000)  // Last 2 minutes
+
+// Related logs
+const error = window.debugAPI.query({ code: 'PHYSICS_CIRCUIT_BREAKER' })[0];
+window.debugAPI.getRelatedLogs(error, { timeWindow: 5000 })
+```
+
+---
+
 ## Best Practices
 
 ### DO:
@@ -528,4 +826,4 @@ if (logs.length > 1800) {
 
 **Guide Maintained By**: Development team
 **Last Updated**: October 29, 2025
-**Next Review**: After Phase 7 (Agent Tools) completion
+**Phase 7**: Agent Tools & API Complete

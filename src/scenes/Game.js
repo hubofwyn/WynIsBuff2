@@ -15,6 +15,7 @@ import {
     InputStateProvider
 } from '../observability/providers/index.js';
 import { ErrorPatternDetector } from '../observability/utils/ErrorPatternDetector.js';
+import { DebugAPI } from '../observability/api/DebugAPI.js';
 
 export class Game extends Scene {
     constructor() {
@@ -41,6 +42,7 @@ export class Game extends Scene {
         // Observability
         this.debugContext = null;
         this.errorPatternDetector = null;
+        this.debugAPI = null;
 
         // Level data
         this.currentLevelId = 'level1';
@@ -135,6 +137,22 @@ export class Game extends Scene {
                 subsystem: 'observability',
                 message: 'ErrorPatternDetector initialized for pattern analysis'
             });
+
+            // Initialize DebugAPI for agent-friendly debugging
+            this.debugAPI = new DebugAPI(LOG, this.debugContext, this.errorPatternDetector);
+            LOG.dev('GAME_DEBUG_API_INIT', {
+                subsystem: 'observability',
+                message: 'DebugAPI initialized for agent-assisted debugging'
+            });
+
+            // Make DebugAPI globally accessible for console debugging
+            if (typeof window !== 'undefined') {
+                window.debugAPI = this.debugAPI;
+                LOG.dev('GAME_DEBUG_API_GLOBAL', {
+                    subsystem: 'observability',
+                    message: 'DebugAPI exposed as window.debugAPI for console access'
+                });
+            }
 
             // Add visual enhancements
             this.createVisualEnhancements();
