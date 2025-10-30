@@ -8,6 +8,12 @@ import { SceneKeys } from '../constants/SceneKeys.js';
 import { AudioAssets, ImageAssets } from '../constants/Assets.js';
 import { PhysicsConfig } from '../constants/PhysicsConfig.js';
 import { LOG } from '../observability/core/LogSystem.js';
+import { DebugContext } from '../observability/context/DebugContext.js';
+import {
+    PlayerStateProvider,
+    PhysicsStateProvider,
+    InputStateProvider
+} from '../observability/providers/index.js';
 
 export class Game extends Scene {
     constructor() {
@@ -30,7 +36,10 @@ export class Game extends Scene {
         this.particleManager = null;
         this.cameraManager = null;
         this.colorManager = null;
-        
+
+        // Observability
+        this.debugContext = null;
+
         // Level data
         this.currentLevelId = 'level1';
     }
@@ -109,7 +118,15 @@ export class Game extends Scene {
             this.cameraManager = new CameraManager(this, this.eventSystem);
             this.colorManager = new ColorManager(this, this.eventSystem);
             LOG.dev('GAME_EFFECT_MANAGERS_READY', { subsystem: 'scene', scene: SceneKeys.GAME, message: 'Effect managers initialized' });
-            
+
+            // Initialize DebugContext for automatic context injection
+            // This happens after core systems ready but before player creation
+            LOG.info('GAME_DEBUGCONTEXT_INIT', {
+                subsystem: 'observability',
+                message: 'Initializing DebugContext for automatic state capture'
+            });
+            this.debugContext = DebugContext.getInstance();
+
             // Add visual enhancements
             this.createVisualEnhancements();
             // Apply persisted graphics and accessibility settings
@@ -166,6 +183,53 @@ export class Game extends Scene {
                 scene: SceneKeys.GAME,
                 message: 'Player uses KinematicCharacterController, managing own sprite position'
             });
+
+            // Register state providers for automatic context injection
+            // This provides rich debugging context in all logs
+            LOG.dev('GAME_REGISTERING_STATE_PROVIDERS', {
+                subsystem: 'observability',
+                message: 'Registering state providers for context capture'
+            });
+
+            try {
+                // Register player state provider
+                if (this.playerController) {
+                    const playerProvider = new PlayerStateProvider(this.playerController);
+                    this.debugContext.registerProvider(playerProvider);
+                }
+
+                // Register physics state provider
+                if (this.physicsManager) {
+                    const physicsProvider = new PhysicsStateProvider(this.physicsManager);
+                    this.debugContext.registerProvider(physicsProvider);
+                }
+
+                // Register input state provider
+                if (this.inputManager) {
+                    const inputProvider = new InputStateProvider(this.inputManager);
+                    this.debugContext.registerProvider(inputProvider);
+                }
+
+                // Connect DebugContext to LogSystem for automatic injection
+                LOG.setContextProvider(this.debugContext);
+
+                LOG.info('GAME_STATE_PROVIDERS_REGISTERED', {
+                    subsystem: 'observability',
+                    message: 'State providers registered and connected to LogSystem',
+                    providers: [
+                        this.playerController ? 'player' : null,
+                        this.physicsManager ? 'physics' : null,
+                        this.inputManager ? 'input' : null
+                    ].filter(Boolean)
+                });
+            } catch (error) {
+                LOG.error('GAME_STATE_PROVIDER_REGISTRATION_ERROR', {
+                    subsystem: 'observability',
+                    error,
+                    message: 'Error registering state providers',
+                    hint: 'Context injection will be disabled, but logging will continue to work'
+                });
+            }
 
             // Listen for Pause events via InputManager (ESC key)
             this.eventSystem.on(EventNames.PAUSE, () => {
@@ -605,11 +669,19 @@ export class Game extends Scene {
     }
 
     update(time, delta) {
+        // Update DebugContext frame tracking
+        // This enables frame-accurate context snapshots for all logs
+        if (this.debugContext) {
+            const frameNumber = this.game.loop.frame;
+            const deltaSeconds = delta / 1000;
+            this.debugContext.updateFrame(frameNumber, deltaSeconds);
+        }
+
         // Only proceed if physics is initialized
         if (!this.physicsManager || !this.physicsManager.isInitialized()) {
             return;
         }
-        
+
         try {
             // Update physics (steps the world and updates sprites)
             this.physicsManager.update(delta);
