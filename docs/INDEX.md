@@ -85,15 +85,33 @@ Complete navigation hub for all WynIsBuff2 documentation.
 
 #### Debugging & Diagnostics
 
-**🔵 ACTIVE: Observability System Integration in Progress**
-- [OBSERVABILITY_IMPLEMENTATION.md](../OBSERVABILITY_IMPLEMENTATION.md) - **Master implementation plan** for observability integration
-- [STATUS_OBSERVABILITY.json](../STATUS_OBSERVABILITY.json) - Real-time status tracking for implementation
-- [OBSERVABILITY_WORKFLOW.md](../OBSERVABILITY_WORKFLOW.md) - Agent workflow guide for implementation
+**✅ Observability System - PRODUCTION READY (Phases 0-5 Complete)**
 
-**Core Systems**
-- [architecture/Observability.md](architecture/Observability.md) - Agent-ready logging system architecture (reference)
-- [systems/ERROR_HANDLING_LOGGING.md](systems/ERROR_HANDLING_LOGGING.md) - Current error handling and logging (being integrated)
+**Quick Start**:
+- [systems/ERROR_HANDLING_LOGGING.md](systems/ERROR_HANDLING_LOGGING.md) - **START HERE** - Complete guide with Quick Start section
+- [OBSERVABILITY_IMPLEMENTATION.md](../OBSERVABILITY_IMPLEMENTATION.md) - Master implementation plan (Phases 0-10)
+- [STATUS_OBSERVABILITY.json](../STATUS_OBSERVABILITY.json) - Real-time status tracking
+
+**Implementation Guides**:
+- [OBSERVABILITY_WORKFLOW.md](../OBSERVABILITY_WORKFLOW.md) - Agent workflow guide
+- [PHASE5_ERROR_INTEGRATION_PLAN.md](../PHASE5_ERROR_INTEGRATION_PLAN.md) - Error integration details (Phase 5)
+- [DEBUGCONTEXT_INTEGRATION_PLAN.md](../DEBUGCONTEXT_INTEGRATION_PLAN.md) - Context integration (Phase 3.5)
+- [OBSERVABILITY_EVALUATION.md](../OBSERVABILITY_EVALUATION.md) - Phase 3 evaluation results
+
+**Architecture & Reference**:
+- [architecture/Observability.md](architecture/Observability.md) - Architecture deep dive and migration guide
 - [systems/INPUT_MOVEMENT_AUDIT.md](systems/INPUT_MOVEMENT_AUDIT.md) - Input and movement system technical audit
+
+**Debugging Guide** (NEW):
+- [guides/DEBUGGING.md](guides/DEBUGGING.md) - **Practical debugging guide** with common scenarios and solutions
+
+**Key Features** (Phase 5):
+- ✅ Structured logging with automatic context injection (DebugContext)
+- ✅ Crash dump generation on fatal errors (CrashDumpGenerator)
+- ✅ Automatic error pattern detection (ErrorPatternDetector)
+- ✅ Query API for AI agents
+- ✅ Circuit breakers with comprehensive state dumps
+- ✅ 95% migration complete (278/293 statements)
 
 ### Assets & Art
 
@@ -285,7 +303,10 @@ WynIsBuff2/
 | Work with assets | [ASSET_MANAGEMENT.md](../ASSET_MANAGEMENT.md) |
 | Understand physics | [technology/RapierPhysics.md](technology/RapierPhysics.md) |
 | Design a level | [level-progression-plan.md](level-progression-plan.md) |
-| Debug "too many errors" | [systems/ERROR_HANDLING_LOGGING.md](systems/ERROR_HANDLING_LOGGING.md) |
+| **Use structured logging** | **[systems/ERROR_HANDLING_LOGGING.md](systems/ERROR_HANDLING_LOGGING.md) - Section 5** |
+| **Debug with observability** | **[systems/ERROR_HANDLING_LOGGING.md](systems/ERROR_HANDLING_LOGGING.md) - Section 11** |
+| Debug "too many errors" | [systems/ERROR_HANDLING_LOGGING.md](systems/ERROR_HANDLING_LOGGING.md) - Section 9 |
+| Query logs programmatically | [systems/ERROR_HANDLING_LOGGING.md](systems/ERROR_HANDLING_LOGGING.md) - Section 5.4 |
 | Implement observability | [OBSERVABILITY_IMPLEMENTATION.md](../OBSERVABILITY_IMPLEMENTATION.md) |
 | Check observability status | [STATUS_OBSERVABILITY.json](../STATUS_OBSERVABILITY.json) |
 | Use the agent system | [AGENTS.md](../AGENTS.md) |
