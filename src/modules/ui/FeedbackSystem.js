@@ -1,5 +1,6 @@
 import { BaseManager, EventBus } from '@features/core';
 import { EventNames } from '../../constants/EventNames.js';
+import { LOG } from '../../observability/core/LogSystem.js';
 
 /**
  * FeedbackSystem - Provides visual and audio feedback for game events
@@ -119,9 +120,13 @@ export class FeedbackSystem extends BaseManager {
         
         // Create feedback containers
         this.createFeedbackContainers();
-        
+
         if (this.debug) {
-            console.log('[FeedbackSystem] Initialized with scene:', scene.scene.key);
+            LOG.dev('FEEDBACKSYSTEM_INITIALIZED', {
+                subsystem: 'ui',
+                message: 'FeedbackSystem initialized with scene',
+                sceneKey: scene.scene.key
+            });
         }
     }
     
