@@ -152,17 +152,70 @@ The system integrates with the existing `src/core/AgentOrchestrator.js` for:
 
 ### Morning Routine
 1. Check orchestration logs for previous session insights
-2. Use agents to plan daily development tasks
-3. Route complex features through appropriate workflows
+2. **Check observability system health** using `window.debugAPI.getSummary()`
+3. Review recent errors from previous session
+4. Use agents to plan daily development tasks
+5. Route complex features through appropriate workflows
 
 ### Feature Development
 1. Let system auto-route or use explicit commands
 2. Follow multi-phase workflows (design → architecture → implementation)
-3. Leverage quality gates for consistent results
+3. **Use structured logging** (`LOG` system, never `console.*`)
+4. Leverage quality gates for consistent results
+5. **Validate with observability** - check for errors after each phase
 
-### Debugging and Optimization  
-1. Use physics expert for performance issues
-2. Architecture guardian for pattern compliance  
-3. Design innovator for UX improvements
+### Debugging and Optimization
+1. **Start with observability data** using `window.debugAPI`
+2. Use physics expert for performance issues
+3. Architecture guardian for pattern compliance
+4. Design innovator for UX improvements
+5. **Export logs** for complex issues using `window.debugAPI.exportForAnalysis()`
+
+### Observability Integration (CRITICAL)
+
+**Every development session must:**
+
+1. **Check system health on startup:**
+   ```javascript
+   // In browser console
+   window.debugAPI.getSummary()
+   ```
+
+2. **Use structured logging in all code:**
+   ```javascript
+   import { LOG } from '@observability';
+
+   // ✅ Always use structured logging
+   LOG.info('FEATURE_INIT', { subsystem: 'feature', message: 'Feature initialized' });
+
+   // ❌ Never use console
+   console.log('Feature initialized');  // FORBIDDEN
+   ```
+
+3. **Query logs during debugging:**
+   ```javascript
+   // Recent errors
+   window.debugAPI.getRecentLogs(60000)
+
+   // Analyze specific subsystem
+   window.debugAPI.analyzeSubsystem('physics')
+
+   // Get suggestions for errors
+   window.debugAPI.getSuggestions('PHYSICS_UPDATE_ERROR')
+   ```
+
+4. **Export logs for complex issues:**
+   ```javascript
+   // Markdown report for bug reports
+   copy(window.debugAPI.exportForAnalysis({
+       format: 'markdown',
+       timeWindow: 300000
+   }))
+   ```
+
+**Observability Documentation:**
+- **Complete Guide**: [docs/guides/DEBUGGING.md](../docs/guides/DEBUGGING.md)
+- **System Documentation**: [docs/systems/ERROR_HANDLING_LOGGING.md](../docs/systems/ERROR_HANDLING_LOGGING.md)
+- **Status**: [STATUS_OBSERVABILITY.json](../STATUS_OBSERVABILITY.json)
 
 This orchestration system ensures consistent, high-quality development while leveraging specialized expertise for each aspect of WynIsBuff2's unique skill-to-automation platformer architecture.

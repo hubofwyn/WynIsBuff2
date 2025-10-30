@@ -49,14 +49,20 @@
     "MAX_THINKING_TOKENS": "8192",
     "DISABLE_COST_WARNINGS": "1",
     "GAME_PROJECT": "WynIsBuff2",
-    "ORCHESTRATION_ENABLED": "1"
+    "ORCHESTRATION_ENABLED": "1",
+    "OBSERVABILITY_ENABLED": "1",
+    "OBSERVABILITY_STATUS": "STATUS_OBSERVABILITY.json"
   },
   "projectSpecific": {
-    "gameEngine": "Phaser 3.88.2",
-    "physicsEngine": "Rapier 0.14.0", 
-    "buildTool": "Vite 5.4.19",
+    "gameEngine": "Phaser 3.90.x",
+    "physicsEngine": "Rapier 0.19.x (compat)",
+    "buildTool": "Vite 7.1.x",
     "testFramework": "Node.js Assert",
     "architecture": "feature-based-modules",
-    "orchestrationConfig": ".claude-orchestration.json"
+    "orchestrationConfig": ".claude-orchestration.json",
+    "observabilitySystem": "production-ready",
+    "observabilityPhase": "7-complete",
+    "loggingFramework": "@observability/LOG",
+    "debugAPI": "window.debugAPI"
   }
 }
