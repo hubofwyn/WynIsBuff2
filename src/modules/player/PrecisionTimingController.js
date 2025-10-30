@@ -1,4 +1,5 @@
 import { EventNames } from '../../constants/EventNames.js';
+import { LOG } from '../../observability/core/LogSystem.js';
 
 /**
  * PrecisionTimingController tracks precise input timing and patterns
@@ -57,8 +58,11 @@ export class PrecisionTimingController {
             movement: { attempts: 0, perfectTimings: 0, averageDelay: 0 },
             combo: { attempts: 0, perfectTimings: 0, averageDelay: 0 }
         };
-        
-        console.log('[PrecisionTimingController] Initialized precision timing system');
+
+        LOG.dev('PRECISIONTIMINGCONTROLLER_INITIALIZED', {
+            subsystem: 'player',
+            message: 'PrecisionTimingController initialized with muscle memory tracking'
+        });
     }
     
     /**

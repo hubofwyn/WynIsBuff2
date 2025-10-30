@@ -1,5 +1,6 @@
 import RAPIER from '@dimforge/rapier2d-compat';
 import { EventNames } from '../../constants/EventNames.js';
+import { LOG } from '../../observability/core/LogSystem.js';
 
 /**
  * PulsarController - Boss physics controller for The Pulsar's pulsating obstacles
@@ -104,8 +105,11 @@ export class PulsarController {
         
         // Pre-allocate obstacle pool
         this.initializeObstaclePool(50);
-        
-        console.log('[PulsarController] Boss initialized with optimized collision system');
+
+        LOG.dev('PULSARCONTROLLER_INITIALIZED', {
+            subsystem: 'boss',
+            message: 'PulsarController boss initialized with optimized collision system'
+        });
     }
     
     /**

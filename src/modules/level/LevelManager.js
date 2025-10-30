@@ -6,6 +6,7 @@ import { CollectibleManager } from './CollectibleManager';
 import { LevelCompletionManager } from './LevelCompletionManager';
 import { LevelTransitionController } from './LevelTransitionController';
 import { LevelLoader } from './LevelLoader';
+import { LOG } from '../../observability/core/LogSystem.js';
 
 /**
  * LevelManager class serves as a facade for the level system,
@@ -110,7 +111,10 @@ export class LevelManager {
      */
     log(message) {
         if (this.debugMode) {
-            console.log(`[LevelManager] ${message}`);
+            LOG.dev('LEVELMANAGER_DEBUG', {
+                subsystem: 'level',
+                message
+            });
         }
     }
     

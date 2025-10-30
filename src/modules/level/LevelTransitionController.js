@@ -1,6 +1,7 @@
 import { EventNames } from '../../constants/EventNames';
 import { getNextLevelId } from '../../constants/LevelData';
 import { SceneKeys } from '../../constants/SceneKeys.js';
+import { LOG } from '../../observability/core/LogSystem.js';
 
 /**
  * LevelTransitionController class is responsible for managing level transitions
@@ -57,7 +58,10 @@ export class LevelTransitionController {
      */
     log(message) {
         if (this.debugMode) {
-            console.log(`[LevelTransitionController] ${message}`);
+            LOG.dev('LEVELTRANSITIONCONTROLLER_DEBUG', {
+                subsystem: 'level',
+                message
+            });
         }
     }
     
