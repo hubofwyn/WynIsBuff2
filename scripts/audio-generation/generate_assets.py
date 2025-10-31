@@ -32,6 +32,7 @@ except ImportError:
 # Import local modules
 from budget_guard import BudgetGuard
 from post_process import post_process_audio
+from observability import LOG
 
 
 class AudioGenerator:
@@ -106,6 +107,14 @@ class AudioGenerator:
         print(f"   Duration: {duration}s")
         print(f"   Prompt influence: {prompt_influence}")
 
+        LOG.info('AUDIO_SFX_GENERATION_START', {
+            'subsystem': 'audio_generation',
+            'asset_id': asset_id,
+            'asset_name': asset.get('name', 'N/A'),
+            'duration_seconds': duration,
+            'prompt_influence': prompt_influence
+        })
+
         # Budget check
         can_proceed, budget_msg, remaining, estimated_cost = self.budget_guard.check_budget(
             duration, "sfx", asset_id
@@ -154,12 +163,31 @@ class AudioGenerator:
 
             if success:
                 self.results["total_credits_used"] += estimated_cost
+                LOG.info('AUDIO_SFX_GENERATION_SUCCESS', {
+                    'subsystem': 'audio_generation',
+                    'asset_id': asset_id,
+                    'credits_used': estimated_cost,
+                    'output_path': output_path
+                })
                 return True
             else:
+                LOG.error('AUDIO_POST_PROCESS_FAILED', {
+                    'subsystem': 'audio_generation',
+                    'asset_id': asset_id,
+                    'asset_type': 'sfx',
+                    'raw_path': raw_mp3_path,
+                    'output_path': output_path
+                })
                 return False
 
         except Exception as e:
             print(f"   ❌ Generation failed: {e}")
+            LOG.error('AUDIO_SFX_GENERATION_FAILED', {
+                'subsystem': 'audio_generation',
+                'asset_id': asset_id,
+                'error': str(e),
+                'hint': 'Check ElevenLabs API credentials and network connection'
+            })
             return False
 
     def generate_music(self, asset: Dict) -> bool:
@@ -180,6 +208,13 @@ class AudioGenerator:
         print(f"\n🎼 Generating Music: {asset_id}")
         print(f"   Name: {asset.get('name', 'N/A')}")
         print(f"   Duration: {duration}s")
+
+        LOG.info('AUDIO_MUSIC_GENERATION_START', {
+            'subsystem': 'audio_generation',
+            'asset_id': asset_id,
+            'asset_name': asset.get('name', 'N/A'),
+            'duration_seconds': duration
+        })
 
         # Budget check
         can_proceed, budget_msg, remaining, estimated_cost = self.budget_guard.check_budget(
@@ -234,12 +269,31 @@ class AudioGenerator:
 
             if success:
                 self.results["total_credits_used"] += estimated_cost
+                LOG.info('AUDIO_MUSIC_GENERATION_SUCCESS', {
+                    'subsystem': 'audio_generation',
+                    'asset_id': asset_id,
+                    'credits_used': estimated_cost,
+                    'output_path': output_path
+                })
                 return True
             else:
+                LOG.error('AUDIO_POST_PROCESS_FAILED', {
+                    'subsystem': 'audio_generation',
+                    'asset_id': asset_id,
+                    'asset_type': 'music',
+                    'raw_path': raw_mp3_path,
+                    'output_path': output_path
+                })
                 return False
 
         except Exception as e:
             print(f"   ❌ Generation failed: {e}")
+            LOG.error('AUDIO_MUSIC_GENERATION_FAILED', {
+                'subsystem': 'audio_generation',
+                'asset_id': asset_id,
+                'error': str(e),
+                'hint': 'Check ElevenLabs API credentials and network connection'
+            })
             return False
 
     def generate_assets(
@@ -286,6 +340,14 @@ class AudioGenerator:
             print(f"   Mode: DRY RUN (preview only)")
         print("=" * 70)
 
+        LOG.info('AUDIO_GENERATION_SESSION_START', {
+            'subsystem': 'audio_generation',
+            'asset_count': len(assets_to_generate),
+            'phase_filter': phase_filter,
+            'asset_id_filter': asset_id_filter,
+            'dry_run': self.dry_run
+        })
+
         # Generate each asset
         for asset in assets_to_generate:
             self.results["total_attempted"] += 1
@@ -327,6 +389,15 @@ class AudioGenerator:
         if not self.dry_run:
             print(f"   💰 Credits used: ~{self.results['total_credits_used']:,}")
         print("=" * 70)
+
+        LOG.info('AUDIO_GENERATION_SESSION_COMPLETE', {
+            'subsystem': 'audio_generation',
+            'total_attempted': self.results['total_attempted'],
+            'total_successful': self.results['total_successful'],
+            'total_failed': self.results['total_failed'],
+            'total_skipped': self.results['total_skipped'],
+            'total_credits_used': self.results['total_credits_used']
+        })
 
         # Save results
         if not self.dry_run:

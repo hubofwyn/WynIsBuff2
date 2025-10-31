@@ -8,6 +8,7 @@ when generating audio assets with the ElevenLabs API.
 
 import requests
 from typing import Dict, Tuple
+from observability import LOG
 
 
 class BudgetGuard:
@@ -59,6 +60,13 @@ class BudgetGuard:
         # ElevenLabs credits are typically 1:1 with characters
         # Remaining = limit - used
         remaining = character_limit - character_count
+
+        LOG.dev('BUDGET_CREDITS_FETCHED', {
+            'subsystem': 'budget_guard',
+            'character_count': character_count,
+            'character_limit': character_limit,
+            'remaining_credits': remaining
+        })
 
         return remaining, user_data
 
@@ -118,6 +126,15 @@ class BudgetGuard:
                     f"   Required: {estimated_cost:,} credits\n"
                     f"   Shortfall: {estimated_cost - available_for_use:,} credits"
                 )
+                LOG.warn('BUDGET_INSUFFICIENT_CREDITS', {
+                    'subsystem': 'budget_guard',
+                    'asset_id': asset_id,
+                    'remaining_credits': remaining_credits,
+                    'safety_margin': self.safety_margin,
+                    'available_credits': available_for_use,
+                    'estimated_cost': estimated_cost,
+                    'shortfall': estimated_cost - available_for_use
+                })
                 return False, message, remaining_credits, estimated_cost
 
             message = (
@@ -125,10 +142,23 @@ class BudgetGuard:
                 f"   Cost: ~{estimated_cost:,} credits\n"
                 f"   Remaining after: ~{remaining_credits - estimated_cost:,} credits"
             )
+            LOG.dev('BUDGET_CHECK_PASSED', {
+                'subsystem': 'budget_guard',
+                'asset_id': asset_id,
+                'remaining_credits': remaining_credits,
+                'estimated_cost': estimated_cost,
+                'remaining_after': remaining_credits - estimated_cost
+            })
             return True, message, remaining_credits, estimated_cost
 
         except requests.RequestException as e:
             message = f"❌ Failed to check budget for {asset_id}: {str(e)}"
+            LOG.error('BUDGET_CHECK_FAILED', {
+                'subsystem': 'budget_guard',
+                'asset_id': asset_id,
+                'error': str(e),
+                'hint': 'Check ElevenLabs API key and network connection'
+            })
             return False, message, 0, 0
 
 

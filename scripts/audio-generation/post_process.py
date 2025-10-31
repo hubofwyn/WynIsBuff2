@@ -14,6 +14,7 @@ from pathlib import Path
 import pyloudnorm as pyln
 import soundfile as sf
 import numpy as np
+from observability import LOG
 
 
 def convert_to_ogg(
@@ -51,12 +52,32 @@ def convert_to_ogg(
         )
 
         print(f"   ✅ Converted to OGG: {output_path}")
+        LOG.dev('AUDIO_CONVERT_SUCCESS', {
+            'subsystem': 'post_process',
+            'input_path': input_path,
+            'output_path': output_path,
+            'bitrate_kbps': bitrate_kbps
+        })
         return True
     except subprocess.CalledProcessError as e:
         print(f"   ❌ Conversion failed: {e.stderr}")
+        LOG.error('AUDIO_CONVERT_FAILED', {
+            'subsystem': 'post_process',
+            'input_path': input_path,
+            'output_path': output_path,
+            'error': e.stderr,
+            'hint': 'Check FFmpeg installation and file permissions'
+        })
         return False
     except Exception as e:
         print(f"   ❌ Conversion failed: {e}")
+        LOG.error('AUDIO_CONVERT_FAILED', {
+            'subsystem': 'post_process',
+            'input_path': input_path,
+            'output_path': output_path,
+            'error': str(e),
+            'hint': 'Check FFmpeg installation and file permissions'
+        })
         return False
 
 
@@ -101,15 +122,31 @@ def normalize_sfx_peak(file_path: str, target_dbfs: float = -3.0) -> bool:
         os.replace(temp_file, file_path)
 
         print(f"   ✅ Peak normalized to {target_dbfs:.1f} dBFS")
+        LOG.dev('AUDIO_NORMALIZE_PEAK_SUCCESS', {
+            'subsystem': 'post_process',
+            'file_path': file_path,
+            'target_dbfs': target_dbfs
+        })
         return True
     except subprocess.CalledProcessError as e:
         print(f"   ❌ Peak normalization failed: {e.stderr}")
+        LOG.error('AUDIO_NORMALIZE_PEAK_FAILED', {
+            'subsystem': 'post_process',
+            'file_path': file_path,
+            'error': e.stderr,
+            'hint': 'Check FFmpeg installation'
+        })
         # Clean up temp file if it exists
         if os.path.exists(temp_file):
             os.remove(temp_file)
         return False
     except Exception as e:
         print(f"   ❌ Peak normalization failed: {e}")
+        LOG.error('AUDIO_NORMALIZE_PEAK_FAILED', {
+            'subsystem': 'post_process',
+            'file_path': file_path,
+            'error': str(e)
+        })
         return False
 
 
@@ -148,9 +185,21 @@ def normalize_music_lufs(file_path: str, target_lufs: float = -16.0) -> bool:
         sf.write(file_path, normalized_data, rate, format='OGG', subtype='VORBIS')
 
         print(f"   ✅ LUFS normalized: {current_loudness:.1f} LUFS → {target_lufs:.1f} LUFS")
+        LOG.dev('AUDIO_NORMALIZE_LUFS_SUCCESS', {
+            'subsystem': 'post_process',
+            'file_path': file_path,
+            'current_loudness': current_loudness,
+            'target_lufs': target_lufs
+        })
         return True
     except Exception as e:
         print(f"   ❌ LUFS normalization failed: {e}")
+        LOG.error('AUDIO_NORMALIZE_LUFS_FAILED', {
+            'subsystem': 'post_process',
+            'file_path': file_path,
+            'error': str(e),
+            'hint': 'Check pyloudnorm installation and file format'
+        })
         return False
 
 
@@ -181,6 +230,13 @@ def post_process_audio(
     """
     print(f"🔧 Post-processing: {Path(output_ogg_path).name}")
 
+    LOG.info('AUDIO_POST_PROCESS_START', {
+        'subsystem': 'post_process',
+        'input_path': raw_mp3_path,
+        'output_path': output_ogg_path,
+        'asset_type': asset_type
+    })
+
     # Ensure output directory exists
     output_dir = Path(output_ogg_path).parent
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -209,6 +265,11 @@ def post_process_audio(
     #     print(f"   ⚠️  Could not remove raw MP3: {e}")
 
     print(f"   ✨ Post-processing complete\n")
+    LOG.info('AUDIO_POST_PROCESS_COMPLETE', {
+        'subsystem': 'post_process',
+        'output_path': output_ogg_path,
+        'asset_type': asset_type
+    })
     return True
 
 
