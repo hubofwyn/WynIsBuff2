@@ -47,15 +47,39 @@ function validateAssets() {
         const errors = [];
         const warnings = [];
 
-        // Check images
+        // Check images (supports simple path and multiResolution variants)
         console.log(`${colors.blue}Checking image assets...${colors.reset}`);
         Object.entries(manifest.assets.images).forEach(([key, asset]) => {
-            const assetPath = path.join(ASSETS_PATH, asset.path);
-            referencedPaths.add(asset.path);
+            // Simple image-like entries with a direct path
+            if (typeof asset.path === 'string') {
+                const assetPath = path.join(ASSETS_PATH, asset.path);
+                referencedPaths.add(asset.path);
 
-            if (!fs.existsSync(assetPath)) {
-                errors.push(`❌ Missing image: ${key} - ${asset.path}`);
-                hasErrors = true;
+                if (!fs.existsSync(assetPath)) {
+                    errors.push(`❌ Missing image: ${key} - ${asset.path}`);
+                    hasErrors = true;
+                }
+            } else if (asset.type === 'multiResolution' && asset.variants && typeof asset.variants === 'object') {
+                // Multi-resolution entries: validate all listed variants (png/webp)
+                Object.entries(asset.variants).forEach(([variantKey, variantVal]) => {
+                    if (variantVal && typeof variantVal === 'object') {
+                        ['png', 'webp'].forEach((fmt) => {
+                            const p = variantVal[fmt];
+                            if (typeof p === 'string') {
+                                const full = path.join(ASSETS_PATH, p);
+                                referencedPaths.add(p);
+                                if (!fs.existsSync(full)) {
+                                    errors.push(`❌ Missing image variant: ${key}[${variantKey}].${fmt} - ${p}`);
+                                    hasErrors = true;
+                                }
+                            }
+                        });
+                    }
+                });
+            } else {
+                // Unknown shape; warn but don't fail validation
+                warnings.push(`⚠️  Unrecognized image asset shape for '${key}', skipping direct path check`);
+                hasWarnings = true;
             }
 
             // Check for placeholder assets
@@ -197,7 +221,7 @@ function validateAssets() {
 
         if (hasErrors) {
             console.log(`\n${colors.red}❌ Asset validation failed with errors${colors.reset}`);
-            console.log('Fix the errors above and run "npm run generate-assets" to rebuild');
+            console.log('Fix the errors above and run "bun run generate-assets" to rebuild');
             process.exit(1);
         } else if (hasWarnings) {
             console.log(

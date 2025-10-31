@@ -31,7 +31,7 @@ function generateAssetsConstants() {
         // Generate the constants file content
         let output = `// AUTO-GENERATED FILE - DO NOT EDIT MANUALLY
 // Generated from assets/manifest.json by scripts/generate-assets.js
-// Run 'npm run generate-assets' to regenerate this file
+// Run 'bun run generate-assets' to regenerate this file
 
 /**
  * Asset constants generated from manifest.json

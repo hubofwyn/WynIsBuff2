@@ -1,1 +1,5 @@
-npm test
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# Run tests using Bun (keep hook lightweight)
+bun run test

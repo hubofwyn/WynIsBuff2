@@ -22,5 +22,5 @@ jobs:
           
       - name: Check for outdated packages
         run: |
-          npm outdated || true
-          echo "Review outdated packages above"
+          bunx --bun npm-check-updates || true
+          echo "Review the suggested updates above"

@@ -1,3 +1,4 @@
+// Bun test: CommonJS
 const assert = require('assert');
 
 console.log('Running subtitle integration tests...');

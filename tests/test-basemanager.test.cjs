@@ -1,4 +1,4 @@
-// CommonJS tests for BaseManager
+// CommonJS tests for BaseManager (Bun test)
 const assert = require('assert');
 
 const { BaseManager } = require('../src/core/BaseManager.js');
@@ -30,4 +30,3 @@ dm1.destroy();
 assert.strictEqual(dm1.isInitialized(), false, 'Destroy should reset flag');
 
 console.log('BaseManager tests passed.');
-

@@ -1,3 +1,4 @@
+// Excluded from bun test; not part of legacy runner
 const assert = require('assert');
 
 // Mock the dependencies

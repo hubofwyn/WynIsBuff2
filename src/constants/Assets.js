@@ -1,6 +1,6 @@
 // AUTO-GENERATED FILE - DO NOT EDIT MANUALLY
 // Generated from assets/manifest.json by scripts/generate-assets.js
-// Run 'npm run generate-assets' to regenerate this file
+// Run 'bun run generate-assets' to regenerate this file
 
 /**
  * Asset constants generated from manifest.json
@@ -10,6 +10,7 @@
 export const ImageAssets = Object.freeze({
   BACKGROUND: 'background',
   LOGO: 'logo',
+  LOGO_OPTIMIZED: 'logoOptimized',
   PLAYER_FULL: 'playerFull',
   PLAYER: 'player',
   DUNGEON_TILES: 'dungeonTiles',
@@ -72,6 +73,7 @@ export const ImageAssets = Object.freeze({
 export const ImagePaths = Object.freeze({
   BACKGROUND: 'images/characters/mainlogo.png',
   LOGO: 'images/characters/mainlogo.png',
+  LOGO_OPTIMIZED: 'undefined',
   PLAYER_FULL: '2D Pixel Dungeon Asset Pack v2.0/2D Pixel Dungeon Asset Pack/character and tileset/Dungeon_Character.png',
   PLAYER: '2D Pixel Dungeon Asset Pack v2.0/2D Pixel Dungeon Asset Pack/character and tileset/Dungeon_Character.png',
   DUNGEON_TILES: 'images/tilesets/Dungeon_Tileset.png',

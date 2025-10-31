@@ -239,7 +239,7 @@ export class MyScene extends Scene {
 2. **Regenerate Constants**:
 
 ```bash
-npm run generate-assets
+bun run generate-assets
 ```
 
 3. **Use in Code**:
@@ -275,8 +275,8 @@ assets/
 ### Running Tests
 
 ```bash
-npm test                    # Run all tests
-npm run generate-assets     # Regenerate asset constants
+bun run test                # Run all tests
+bun run generate-assets     # Regenerate asset constants
 ```
 
 ### Test Structure
@@ -309,16 +309,16 @@ console.log('MyManager tests passed.');
 
 ```bash
 # Install dependencies
-npm install
+bun install
 
 # Start development server
-npm run dev
+bun run dev
 
 # Run tests
-npm test
+bun run test
 
 # Regenerate asset constants
-npm run generate-assets
+bun run generate-assets
 ```
 
 ### Making Your First Contribution

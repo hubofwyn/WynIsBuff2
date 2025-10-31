@@ -94,25 +94,25 @@ The project follows a standard structure for Phaser games:
 │   └── config.prod.mjs      # Production configuration
 ├── index.html               # HTML entry point
 ├── package.json             # Project metadata and dependencies
-└── package-lock.json        # Locked dependencies
+└── bun.lockb                # Locked dependencies (Bun)
 ```
 
 ## Build System
 
-The project uses Vite for its build system with the following npm scripts:
+The project uses Vite for its build system with the following Bun scripts:
 
-- **dev**: `node log.js dev & vite --config vite/config.dev.mjs`
+- **dev**: `bun log.js dev & bunx --bun vite --config vite/config.dev.mjs`
     - Starts the development server with hot module replacement
     - Runs on http://localhost:8080 by default
 
-- **build**: `node log.js build & vite build --config vite/config.prod.mjs`
+- **build**: `bun log.js build & bunx --bun vite build --config vite/config.prod.mjs`
     - Creates a production build in the `dist` folder
     - Optimizes and minifies the code using Terser
 
-- **dev-nolog**: `vite --config vite/config.dev.mjs`
+- **dev-nolog**: `bunx --bun vite --config vite/config.dev.mjs`
     - Same as `dev` but without sending anonymous usage data
 
-- **build-nolog**: `vite build --config vite/config.prod.mjs`
+- **build-nolog**: `bunx --bun vite build --config vite/config.prod.mjs`
     - Same as `build` but without sending anonymous usage data
 
 ### Vite Configuration

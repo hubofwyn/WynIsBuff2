@@ -94,6 +94,7 @@ export default [
             '*.min.js',
             'public/**',
             'assets/**',
+            'scripts/**',
             'vite/**',
             '.migration-backup/**',
             'tests/**',

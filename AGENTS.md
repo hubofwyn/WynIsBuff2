@@ -41,19 +41,19 @@ this.load.image('logo', 'images/ui/logo.png'); // NO!
 
 ```bash
 # Development
-npm run dev              # Start dev server with hot reload
-npm run build            # Production build
+bun run dev              # Start dev server with hot reload
+bun run build            # Production build
 
 # Asset Management
-npm run generate-assets  # Regenerate Assets.js from manifest.json
-npm run validate-assets  # Check asset integrity
+bun run generate-assets  # Regenerate Assets.js from manifest.json
+bun run validate-assets  # Check asset integrity
 
 # Testing
-npm test                 # Run all tests (CommonJS format)
+bun run test             # Run all tests (CommonJS .cjs)
 
 # Quality Checks
-npm run lint             # ESLint checking (if configured)
-npm run typecheck        # TypeScript checking (if configured)
+bun run lint             # ESLint checking (if configured)
+bun run typecheck        # TypeScript checking (if configured)
 ```
 
 ## Agent Workflow
@@ -64,8 +64,8 @@ npm run typecheck        # TypeScript checking (if configured)
 2. Follow barrel export structure (@features/\*)
 3. Add events to EventNames.js
 4. Update manifest.json for new assets
-5. Run `npm run generate-assets`
-6. Test with `npm test`
+5. Run `bun run generate-assets`
+6. Test with `bun run test`
 
 ### For Bug Fixes:
 
@@ -128,6 +128,6 @@ The project includes intelligent agent routing via AgentOrchestrator:
 
 - The project has strong conventions - follow existing patterns
 - Always check CLAUDE.md for detailed architecture rules
-- Run `npm run generate-assets` after modifying manifest.json
+- Run `bun run generate-assets` after modifying manifest.json
 - Test changes across multiple scenes (MainMenu, Game, BirthdayMinigame)
 - The birthday minigame is a special feature - handle with care

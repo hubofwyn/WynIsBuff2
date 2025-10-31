@@ -16,10 +16,10 @@ Play as Wyn, navigate levels with precise jumping, and experience increasingly b
 ## Quick Start
 
 ```bash
-npm install           # Install dependencies
-npm run dev           # Start development server (localhost:5173)
-npm run build         # Production build
-npm test              # Run tests
+bun install           # Install dependencies (generates bun.lockb)
+bun run dev           # Start dev server (port 8080 per Vite config)
+bun run build         # Production build
+bun run test          # Run tests (Path A runner)
 ```
 
 ## Controls
@@ -159,7 +159,7 @@ this.eventSystem.on(EventNames.LEVEL_COMPLETE, this.handleComplete);
         "path": "images/my-asset.png"
     }
     ```
-3. Run `npm run generate-assets`
+3. Run `bun run generate-assets`
 4. Use via `ImageAssets.MY_ASSET`
 
 ### Testing

@@ -1,0 +1,7 @@
+[alias]
+"@features" = "./src/features"
+"@features/*" = "./src/features/*"
+"@core" = "./src/core"
+"@observability" = "./src/observability"
+"@scenes" = "./src/scenes"
+

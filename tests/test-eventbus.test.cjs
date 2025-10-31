@@ -1,4 +1,4 @@
-// CommonJS test for EventBus singleton
+// CommonJS test for EventBus singleton (Bun test)
 const assert = require('assert');
 
 const { EventBus } = require('../src/core/EventBus.js');
@@ -29,4 +29,3 @@ EventBus.emit('test.loop');
 assert.strictEqual(count, 2, '.off() should remove listener');
 
 console.log('EventBus tests passed.');
-

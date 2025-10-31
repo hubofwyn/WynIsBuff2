@@ -1,4 +1,4 @@
-// Simple test suite for GameStateManager (CommonJS)
+// Simple test suite for GameStateManager (CommonJS) - Bun test
 const assert = require('assert');
 // Shim localStorage for Node environment
 class LocalStorageMock {
