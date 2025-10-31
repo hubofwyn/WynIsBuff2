@@ -9,9 +9,34 @@
         "description": "Main background image used in Boot scene"
       },
       "logo": {
-        "type": "image", 
+        "type": "image",
         "path": "images/characters/mainlogo.png",
-        "description": "Game logo"
+        "description": "Game logo (backward compatibility - use logoOptimized for best performance)"
+      },
+      "logoOptimized": {
+        "type": "multiResolution",
+        "variants": {
+          "1x": {
+            "png": "images/ui/logo/mainlogo@1x.png",
+            "webp": "images/ui/logo/mainlogo@1x.webp",
+            "dimensions": "512x512",
+            "size": {"png": "325KB", "webp": "39KB"}
+          },
+          "2x": {
+            "png": "images/ui/logo/mainlogo@2x.png",
+            "webp": "images/ui/logo/mainlogo@2x.webp",
+            "dimensions": "1024x1024",
+            "size": {"png": "1.7MB", "webp": "128KB"}
+          },
+          "fallback": {
+            "png": "images/ui/logo/mainlogo-fallback.png",
+            "webp": "images/ui/logo/mainlogo-fallback.webp",
+            "dimensions": "256x256",
+            "size": {"png": "84KB", "webp": "16KB"}
+          }
+        },
+        "source": "images/ui/logo/mainlogo.svg",
+        "description": "Multi-resolution optimized logo with WebP support (92-97% smaller than PNG)"
       },
       "playerFull": {
         "type": "image",

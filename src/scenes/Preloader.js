@@ -10,6 +10,7 @@ import {
     SpritesheetConfigs,
 } from '../constants/Assets.js';
 import { LOG } from '../observability/core/LogSystem.js';
+import { LogoLoader } from '../utils/LogoLoader.js';
 
 export class Preloader extends Scene {
     constructor() {
@@ -197,8 +198,15 @@ export class Preloader extends Scene {
             }
         });
 
-        // Load the custom game logo
-        this.load.image(ImageAssets.LOGO, ImagePaths.LOGO);
+        // Load the custom game logo with smart resolution and format selection
+        // LogoLoader automatically chooses optimal variant based on:
+        // - Device pixel ratio (1x=512px, 2x=1024px)
+        // - WebP support (92-97% smaller than PNG)
+        const logoPath = LogoLoader.getOptimalPath(this.sys.game);
+        this.load.image(ImageAssets.LOGO, logoPath);
+
+        // Also load legacy path for backward compatibility
+        // this.load.image(ImageAssets.LOGO, ImagePaths.LOGO);
 
         // Load player character sprite
         // IMPORTANT: For character animations, we need to load as a spritesheet
