@@ -1,21 +1,14 @@
 import Phaser from 'phaser';
 import RAPIER from '@dimforge/rapier2d-compat';
 
-import { EventNames } from '../../constants/EventNames';
+import { EventNames } from '../../constants/EventNames.js';
 import { PhysicsConfig } from '../../constants/PhysicsConfig.js';
-import {
-    PIXELS_PER_METER,
-    pixelsToMeters,
-    metersToPixels,
-} from '../../constants/PhysicsConstants.js';
+import { pixelsToMeters, metersToPixels } from '../../constants/PhysicsConstants.js';
 import { createEmptyInputState } from '../../types/InputState.js';
 import { LOG } from '../../observability/core/LogSystem.js';
 import { CrashDumpGenerator } from '../../observability/utils/CrashDumpGenerator.js';
 
-import { JumpController } from './JumpController';
-import { MovementController } from './MovementController';
-import { CollisionController } from './CollisionController';
-import { WallJumpController } from './WallJumpController';
+// Controllers are managed elsewhere in the enhanced architecture
 
 /**
  * PlayerController class for modern 2D platformer using KinematicCharacterController

@@ -58,7 +58,7 @@ export class AgentOrchestrator extends BaseManager {
             analysis.supportingAgents = sortedAgents.slice(1).map(([name]) => name);
         }
 
-        for (const [workflowName, workflowConfig] of Object.entries(this.config.workflows)) {
+        for (const [workflowName, _wf] of Object.entries(this.config.workflows)) {
             const relevantKeywords = this.extractKeywords(lowerTask, workflowName);
             if (relevantKeywords.length > 0) {
                 analysis.workflow = workflowName;
@@ -75,7 +75,7 @@ export class AgentOrchestrator extends BaseManager {
         return analysis;
     }
 
-    extractKeywords(text, context) {
+    extractKeywords(text, _context) {
         const keywords = [];
         const routing = this.config.routing.keywords;
 
@@ -204,7 +204,7 @@ export class AgentOrchestrator extends BaseManager {
 
     checkPatternCompliance(code) {
         const hasBaseManager = /extends\s+BaseManager/.test(code);
-        const usesConstructorPattern = /constructor\(\)\s*{\s*super\(\)/.test(code);
+        const _usesConstructorPattern = /constructor\(\)\s*{\s*super\(\)/.test(code);
 
         if (code.includes('Manager') && !hasBaseManager) {
             return { passed: false, message: 'Manager classes must extend BaseManager' };
@@ -244,8 +244,8 @@ export class AgentOrchestrator extends BaseManager {
 
     checkDocumentation(code) {
         const hasClassComment = /\/\*\*[\s\S]*?\*\/\s*(?:export\s+)?class/.test(code);
-        const publicMethods = code.match(/^\s{4}(?!constructor|init|_)[a-z][a-zA-Z0-9]*\(/gm) || [];
-        const documentedMethods = code.match(/\/\*\*[\s\S]*?\*\/\s*\n\s{4}[a-z]/g) || [];
+        const _publicMethods = code.match(/^\s{4}(?!constructor|init|_)[a-z][a-zA-Z0-9]*\(/gm) || [];
+        const _documentedMethods = code.match(/\/\*\*[\s\S]*?\*\/\s*\n\s{4}[a-z]/g) || [];
 
         if (!hasClassComment && code.includes('export class')) {
             return { passed: false, message: 'Public classes should have documentation' };

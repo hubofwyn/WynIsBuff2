@@ -1,6 +1,6 @@
 import RAPIER from '@dimforge/rapier2d-compat';
 
-import { EventNames } from '../../constants/EventNames';
+import { EventNames } from '../../constants/EventNames.js';
 import { PhysicsConfig } from '../../constants/PhysicsConfig.js';
 import { pixelsToMeters } from '../../constants/PhysicsConstants.js';
 import { LOG } from '../../observability/core/LogSystem.js';

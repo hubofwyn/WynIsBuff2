@@ -1,13 +1,13 @@
-import { EventNames } from '../../constants/EventNames';
+import { EventNames } from '../../constants/EventNames.js';
 import { LOG } from '../../observability/core/LogSystem.js';
 
-import { GroundFactory } from './GroundFactory';
-import { PlatformFactory } from './PlatformFactory';
-import { MovingPlatformController } from './MovingPlatformController';
-import { CollectibleManager } from './CollectibleManager';
-import { LevelCompletionManager } from './LevelCompletionManager';
-import { LevelTransitionController } from './LevelTransitionController';
-import { LevelLoader } from './LevelLoader';
+import { GroundFactory } from './GroundFactory.js';
+import { PlatformFactory } from './PlatformFactory.js';
+import { MovingPlatformController } from './MovingPlatformController.js';
+import { CollectibleManager } from './CollectibleManager.js';
+import { LevelCompletionManager } from './LevelCompletionManager.js';
+import { LevelTransitionController } from './LevelTransitionController.js';
+import { LevelLoader } from './LevelLoader.js';
 
 /**
  * LevelManager class serves as a facade for the level system,

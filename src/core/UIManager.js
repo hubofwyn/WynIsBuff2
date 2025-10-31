@@ -1,7 +1,7 @@
-import { EventNames } from '../constants/EventNames';
+import { EventNames } from '../constants/EventNames.js';
 import { LOG } from '../observability/core/LogSystem.js';
 
-import { BaseManager } from './BaseManager';
+import { BaseManager } from './BaseManager.js';
 
 /**
  * UIManager class handles all UI-related functionality including
@@ -240,7 +240,7 @@ export class UIManager extends BaseManager {
         this.screenHeight = gameSize.height;
 
         // Update positions of responsive elements
-        this.elements.forEach((data, key) => {
+        this.elements.forEach((data, _key) => {
             if (data.responsive && data.element) {
                 this.updateResponsivePosition(data);
             }

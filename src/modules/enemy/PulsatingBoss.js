@@ -1,6 +1,6 @@
 import RAPIER from '@dimforge/rapier2d-compat';
 
-import { EventNames } from '../../constants/EventNames';
+import { EventNames } from '../../constants/EventNames.js';
 
 /**
  * PulsatingBoss - A pulsating obstacle that the player must avoid

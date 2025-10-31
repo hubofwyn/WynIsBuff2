@@ -11,7 +11,7 @@ import {
 } from '@features/core';
 import { LevelManager } from '@features/level';
 
-import { EventNames } from '../constants/EventNames';
+import { EventNames } from '../constants/EventNames.js';
 import { SceneKeys } from '../constants/SceneKeys.js';
 import { AudioAssets, ImageAssets } from '../constants/Assets.js';
 import { PhysicsConfig } from '../constants/PhysicsConfig.js';

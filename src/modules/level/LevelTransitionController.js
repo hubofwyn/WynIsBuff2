@@ -1,5 +1,5 @@
-import { EventNames } from '../../constants/EventNames';
-import { getNextLevelId } from '../../constants/LevelData';
+import { EventNames } from '../../constants/EventNames.js';
+import { getNextLevelId } from '../../constants/LevelData.js';
 import { SceneKeys } from '../../constants/SceneKeys.js';
 import { LOG } from '../../observability/core/LogSystem.js';
 

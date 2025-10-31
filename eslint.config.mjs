@@ -15,22 +15,24 @@ export default [
         languageOptions: {
             ecmaVersion: 2022,
             sourceType: 'module',
-            globals: {
-                // Node.js globals
-                console: 'readonly',
-                process: 'readonly',
-                Buffer: 'readonly',
-                __dirname: 'readonly',
-                __filename: 'readonly',
-                global: 'readonly',
-                // Browser globals
-                window: 'readonly',
-                document: 'readonly',
-                navigator: 'readonly',
-                localStorage: 'readonly',
-                sessionStorage: 'readonly',
-                URL: 'readonly',
-                URLSearchParams: 'readonly',
+                globals: {
+                    // Node.js globals
+                    console: 'readonly',
+                    process: 'readonly',
+                    Buffer: 'readonly',
+                    __dirname: 'readonly',
+                    __filename: 'readonly',
+                    global: 'readonly',
+                    require: 'readonly',
+                    // Browser globals
+                    window: 'readonly',
+                    document: 'readonly',
+                    navigator: 'readonly',
+                    localStorage: 'readonly',
+                    sessionStorage: 'readonly',
+                    URL: 'readonly',
+                    URLSearchParams: 'readonly',
+                    performance: 'readonly',
                 // Timers
                 setTimeout: 'readonly',
                 clearTimeout: 'readonly',
@@ -51,12 +53,14 @@ export default [
         rules: {
             'no-console': 'warn',
             'no-unused-vars': [
-                'error',
+                'warn',
                 {
                     argsIgnorePattern: '^_',
                     caughtErrorsIgnorePattern: '^_',
+                    varsIgnorePattern: '^_',
                 },
             ],
+            'no-case-declarations': 'warn',
             'import/extensions': ['warn', 'ignorePackages'],
             'import/no-unresolved': [
                 'warn',

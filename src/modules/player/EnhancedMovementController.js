@@ -1,4 +1,4 @@
-import { EventNames } from '../../constants/EventNames';
+import { EventNames } from '../../constants/EventNames.js';
 import { LOG } from '../../observability/core/LogSystem.js';
 
 /**
@@ -250,7 +250,7 @@ export class EnhancedMovementController {
      * @param {Phaser.GameObjects.Sprite} sprite - Player's sprite
      * @param {boolean} isOnGround - Ground contact state
      */
-    fixedUpdate(body, sprite, isOnGround) {
+    fixedUpdate(body, _sprite, _isOnGround) {
         const currentVel = body.linvel();
         let newVelX = currentVel.x;
         let newVelY = currentVel.y;
@@ -277,11 +277,12 @@ export class EnhancedMovementController {
                 newVelY = this.applyAirPhysics(currentVel.y);
                 break;
 
-            case 'dashing':
+            case 'dashing': {
                 const dashVel = this.calculateDashVelocity();
                 newVelX = dashVel.x;
                 newVelY = dashVel.y;
                 break;
+            }
         }
 
         // Apply momentum preservation
@@ -457,7 +458,7 @@ export class EnhancedMovementController {
      * @param {number} currentVelX - Current X velocity
      * @returns {number} New X velocity
      */
-    calculateWallSlideMovement(currentVelX) {
+    calculateWallSlideMovement(_currentVelX) {
         // Stick to wall with slight push-off capability
         const wallDir = this.wallDetection.left ? -1 : 1;
         const inputDir = this.currentInput.direction;
@@ -505,7 +506,7 @@ export class EnhancedMovementController {
      * @param {number} oldVel - Previous velocity
      * @returns {number} Velocity with momentum preserved
      */
-    applyMomentumPreservation(newVel, oldVel) {
+    applyMomentumPreservation(newVel, _oldVel) {
         // Preserve momentum during state transitions
         if (this.state !== this.previousState) {
             const preservedMomentum = this.momentum.x * this.momentum.preservationFactor;
@@ -629,7 +630,7 @@ export class EnhancedMovementController {
      */
     detectWalls(body) {
         // Simple wall detection - in production, use raycasts
-        const pos = body.translation();
+        // const pos = body.translation();
         const vel = body.linvel();
 
         // Reset wall detection
@@ -652,7 +653,7 @@ export class EnhancedMovementController {
      * @param {number} direction - Direction to check (-1 left, 1 right)
      * @returns {boolean} True if wall detected
      */
-    checkWallCollision(body, direction) {
+    checkWallCollision(_body, _direction) {
         // In production, cast a ray from player center in the direction
         // For now, return false (would integrate with Rapier's ray casting)
         return false;

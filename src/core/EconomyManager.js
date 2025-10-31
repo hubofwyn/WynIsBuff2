@@ -228,7 +228,7 @@ export class EconomyManager extends BaseManager {
     /**
      * Build flow state momentum
      */
-    buildFlow(amount, source = 'unknown') {
+    buildFlow(amount, _source = 'unknown') {
         this.flowState.momentum += amount;
         this.flowState.lastAction = Date.now();
 

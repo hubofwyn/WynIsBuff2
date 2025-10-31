@@ -1,11 +1,11 @@
 import Phaser from 'phaser';
 
-import { EventNames } from '../constants/EventNames';
+import { EventNames } from '../constants/EventNames.js';
 import { createEmptyInputState } from '../types/InputState.js';
 import { LOG } from '../observability/core/LogSystem.js';
 
-import { GameStateManager } from './GameStateManager';
-import { BaseManager } from './BaseManager';
+import { GameStateManager } from './GameStateManager.js';
+import { BaseManager } from './BaseManager.js';
 
 /**
  * InputManager handles mapping of keyboard inputs to game events.

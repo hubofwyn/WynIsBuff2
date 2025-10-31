@@ -73,7 +73,7 @@ export class DeterministicRNG extends BaseManager {
      * Reset all streams to their initial states
      */
     resetAll() {
-        for (const [name, stream] of this.streams) {
+        for (const [_name, stream] of this.streams) {
             stream.state = stream.seed;
             stream.callCount = 0;
         }
@@ -235,8 +235,8 @@ export class DeterministicRNG extends BaseManager {
             streams: {},
         };
 
-        for (const [name, stream] of this.streams) {
-            state.streams[name] = { ...stream };
+        for (const [streamName, stream] of this.streams) {
+            state.streams[streamName] = { ...stream };
         }
 
         return state;
@@ -265,7 +265,7 @@ export class DeterministicRNG extends BaseManager {
     getStateHash() {
         let hash = this.masterSeed;
 
-        for (const [name, stream] of this.streams) {
+        for (const [_name, stream] of this.streams) {
             hash = hash ^ stream.state;
             hash = hash ^ stream.callCount;
             // Rotate left
