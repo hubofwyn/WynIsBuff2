@@ -63,3 +63,12 @@ public/assets/
 # Git-Specific
 # ───────────────────────────────────────────
 .git/
+
+# ───────────────────────────────────────────
+# Documentation Analysis (Large Binary Files)
+# ───────────────────────────────────────────
+doc-analysis/
+doc-analysis-docs/
+doc-analysis-slim/
+*.db
+knowledge_graph.json
