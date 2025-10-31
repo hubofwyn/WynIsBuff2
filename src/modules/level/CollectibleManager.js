@@ -142,7 +142,7 @@ export class CollectibleManager {
                         error,
                         message: 'Error creating collectible',
                         collectibleIndex: index + 1,
-                        collectibleConfig: config,
+                        collectibleConfig: collectible,
                         hint: 'Check collectible configuration and physics world initialization',
                     });
                 }

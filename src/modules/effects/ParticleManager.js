@@ -131,19 +131,15 @@ export class ParticleManager {
     }
 
     /**
-     * Create a particle emitter
+     * Create a particle emitter using Phaser 3.60+ API
      * @param {string} key - Unique identifier for the emitter
      * @param {object} config - Emitter configuration
      * @returns {Phaser.GameObjects.Particles.ParticleEmitter} The created emitter
      */
     createEmitter(key, config) {
-        // Create particle manager if it doesn't exist
-        if (!this.scene.particles) {
-            this.scene.particles = this.scene.add.particles('particle');
-        }
-
-        // Create the emitter with the provided configuration
-        const emitter = this.scene.particles.createEmitter({
+        // Phaser 3.60+ API: Create ParticleEmitter directly (ParticleEmitterManager was removed)
+        // Use 'particleWhite' texture (loaded in Preloader) for all particles
+        const emitter = this.scene.add.particles(0, 0, 'particleWhite', {
             frame: config.frame || ['white'],
             lifespan: config.lifespan || 1000,
             speed: config.speed || { min: 50, max: 100 },
@@ -152,13 +148,25 @@ export class ParticleManager {
             gravityY: config.gravityY || 200,
             alpha: config.alpha || { start: 1, end: 0 },
             tint: config.tint || 0xffffff,
-            on: false, // Start inactive
+            emitting: false, // Start inactive (replaces 'on: false')
+            angle: config.angle || { min: 0, max: 360 },
+            blendMode: config.blendMode || 'NORMAL',
+            rotate: config.rotate || 0,
+            frequency: config.frequency || -1, // -1 = explode mode only
         });
 
         // Store the emitter
         this.emitters.set(key, {
             emitter,
             config,
+        });
+
+        LOG.dev('PARTICLEMANAGER_EMITTER_CREATED', {
+            subsystem: 'effects',
+            message: 'ParticleEmitter created using Phaser 3.60+ API',
+            key,
+            phaserVersion: '3.90.0',
+            api: 'scene.add.particles(x, y, texture, config)',
         });
 
         return emitter;
