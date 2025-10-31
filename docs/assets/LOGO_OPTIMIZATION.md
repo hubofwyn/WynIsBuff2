@@ -332,6 +332,8 @@ cwebp -q 90 -m 6 -alpha_q 100 mainlogo-fallback.png -o mainlogo-fallback.webp
 ls -lh mainlogo*
 ```
 
+**Important Path Note**: LogoLoader uses `BASE_PATH = 'images/ui/logo/'` (without 'assets/' prefix) because Phaser's loader automatically prepends 'assets/' to all load paths.
+
 ### Quality Parameters
 
 - **PNG Export**: 300 DPI, transparent background, power-of-2 dimensions

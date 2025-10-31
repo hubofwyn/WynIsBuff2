@@ -20,9 +20,10 @@ import { LOG } from '../observability/core/LogSystem.js';
  */
 export class LogoLoader {
     /**
-     * Base path for logo assets
+     * Base path for logo assets (relative to assets/ directory)
+     * Note: Phaser automatically prepends 'assets/' to load paths
      */
-    static BASE_PATH = 'assets/images/ui/logo/';
+    static BASE_PATH = 'images/ui/logo/';
 
     /**
      * Logo file configurations
