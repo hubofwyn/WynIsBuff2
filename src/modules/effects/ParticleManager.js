@@ -276,21 +276,27 @@ export class ParticleManager {
         // Set emitter position
         emitter.setPosition(position.x, position.y + 16); // Offset to feet position
 
-        // Configure emitter based on jump number
+        // Configure emitter based on jump number (Phaser 3.60+ API)
         if (jumpNumber === 1) {
             // First jump: simple dust cloud below player
-            emitter.setSpeed({ min: 50, max: 100 });
-            emitter.setScale({ start: 0.1, end: 0 });
+            emitter.setConfig({
+                speed: { min: 50, max: 100 },
+                scale: { start: 0.1, end: 0 },
+            });
             emitter.explode(10);
         } else if (jumpNumber === 2) {
             // Second jump: energy particles in a wider pattern
-            emitter.setSpeed({ min: 80, max: 120 });
-            emitter.setScale({ start: 0.15, end: 0 });
+            emitter.setConfig({
+                speed: { min: 80, max: 120 },
+                scale: { start: 0.15, end: 0 },
+            });
             emitter.explode(15);
         } else if (jumpNumber === 3) {
             // Third jump: burst effect in all directions
-            emitter.setSpeed({ min: 100, max: 200 });
-            emitter.setScale({ start: 0.2, end: 0 });
+            emitter.setConfig({
+                speed: { min: 100, max: 200 },
+                scale: { start: 0.2, end: 0 },
+            });
             emitter.explode(25);
         }
     }
@@ -309,9 +315,11 @@ export class ParticleManager {
         const impactForce = Math.min(Math.abs(velocity.y) / 10, 3); // Cap at 3x
         const quantity = Math.floor(this.landParticleConfig.quantity * impactForce);
 
-        // Emit particles in a horizontal pattern
-        emitter.setSpeed({ min: 60, max: 120 });
-        emitter.setGravityY(200);
+        // Emit particles in a horizontal pattern (Phaser 3.60+ API)
+        emitter.setConfig({
+            speed: { min: 60, max: 120 },
+            gravityY: 200,
+        });
         emitter.explode(quantity);
     }
 
@@ -328,9 +336,12 @@ export class ParticleManager {
         // Emit particles opposite to movement direction
         const particleVelocityX = -Math.sign(velocity.x) * 30;
 
-        emitter.setSpeedX({ min: particleVelocityX - 10, max: particleVelocityX + 10 });
-        emitter.setSpeedY({ min: -20, max: 0 });
-        emitter.setGravityY(200);
+        // Configure particle velocity (Phaser 3.60+ API)
+        emitter.setConfig({
+            speedX: { min: particleVelocityX - 10, max: particleVelocityX + 10 },
+            speedY: { min: -20, max: 0 },
+            gravityY: 200,
+        });
 
         // Emit a small puff
         emitter.explode(1);

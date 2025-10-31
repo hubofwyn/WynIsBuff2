@@ -105,57 +105,23 @@ export class PhysicsManager extends BaseManager {
 
     /**
      * Set up collision event handling
+     * Uses Rapier 0.19+ EventQueue API for collision event processing
+     * Events are processed in update() method via eventQueue.drainCollisionEvents()
      */
     setupCollisionEvents() {
         if (!this.world) {
             return;
         }
 
-        // Check if contactPairEvents is available
-        if (this.world.contactPairEvents) {
-            this.world.contactPairEvents.on('begin', (event) => {
-                // Extract the body handles from the event
-                const bodyHandleA = event.collider1.parent().handle;
-                const bodyHandleB = event.collider2.parent().handle;
-
-                // Get the positions of the colliding bodies
-                const bodyA = this.world.getBodyByHandle(bodyHandleA);
-                const bodyB = this.world.getBodyByHandle(bodyHandleB);
-
-                if (!bodyA || !bodyB) {
-                    return;
-                }
-
-                const positionA = bodyA.translation();
-                const positionB = bodyB.translation();
-
-                // Emit collision event
-                if (this.eventSystem) {
-                    this.eventSystem.emit(EventNames.COLLISION_START, {
-                        bodyHandleA,
-                        bodyHandleB,
-                        positionA: { x: positionA.x, y: positionA.y },
-                        positionB: { x: positionB.x, y: positionB.y },
-                    });
-                }
-
-                // Call any registered collision handlers
-                this.handleCollision(bodyHandleA, bodyHandleB);
-            });
-        } else {
-            // Fallback for collision event handling if contactPairEvents is not available
-            LOG.warn('PHYSICS_NO_CONTACT_EVENTS', {
-                subsystem: 'physics',
-                message: 'contactPairEvents not available, using manual collision detection',
-                hint: 'For basic platformer gameplay, character controller contact detection is sufficient',
-            });
-            // Note: Collision detection will be handled manually in the update() method if needed
-            // For basic platformer gameplay, contact detection via characterController is sufficient
-        }
+        // Rapier 0.19+ uses EventQueue for collision events
+        // Event processing happens in update() via eventQueue.drainCollisionEvents()
+        // Colliders must be created with .setActiveEvents(RAPIER.ActiveEvents.COLLISION_EVENTS)
+        // to generate collision events in the queue
 
         LOG.dev('PHYSICS_COLLISION_SETUP', {
             subsystem: 'physics',
-            message: 'Collision events set up',
+            message: 'Collision events configured for Rapier 0.19+ EventQueue API',
+            hint: 'Colliders need ActiveEvents.COLLISION_EVENTS flag to generate events',
         });
     }
 
