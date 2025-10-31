@@ -29,7 +29,7 @@ export class BoundedBuffer {
         const enrichedEntry = {
             ...entry,
             _bufferIndex: this.totalWritten,
-            _timestamp: Date.now()
+            _timestamp: Date.now(),
         };
 
         if (this.buffer.length < this.maxSize) {
@@ -55,9 +55,10 @@ export class BoundedBuffer {
         if (actualCount === 0) return [];
 
         const result = [];
-        let idx = this.buffer.length < this.maxSize
-            ? this.buffer.length - 1
-            : (this.writePointer - 1 + this.maxSize) % this.maxSize;
+        let idx =
+            this.buffer.length < this.maxSize
+                ? this.buffer.length - 1
+                : (this.writePointer - 1 + this.maxSize) % this.maxSize;
 
         for (let i = 0; i < actualCount; i++) {
             result.push(this.buffer[idx]);
@@ -78,9 +79,8 @@ export class BoundedBuffer {
         const len = this.buffer.length;
 
         // Start from most recent
-        let idx = len < this.maxSize
-            ? len - 1
-            : (this.writePointer - 1 + this.maxSize) % this.maxSize;
+        let idx =
+            len < this.maxSize ? len - 1 : (this.writePointer - 1 + this.maxSize) % this.maxSize;
 
         for (let i = 0; i < len && results.length < maxResults; i++) {
             const entry = this.buffer[idx];
@@ -99,7 +99,7 @@ export class BoundedBuffer {
      * @param {number} count - Maximum number to return
      */
     getByLevel(level, count = 10) {
-        return this.filter(entry => entry.level === level, count);
+        return this.filter((entry) => entry.level === level, count);
     }
 
     /**
@@ -108,7 +108,7 @@ export class BoundedBuffer {
      * @param {number} count - Maximum number to return
      */
     getByCode(code, count = 10) {
-        return this.filter(entry => entry.code === code, count);
+        return this.filter((entry) => entry.code === code, count);
     }
 
     /**
@@ -148,7 +148,7 @@ export class BoundedBuffer {
             maxSize: this.maxSize,
             totalWritten: this.totalWritten,
             overflowCount: this.overflowCount,
-            utilizationPercent: (this.buffer.length / this.maxSize) * 100
+            utilizationPercent: (this.buffer.length / this.maxSize) * 100,
         };
     }
 

@@ -1,32 +1,29 @@
 import { Scene } from 'phaser';
+
 import { SceneKeys } from '../constants/SceneKeys.js';
 import { ImageAssets, ImagePaths } from '../constants/Assets.js';
 import { LOG } from '../observability/core/LogSystem.js';
 
-export class Boot extends Scene
-{
-    constructor ()
-    {
+export class Boot extends Scene {
+    constructor() {
         super(SceneKeys.BOOT);
     }
 
-    preload ()
-    {
+    preload() {
         LOG.dev('BOOT_PRELOAD_STARTED', {
             subsystem: 'scene',
             scene: SceneKeys.BOOT,
-            message: 'Boot scene preload started'
+            message: 'Boot scene preload started',
         });
         // Skip asset loading for now to test scene flow
         // this.load.image(ImageAssets.BACKGROUND, 'assets/' + ImagePaths.BACKGROUND);
     }
 
-    create ()
-    {
+    create() {
         LOG.dev('BOOT_CREATED', {
             subsystem: 'scene',
             scene: SceneKeys.BOOT,
-            message: 'Boot scene created'
+            message: 'Boot scene created',
         });
 
         // Boot scene should transition to Preloader
@@ -34,13 +31,12 @@ export class Boot extends Scene
             subsystem: 'scene',
             scene: SceneKeys.BOOT,
             message: 'Transitioning to Preloader scene',
-            nextScene: SceneKeys.PRELOADER
+            nextScene: SceneKeys.PRELOADER,
         });
         this.scene.start(SceneKeys.PRELOADER);
     }
-    
-    update (time, delta)
-    {
+
+    update(time, delta) {
         // Placeholder update method for Boot scene
     }
 }

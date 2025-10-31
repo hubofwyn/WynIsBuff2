@@ -1,6 +1,7 @@
 # Architectural Assessment and Improvement Plan
 
 ## Table of Contents
+
 - [Current Architecture Overview](#current-architecture-overview)
 - [Strengths](#strengths)
 - [Areas for Improvement](#areas-for-improvement)
@@ -53,23 +54,26 @@ export class EventSystem {
     constructor() {
         this.events = new Map();
     }
-    
+
     on(event, callback) {
         if (!this.events.has(event)) {
             this.events.set(event, []);
         }
         this.events.get(event).push(callback);
     }
-    
+
     off(event, callback) {
         if (!this.events.has(event)) return;
         const callbacks = this.events.get(event);
-        this.events.set(event, callbacks.filter(cb => cb !== callback));
+        this.events.set(
+            event,
+            callbacks.filter((cb) => cb !== callback)
+        );
     }
-    
+
     emit(event, data) {
         if (!this.events.has(event)) return;
-        this.events.get(event).forEach(callback => callback(data));
+        this.events.get(event).forEach((callback) => callback(data));
     }
 }
 
@@ -93,31 +97,31 @@ export class EntityManager {
         this.entities = new Map();
         this.nextId = 0;
     }
-    
+
     createEntity(components = {}) {
         const id = this.nextId++;
         const entity = { id, components };
         this.entities.set(id, entity);
         return entity;
     }
-    
+
     removeEntity(id) {
         this.entities.delete(id);
     }
-    
+
     getEntity(id) {
         return this.entities.get(id);
     }
-    
+
     getEntitiesWithComponents(...componentTypes) {
-        return Array.from(this.entities.values()).filter(entity => 
-            componentTypes.every(type => entity.components[type])
+        return Array.from(this.entities.values()).filter((entity) =>
+            componentTypes.every((type) => entity.components[type])
         );
     }
-    
+
     update() {
         // Update all entities with updateable components
-        this.getEntitiesWithComponents('updateable').forEach(entity => {
+        this.getEntitiesWithComponents('updateable').forEach((entity) => {
             entity.components.updateable.update();
         });
     }
@@ -135,11 +139,11 @@ export class AssetManager {
         this.scene = scene;
         this.assets = new Map();
     }
-    
+
     preload(assetManifest) {
         // Load assets based on manifest
         Object.entries(assetManifest).forEach(([type, assets]) => {
-            assets.forEach(asset => {
+            assets.forEach((asset) => {
                 switch (type) {
                     case 'image':
                         this.scene.load.image(asset.key, asset.path);
@@ -156,15 +160,15 @@ export class AssetManager {
             });
         });
     }
-    
+
     getAsset(key) {
         return this.assets.get(key);
     }
-    
+
     createAnimation(key, config) {
         this.scene.anims.create({
             key,
-            ...config
+            ...config,
         });
     }
 }
@@ -181,39 +185,40 @@ export class UIManager {
         this.scene = scene;
         this.elements = new Map();
     }
-    
+
     createText(key, x, y, text, style) {
         const textElement = this.scene.add.text(x, y, text, style);
         this.elements.set(key, textElement);
         return textElement;
     }
-    
+
     createButton(key, x, y, texture, callback, context) {
-        const button = this.scene.add.image(x, y, texture)
+        const button = this.scene.add
+            .image(x, y, texture)
             .setInteractive()
             .on('pointerdown', callback, context);
         this.elements.set(key, button);
         return button;
     }
-    
+
     updateText(key, text) {
         const element = this.elements.get(key);
         if (element && element.setText) {
             element.setText(text);
         }
     }
-    
+
     getElement(key) {
         return this.elements.get(key);
     }
-    
+
     hideElement(key) {
         const element = this.elements.get(key);
         if (element) {
             element.setVisible(false);
         }
     }
-    
+
     showElement(key) {
         const element = this.elements.get(key);
         if (element) {
@@ -234,35 +239,38 @@ export class StateManager {
         this.state = { ...initialState };
         this.listeners = new Map();
     }
-    
+
     setState(key, value) {
         const oldValue = this.state[key];
         this.state[key] = value;
-        
+
         if (this.listeners.has(key)) {
-            this.listeners.get(key).forEach(listener => {
+            this.listeners.get(key).forEach((listener) => {
                 listener(value, oldValue);
             });
         }
     }
-    
+
     getState(key) {
         return this.state[key];
     }
-    
+
     onStateChange(key, callback) {
         if (!this.listeners.has(key)) {
             this.listeners.set(key, []);
         }
         this.listeners.get(key).push(callback);
     }
-    
+
     offStateChange(key, callback) {
         if (!this.listeners.has(key)) return;
         const callbacks = this.listeners.get(key);
-        this.listeners.set(key, callbacks.filter(cb => cb !== callback));
+        this.listeners.set(
+            key,
+            callbacks.filter((cb) => cb !== callback)
+        );
     }
-    
+
     saveState() {
         try {
             localStorage.setItem('gameState', JSON.stringify(this.state));
@@ -272,7 +280,7 @@ export class StateManager {
             return false;
         }
     }
-    
+
     loadState() {
         try {
             const savedState = localStorage.getItem('gameState');
@@ -302,21 +310,21 @@ export class AudioManager {
         this.music = null;
         this.isMuted = false;
     }
-    
+
     addSound(key, config = {}) {
         if (!this.scene.sound.get(key)) {
             console.warn(`Sound ${key} not found`);
             return;
         }
-        
+
         const sound = this.scene.sound.add(key, config);
         this.sounds.set(key, sound);
         return sound;
     }
-    
+
     playSound(key, config = {}) {
         if (this.isMuted) return;
-        
+
         const sound = this.sounds.get(key);
         if (sound) {
             sound.play(config);
@@ -327,34 +335,34 @@ export class AudioManager {
             }
         }
     }
-    
+
     playMusic(key, config = { loop: true }) {
         if (this.isMuted) return;
-        
+
         if (this.music) {
             this.music.stop();
         }
-        
+
         this.music = this.scene.sound.add(key, config);
         this.music.play();
     }
-    
+
     stopMusic() {
         if (this.music) {
             this.music.stop();
         }
     }
-    
+
     mute() {
         this.isMuted = true;
         this.scene.sound.mute = true;
     }
-    
+
     unmute() {
         this.isMuted = false;
         this.scene.sound.mute = false;
     }
-    
+
     toggleMute() {
         this.isMuted = !this.isMuted;
         this.scene.sound.mute = this.isMuted;
@@ -376,7 +384,7 @@ export class InputManager {
         this.actions = new Map();
         this.initialize();
     }
-    
+
     initialize() {
         // Set up common keys
         this.keys = {
@@ -387,56 +395,56 @@ export class InputManager {
             jump: this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE),
             // Add more keys as needed
         };
-        
+
         // Set up arrow keys
         this.cursors = this.scene.input.keyboard.createCursorKeys();
     }
-    
+
     addAction(name, keys, callback) {
         this.actions.set(name, { keys, callback, active: true });
     }
-    
+
     removeAction(name) {
         this.actions.delete(name);
     }
-    
+
     disableAction(name) {
         const action = this.actions.get(name);
         if (action) {
             action.active = false;
         }
     }
-    
+
     enableAction(name) {
         const action = this.actions.get(name);
         if (action) {
             action.active = true;
         }
     }
-    
+
     update() {
         // Process all active actions
         this.actions.forEach((action, name) => {
             if (!action.active) return;
-            
-            const keysPressed = action.keys.some(key => {
+
+            const keysPressed = action.keys.some((key) => {
                 if (key.includes('CURSOR_')) {
                     const cursorKey = key.replace('CURSOR_', '').toLowerCase();
                     return this.cursors[cursorKey] && this.cursors[cursorKey].isDown;
                 }
                 return this.keys[key] && this.keys[key].isDown;
             });
-            
+
             if (keysPressed) {
                 action.callback();
             }
         });
     }
-    
+
     isKeyDown(key) {
         return this.keys[key] && this.keys[key].isDown;
     }
-    
+
     isKeyJustDown(key) {
         return Phaser.Input.Keyboard.JustDown(this.keys[key]);
     }
@@ -461,97 +469,93 @@ export class LevelManager {
         this.tileset = null;
         this.layers = {};
     }
-    
+
     loadTilemap(key, tilesetKey) {
         this.map = this.scene.make.tilemap({ key });
         this.tileset = this.map.addTilesetImage(tilesetKey);
         return this.map;
     }
-    
+
     createLayer(name, tileset, config = {}) {
         const layer = this.map.createLayer(name, tileset, 0, 0);
-        
+
         if (config.collision) {
             layer.setCollisionByProperty({ collides: true });
             // Add physics for the layer
             this.createLayerPhysics(layer);
         }
-        
+
         this.layers[name] = layer;
         return layer;
     }
-    
+
     createLayerPhysics(layer) {
         // Iterate through tiles and create physics bodies for collision tiles
-        layer.forEachTile(tile => {
+        layer.forEachTile((tile) => {
             if (!tile.properties.collides) return;
-            
-            const x = tile.x * tile.width + (tile.width / 2);
-            const y = tile.y * tile.height + (tile.height / 2);
-            
+
+            const x = tile.x * tile.width + tile.width / 2;
+            const y = tile.y * tile.height + tile.height / 2;
+
             // Create a static body for the tile
-            const bodyDesc = RAPIER.RigidBodyDesc.fixed()
-                .setTranslation(x, y);
+            const bodyDesc = RAPIER.RigidBodyDesc.fixed().setTranslation(x, y);
             const body = this.world.createRigidBody(bodyDesc);
-            
+
             // Create a collider for the tile
-            const colliderDesc = RAPIER.ColliderDesc
-                .cuboid(tile.width / 2, tile.height / 2)
-                .setRestitution(0.0);
+            const colliderDesc = RAPIER.ColliderDesc.cuboid(
+                tile.width / 2,
+                tile.height / 2
+            ).setRestitution(0.0);
             this.world.createCollider(colliderDesc, body);
-            
+
             // Store the body-tile association
             this.bodyToSprite.set(body.handle, tile);
         });
     }
-    
+
     loadLevel(levelData) {
         // Clear existing level elements
         this.clearLevel();
-        
+
         // Create platforms from level data
         if (levelData.platforms) {
             this.createPlatforms(levelData.platforms);
         }
-        
+
         // Create ground from level data
         if (levelData.ground) {
-            this.createGround(
-                levelData.ground.width,
-                levelData.ground.height,
-                levelData.ground.y
-            );
+            this.createGround(levelData.ground.width, levelData.ground.height, levelData.ground.y);
         }
-        
+
         // Create collectibles, enemies, etc.
         if (levelData.collectibles) {
             this.createCollectibles(levelData.collectibles);
         }
-        
+
         // Emit level loaded event
         if (this.events) {
             this.events.emit('level:loaded', levelData);
         }
     }
-    
+
     clearLevel() {
         // Remove all physics bodies
-        this.platforms.forEach(platform => {
+        this.platforms.forEach((platform) => {
             if (platform.body) {
                 this.world.removeRigidBody(platform.body);
             }
         });
-        
+
         if (this.ground && this.ground.body) {
             this.world.removeRigidBody(this.ground.body);
         }
-        
+
         // Clear arrays and references
         this.platforms = [];
         this.ground = null;
         this.bodyToSprite.clear();
     }
-    
+
     // Existing methods (createGround, createPlatforms, etc.)
     // ...
 }

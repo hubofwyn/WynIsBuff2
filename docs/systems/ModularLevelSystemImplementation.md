@@ -1,6 +1,7 @@
 # Modular Level System Implementation
 
 ## Table of Contents
+
 - [Overview](#overview)
 - [Implementation Details](#implementation-details)
 - [Class Structure](#class-structure)
@@ -35,11 +36,11 @@ Responsible for creating and managing the ground:
 
 ```javascript
 // Key methods
-constructor(scene, world, eventSystem)
-createGround(config)
-removeGround()
-getGround()
-getBodyToSpriteMap()
+constructor(scene, world, eventSystem);
+createGround(config);
+removeGround();
+getGround();
+getBodyToSpriteMap();
 ```
 
 ### PlatformFactory
@@ -48,11 +49,11 @@ Responsible for creating and managing static platforms:
 
 ```javascript
 // Key methods
-constructor(scene, world, eventSystem)
-createPlatforms(platformConfigs)
-removePlatforms()
-getPlatforms()
-getBodyToSpriteMap()
+constructor(scene, world, eventSystem);
+createPlatforms(platformConfigs);
+removePlatforms();
+getPlatforms();
+getBodyToSpriteMap();
 ```
 
 ### MovingPlatformController
@@ -61,12 +62,12 @@ Responsible for creating and managing moving platforms:
 
 ```javascript
 // Key methods
-constructor(scene, world, eventSystem)
-createMovingPlatforms(movingPlatformConfigs)
-removeMovingPlatforms()
-updateMovingPlatforms(delta)
-getMovingPlatforms()
-getBodyToSpriteMap()
+constructor(scene, world, eventSystem);
+createMovingPlatforms(movingPlatformConfigs);
+removeMovingPlatforms();
+updateMovingPlatforms(delta);
+getMovingPlatforms();
+getBodyToSpriteMap();
 ```
 
 ### CollectibleManager
@@ -75,14 +76,14 @@ Responsible for creating and managing collectibles:
 
 ```javascript
 // Key methods
-constructor(scene, world, eventSystem)
-createCollectibles(collectibleConfigs)
-removeCollectibles()
-collectItem(collectibleId)
-handleCollectibleCollision(bodyHandle)
-areAllCollectiblesCollected()
-getCollectibles()
-getBodyToSpriteMap()
+constructor(scene, world, eventSystem);
+createCollectibles(collectibleConfigs);
+removeCollectibles();
+collectItem(collectibleId);
+handleCollectibleCollision(bodyHandle);
+areAllCollectiblesCollected();
+getCollectibles();
+getBodyToSpriteMap();
 ```
 
 ### LevelCompletionManager
@@ -91,15 +92,15 @@ Responsible for handling level completion logic:
 
 ```javascript
 // Key methods
-constructor(scene, world, eventSystem, collectibleManager)
-setCurrentLevelId(levelId)
-createCompletionTrigger(triggerConfig)
-removeCompletionTrigger()
-checkLevelCompletion(playerPosition, playerBody)
-handleTriggerCollision(bodyHandle, playerPosition)
-completeLevel()
-getCompletionTrigger()
-getBodyToSpriteMap()
+constructor(scene, world, eventSystem, collectibleManager);
+setCurrentLevelId(levelId);
+createCompletionTrigger(triggerConfig);
+removeCompletionTrigger();
+checkLevelCompletion(playerPosition, playerBody);
+handleTriggerCollision(bodyHandle, playerPosition);
+completeLevel();
+getCompletionTrigger();
+getBodyToSpriteMap();
 ```
 
 ### LevelTransitionController
@@ -108,13 +109,13 @@ Responsible for managing level transitions:
 
 ```javascript
 // Key methods
-constructor(scene, eventSystem)
-startTransitionToNextLevel(fromLevelId)
-startTransitionToGameOver(fromLevelId)
-startTransition(fromLevelId, toLevelId)
-handleLevelLoaded(levelId)
-isInTransition()
-getTransitionState()
+constructor(scene, eventSystem);
+startTransitionToNextLevel(fromLevelId);
+startTransitionToGameOver(fromLevelId);
+startTransition(fromLevelId, toLevelId);
+handleLevelLoaded(levelId);
+isInTransition();
+getTransitionState();
 ```
 
 ### LevelLoader
@@ -123,12 +124,12 @@ Responsible for loading level data and initializing level elements:
 
 ```javascript
 // Key methods
-constructor(scene, eventSystem, managers)
-loadLevel(levelId)
-initializeLevel(levelConfig)
-clearLevel()
-getCurrentLevelId()
-getCurrentLevelConfig()
+constructor(scene, eventSystem, managers);
+loadLevel(levelId);
+initializeLevel(levelConfig);
+clearLevel();
+getCurrentLevelId();
+getCurrentLevelConfig();
 ```
 
 ### LevelManager (Modular)
@@ -137,16 +138,16 @@ Serves as a facade for the level system, coordinating the other specialized clas
 
 ```javascript
 // Key methods
-constructor(scene, world, eventSystem)
-loadLevel(levelId)
-nextLevel()
-resetLevel()
-update(delta)
-getBodyToSpriteMap()
-getPlatforms()
-getGround()
-getCurrentLevelId()
-getCurrentLevelConfig()
+constructor(scene, world, eventSystem);
+loadLevel(levelId);
+nextLevel();
+resetLevel();
+update(delta);
+getBodyToSpriteMap();
+getPlatforms();
+getGround();
+getCurrentLevelId();
+getCurrentLevelConfig();
 ```
 
 ### LevelManager (Wrapper)
@@ -155,16 +156,16 @@ Maintains backward compatibility with the original LevelManager while delegating
 
 ```javascript
 // Key methods
-constructor(scene, world, eventSystem)
-createGround(width, height, y)
-createPlatforms(platformConfigs)
-getPlatforms()
-getGround()
-getBodyToSpriteMap()
-loadLevel(levelId)
-nextLevel()
-resetLevel()
-update(delta)
+constructor(scene, world, eventSystem);
+createGround(width, height, y);
+createPlatforms(platformConfigs);
+getPlatforms();
+getGround();
+getBodyToSpriteMap();
+loadLevel(levelId);
+nextLevel();
+resetLevel();
+update(delta);
 ```
 
 ## Integration with Game Scene
@@ -223,7 +224,7 @@ const levelConfig = this.levelManager.getCurrentLevelConfig();
 update(time, delta) {
     // Update the level manager
     this.levelManager.update(delta);
-    
+
     // Rest of the update logic
     // ...
 }

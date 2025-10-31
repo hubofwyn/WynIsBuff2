@@ -15,4 +15,3 @@ For current project guidance, start at docs/INDEX.md.
 - SESSION_4_COMPLETE.md
 - SESSION_4_FINAL_STATUS.md
 - SESSION_4_PROGRESS.md
-

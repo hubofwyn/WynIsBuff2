@@ -1,8 +1,16 @@
 import { Scene } from 'phaser';
 import { PlayerController } from '@features/player';
 import { ParticleManager, CameraManager, ColorManager } from '@features/effects';
-import { PhysicsManager, EventSystem, InputManager, UIManager, GameStateManager, AudioManager } from '@features/core';
+import {
+    PhysicsManager,
+    EventSystem,
+    InputManager,
+    UIManager,
+    GameStateManager,
+    AudioManager,
+} from '@features/core';
 import { LevelManager } from '@features/level';
+
 import { EventNames } from '../constants/EventNames';
 import { SceneKeys } from '../constants/SceneKeys.js';
 import { AudioAssets, ImageAssets } from '../constants/Assets.js';
@@ -12,7 +20,7 @@ import { DebugContext } from '../observability/context/DebugContext.js';
 import {
     PlayerStateProvider,
     PhysicsStateProvider,
-    InputStateProvider
+    InputStateProvider,
 } from '../observability/providers/index.js';
 import { ErrorPatternDetector } from '../observability/utils/ErrorPatternDetector.js';
 import { DebugAPI } from '../observability/api/DebugAPI.js';
@@ -23,7 +31,7 @@ export class Game extends Scene {
         LOG.dev('GAME_SCENE_CONSTRUCTOR', {
             subsystem: 'scene',
             scene: SceneKeys.GAME,
-            message: 'Game scene constructor called'
+            message: 'Game scene constructor called',
         });
 
         // Game managers
@@ -33,7 +41,7 @@ export class Game extends Scene {
         this.playerController = null;
         this.uiManager = null;
         this.gameStateManager = null;
-        
+
         // Effect managers
         this.particleManager = null;
         this.cameraManager = null;
@@ -53,7 +61,7 @@ export class Game extends Scene {
             subsystem: 'scene',
             scene: SceneKeys.GAME,
             message: 'Game scene initialized',
-            data
+            data,
         });
 
         // If a level ID is provided, use it
@@ -66,68 +74,72 @@ export class Game extends Scene {
         LOG.dev('GAME_SCENE_PRELOAD', {
             subsystem: 'scene',
             scene: SceneKeys.GAME,
-            message: 'Game scene preload called'
+            message: 'Game scene preload called',
         });
     }
 
     async create() {
-            LOG.info('GAME_SCENE_CREATE_START', {
-                subsystem: 'scene',
-                scene: SceneKeys.GAME,
-                message: 'Game scene create started',
-                levelId: this.currentLevelId
-            });
-            // Play in-level music
-            const audio = AudioManager.getInstance();
-            audio.stopMusic(AudioAssets.PROTEIN_PIXEL_ANTHEM);
-            audio.playMusic(AudioAssets.HYPER_BUFF_BLITZ);
-        
+        LOG.info('GAME_SCENE_CREATE_START', {
+            subsystem: 'scene',
+            scene: SceneKeys.GAME,
+            message: 'Game scene create started',
+            levelId: this.currentLevelId,
+        });
+        // Play in-level music
+        const audio = AudioManager.getInstance();
+        audio.stopMusic(AudioAssets.PROTEIN_PIXEL_ANTHEM);
+        audio.playMusic(AudioAssets.HYPER_BUFF_BLITZ);
+
         try {
             // Initialize event system
             this.eventSystem = new EventSystem();
             this.eventSystem.setDebugMode(true);
-            
+
             // Initialize game state manager
             this.gameStateManager = GameStateManager.getInstance();
-            
+
             // Set up event listeners
             this.setupEventListeners();
-            
+
             // Initialize input manager
             this.inputManager = InputManager.getInstance();
             this.inputManager.init(this, this.eventSystem);
-            
+
             // Initialize physics with BUFF action game feel
             this.physicsManager = PhysicsManager.getInstance();
             const physicsInitialized = await this.physicsManager.init(
-                this, 
-                this.eventSystem, 
-                PhysicsConfig.gravityX, 
+                this,
+                this.eventSystem,
+                PhysicsConfig.gravityX,
                 PhysicsConfig.gravityY
             );
-            
+
             if (!physicsInitialized) {
                 throw new Error('Failed to initialize physics');
             }
-            
+
             // Initialize UI Manager
             this.uiManager = UIManager.getInstance();
             this.uiManager.init(this, this.eventSystem);
-            
+
             // Create UI elements
             this.createUIElements();
-            
+
             // Initialize effect managers
             this.particleManager = new ParticleManager(this, this.eventSystem);
             this.cameraManager = new CameraManager(this, this.eventSystem);
             this.colorManager = new ColorManager(this, this.eventSystem);
-            LOG.dev('GAME_EFFECT_MANAGERS_READY', { subsystem: 'scene', scene: SceneKeys.GAME, message: 'Effect managers initialized' });
+            LOG.dev('GAME_EFFECT_MANAGERS_READY', {
+                subsystem: 'scene',
+                scene: SceneKeys.GAME,
+                message: 'Effect managers initialized',
+            });
 
             // Initialize DebugContext for automatic context injection
             // This happens after core systems ready but before player creation
             LOG.info('GAME_DEBUGCONTEXT_INIT', {
                 subsystem: 'observability',
-                message: 'Initializing DebugContext for automatic state capture'
+                message: 'Initializing DebugContext for automatic state capture',
             });
             this.debugContext = DebugContext.getInstance();
 
@@ -135,14 +147,14 @@ export class Game extends Scene {
             this.errorPatternDetector = new ErrorPatternDetector(LOG);
             LOG.dev('GAME_ERROR_PATTERN_DETECTOR_INIT', {
                 subsystem: 'observability',
-                message: 'ErrorPatternDetector initialized for pattern analysis'
+                message: 'ErrorPatternDetector initialized for pattern analysis',
             });
 
             // Initialize DebugAPI for agent-friendly debugging
             this.debugAPI = new DebugAPI(LOG, this.debugContext, this.errorPatternDetector);
             LOG.dev('GAME_DEBUG_API_INIT', {
                 subsystem: 'observability',
-                message: 'DebugAPI initialized for agent-assisted debugging'
+                message: 'DebugAPI initialized for agent-assisted debugging',
             });
 
             // Make DebugAPI globally accessible for console debugging
@@ -150,7 +162,7 @@ export class Game extends Scene {
                 window.debugAPI = this.debugAPI;
                 LOG.dev('GAME_DEBUG_API_GLOBAL', {
                     subsystem: 'observability',
-                    message: 'DebugAPI exposed as window.debugAPI for console access'
+                    message: 'DebugAPI exposed as window.debugAPI for console access',
                 });
             }
 
@@ -174,14 +186,18 @@ export class Game extends Scene {
             if (acc.subtitles && this.uiManager) {
                 this.uiManager.showSubtitles(acc.subtitles);
             }
-            
+
             // Create level manager and load the specified level
-            this.levelManager = new LevelManager(this, this.physicsManager.getWorld(), this.eventSystem);
+            this.levelManager = new LevelManager(
+                this,
+                this.physicsManager.getWorld(),
+                this.eventSystem
+            );
             this.levelManager.loadLevel(this.currentLevelId);
-            
+
             // Register level body-sprite mappings with physics manager
             this.physicsManager.registerBodySpriteMap(this.levelManager.getBodyToSpriteMap());
-            
+
             // Create player controller at the level's start position with selected character
             const levelConfig = this.levelManager.getCurrentLevelConfig();
             const startX = levelConfig && levelConfig.playerStart ? levelConfig.playerStart.x : 512;
@@ -192,7 +208,7 @@ export class Game extends Scene {
                 scene: SceneKeys.GAME,
                 message: 'Creating player with character',
                 character: selectedKey,
-                availableTextures: Object.keys(this.textures.list)
+                availableTextures: Object.keys(this.textures.list),
             });
             this.playerController = new PlayerController(
                 this,
@@ -202,20 +218,20 @@ export class Game extends Scene {
                 startY,
                 selectedKey
             );
-            
+
             // DON'T register player with physics manager - player manages own sprite position
             // because it uses KinematicCharacterController for advanced movement
             LOG.dev('GAME_PLAYER_CONTROLLER_MODE', {
                 subsystem: 'scene',
                 scene: SceneKeys.GAME,
-                message: 'Player uses KinematicCharacterController, managing own sprite position'
+                message: 'Player uses KinematicCharacterController, managing own sprite position',
             });
 
             // Register state providers for automatic context injection
             // This provides rich debugging context in all logs
             LOG.dev('GAME_REGISTERING_STATE_PROVIDERS', {
                 subsystem: 'observability',
-                message: 'Registering state providers for context capture'
+                message: 'Registering state providers for context capture',
             });
 
             try {
@@ -246,15 +262,15 @@ export class Game extends Scene {
                     providers: [
                         this.playerController ? 'player' : null,
                         this.physicsManager ? 'physics' : null,
-                        this.inputManager ? 'input' : null
-                    ].filter(Boolean)
+                        this.inputManager ? 'input' : null,
+                    ].filter(Boolean),
                 });
             } catch (error) {
                 LOG.error('GAME_STATE_PROVIDER_REGISTRATION_ERROR', {
                     subsystem: 'observability',
                     error,
                     message: 'Error registering state providers',
-                    hint: 'Context injection will be disabled, but logging will continue to work'
+                    hint: 'Context injection will be disabled, but logging will continue to work',
                 });
             }
 
@@ -263,7 +279,7 @@ export class Game extends Scene {
                 LOG.dev('GAME_PAUSE_EVENT', {
                     subsystem: 'scene',
                     scene: SceneKeys.GAME,
-                    message: 'Pause event received, launching PauseScene'
+                    message: 'Pause event received, launching PauseScene',
                 });
                 // Pause the game and show pause overlay
                 this.scene.launch(SceneKeys.PAUSE);
@@ -274,21 +290,21 @@ export class Game extends Scene {
                 LOG.dev('GAME_LEVEL_RESET_EVENT', {
                     subsystem: 'scene',
                     scene: SceneKeys.GAME,
-                    message: 'Level reset event received, resetting level'
+                    message: 'Level reset event received, resetting level',
                 });
                 this.levelManager.resetLevel();
             });
-            
+
             // Emit game init event
             this.eventSystem.emit(EventNames.GAME_INIT, {
                 scene: 'Game',
-                levelId: this.currentLevelId
+                levelId: this.currentLevelId,
             });
-            
+
             LOG.info('GAME_SCENE_CREATE_COMPLETE', {
                 subsystem: 'scene',
                 scene: SceneKeys.GAME,
-                message: 'Game scene create completed successfully'
+                message: 'Game scene create completed successfully',
             });
         } catch (error) {
             LOG.error('GAME_SCENE_CREATE_ERROR', {
@@ -296,16 +312,20 @@ export class Game extends Scene {
                 scene: SceneKeys.GAME,
                 error,
                 message: 'Error in Game scene create method',
-                hint: 'Check manager initialization order. Verify all assets are loaded.'
+                hint: 'Check manager initialization order. Verify all assets are loaded.',
             });
             // Display error on screen for easier debugging
-            this.add.text(512, 400, 'ERROR: ' + error.message, {
-                fontFamily: 'Arial', fontSize: 16, color: '#ff0000',
-                align: 'center'
-            }).setOrigin(0.5);
+            this.add
+                .text(512, 400, 'ERROR: ' + error.message, {
+                    fontFamily: 'Arial',
+                    fontSize: 16,
+                    color: '#ff0000',
+                    align: 'center',
+                })
+                .setOrigin(0.5);
         }
     }
-    
+
     /**
      * Create visual enhancements for better game feel
      */
@@ -333,7 +353,7 @@ export class Game extends Scene {
             graphics.fillStyle(colors[i], alphas[i]);
             graphics.fillRect(0, i * 250, 1024, 250);
         }
-        
+
         // Add animated background particles for atmosphere
         this.time.addEvent({
             delay: 2000,
@@ -341,36 +361,36 @@ export class Game extends Scene {
                 if (this.particleManager) {
                     const x = Phaser.Math.Between(0, 1024);
                     const particle = this.add.circle(x, -10, 3, 0xffffff, 0.2);
-                    
+
                     this.tweens.add({
                         targets: particle,
                         y: 768,
                         x: x + Phaser.Math.Between(-50, 50),
                         alpha: 0,
                         duration: 8000,
-                        onComplete: () => particle.destroy()
+                        onComplete: () => particle.destroy(),
                     });
                 }
             },
-            loop: true
+            loop: true,
         });
-        
+
         // Add subtle vignette effect
         const vignette = this.add.graphics();
         vignette.fillStyle(0x000000, 0);
         vignette.fillRect(0, 0, 1024, 768);
         vignette.setBlendMode(Phaser.BlendModes.MULTIPLY);
         vignette.setDepth(999);
-        
+
         // Create radial gradient for vignette
         const radius = 512;
         for (let i = 0; i < 20; i++) {
-            const alpha = i / 20 * 0.3;
+            const alpha = (i / 20) * 0.3;
             vignette.lineStyle(20, 0x000000, alpha);
             vignette.strokeCircle(512, 384, radius + i * 30);
         }
     }
-    
+
     /**
      * Create UI elements for the game
      */
@@ -381,138 +401,142 @@ export class Game extends Scene {
             color: '#ffffff',
             stroke: '#000000',
             strokeThickness: 4,
-            align: 'center'
+            align: 'center',
         };
-        
+
         const smallTextStyle = {
             fontFamily: 'Arial',
             fontSize: 16,
             color: '#ffffff',
             stroke: '#000000',
             strokeThickness: 2,
-            align: 'left'
+            align: 'left',
         };
-        
+
         // Create UI groups
         this.uiManager.createGroup('gameUI');
         this.uiManager.createGroup('levelCompleteUI');
-        
+
         // Hide level complete UI initially
         this.uiManager.hideGroup('levelCompleteUI');
-        
+
         // Add instructions text
-        this.uiManager.createText(
-            'instructions',
-            512, 100,
-            'WASD/Arrows: Move | SPACE: Triple Jump! | C: Duck',
-            instructionsStyle,
-            true
-        ).setOrigin(0.5);
+        this.uiManager
+            .createText(
+                'instructions',
+                512,
+                100,
+                'WASD/Arrows: Move | SPACE: Triple Jump! | C: Duck',
+                instructionsStyle,
+                true
+            )
+            .setOrigin(0.5);
         this.uiManager.addToGroup('gameUI', 'instructions');
-        
+
         // Display jump counter
-        this.uiManager.createText(
-            'jumpCounter',
-            512, 150,
-            'Jumps Used: 0 / 3',
-            instructionsStyle,
-            true
-        ).setOrigin(0.5);
+        this.uiManager
+            .createText('jumpCounter', 512, 150, 'Jumps Used: 0 / 3', instructionsStyle, true)
+            .setOrigin(0.5);
         this.uiManager.addToGroup('gameUI', 'jumpCounter');
-        
+
         // Display level name
-        this.uiManager.createText(
-            'levelName',
-            20, 20,
-            'Level: 1',
-            smallTextStyle,
-            false
-        );
+        this.uiManager.createText('levelName', 20, 20, 'Level: 1', smallTextStyle, false);
         this.uiManager.addToGroup('gameUI', 'levelName');
-        
+
         // Display collectibles counter
         this.uiManager.createText(
             'collectiblesCounter',
-            20, 50,
+            20,
+            50,
             'Collectibles: 0/0',
             smallTextStyle,
             false
         );
         this.uiManager.addToGroup('gameUI', 'collectiblesCounter');
-        
+
         // Create level complete UI
-        const levelCompleteText = this.uiManager.createText(
-            'levelCompleteText',
-            512, 300,
-            'Level Complete!',
-            {
-                fontFamily: 'Arial Black',
-                fontSize: 48,
-                color: '#ffffff',
-                stroke: '#000000',
-                strokeThickness: 6,
-                align: 'center'
-            },
-            true
-        ).setOrigin(0.5);
+        const levelCompleteText = this.uiManager
+            .createText(
+                'levelCompleteText',
+                512,
+                300,
+                'Level Complete!',
+                {
+                    fontFamily: 'Arial Black',
+                    fontSize: 48,
+                    color: '#ffffff',
+                    stroke: '#000000',
+                    strokeThickness: 6,
+                    align: 'center',
+                },
+                true
+            )
+            .setOrigin(0.5);
         this.uiManager.addToGroup('levelCompleteUI', 'levelCompleteText');
-        
+
         // Add stats text
-        this.uiManager.createText(
-            'levelCompleteStats',
-            512, 380,
-            'Collectibles: 0/0',
-            {
-                fontFamily: 'Arial',
-                fontSize: 24,
-                color: '#ffffff',
-                stroke: '#000000',
-                strokeThickness: 4,
-                align: 'center'
-            },
-            true
-        ).setOrigin(0.5);
+        this.uiManager
+            .createText(
+                'levelCompleteStats',
+                512,
+                380,
+                'Collectibles: 0/0',
+                {
+                    fontFamily: 'Arial',
+                    fontSize: 24,
+                    color: '#ffffff',
+                    stroke: '#000000',
+                    strokeThickness: 4,
+                    align: 'center',
+                },
+                true
+            )
+            .setOrigin(0.5);
         this.uiManager.addToGroup('levelCompleteUI', 'levelCompleteStats');
-        
+
         // Add continue button
-        const continueButton = this.uiManager.createText(
-            'continueButton',
-            512, 450,
-            'Continue',
-            {
-                fontFamily: 'Arial Black',
-                fontSize: 32,
-                color: '#ffffff',
-                stroke: '#000000',
-                strokeThickness: 4,
-                align: 'center'
-            },
-            true
-        ).setOrigin(0.5).setInteractive();
-        
+        const continueButton = this.uiManager
+            .createText(
+                'continueButton',
+                512,
+                450,
+                'Continue',
+                {
+                    fontFamily: 'Arial Black',
+                    fontSize: 32,
+                    color: '#ffffff',
+                    stroke: '#000000',
+                    strokeThickness: 4,
+                    align: 'center',
+                },
+                true
+            )
+            .setOrigin(0.5)
+            .setInteractive();
+
         continueButton.on('pointerdown', () => {
             AudioManager.getInstance().playSFX('click');
             this.levelManager.nextLevel();
         });
-        
+
         continueButton.on('pointerover', () => {
             continueButton.setTint(0xffff00);
             AudioManager.getInstance().playSFX('hover');
         });
-        
+
         continueButton.on('pointerout', () => {
             continueButton.clearTint();
         });
-        
+
         this.uiManager.addToGroup('levelCompleteUI', 'continueButton');
 
         LOG.dev('GAME_UI_CREATED', {
             subsystem: 'scene',
             scene: SceneKeys.GAME,
-            message: 'UI elements created'
+            message: 'UI elements created',
         });
     }
-    
+
     /**
      * Set up event listeners for the game
      */
@@ -525,25 +549,25 @@ export class Game extends Scene {
                     subsystem: 'scene',
                     scene: SceneKeys.GAME,
                     message: 'Player landed, CameraManager handling effects',
-                    data
+                    data,
                 });
             }
             // Play landing sound
             AudioManager.getInstance().playSFX('land');
         });
-        
+
         // Listen for player jump events
         this.eventSystem.on(EventNames.PLAYER_JUMP, (data) => {
             LOG.dev('GAME_PLAYER_JUMP', {
                 subsystem: 'scene',
                 scene: SceneKeys.GAME,
                 message: 'Player jumped, effect managers handling feedback',
-                data
+                data,
             });
             // Play jump sound effect
             AudioManager.getInstance().playSFX('jump');
         });
-        
+
         // Listen for collectible collected events
         this.eventSystem.on(EventNames.COLLECTIBLE_COLLECTED, (data) => {
             LOG.dev('GAME_COLLECTIBLE_COLLECTED', {
@@ -552,17 +576,17 @@ export class Game extends Scene {
                 message: 'Collectible collected',
                 totalCollected: data.totalCollected,
                 totalCollectibles: data.totalCollectibles,
-                position: data.position
+                position: data.position,
             });
             // Play pickup sound effect
             AudioManager.getInstance().playSFX('pickup');
-            
+
             // Update collectibles counter
             this.uiManager.updateText(
                 'collectiblesCounter',
                 `Collectibles: ${data.totalCollected}/${data.totalCollectibles}`
             );
-            
+
             // Create particle effect at collection position
             if (this.particleManager) {
                 this.particleManager.createParticles(
@@ -573,12 +597,12 @@ export class Game extends Scene {
                         speed: 100,
                         scale: { start: 0.5, end: 0 },
                         quantity: 10,
-                        lifespan: 500
+                        lifespan: 500,
                     }
                 );
             }
         });
-        
+
         // Listen for level complete events
         this.eventSystem.on(EventNames.LEVEL_COMPLETE, (data) => {
             LOG.dev('GAME_LEVEL_COMPLETE', {
@@ -587,7 +611,7 @@ export class Game extends Scene {
                 message: 'Level complete',
                 levelId: data.levelId,
                 collectiblesCollected: data.collectiblesCollected,
-                totalCollectibles: data.totalCollectibles
+                totalCollectibles: data.totalCollectibles,
             });
 
             // Save progress
@@ -598,23 +622,23 @@ export class Game extends Scene {
                     data.totalCollectibles
                 );
             }
-            
+
             // Update level complete UI
             this.uiManager.updateText(
                 'levelCompleteText',
                 `Level ${data.levelId.replace('level', '')} Complete!`
             );
-            
+
             this.uiManager.updateText(
                 'levelCompleteStats',
                 `Collectibles: ${data.collectiblesCollected}/${data.totalCollectibles}`
             );
-            
+
             // Show level complete UI
             this.uiManager.hideGroup('gameUI');
             this.uiManager.showGroup('levelCompleteUI');
         });
-        
+
         // Listen for level loaded events
         this.eventSystem.on(EventNames.LEVEL_LOADED, (data) => {
             LOG.dev('GAME_LEVEL_LOADED', {
@@ -622,31 +646,25 @@ export class Game extends Scene {
                 scene: SceneKeys.GAME,
                 message: 'Level loaded',
                 levelName: data.name,
-                levelData: data
+                levelData: data,
             });
 
             // Update level name
-            this.uiManager.updateText(
-                'levelName',
-                `Level: ${data.name}`
-            );
-            
+            this.uiManager.updateText('levelName', `Level: ${data.name}`);
+
             // Reset collectibles counter
-            this.uiManager.updateText(
-                'collectiblesCounter',
-                'Collectibles: 0/0'
-            );
-            
+            this.uiManager.updateText('collectiblesCounter', 'Collectibles: 0/0');
+
             // Show game UI, hide level complete UI
             this.uiManager.showGroup('gameUI');
             this.uiManager.hideGroup('levelCompleteUI');
         });
-        
+
         // Listen for collision events
         this.eventSystem.on(EventNames.COLLISION_START, (data) => {
             // Handled by the level manager
         });
-        
+
         // Listen for player explode events
         this.eventSystem.on(EventNames.PLAYER_EXPLODE, (data) => {
             LOG.dev('GAME_PLAYER_EXPLODE', {
@@ -654,22 +672,22 @@ export class Game extends Scene {
                 scene: SceneKeys.GAME,
                 message: 'Player exploded',
                 reason: data.reason || 'Unknown',
-                data
+                data,
             });
 
             // Stop all gameplay
             this.scene.pause();
-            
+
             // Trigger dramatic game over
             this.time.delayedCall(1000, () => {
                 this.scene.stop();
-                this.scene.start(SceneKeys.GAME_OVER, { 
+                this.scene.start(SceneKeys.GAME_OVER, {
                     dramatic: true,
-                    reason: data.reason || 'You exploded!'
+                    reason: data.reason || 'You exploded!',
                 });
             });
         });
-        
+
         // Listen for scene transition events
         this.eventSystem.on(EventNames.SCENE_TRANSITION, (data) => {
             LOG.dev('GAME_SCENE_TRANSITION', {
@@ -677,19 +695,19 @@ export class Game extends Scene {
                 scene: SceneKeys.GAME,
                 message: 'Scene transition event',
                 targetScene: data.scene || 'unknown',
-                data
+                data,
             });
 
             // Fade out current scene
             this.cameras.main.fadeOut(500, 0, 0, 0);
-            
+
             this.cameras.main.once('camerafadeoutcomplete', () => {
                 // Stop current scene
                 this.scene.stop();
-                
+
                 // Start new scene
                 this.scene.start(SceneKeys.GAME, {
-                    levelId: data.toScene
+                    levelId: data.toScene,
                 });
             });
         });
@@ -717,9 +735,9 @@ export class Game extends Scene {
                         repeatingCount: patterns.repeatingErrors.length,
                         cascadeCount: patterns.cascades.length,
                         severity: patterns.severity.level,
-                        errorRate: patterns.errorRate.errorsPerSecond
+                        errorRate: patterns.errorRate.errorsPerSecond,
                     },
-                    hint: 'Multiple errors occurring. Check logs for details or investigate specific error codes.'
+                    hint: 'Multiple errors occurring. Check logs for details or investigate specific error codes.',
                 });
             }
         }
@@ -729,22 +747,22 @@ export class Game extends Scene {
             return;
         }
 
-        try{
+        try {
             // Update physics (steps the world and updates sprites)
             this.physicsManager.update(delta);
-            
+
             // Update level elements with delta time
             if (this.levelManager) {
                 this.levelManager.update(delta);
             }
-            
+
             // Update player with delta time
             if (this.playerController) {
                 this.playerController.update(delta);
             }
             // Update enemies
             if (this.enemies) {
-                this.enemies.forEach(enemy => {
+                this.enemies.forEach((enemy) => {
                     try {
                         enemy.update(time, delta);
                     } catch (err) {
@@ -753,12 +771,12 @@ export class Game extends Scene {
                             scene: SceneKeys.GAME,
                             error: err,
                             message: 'Error updating enemy',
-                            hint: 'Check enemy controller update method'
+                            hint: 'Check enemy controller update method',
                         });
                     }
                 });
             }
-            
+
             // Update boss
             if (this.boss) {
                 try {
@@ -769,16 +787,16 @@ export class Game extends Scene {
                         scene: SceneKeys.GAME,
                         error: err,
                         message: 'Error updating boss',
-                        hint: 'Check boss controller update method'
+                        hint: 'Check boss controller update method',
                     });
                 }
             }
-            
+
             // Update pulsating boss
             if (this.pulsatingBoss) {
                 try {
                     this.pulsatingBoss.update();
-                    
+
                     // Check collision with player
                     if (this.playerController) {
                         const playerBody = this.playerController.getBody();
@@ -792,7 +810,7 @@ export class Game extends Scene {
                         scene: SceneKeys.GAME,
                         error: err,
                         message: 'Error updating pulsating boss',
-                        hint: 'Check pulsating boss controller update method'
+                        hint: 'Check pulsating boss controller update method',
                     });
                 }
             }
@@ -802,7 +820,7 @@ export class Game extends Scene {
                 scene: SceneKeys.GAME,
                 error,
                 message: 'Error in Game scene update loop',
-                hint: 'Check physics manager and entity updates'
+                hint: 'Check physics manager and entity updates',
             });
         }
     }

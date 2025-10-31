@@ -14,19 +14,19 @@
  */
 const ERROR_KNOWLEDGE_BASE = {
     // Physics errors
-    'PHYSICS_INIT_ERROR': {
+    PHYSICS_INIT_ERROR: {
         category: 'physics',
         severity: 'high',
         suggestions: [
             'Verify Rapier WASM files are accessible and loaded correctly',
             'Check if gravity values are valid finite numbers',
             'Ensure physics engine is initialized before creating bodies',
-            'Review browser console for Rapier-specific error messages'
+            'Review browser console for Rapier-specific error messages',
         ],
-        documentation: 'docs/systems/ERROR_HANDLING_LOGGING.md#6-critical-systems-analysis'
+        documentation: 'docs/systems/ERROR_HANDLING_LOGGING.md#6-critical-systems-analysis',
     },
 
-    'PHYSICS_UPDATE_ERROR': {
+    PHYSICS_UPDATE_ERROR: {
         category: 'physics',
         severity: 'high',
         suggestions: [
@@ -35,13 +35,13 @@ const ERROR_KNOWLEDGE_BASE = {
             'Check for NaN in body positions or velocities',
             'Review recent Rapier 0.19+ API changes',
             'Verify world.step() is receiving correct parameters',
-            'Check for invalid body configurations or constraints'
+            'Check for invalid body configurations or constraints',
         ],
         relatedCodes: ['PHYSICS_CIRCUIT_BREAKER', 'PHYSICS_UPDATE_GAMEOBJECTS_ERROR'],
-        documentation: 'docs/technology/RapierPhysics.md'
+        documentation: 'docs/technology/RapierPhysics.md',
     },
 
-    'PHYSICS_CIRCUIT_BREAKER': {
+    PHYSICS_CIRCUIT_BREAKER: {
         category: 'physics',
         severity: 'critical',
         suggestions: [
@@ -49,13 +49,13 @@ const ERROR_KNOWLEDGE_BASE = {
             'Check recent PHYSICS_UPDATE_ERROR logs for root cause',
             'Verify physics body initialization sequence',
             'Consider restarting the scene or game',
-            'Check for memory leaks or resource exhaustion'
+            'Check for memory leaks or resource exhaustion',
         ],
         relatedCodes: ['PHYSICS_UPDATE_ERROR'],
-        documentation: 'docs/systems/ERROR_HANDLING_LOGGING.md#3-circuit-breaker-systems'
+        documentation: 'docs/systems/ERROR_HANDLING_LOGGING.md#3-circuit-breaker-systems',
     },
 
-    'PHYSICS_FRAME_BUDGET_EXCEEDED': {
+    PHYSICS_FRAME_BUDGET_EXCEEDED: {
         category: 'physics',
         severity: 'medium',
         suggestions: [
@@ -63,13 +63,13 @@ const ERROR_KNOWLEDGE_BASE = {
             'Optimize collision shapes (use simpler shapes)',
             'Increase maxStepsPerFrame if acceptable',
             'Review frame rate - may indicate performance issues',
-            'Consider spatial partitioning for collision detection'
+            'Consider spatial partitioning for collision detection',
         ],
-        documentation: 'docs/PERFORMANCE_OPTIMIZATION.md'
+        documentation: 'docs/PERFORMANCE_OPTIMIZATION.md',
     },
 
     // Player errors
-    'PLAYER_UPDATE_ERROR': {
+    PLAYER_UPDATE_ERROR: {
         category: 'player',
         severity: 'high',
         suggestions: [
@@ -78,13 +78,13 @@ const ERROR_KNOWLEDGE_BASE = {
             'Validate input manager state',
             'Check for NaN in movement calculations',
             'Verify collider is properly configured',
-            'Ensure player is not being updated after destruction'
+            'Ensure player is not being updated after destruction',
         ],
         relatedCodes: ['PLAYER_CIRCUIT_BREAKER', 'INPUT_MANAGER_ERROR'],
-        documentation: 'docs/systems/MovementSystem.md'
+        documentation: 'docs/systems/MovementSystem.md',
     },
 
-    'PLAYER_CIRCUIT_BREAKER': {
+    PLAYER_CIRCUIT_BREAKER: {
         category: 'player',
         severity: 'critical',
         suggestions: [
@@ -92,13 +92,13 @@ const ERROR_KNOWLEDGE_BASE = {
             'Check recent PLAYER_UPDATE_ERROR logs',
             'Verify physics manager is functioning',
             'Check input manager initialization',
-            'Consider scene restart or player respawn'
+            'Consider scene restart or player respawn',
         ],
         relatedCodes: ['PLAYER_UPDATE_ERROR', 'PHYSICS_UPDATE_ERROR'],
-        documentation: 'docs/systems/ERROR_HANDLING_LOGGING.md#3-circuit-breaker-systems'
+        documentation: 'docs/systems/ERROR_HANDLING_LOGGING.md#3-circuit-breaker-systems',
     },
 
-    'PLAYER_MOVEMENT_NAN': {
+    PLAYER_MOVEMENT_NAN: {
         category: 'player',
         severity: 'high',
         suggestions: [
@@ -106,12 +106,12 @@ const ERROR_KNOWLEDGE_BASE = {
             'Verify deltaTime is a valid finite number',
             'Check input values are normalized correctly',
             'Verify physics body translation is valid',
-            'Add NaN guards in movement calculation code'
-        ]
+            'Add NaN guards in movement calculation code',
+        ],
     },
 
     // Input errors
-    'INPUT_MANAGER_ERROR': {
+    INPUT_MANAGER_ERROR: {
         category: 'input',
         severity: 'medium',
         suggestions: [
@@ -119,13 +119,13 @@ const ERROR_KNOWLEDGE_BASE = {
             'Check if keyboard is available in browser',
             'Ensure input manager init() was called',
             'Verify scene context is valid',
-            'Check for input polling before initialization'
+            'Check for input polling before initialization',
         ],
-        documentation: 'docs/systems/ERROR_HANDLING_LOGGING.md#63-inputmanager-error-handling'
+        documentation: 'docs/systems/ERROR_HANDLING_LOGGING.md#63-inputmanager-error-handling',
     },
 
     // Level/Scene errors
-    'LEVEL_LOAD_ERROR': {
+    LEVEL_LOAD_ERROR: {
         category: 'level',
         severity: 'high',
         suggestions: [
@@ -133,12 +133,12 @@ const ERROR_KNOWLEDGE_BASE = {
             'Check all referenced assets exist',
             'Ensure scene is properly initialized',
             'Review level loader initialization sequence',
-            'Check for missing or malformed platform/entity configs'
+            'Check for missing or malformed platform/entity configs',
         ],
-        documentation: 'docs/features/LevelImplementationArchitecture.md'
+        documentation: 'docs/features/LevelImplementationArchitecture.md',
     },
 
-    'LEVEL_LOAD_PLATFORM_ERROR': {
+    LEVEL_LOAD_PLATFORM_ERROR: {
         category: 'level',
         severity: 'medium',
         suggestions: [
@@ -146,12 +146,12 @@ const ERROR_KNOWLEDGE_BASE = {
             'Verify sprite keys exist in asset manifest',
             'Ensure physics manager is initialized',
             'Check platform factory initialization',
-            'Review platform position and size values'
-        ]
+            'Review platform position and size values',
+        ],
     },
 
     // Game state errors
-    'GAMESTATE_SAVE_PROGRESS_ERROR': {
+    GAMESTATE_SAVE_PROGRESS_ERROR: {
         category: 'persistence',
         severity: 'low',
         suggestions: [
@@ -159,13 +159,13 @@ const ERROR_KNOWLEDGE_BASE = {
             'Verify storage quota is not exceeded',
             'Check for private browsing mode restrictions',
             'Ensure data being saved is serializable',
-            'Consider fallback to in-memory storage'
+            'Consider fallback to in-memory storage',
         ],
-        documentation: 'docs/systems/ERROR_HANDLING_LOGGING.md#625-storage-access-guard'
+        documentation: 'docs/systems/ERROR_HANDLING_LOGGING.md#625-storage-access-guard',
     },
 
     // Audio errors
-    'AUDIO_MANAGER_ERROR': {
+    AUDIO_MANAGER_ERROR: {
         category: 'audio',
         severity: 'low',
         suggestions: [
@@ -173,13 +173,13 @@ const ERROR_KNOWLEDGE_BASE = {
             'Verify audio files are loaded correctly',
             'Check browser audio autoplay policies',
             'Ensure Howler.js is loaded',
-            'Try calling audioManager.init() after user gesture'
+            'Try calling audioManager.init() after user gesture',
         ],
-        documentation: 'docs/systems/ERROR_HANDLING_LOGGING.md#audio-context-resume'
+        documentation: 'docs/systems/ERROR_HANDLING_LOGGING.md#audio-context-resume',
     },
 
     // Generic patterns
-    'INIT_ERROR': {
+    INIT_ERROR: {
         category: 'initialization',
         severity: 'high',
         suggestions: [
@@ -187,9 +187,9 @@ const ERROR_KNOWLEDGE_BASE = {
             'Verify all required parameters are provided',
             'Check for async initialization race conditions',
             'Review constructor and init() method logs',
-            'Ensure parent initialization completed successfully'
-        ]
-    }
+            'Ensure parent initialization completed successfully',
+        ],
+    },
 };
 
 export class ErrorSuggestions {
@@ -209,7 +209,7 @@ export class ErrorSuggestions {
             return {
                 errorCode,
                 ...this.knowledgeBase[errorCode],
-                confidence: 'high'
+                confidence: 'high',
             };
         }
 
@@ -220,7 +220,7 @@ export class ErrorSuggestions {
                 errorCode,
                 ...partialMatch,
                 confidence: 'medium',
-                note: 'Suggestions based on similar error pattern'
+                note: 'Suggestions based on similar error pattern',
             };
         }
 
@@ -235,9 +235,9 @@ export class ErrorSuggestions {
                 'Review recent logs for related errors using LOG.getByCode()',
                 'Consult ERROR_HANDLING_LOGGING.md documentation',
                 'Check if error is repeating - may indicate systematic issue',
-                'Export logs for detailed analysis'
+                'Export logs for detailed analysis',
             ],
-            documentation: 'docs/systems/ERROR_HANDLING_LOGGING.md'
+            documentation: 'docs/systems/ERROR_HANDLING_LOGGING.md',
         };
     }
 
@@ -256,8 +256,8 @@ export class ErrorSuggestions {
                     'Add guards to prevent repeated execution',
                     'Consider adding cooldown or rate limiting',
                     'Review code path that triggers this error',
-                    'Check if circuit breaker threshold is appropriate'
-                ]
+                    'Check if circuit breaker threshold is appropriate',
+                ],
             };
         }
 
@@ -270,17 +270,14 @@ export class ErrorSuggestions {
                     'Add defensive checks in dependent systems',
                     'Review initialization order',
                     'Consider adding error boundaries',
-                    'Check for proper cleanup on error'
-                ]
+                    'Check for proper cleanup on error',
+                ],
             };
         }
 
         return {
             pattern: pattern.type,
-            suggestions: [
-                'Analyze the pattern in detail',
-                'Export logs for comprehensive review'
-            ]
+            suggestions: ['Analyze the pattern in detail', 'Export logs for comprehensive review'],
         };
     }
 
@@ -296,7 +293,7 @@ export class ErrorSuggestions {
             if (data.category === subsystem) {
                 suggestions.push({
                     errorCode: code,
-                    ...data
+                    ...data,
                 });
             }
         });
@@ -312,9 +309,9 @@ export class ErrorSuggestions {
     getRelatedCodes(errorCode) {
         const entry = this.knowledgeBase[errorCode];
         if (entry && entry.relatedCodes) {
-            return entry.relatedCodes.map(code => ({
+            return entry.relatedCodes.map((code) => ({
                 code,
-                ...this.knowledgeBase[code]
+                ...this.knowledgeBase[code],
             }));
         }
         return [];
@@ -362,7 +359,7 @@ export class ErrorSuggestions {
             category: suggestionData.category || 'custom',
             severity: suggestionData.severity || 'medium',
             suggestions: suggestionData.suggestions || [],
-            ...suggestionData
+            ...suggestionData,
         };
     }
 
@@ -372,7 +369,7 @@ export class ErrorSuggestions {
      */
     getCategories() {
         const categories = new Set();
-        Object.values(this.knowledgeBase).forEach(data => {
+        Object.values(this.knowledgeBase).forEach((data) => {
             if (data.category) {
                 categories.add(data.category);
             }

@@ -1,42 +1,45 @@
 # WynIsBuff2 Asset Structure Guide
 
 ## Overview
+
 This document outlines the asset structure for the WynIsBuff2 game project. Understanding this organization is crucial for efficient development and asset management.
 
 ## Main Asset Directory Structure
 
-```  
-  
+```
+
 ### 3. Sounds Directory (`assets/sounds/`)
 
 Audio assets organized by type:
 
 ```
+
 sounds/
-├── opener/                   # Title screen background music
-│   └── protein-pixel-anthem.mp3
-├── background/               # In-level background music
-│   └── hyper-buff-blitz.mp3
-├── land-effects/             # Landing sound effect variants
-│   ├── land1.mp3
-│   ├── land2.mp3
-│   ├── land3.mp3
-│   └── land4.mp3
-├── pickup-effects/           # Collectible pickup sound variants
-│   ├── pickup1.mp3
-│   ├── pickup2.mp3
-│   ├── pickup3.mp3
-│   └── pickup4.mp3
-├── primary-click/            # UI click sound variants
-│   ├── click1.mp3
-│   ├── click2.mp3
-│   ├── click3.mp3
-│   └── click4.mp3
-└── ui-hover/                 # UI hover sound variants
-    ├── hover1.mp3
-    ├── hover2.mp3
-    ├── hover3.mp3
-    └── hover4.mp3
+├── opener/ # Title screen background music
+│ └── protein-pixel-anthem.mp3
+├── background/ # In-level background music
+│ └── hyper-buff-blitz.mp3
+├── land-effects/ # Landing sound effect variants
+│ ├── land1.mp3
+│ ├── land2.mp3
+│ ├── land3.mp3
+│ └── land4.mp3
+├── pickup-effects/ # Collectible pickup sound variants
+│ ├── pickup1.mp3
+│ ├── pickup2.mp3
+│ ├── pickup3.mp3
+│ └── pickup4.mp3
+├── primary-click/ # UI click sound variants
+│ ├── click1.mp3
+│ ├── click2.mp3
+│ ├── click3.mp3
+│ └── click4.mp3
+└── ui-hover/ # UI hover sound variants
+├── hover1.mp3
+├── hover2.mp3
+├── hover3.mp3
+└── hover4.mp3
+
 ```
 assets/
 ├── 2D Pixel Dungeon Asset Pack v2.0/  # Original dungeon tileset assets
@@ -106,10 +109,10 @@ spritesheets/
 Animation frames follow a consistent naming pattern:
 
 - Character animations: `[character_type]_[animation_state]_v[variation]_[frame_number].png`
-  - Example: `skeleton1_attack_v1_1.png`
+    - Example: `skeleton1_attack_v1_1.png`
 
 - Item animations: `[item_name]_[variation]_[frame_number].png`
-  - Example: `chest_1_1.png`
+    - Example: `chest_1_1.png`
 
 ## Asset Processing
 
@@ -126,6 +129,7 @@ When loading assets in your game scenes:
 3. For animations, use the spritesheets directory structure
 
 Example:
+
 ```javascript
 // In your preload method
 this.load.setPath('assets');
@@ -134,7 +138,8 @@ this.load.setPath('assets');
 this.load.image('dungeon-tiles', 'images/tilesets/Dungeon_Tileset.png');
 
 // Load a character spritesheet
-this.load.spritesheet('skeleton1-attack', 
+this.load.spritesheet(
+    'skeleton1-attack',
     'spritesheets/animations/characters/enemies/skeleton1/attack/skeleton1_attack_v1.png',
     { frameWidth: 32, frameHeight: 32 }
 );

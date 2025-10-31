@@ -1,4 +1,5 @@
 import RAPIER from '@dimforge/rapier2d-compat';
+
 import { EventNames } from '../../constants/EventNames';
 import { PhysicsConfig } from '../../constants/PhysicsConfig.js';
 import { pixelsToMeters } from '../../constants/PhysicsConstants.js';
@@ -18,17 +19,17 @@ export class GroundFactory {
         this.scene = scene;
         this.world = world;
         this.eventSystem = eventSystem;
-        
+
         // Store ground for later reference
         this.ground = null;
-        
+
         // Mapping to track physics bodies to sprites
         this.bodyToSprite = new Map();
-        
+
         // Debug mode
         this.debugMode = false;
     }
-    
+
     /**
      * Set debug mode
      * @param {boolean} enabled - Whether debug mode is enabled
@@ -36,7 +37,7 @@ export class GroundFactory {
     setDebugMode(enabled) {
         this.debugMode = enabled;
     }
-    
+
     /**
      * Log a message if debug mode is enabled
      * @param {string} message - The message to log
@@ -45,11 +46,11 @@ export class GroundFactory {
         if (this.debugMode) {
             LOG.dev('GROUNDFACTORY_DEBUG', {
                 subsystem: 'level',
-                message
+                message,
             });
         }
     }
-    
+
     /**
      * Create the ground
      * @param {Object} config - Ground configuration
@@ -65,38 +66,40 @@ export class GroundFactory {
             const height = config.height || 50;
             const y = config.y || 700;
             const color = config.color || 0x654321;
-            
+
             this.log('Creating ground...');
-            
+
             // Remove existing ground if any
             this.removeGround();
-            
+
             // Create a visual representation of the ground (in pixels)
-            const groundSprite = this.scene.add.rectangle(
-                width / 2, y, width, height, color
-            );
+            const groundSprite = this.scene.add.rectangle(width / 2, y, width, height, color);
             this.log('Ground sprite created');
-            
+
             // Create a fixed (static) rigid body with proper scaling (pixels to meters)
-            const groundBodyDesc = RAPIER.RigidBodyDesc.fixed()
-                .setTranslation(pixelsToMeters(width / 2), pixelsToMeters(y));
-            
+            const groundBodyDesc = RAPIER.RigidBodyDesc.fixed().setTranslation(
+                pixelsToMeters(width / 2),
+                pixelsToMeters(y)
+            );
+
             const groundBody = this.world.createRigidBody(groundBodyDesc);
             this.log('Ground body created');
-            
+
             // Store the association between body and sprite
             this.bodyToSprite.set(groundBody.handle, groundSprite);
-            
+
             // Create a collider with proper scaling and physics properties
-            const groundColliderDesc = RAPIER.ColliderDesc
-                .cuboid(pixelsToMeters(width / 2), pixelsToMeters(height / 2))
+            const groundColliderDesc = RAPIER.ColliderDesc.cuboid(
+                pixelsToMeters(width / 2),
+                pixelsToMeters(height / 2)
+            )
                 .setFriction(PhysicsConfig.ground.friction)
                 .setRestitution(PhysicsConfig.ground.restitution)
                 .setDensity(PhysicsConfig.ground.density);
-                
+
             const groundCollider = this.world.createCollider(groundColliderDesc, groundBody);
             this.log('Ground collider created');
-            
+
             // Store ground info
             this.ground = {
                 body: groundBody,
@@ -106,18 +109,18 @@ export class GroundFactory {
                     width,
                     height,
                     y,
-                    color
-                }
+                    color,
+                },
             };
-            
+
             // Emit event
             if (this.eventSystem) {
                 this.eventSystem.emit(EventNames.custom('level', 'groundCreated'), {
                     position: { x: width / 2, y },
-                    dimensions: { width, height }
+                    dimensions: { width, height },
                 });
             }
-            
+
             return this.ground;
         } catch (error) {
             LOG.error('GROUNDFACTORY_CREATE_GROUND_ERROR', {
@@ -125,12 +128,12 @@ export class GroundFactory {
                 error,
                 message: 'Error creating ground',
                 config,
-                hint: 'Check ground configuration and physics world state'
+                hint: 'Check ground configuration and physics world state',
             });
             return null;
         }
     }
-    
+
     /**
      * Remove the ground
      */
@@ -138,28 +141,28 @@ export class GroundFactory {
         if (!this.ground) {
             return;
         }
-        
+
         this.log('Removing ground');
-        
+
         // Remove physics body
         if (this.ground.body) {
             this.world.removeRigidBody(this.ground.body);
         }
-        
+
         // Remove sprite
         if (this.ground.sprite) {
             this.ground.sprite.destroy();
         }
-        
+
         // Clear body-sprite mapping
         if (this.ground.body) {
             this.bodyToSprite.delete(this.ground.body.handle);
         }
-        
+
         // Clear ground reference
         this.ground = null;
     }
-    
+
     /**
      * Get the ground object
      * @returns {Object} The ground object
@@ -167,7 +170,7 @@ export class GroundFactory {
     getGround() {
         return this.ground;
     }
-    
+
     /**
      * Get the body-to-sprite mapping
      * @returns {Map} Map of body handles to sprites

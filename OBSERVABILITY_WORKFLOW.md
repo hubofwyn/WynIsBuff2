@@ -11,16 +11,19 @@
 Before starting any work, ALWAYS:
 
 1. **Read the status file**:
+
 ```bash
 cat STATUS_OBSERVABILITY.json | jq '.implementation'
 ```
 
 2. **Identify current phase**:
+
 ```bash
 cat STATUS_OBSERVABILITY.json | jq '.phases."'$(cat STATUS_OBSERVABILITY.json | jq -r '.implementation.currentPhase')'"'
 ```
 
 3. **Check for blockers**:
+
 ```bash
 cat STATUS_OBSERVABILITY.json | jq '.implementation.blockers'
 ```
@@ -32,6 +35,7 @@ cat STATUS_OBSERVABILITY.json | jq '.implementation.blockers'
 Each phase follows this **STRICT** workflow:
 
 ### 1. Phase Entry Validation
+
 ```javascript
 // Check dependencies
 const currentPhase = status.implementation.currentPhase;
@@ -46,36 +50,42 @@ for (const dep of phaseDeps) {
 ### 2. Phase Execution Steps
 
 #### Step A: Preparation
+
 - [ ] Update status to "in_progress"
 - [ ] Create required directories
 - [ ] Back up affected files
 - [ ] Document start time
 
 #### Step B: Implementation
+
 - [ ] Create new files per specification
 - [ ] Modify existing files incrementally
 - [ ] Add comprehensive comments
 - [ ] Ensure backwards compatibility
 
 #### Step C: Testing
+
 - [ ] Unit test new components
 - [ ] Integration test with existing code
 - [ ] Performance profiling
 - [ ] Error scenario testing
 
 #### Step D: Validation
+
 - [ ] All validation criteria met
 - [ ] No regression in existing functionality
 - [ ] Performance within budget
 - [ ] Documentation updated
 
 #### Step E: Completion
+
 - [ ] Update status to "complete"
 - [ ] Set completion to 100
 - [ ] Update validation flags
 - [ ] Commit changes
 
 ### 3. Phase Exit Protocol
+
 ```javascript
 // Update status file
 status.phases[currentPhase].status = 'complete';
@@ -90,6 +100,7 @@ status.implementation.nextAction = getNextAction(status.implementation.currentPh
 ## 🚀 Phase-Specific Workflows
 
 ### Phase 0: Foundation & Planning
+
 ```bash
 # 1. Create feature branch
 git checkout -b feature/observability-integration
@@ -106,6 +117,7 @@ mkdir -p tests/observability
 ```
 
 ### Phase 1: Core Infrastructure
+
 ```javascript
 // 1. Create LogSystem.js
 export class LogSystem extends BaseManager {
@@ -146,6 +158,7 @@ npm test tests/observability/core.test.js
 ```
 
 ### Phase 2: Context System
+
 ```javascript
 // 1. Create DebugContext.js
 export class DebugContext {
@@ -178,13 +191,15 @@ this.debugContext.registerProvider('physics', new PhysicsStateProvider(this.phys
 ### Phase 3: Logging Migration
 
 **Migration Priority Order**:
-1. PhysicsManager.js (17 console.* calls)
-2. PlayerController.js (12 console.* calls)
-3. InputManager.js (8 console.* calls)
-4. Game.js (15 console.* calls)
+
+1. PhysicsManager.js (17 console.\* calls)
+2. PlayerController.js (12 console.\* calls)
+3. InputManager.js (8 console.\* calls)
+4. Game.js (15 console.\* calls)
 5. All scenes (remaining)
 
 **Migration Pattern**:
+
 ```javascript
 // BEFORE:
 console.log('Player jumped');
@@ -196,15 +211,16 @@ LOG.dev('PLAYER_JUMP', { height, velocity });
 LOG.error('PHYSICS_ERROR', {
     error: e,
     hint: 'Check body initialization',
-    subsystem: 'physics'
+    subsystem: 'physics',
 });
 LOG.warn('INPUT_CONFLICT', {
     keys: conflictingKeys,
-    hint: 'User pressed conflicting keys'
+    hint: 'User pressed conflicting keys',
 });
 ```
 
 ### Phase 4: Performance Optimization
+
 ```javascript
 // Add frame throttling
 class FrameThrottle {
@@ -228,6 +244,7 @@ class FrameThrottle {
 ```
 
 ### Phase 5: Error Integration
+
 ```javascript
 // Enhance circuit breakers
 class PhysicsManager {
@@ -241,8 +258,7 @@ class PhysicsManager {
             threshold: this.errorThreshold,
             willDisable: this.errorCount >= this.errorThreshold,
             hint: 'Physics system experiencing repeated failures',
-            crashDump: this.errorCount >= this.errorThreshold ?
-                       this.generateCrashDump() : null
+            crashDump: this.errorCount >= this.errorThreshold ? this.generateCrashDump() : null,
         });
 
         if (this.errorCount >= this.errorThreshold) {
@@ -283,25 +299,28 @@ git commit -m "chore: Update observability status - Phase X at Y%"
 When encountering a blocker:
 
 1. **Document immediately**:
+
 ```javascript
 status.implementation.blockers.push({
     phase: currentPhase,
-    description: "Detailed description",
-    impact: "high|medium|low",
-    suggestedResolution: "Proposed solution",
-    timestamp: new Date().toISOString()
+    description: 'Detailed description',
+    impact: 'high|medium|low',
+    suggestedResolution: 'Proposed solution',
+    timestamp: new Date().toISOString(),
 });
 ```
 
 2. **Attempt resolution**:
+
 - Try suggested resolution
 - If fails, try alternative approach
 - If still blocked, escalate
 
 3. **Clear when resolved**:
+
 ```javascript
 status.implementation.blockers = status.implementation.blockers.filter(
-    b => b.phase !== currentPhase
+    (b) => b.phase !== currentPhase
 );
 ```
 
@@ -310,19 +329,22 @@ status.implementation.blockers = status.implementation.blockers.filter(
 ## ✅ Validation Checklists
 
 ### Per-Phase Validation
+
 Each phase has specific validation criteria in [OBSERVABILITY_IMPLEMENTATION.md](OBSERVABILITY_IMPLEMENTATION.md#validation-criteria).
 
 ### Global Validation
+
 Before marking any phase complete:
 
 - [ ] All tests pass: `npm test`
-- [ ] No console.* in new code
+- [ ] No console.\* in new code
 - [ ] Documentation updated
 - [ ] Status file current
 - [ ] Performance profiled
 - [ ] Backwards compatible
 
 ### Final Validation (Phase 9)
+
 - [ ] All phases complete
 - [ ] All validation flags true
 - [ ] Performance <0.5ms/frame
@@ -354,17 +376,20 @@ cat STATUS_OBSERVABILITY.json | jq '.metrics.consoleLogsRemaining'
 When multiple agents work on this:
 
 1. **Claim phase ownership**:
+
 ```javascript
-status.implementation.activeAgent = "agent-name";
-status.phases[phase].assignedTo = "agent-name";
+status.implementation.activeAgent = 'agent-name';
+status.phases[phase].assignedTo = 'agent-name';
 ```
 
 2. **Regular sync**:
+
 - Push status updates every 30 minutes
 - Check for conflicts before starting work
 - Coordinate on shared files
 
 3. **Handoff protocol**:
+
 - Complete current phase or checkpoint
 - Update status with detailed notes
 - Clear activeAgent field
@@ -375,6 +400,7 @@ status.phases[phase].assignedTo = "agent-name";
 ## 📚 Quick Reference
 
 ### File Locations
+
 - **Status**: `STATUS_OBSERVABILITY.json`
 - **Plan**: `OBSERVABILITY_IMPLEMENTATION.md`
 - **Workflow**: `OBSERVABILITY_WORKFLOW.md` (this file)
@@ -382,6 +408,7 @@ status.phases[phase].assignedTo = "agent-name";
 - **Current Error Handling**: `docs/systems/ERROR_HANDLING_LOGGING.md`
 
 ### Key Commands
+
 ```bash
 # Check status
 cat STATUS_OBSERVABILITY.json | jq '.implementation'
@@ -400,6 +427,7 @@ npm run docs:generate
 ```
 
 ### Critical Paths
+
 1. **Fastest MVP**: Phases 0→1→3 (basic logging)
 2. **Full System**: All phases in sequence
 3. **Rollback**: `git checkout main -- src/`
@@ -409,6 +437,7 @@ npm run docs:generate
 ## ⚡ Emergency Procedures
 
 ### If build breaks:
+
 ```bash
 git stash
 git checkout main -- package.json src/
@@ -417,6 +446,7 @@ npm test
 ```
 
 ### If performance degrades:
+
 1. Disable sampling temporarily
 2. Reduce buffer size to 500
 3. Profile with Chrome DevTools
@@ -424,6 +454,7 @@ npm test
 5. Fix or rollback
 
 ### If tests fail:
+
 1. Check STATUS_OBSERVABILITY.json for last change
 2. Review modified files list
 3. Run isolated test

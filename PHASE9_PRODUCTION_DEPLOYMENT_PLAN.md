@@ -25,7 +25,7 @@
 
 - [ ] All tests pass (unit, integration)
 - [ ] Build succeeds for both dev and production
-- [ ] No console.* statements in production code (except infrastructure)
+- [ ] No console.\* statements in production code (except infrastructure)
 - [ ] All TODOs in code are documented or resolved
 - [ ] Code follows project conventions (barrel exports, constants, etc.)
 - [ ] No security vulnerabilities in dependencies
@@ -76,6 +76,7 @@
 - [x] Tests: 7/7 passing
 
 **Validation**:
+
 ```javascript
 // Test in browser console
 const logs = LOG.getAll();
@@ -95,9 +96,10 @@ console.log('Buffer size:', 2000);
 - [x] Tests: 8/8 passing
 
 **Validation**:
+
 ```javascript
 // Test context injection
-const logsWithContext = LOG.getAll().filter(log => log.context);
+const logsWithContext = LOG.getAll().filter((log) => log.context);
 console.log('Logs with context:', logsWithContext.length);
 console.log('Sample context:', logsWithContext[0]?.context);
 ```
@@ -113,6 +115,7 @@ console.log('Sample context:', logsWithContext[0]?.context);
 - [x] Build successful
 
 **Validation**:
+
 ```bash
 # Verify console.* usage
 grep -r "console\." src/ --include="*.js" | grep -v "LogSystem.js" | wc -l
@@ -130,6 +133,7 @@ grep -r "console\." src/ --include="*.js" | grep -v "LogSystem.js" | wc -l
 - [x] Build successful
 
 **Validation**:
+
 ```javascript
 // Check initialization
 const scene = game.scene.scenes[0];
@@ -149,6 +153,7 @@ console.log('Providers:', scene.debugContext?.providers?.size);
 - [x] Build successful
 
 **Validation**:
+
 ```javascript
 // Check error detection
 import { ErrorPatternDetector } from '@observability';
@@ -168,6 +173,7 @@ console.log('Patterns:', patterns);
 - [x] All cross-references working
 
 **Validation**:
+
 - Review each doc file for completeness
 - Verify all links work
 - Check for typos/errors
@@ -185,6 +191,7 @@ console.log('Patterns:', patterns);
 - [x] Build successful
 
 **Validation**:
+
 ```javascript
 // Test API in browser
 console.log('DebugAPI:', typeof window.debugAPI);
@@ -207,6 +214,7 @@ console.log('Summary:', summary);
 - [x] Development paradigm integrated
 
 **Validation**:
+
 ```bash
 npm test
 npm run build
@@ -265,27 +273,28 @@ npm run build
 ### If Issues Discovered Post-Merge
 
 1. **Assess severity**:
-   - **Critical** (game won't start): Immediate rollback
-   - **High** (observability broken): Rollback if can't hotfix
-   - **Medium** (minor issues): Hotfix on main
-   - **Low** (documentation errors): Fix in next commit
+    - **Critical** (game won't start): Immediate rollback
+    - **High** (observability broken): Rollback if can't hotfix
+    - **Medium** (minor issues): Hotfix on main
+    - **Low** (documentation errors): Fix in next commit
 
 2. **Rollback procedure**:
-   ```bash
-   # Option 1: Revert merge commit
-   git revert -m 1 <merge-commit-hash>
-   git push origin main
 
-   # Option 2: Hard reset (if just merged, no other changes)
-   git reset --hard HEAD~1
-   git push --force origin main  # USE WITH EXTREME CAUTION
-   ```
+    ```bash
+    # Option 1: Revert merge commit
+    git revert -m 1 <merge-commit-hash>
+    git push origin main
+
+    # Option 2: Hard reset (if just merged, no other changes)
+    git reset --hard HEAD~1
+    git push --force origin main  # USE WITH EXTREME CAUTION
+    ```
 
 3. **Communication**:
-   - Notify team of rollback
-   - Document reason in rollback commit
-   - Create issue for fixing root cause
-   - Plan re-deployment
+    - Notify team of rollback
+    - Document reason in rollback commit
+    - Create issue for fixing root cause
+    - Plan re-deployment
 
 ### Validation After Rollback
 
@@ -302,40 +311,43 @@ npm run build
 ### What to Monitor
 
 1. **System Health**:
-   - `window.debugAPI.getSummary()` - Overall health score
-   - Subsystem health scores (physics, player, input)
-   - Error counts and rates
+    - `window.debugAPI.getSummary()` - Overall health score
+    - Subsystem health scores (physics, player, input)
+    - Error counts and rates
 
 2. **Error Patterns**:
-   - Repeating errors (same error multiple times)
-   - Error cascades (multiple errors in quick succession)
-   - Circuit breaker triggers
+    - Repeating errors (same error multiple times)
+    - Error cascades (multiple errors in quick succession)
+    - Circuit breaker triggers
 
 3. **Performance**:
-   - Frame rate (should maintain 60 FPS)
-   - Physics step time (<4ms target)
-   - Collision detection time (<2ms target)
-   - Log system overhead (<0.5ms per frame)
+    - Frame rate (should maintain 60 FPS)
+    - Physics step time (<4ms target)
+    - Collision detection time (<2ms target)
+    - Log system overhead (<0.5ms per frame)
 
 4. **User Impact**:
-   - Circuit breaker activations (game systems disabled)
-   - Fatal errors (crash dumps generated)
-   - Warning frequency (may indicate degrading system)
+    - Circuit breaker activations (game systems disabled)
+    - Fatal errors (crash dumps generated)
+    - Warning frequency (may indicate degrading system)
 
 ### Monitoring Schedule
 
 **Daily** (during active development):
+
 - Check `window.debugAPI.getSummary()` at start of session
 - Review recent errors: `window.debugAPI.getRecentLogs(86400000)` (24h)
 - Check for patterns: `window.debugAPI.analyzeTimeWindow(86400000)`
 
 **Weekly**:
+
 - Export comprehensive report: `window.debugAPI.exportForAnalysis({ format: 'markdown', timeWindow: 604800000 })`
 - Review error trends
 - Identify recurring issues
 - Update ErrorSuggestions knowledge base if new patterns emerge
 
 **After Major Changes**:
+
 - Run full test suite
 - Play-test for 10+ minutes
 - Check health after session
@@ -344,21 +356,24 @@ npm run build
 ### Alert Thresholds
 
 **Critical** (immediate attention):
+
 - Overall health < 50
 - Circuit breaker triggered
 - Fatal errors present
 - Frame rate < 30 FPS
 
 **High** (address within 24h):
+
 - Overall health < 70
 - Subsystem health < 50
-- >10 errors per minute
+- > 10 errors per minute
 - Repeating error patterns
 
 **Medium** (address within week):
+
 - Overall health < 90
 - Subsystem health < 70
-- >5 warnings per minute
+- > 5 warnings per minute
 - Performance degradation trends
 
 ---
@@ -401,44 +416,44 @@ npm run build
 ### Required Documentation
 
 1. **README.md** - Project overview
-   - [ ] Mentions observability system
-   - [ ] Links to debugging guide
+    - [ ] Mentions observability system
+    - [ ] Links to debugging guide
 
 2. **CLAUDE.md** - Development guide
-   - [x] Includes observability as 5th principle
-   - [x] Observability section with examples
-   - [x] Links to debugging guide
+    - [x] Includes observability as 5th principle
+    - [x] Observability section with examples
+    - [x] Links to debugging guide
 
 3. **.claude/CLAUDE.md** - Agent orchestration
-   - [x] Observability in workflows
-   - [x] Morning routine includes health check
-   - [x] Feature development includes logging
-   - [x] Debugging starts with observability
+    - [x] Observability in workflows
+    - [x] Morning routine includes health check
+    - [x] Feature development includes logging
+    - [x] Debugging starts with observability
 
 4. **docs/guides/DEBUGGING.md** - Debugging guide
-   - [x] Complete with Phase 7 API
-   - [x] Browser console examples
-   - [x] Common scenarios
-   - [x] Best practices
+    - [x] Complete with Phase 7 API
+    - [x] Browser console examples
+    - [x] Common scenarios
+    - [x] Best practices
 
 5. **docs/systems/ERROR_HANDLING_LOGGING.md** - System docs
-   - [x] Section 11: Observability System
-   - [x] Section 11.8: Agent Tools & API
-   - [x] All implementation details
+    - [x] Section 11: Observability System
+    - [x] Section 11.8: Agent Tools & API
+    - [x] All implementation details
 
 6. **docs/INDEX.md** - Documentation index
-   - [ ] Review for completeness
-   - [ ] Verify all links work
+    - [ ] Review for completeness
+    - [ ] Verify all links work
 
 7. **STATUS_OBSERVABILITY.json** - Status tracking
-   - [ ] All phases marked complete
-   - [ ] Metrics updated
-   - [ ] Next action reflects deployment
+    - [ ] All phases marked complete
+    - [ ] Metrics updated
+    - [ ] Next action reflects deployment
 
 8. **Phase Plans** - Implementation records
-   - [x] PHASE7_AGENT_TOOLS_PLAN.md
-   - [x] PHASE8_TESTING_VALIDATION_PLAN.md
-   - [ ] PHASE9_PRODUCTION_DEPLOYMENT_PLAN.md (this file)
+    - [x] PHASE7_AGENT_TOOLS_PLAN.md
+    - [x] PHASE8_TESTING_VALIDATION_PLAN.md
+    - [ ] PHASE9_PRODUCTION_DEPLOYMENT_PLAN.md (this file)
 
 ### Documentation Review Checklist
 
@@ -457,6 +472,7 @@ npm run build
 ### System Overview
 
 **Observability System for WynIsBuff2**
+
 - **Status**: Production Ready
 - **Phases Complete**: 0-9 (All)
 - **Implementation Time**: ~1 day
@@ -480,21 +496,21 @@ npm run build
 
 ```javascript
 // Check system health
-window.debugAPI.getSummary()
+window.debugAPI.getSummary();
 
 // Log structured data
 import { LOG } from '@observability';
 LOG.info('EVENT', { subsystem: 'game', message: 'Event occurred' });
 
 // Query logs
-window.debugAPI.getRecentLogs(60000)
-window.debugAPI.analyzeSubsystem('physics')
+window.debugAPI.getRecentLogs(60000);
+window.debugAPI.analyzeSubsystem('physics');
 
 // Get help
-window.debugAPI.getSuggestions('PHYSICS_UPDATE_ERROR')
+window.debugAPI.getSuggestions('PHYSICS_UPDATE_ERROR');
 
 // Export report
-window.debugAPI.exportForAnalysis({ format: 'markdown' })
+window.debugAPI.exportForAnalysis({ format: 'markdown' });
 ```
 
 ### Architecture
@@ -566,15 +582,18 @@ Phase 9 is complete when:
 ## Sign-Off
 
 ### Implementation Team
+
 - **Developer**: Claude (Sonnet 4.5)
 - **Reviewer**: (Pending)
 - **Approver**: (Pending)
 
 ### Sign-Off Date
+
 - **Planned**: 2025-10-29
 - **Actual**: (Pending)
 
 ### Deployment Approval
+
 - [ ] Code reviewed and approved
 - [ ] Tests reviewed and passed
 - [ ] Documentation reviewed and approved
@@ -592,6 +611,7 @@ Phase 9 is complete when:
 ## Appendix A: Commands Reference
 
 ### Pre-Deployment Checks
+
 ```bash
 # Run all tests
 npm test
@@ -610,6 +630,7 @@ grep -r "TODO" src/ --include="*.js"
 ```
 
 ### Git Commands
+
 ```bash
 # Check branch status
 git status
@@ -631,27 +652,30 @@ git push origin v1.0.0-observability
 ```
 
 ### Browser Console Commands
+
 ```javascript
 // System health check
-window.debugAPI.getSummary()
+window.debugAPI.getSummary();
 
 // Recent logs
-window.debugAPI.getRecentLogs(60000)
+window.debugAPI.getRecentLogs(60000);
 
 // Analyze subsystem
-window.debugAPI.analyzeSubsystem('physics')
-window.debugAPI.analyzeSubsystem('player')
-window.debugAPI.analyzeSubsystem('input')
+window.debugAPI.analyzeSubsystem('physics');
+window.debugAPI.analyzeSubsystem('player');
+window.debugAPI.analyzeSubsystem('input');
 
 // Export report
-copy(window.debugAPI.exportForAnalysis({
-    format: 'markdown',
-    timeWindow: 300000
-}))
+copy(
+    window.debugAPI.exportForAnalysis({
+        format: 'markdown',
+        timeWindow: 300000,
+    })
+);
 
 // Query builder
 import { QueryBuilder, LOG } from '@observability';
-new QueryBuilder(LOG).errorsOnly().inLastMinutes(5).execute()
+new QueryBuilder(LOG).errorsOnly().inLastMinutes(5).execute();
 ```
 
 ---

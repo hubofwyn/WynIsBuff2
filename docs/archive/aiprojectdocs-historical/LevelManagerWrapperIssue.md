@@ -55,4 +55,4 @@ When creating wrapper classes or adapters between different implementations, it'
 1. Consider using TypeScript interfaces to ensure implementation completeness
 2. Add unit tests that verify all required methods are present in wrapper classes
 3. When refactoring to a modular architecture, create a comprehensive list of all public methods that need to be supported in wrapper classes
-> Archived Notice: Historical issue note preserved for reference. Superseded by modular level docs. See docs/systems/ModularLevelArchitecture.md and docs/systems/ModularLevelSystemImplementation.md.
+    > Archived Notice: Historical issue note preserved for reference. Superseded by modular level docs. See docs/systems/ModularLevelArchitecture.md and docs/systems/ModularLevelSystemImplementation.md.

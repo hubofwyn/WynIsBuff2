@@ -1,11 +1,12 @@
 # Modular Architecture Documentation
 
 ## Table of Contents
+
 - [Overview](#overview)
 - [Module Structure](#module-structure)
-  - [PhysicsManager](#physicsmanager)
-  - [LevelManager](#levelmanager)
-  - [PlayerController](#playercontroller)
+    - [PhysicsManager](#physicsmanager)
+    - [LevelManager](#levelmanager)
+    - [PlayerController](#playercontroller)
 - [Integration with Phaser Scenes](#integration-with-phaser-scenes)
 - [Benefits of Modularization](#benefits-of-modularization)
 - [Best Practices](#best-practices)
@@ -24,6 +25,7 @@ The game is organized into the following modules:
 **File**: `src/modules/PhysicsManager.js`
 
 The PhysicsManager is responsible for:
+
 - Initializing the Rapier physics engine
 - Creating and managing the physics world
 - Stepping the physics simulation
@@ -41,6 +43,7 @@ physicsManager.update(); // Call in scene's update method
 **File**: `src/modules/LevelManager.js`
 
 The LevelManager is responsible for:
+
 - Creating and managing level elements (ground, platforms, etc.)
 - Storing references to level objects
 - Providing access to level elements for collision detection
@@ -65,6 +68,7 @@ The PlayerController has been refactored into a modular architecture with specia
 4. **CollisionController**: Handles collision detection and ground state
 
 Additionally, three effect managers provide visual feedback:
+
 1. **ParticleManager**: Handles particle effects for jumps, landings, and movement
 2. **CameraManager**: Handles screen shake and camera effects
 3. **ColorManager**: Handles color transitions for the player sprite
@@ -97,15 +101,15 @@ async create() {
     // Initialize physics
     this.physicsManager = new PhysicsManager(this);
     await this.physicsManager.initialize(0.0, 20.0);
-    
+
     // Create level
     this.levelManager = new LevelManager(this, this.physicsManager.getWorld());
     this.levelManager.createGround();
     this.levelManager.createPlatforms();
-    
+
     // Create player
     this.playerController = new PlayerController(
-        this, 
+        this,
         this.physicsManager.getWorld(),
         512, 300
     );

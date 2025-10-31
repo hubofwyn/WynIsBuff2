@@ -19,7 +19,7 @@ import { LOG } from './observability/core/LogSystem.js';
 //  https://newdocs.phaser.io/docs/3.70.0/Phaser.Types.Core.GameConfig
 LOG.info('MAIN_PHASER_INITIALIZING', {
     subsystem: 'bootstrap',
-    message: 'Initializing Phaser game'
+    message: 'Initializing Phaser game',
 });
 
 const config = {
@@ -31,35 +31,35 @@ const config = {
     scale: {
         mode: Phaser.Scale.FIT,
         autoCenter: Phaser.Scale.CENTER_BOTH,
-        autoRound: true
+        autoRound: true,
     },
     physics: {
         default: 'arcade',
         arcade: {
             gravity: { y: 0 },
-            debug: false
-        }
+            debug: false,
+        },
     },
     // Performance optimizations
     fps: {
         target: 60,
         forceSetTimeOut: false,
-        smoothStep: false
+        smoothStep: false,
     },
     render: {
         // TRIAGE FIX: Disable mipmaps to prevent OUT_OF_MEMORY and GL_INVALID_OPERATION
-        mipmapFilter: 'LINEAR',      // Never use *_MIPMAP_* unless we guarantee POT textures
-        antialias: false,            // Disable anti-aliasing to reduce VRAM usage
-        antialiasGL: false,          // Explicitly disable WebGL anti-aliasing
+        mipmapFilter: 'LINEAR', // Never use *_MIPMAP_* unless we guarantee POT textures
+        antialias: false, // Disable anti-aliasing to reduce VRAM usage
+        antialiasGL: false, // Explicitly disable WebGL anti-aliasing
         pixelArt: false,
-        roundPixels: true,           // Reduce sub-pixel rendering overhead
+        roundPixels: true, // Reduce sub-pixel rendering overhead
         transparent: false,
         clearBeforeRender: true,
-        powerPreference: 'high-performance',  // Request dedicated GPU if available
+        powerPreference: 'high-performance', // Request dedicated GPU if available
         // Additional safety settings
-        failIfMajorPerformanceCaveat: false,  // Don't fail on slower hardware
-        premultipliedAlpha: false,            // Reduce texture complexity
-        preserveDrawingBuffer: false          // Don't preserve buffer (saves memory)
+        failIfMajorPerformanceCaveat: false, // Don't fail on slower hardware
+        premultipliedAlpha: false, // Reduce texture complexity
+        preserveDrawingBuffer: false, // Don't preserve buffer (saves memory)
     },
     scene: [
         Boot,
@@ -76,8 +76,8 @@ const config = {
         SettingsScene,
         GameOver,
         BirthdayMinigame,
-        TestScene
-    ]
+        TestScene,
+    ],
 };
 
 const game = new Phaser.Game(config);
@@ -87,7 +87,7 @@ game.events.on('ready', () => {
     LOG.info('MAIN_PHASER_READY', {
         subsystem: 'bootstrap',
         message: 'Phaser game is ready',
-        sceneCount: game.scene.scenes.length
+        sceneCount: game.scene.scenes.length,
     });
 });
 
@@ -96,12 +96,12 @@ game.events.on('contextlost', (event) => {
     LOG.warn('MAIN_WEBGL_CONTEXT_LOST', {
         subsystem: 'bootstrap',
         message: 'WebGL context lost - pausing game',
-        activeScenes: game.scene.scenes.filter(s => s.scene.isActive()).length,
-        hint: 'Context loss may be due to GPU issues, browser tab management, or system memory pressure. Game will attempt to recover.'
+        activeScenes: game.scene.scenes.filter((s) => s.scene.isActive()).length,
+        hint: 'Context loss may be due to GPU issues, browser tab management, or system memory pressure. Game will attempt to recover.',
     });
     event.preventDefault(); // Prevent default browser behavior
     // Pause all scenes
-    game.scene.scenes.forEach(scene => {
+    game.scene.scenes.forEach((scene) => {
         if (scene.scene.isActive()) {
             scene.scene.pause();
         }
@@ -112,10 +112,10 @@ game.events.on('contextrestored', () => {
     LOG.info('MAIN_WEBGL_CONTEXT_RESTORED', {
         subsystem: 'bootstrap',
         message: 'WebGL context restored - resuming game',
-        pausedScenes: game.scene.scenes.filter(s => s.scene.isPaused()).length
+        pausedScenes: game.scene.scenes.filter((s) => s.scene.isPaused()).length,
     });
     // Resume all paused scenes
-    game.scene.scenes.forEach(scene => {
+    game.scene.scenes.forEach((scene) => {
         if (scene.scene.isPaused()) {
             scene.scene.resume();
         }
@@ -129,8 +129,8 @@ LOG.info('MAIN_PHASER_INSTANCE_CREATED', {
         width: config.width,
         height: config.height,
         type: config.type === Phaser.WEBGL ? 'WEBGL' : 'CANVAS',
-        sceneCount: config.scene.length
-    }
+        sceneCount: config.scene.length,
+    },
 });
 
 export default game;

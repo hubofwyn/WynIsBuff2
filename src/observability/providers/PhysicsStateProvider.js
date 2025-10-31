@@ -26,7 +26,7 @@ export class PhysicsStateProvider extends StateProvider {
 
         const state = {
             available: true,
-            initialized: physics.isInitialized ? physics.isInitialized() : false
+            initialized: physics.isInitialized ? physics.isInitialized() : false,
         };
 
         // World state
@@ -36,7 +36,7 @@ export class PhysicsStateProvider extends StateProvider {
                 const gravity = physics.world.gravity;
                 state.gravity = {
                     x: gravity.x,
-                    y: gravity.y
+                    y: gravity.y,
                 };
 
                 // Body counts
@@ -44,12 +44,12 @@ export class PhysicsStateProvider extends StateProvider {
                     total: physics.world.bodies?.len?.() || 0,
                     dynamic: 0,
                     static: 0,
-                    kinematic: 0
+                    kinematic: 0,
                 };
 
                 // Collider count
                 state.colliders = {
-                    total: physics.world.colliders?.len?.() || 0
+                    total: physics.world.colliders?.len?.() || 0,
                 };
             } catch (e) {
                 state.worldError = e.message;
@@ -60,7 +60,7 @@ export class PhysicsStateProvider extends StateProvider {
         if (physics.performanceMetrics) {
             state.performance = {
                 lastUpdateTime: physics.performanceMetrics.lastUpdateTime,
-                averageUpdateTime: physics.performanceMetrics.averageUpdateTime
+                averageUpdateTime: physics.performanceMetrics.averageUpdateTime,
             };
         }
 
@@ -69,7 +69,7 @@ export class PhysicsStateProvider extends StateProvider {
             state.errors = {
                 count: physics.errorCount,
                 threshold: physics.errorThreshold || 10,
-                disabled: physics.disabled || false
+                disabled: physics.disabled || false,
             };
         }
 
@@ -81,7 +81,7 @@ export class PhysicsStateProvider extends StateProvider {
         // Active game objects
         if (physics.gameObjects) {
             state.gameObjects = {
-                count: physics.gameObjects.size || physics.gameObjects.length || 0
+                count: physics.gameObjects.size || physics.gameObjects.length || 0,
             };
         }
 

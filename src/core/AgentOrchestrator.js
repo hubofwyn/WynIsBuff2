@@ -1,5 +1,6 @@
-import { BaseManager } from './BaseManager.js';
 import orchestrationConfig from '../../.claude-orchestration.json';
+
+import { BaseManager } from './BaseManager.js';
 
 export class AgentOrchestrator extends BaseManager {
     constructor() {
@@ -22,35 +23,34 @@ export class AgentOrchestrator extends BaseManager {
             supportingAgents: [],
             workflow: null,
             confidence: 0,
-            keywords: []
+            keywords: [],
         };
 
         const lowerTask = taskDescription.toLowerCase();
-        
+
         const agentScores = {};
         for (const [agentName, agentConfig] of Object.entries(this.config.agents)) {
             let score = 0;
-            
+
             for (const pattern of agentConfig.patterns) {
                 const regex = new RegExp(pattern, 'i');
                 if (regex.test(lowerTask)) {
                     score += 10;
                 }
             }
-            
+
             for (const trigger of agentConfig.triggers) {
                 if (lowerTask.includes(trigger.toLowerCase())) {
                     score += 5;
                 }
             }
-            
+
             if (score > 0) {
                 agentScores[agentName] = score;
             }
         }
 
-        const sortedAgents = Object.entries(agentScores)
-            .sort(([, a], [, b]) => b - a);
+        const sortedAgents = Object.entries(agentScores).sort(([, a], [, b]) => b - a);
 
         if (sortedAgents.length > 0) {
             analysis.primaryAgent = sortedAgents[0][0];
@@ -78,7 +78,7 @@ export class AgentOrchestrator extends BaseManager {
     extractKeywords(text, context) {
         const keywords = [];
         const routing = this.config.routing.keywords;
-        
+
         for (const [category, terms] of Object.entries(routing)) {
             for (const term of terms) {
                 if (text.includes(term.toLowerCase())) {
@@ -86,19 +86,19 @@ export class AgentOrchestrator extends BaseManager {
                 }
             }
         }
-        
+
         return keywords;
     }
 
     routeTask(taskDescription, options = {}) {
         const analysis = this.analyzeTask(taskDescription);
-        
+
         const routing = {
             task: taskDescription,
             analysis,
             timestamp: Date.now(),
             agents: [],
-            workflow: null
+            workflow: null,
         };
 
         if (analysis.workflow && !options.skipWorkflow) {
@@ -107,18 +107,21 @@ export class AgentOrchestrator extends BaseManager {
             routing.agents.push({
                 name: analysis.primaryAgent,
                 role: 'primary',
-                confidence: analysis.confidence
+                confidence: analysis.confidence,
             });
 
-            if (this.config.routing.parallel_execution.enabled && analysis.supportingAgents.length > 0) {
+            if (
+                this.config.routing.parallel_execution.enabled &&
+                analysis.supportingAgents.length > 0
+            ) {
                 const maxParallel = this.config.routing.parallel_execution.max_agents - 1;
                 const supportingToUse = analysis.supportingAgents.slice(0, maxParallel);
-                
+
                 for (const agent of supportingToUse) {
                     routing.agents.push({
                         name: agent,
                         role: 'supporting',
-                        confidence: analysis.confidence * 0.7
+                        confidence: analysis.confidence * 0.7,
                     });
                 }
             }
@@ -135,18 +138,19 @@ export class AgentOrchestrator extends BaseManager {
         const execution = {
             name: workflowName,
             context,
-            steps: []
+            steps: [],
         };
 
         for (const step of workflow.steps) {
-            const shouldExecute = !step.condition || this.evaluateCondition(step.condition, context);
-            
+            const shouldExecute =
+                !step.condition || this.evaluateCondition(step.condition, context);
+
             if (shouldExecute) {
                 execution.steps.push({
                     phase: step.phase,
                     agent: step.agent,
                     actions: step.actions,
-                    status: 'pending'
+                    status: 'pending',
                 });
             }
         }
@@ -165,7 +169,7 @@ export class AgentOrchestrator extends BaseManager {
 
         const results = {
             passed: true,
-            checks: []
+            checks: [],
         };
 
         for (const check of gates.checks) {
@@ -173,9 +177,9 @@ export class AgentOrchestrator extends BaseManager {
             results.checks.push({
                 name: check,
                 passed: checkResult.passed,
-                message: checkResult.message
+                message: checkResult.message,
             });
-            
+
             if (!checkResult.passed) {
                 results.passed = false;
             }
@@ -191,7 +195,7 @@ export class AgentOrchestrator extends BaseManager {
             import_structure: () => this.checkImportStructure(code),
             test_coverage: () => ({ passed: true, message: 'Test coverage check pending' }),
             documentation: () => this.checkDocumentation(code),
-            event_consistency: () => this.checkEventConsistency(code)
+            event_consistency: () => this.checkEventConsistency(code),
         };
 
         const checkFn = checks[checkName];
@@ -201,37 +205,40 @@ export class AgentOrchestrator extends BaseManager {
     checkPatternCompliance(code) {
         const hasBaseManager = /extends\s+BaseManager/.test(code);
         const usesConstructorPattern = /constructor\(\)\s*{\s*super\(\)/.test(code);
-        
+
         if (code.includes('Manager') && !hasBaseManager) {
             return { passed: false, message: 'Manager classes must extend BaseManager' };
         }
-        
+
         return { passed: true, message: 'Pattern compliance verified' };
     }
 
     checkNamingConventions(code) {
         const classNamePattern = /class\s+[A-Z][a-zA-Z0-9]+/;
         const hasValidClassName = classNamePattern.test(code);
-        
+
         if (!hasValidClassName && code.includes('class ')) {
             return { passed: false, message: 'Class names must be in PascalCase' };
         }
-        
+
         return { passed: true, message: 'Naming conventions verified' };
     }
 
     checkImportStructure(code) {
         const invalidImports = /from\s+['"]\.\.\/modules\//;
         const hasMagicStrings = /scene\.start\(['"][^'"]+['"]\)(?!.*SceneKeys)/;
-        
+
         if (invalidImports.test(code)) {
-            return { passed: false, message: 'Use barrel exports from @features/* instead of direct module imports' };
+            return {
+                passed: false,
+                message: 'Use barrel exports from @features/* instead of direct module imports',
+            };
         }
-        
+
         if (hasMagicStrings.test(code)) {
             return { passed: false, message: 'Use SceneKeys constants instead of magic strings' };
         }
-        
+
         return { passed: true, message: 'Import structure verified' };
     }
 
@@ -239,55 +246,58 @@ export class AgentOrchestrator extends BaseManager {
         const hasClassComment = /\/\*\*[\s\S]*?\*\/\s*(?:export\s+)?class/.test(code);
         const publicMethods = code.match(/^\s{4}(?!constructor|init|_)[a-z][a-zA-Z0-9]*\(/gm) || [];
         const documentedMethods = code.match(/\/\*\*[\s\S]*?\*\/\s*\n\s{4}[a-z]/g) || [];
-        
+
         if (!hasClassComment && code.includes('export class')) {
             return { passed: false, message: 'Public classes should have documentation' };
         }
-        
+
         return { passed: true, message: 'Documentation present' };
     }
 
     checkEventConsistency(code) {
         const eventEmits = code.match(/emit\(['"]([^'"]+)['"]/g) || [];
-        const hasNamespaceFormat = eventEmits.every(emit => {
+        const hasNamespaceFormat = eventEmits.every((emit) => {
             const eventName = emit.match(/['"]([^'"]+)['"]/)[1];
             return eventName.includes(':') || eventName.includes('EventNames.');
         });
-        
+
         if (!hasNamespaceFormat && eventEmits.length > 0) {
-            return { passed: false, message: 'Event names should use namespace:action format or EventNames constants' };
+            return {
+                passed: false,
+                message: 'Event names should use namespace:action format or EventNames constants',
+            };
         }
-        
+
         return { passed: true, message: 'Event consistency verified' };
     }
 
     getRecommendation(taskDescription) {
         const analysis = this.analyzeTask(taskDescription);
         const routing = this.routeTask(taskDescription, { skipWorkflow: false });
-        
+
         return {
             analysis,
             routing,
             recommendation: this.formatRecommendation(routing),
-            confidence: this.calculateOverallConfidence(analysis)
+            confidence: this.calculateOverallConfidence(analysis),
         };
     }
 
     formatRecommendation(routing) {
         if (routing.workflow) {
-            const steps = routing.workflow.steps.map(s => `${s.phase}: ${s.agent}`).join(' → ');
+            const steps = routing.workflow.steps.map((s) => `${s.phase}: ${s.agent}`).join(' → ');
             return `Workflow: ${routing.workflow.name} (${steps})`;
         } else if (routing.agents.length > 0) {
-            const primary = routing.agents.find(a => a.role === 'primary');
-            const supporting = routing.agents.filter(a => a.role === 'supporting');
-            
+            const primary = routing.agents.find((a) => a.role === 'primary');
+            const supporting = routing.agents.filter((a) => a.role === 'supporting');
+
             let rec = `Primary: ${primary.name}`;
             if (supporting.length > 0) {
-                rec += ` | Supporting: ${supporting.map(a => a.name).join(', ')}`;
+                rec += ` | Supporting: ${supporting.map((a) => a.name).join(', ')}`;
             }
             return rec;
         }
-        
+
         return 'No specific agent recommendation - using fallback';
     }
 

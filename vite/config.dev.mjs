@@ -10,20 +10,20 @@ export default defineConfig({
             '@core': pathFromRoot('../src/core'),
             '@features': pathFromRoot('../src/features'),
             '@scenes': pathFromRoot('../src/scenes'),
-            '@observability': pathFromRoot('../src/observability')
-        }
+            '@observability': pathFromRoot('../src/observability'),
+        },
     },
     base: './',
     build: {
         rollupOptions: {
             output: {
                 manualChunks: {
-                    phaser: ['phaser']
-                }
-            }
+                    phaser: ['phaser'],
+                },
+            },
         },
     },
     server: {
-        port: 8080
-    }
+        port: 8080,
+    },
 });

@@ -52,7 +52,7 @@ export class CrashDumpGenerator {
                 logStats: this.captureLogStats(),
 
                 // Additional context provided by caller
-                additionalContext
+                additionalContext,
             };
 
             return dump;
@@ -64,9 +64,9 @@ export class CrashDumpGenerator {
                 error: {
                     message: error?.message || 'Unknown error',
                     stack: error?.stack || 'No stack trace',
-                    dumpGenerationError: dumpError.message
+                    dumpGenerationError: dumpError.message,
                 },
-                additionalContext
+                additionalContext,
             };
         }
     }
@@ -79,7 +79,7 @@ export class CrashDumpGenerator {
         if (!error) {
             return {
                 message: 'No error object provided',
-                stack: 'No stack trace available'
+                stack: 'No stack trace available',
             };
         }
 
@@ -87,7 +87,7 @@ export class CrashDumpGenerator {
             message: error.message,
             stack: error.stack,
             name: error.name,
-            type: error.constructor?.name || 'Error'
+            type: error.constructor?.name || 'Error',
         };
     }
 
@@ -102,12 +102,12 @@ export class CrashDumpGenerator {
                 recent: logSystem.getRecent(count),
                 errors: logSystem.getByLevel('error', 20),
                 warnings: logSystem.getByLevel('warn', 10),
-                fatal: logSystem.getByLevel('fatal', 5)
+                fatal: logSystem.getByLevel('fatal', 5),
             };
         } catch (err) {
             return {
                 error: 'Failed to capture logs',
-                message: err.message
+                message: err.message,
             };
         }
     }
@@ -123,7 +123,7 @@ export class CrashDumpGenerator {
         } catch (err) {
             return {
                 error: 'Failed to capture game state',
-                message: err.message
+                message: err.message,
             };
         }
     }
@@ -153,21 +153,24 @@ export class CrashDumpGenerator {
                     usedPercentage: (
                         (performance.memory.usedJSHeapSize / performance.memory.jsHeapSizeLimit) *
                         100
-                    ).toFixed(2)
+                    ).toFixed(2),
                 };
             }
 
             // Performance timing
             if (typeof performance !== 'undefined' && performance.timing) {
-                metrics.loadTime = performance.timing.loadEventEnd - performance.timing.navigationStart;
-                metrics.domContentLoaded = performance.timing.domContentLoadedEventEnd - performance.timing.navigationStart;
+                metrics.loadTime =
+                    performance.timing.loadEventEnd - performance.timing.navigationStart;
+                metrics.domContentLoaded =
+                    performance.timing.domContentLoadedEventEnd -
+                    performance.timing.navigationStart;
             }
 
             return metrics;
         } catch (err) {
             return {
                 error: 'Failed to capture performance metrics',
-                message: err.message
+                message: err.message,
             };
         }
     }
@@ -193,11 +196,11 @@ export class CrashDumpGenerator {
             if (typeof window !== 'undefined') {
                 env.windowSize = {
                     width: window.innerWidth,
-                    height: window.innerHeight
+                    height: window.innerHeight,
                 };
                 env.screenSize = {
                     width: window.screen?.width,
-                    height: window.screen?.height
+                    height: window.screen?.height,
                 };
                 env.devicePixelRatio = window.devicePixelRatio;
             }
@@ -213,7 +216,7 @@ export class CrashDumpGenerator {
         } catch (err) {
             return {
                 error: 'Failed to capture environment',
-                message: err.message
+                message: err.message,
             };
         }
     }
@@ -229,7 +232,7 @@ export class CrashDumpGenerator {
         } catch (err) {
             return {
                 error: 'Failed to capture log stats',
-                message: err.message
+                message: err.message,
             };
         }
     }
@@ -263,10 +266,14 @@ export class CrashDumpGenerator {
         if (crashDump.gameState) {
             lines.push('Game State:');
             if (crashDump.gameState.player) {
-                lines.push(`  Player: pos=(${crashDump.gameState.player.position?.x},${crashDump.gameState.player.position?.y})`);
+                lines.push(
+                    `  Player: pos=(${crashDump.gameState.player.position?.x},${crashDump.gameState.player.position?.y})`
+                );
             }
             if (crashDump.gameState.physics) {
-                lines.push(`  Physics: ${crashDump.gameState.physics.bodyCount || 0} bodies, ${crashDump.gameState.physics.errorCount || 0} errors`);
+                lines.push(
+                    `  Physics: ${crashDump.gameState.physics.bodyCount || 0} bodies, ${crashDump.gameState.physics.errorCount || 0} errors`
+                );
             }
             lines.push('');
         }
@@ -274,7 +281,7 @@ export class CrashDumpGenerator {
         // Recent errors
         if (crashDump.logs?.errors) {
             lines.push(`Recent Errors (${crashDump.logs.errors.length}):`);
-            crashDump.logs.errors.slice(0, 5).forEach(log => {
+            crashDump.logs.errors.slice(0, 5).forEach((log) => {
                 lines.push(`  - ${log.code}: ${log.message}`);
             });
             lines.push('');

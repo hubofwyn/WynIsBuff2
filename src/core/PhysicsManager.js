@@ -1,10 +1,12 @@
 import RAPIER from '@dimforge/rapier2d-compat';
+
 import { EventNames } from '../constants/EventNames';
 import { PhysicsConfig } from '../constants/PhysicsConfig';
 import { metersToPixels } from '../constants/PhysicsConstants.js';
-import { BaseManager } from './BaseManager';
 import { LOG } from '../observability/core/LogSystem.js';
 import { CrashDumpGenerator } from '../observability/utils/CrashDumpGenerator.js';
+
+import { BaseManager } from './BaseManager';
 
 /**
  * PhysicsManager class handles the Rapier physics world and synchronization
@@ -18,19 +20,19 @@ export class PhysicsManager extends BaseManager {
     constructor() {
         super();
         if (this.isInitialized()) return;
-        
+
         this.scene = null;
         this.eventSystem = null;
         this.world = null;
         this.bodyToSprite = new Map();
-        
+
         // Collision event handlers
         this.collisionHandlers = new Map();
-        
+
         // Fixed timestep accumulator
         this.accumulator = 0;
     }
-    
+
     /**
      * Initialize the Rapier physics engine
      * @param {number} gravityX - Horizontal gravity
@@ -42,18 +44,23 @@ export class PhysicsManager extends BaseManager {
      * @param {number} [gravityX=PhysicsConfig.gravityX] - Horizontal gravity
      * @param {number} [gravityY=PhysicsConfig.gravityY] - Vertical gravity
      */
-    async init(scene, eventSystem, gravityX = PhysicsConfig.gravityX, gravityY = PhysicsConfig.gravityY) {
+    async init(
+        scene,
+        eventSystem,
+        gravityX = PhysicsConfig.gravityX,
+        gravityY = PhysicsConfig.gravityY
+    ) {
         this.scene = scene;
         this.eventSystem = eventSystem;
         try {
             LOG.info('PHYSICS_INIT_START', {
                 subsystem: 'physics',
-                message: 'Initializing Rapier physics engine'
+                message: 'Initializing Rapier physics engine',
             });
             await RAPIER.init();
             LOG.info('PHYSICS_INIT_SUCCESS', {
                 subsystem: 'physics',
-                message: 'Rapier initialized successfully'
+                message: 'Rapier initialized successfully',
             });
 
             // Create physics world with gravity
@@ -61,28 +68,28 @@ export class PhysicsManager extends BaseManager {
             LOG.info('PHYSICS_WORLD_CREATED', {
                 subsystem: 'physics',
                 message: 'Rapier world created',
-                gravity: { x: gravityX, y: gravityY }
+                gravity: { x: gravityX, y: gravityY },
             });
 
             // Create event queue for collision events (required in Rapier 0.19+)
             this.eventQueue = new RAPIER.EventQueue(true);
             LOG.dev('PHYSICS_EVENT_QUEUE', {
                 subsystem: 'physics',
-                message: 'Event queue created'
+                message: 'Event queue created',
             });
 
             // Set up collision event handling
             this.setupCollisionEvents();
-            
+
             this._initialized = true;
-            
+
             if (this.eventSystem) {
                 this.eventSystem.emit(EventNames.GAME_INIT, {
                     module: 'physics',
-                    gravity: { x: gravityX, y: gravityY }
+                    gravity: { x: gravityX, y: gravityY },
                 });
             }
-            
+
             return true;
         } catch (error) {
             LOG.error('PHYSICS_INIT_ERROR', {
@@ -90,12 +97,12 @@ export class PhysicsManager extends BaseManager {
                 error,
                 message: 'Failed to initialize physics engine',
                 hint: 'Check if Rapier WASM files are accessible. Verify gravity values are valid.',
-                gravity: { x: gravityX, y: gravityY }
+                gravity: { x: gravityX, y: gravityY },
             });
             return false;
         }
     }
-    
+
     /**
      * Set up collision event handling
      */
@@ -103,35 +110,35 @@ export class PhysicsManager extends BaseManager {
         if (!this.world) {
             return;
         }
-        
+
         // Check if contactPairEvents is available
         if (this.world.contactPairEvents) {
             this.world.contactPairEvents.on('begin', (event) => {
                 // Extract the body handles from the event
                 const bodyHandleA = event.collider1.parent().handle;
                 const bodyHandleB = event.collider2.parent().handle;
-                
+
                 // Get the positions of the colliding bodies
                 const bodyA = this.world.getBodyByHandle(bodyHandleA);
                 const bodyB = this.world.getBodyByHandle(bodyHandleB);
-                
+
                 if (!bodyA || !bodyB) {
                     return;
                 }
-                
+
                 const positionA = bodyA.translation();
                 const positionB = bodyB.translation();
-                
+
                 // Emit collision event
                 if (this.eventSystem) {
                     this.eventSystem.emit(EventNames.COLLISION_START, {
                         bodyHandleA,
                         bodyHandleB,
                         positionA: { x: positionA.x, y: positionA.y },
-                        positionB: { x: positionB.x, y: positionB.y }
+                        positionB: { x: positionB.x, y: positionB.y },
                     });
                 }
-                
+
                 // Call any registered collision handlers
                 this.handleCollision(bodyHandleA, bodyHandleB);
             });
@@ -140,7 +147,7 @@ export class PhysicsManager extends BaseManager {
             LOG.warn('PHYSICS_NO_CONTACT_EVENTS', {
                 subsystem: 'physics',
                 message: 'contactPairEvents not available, using manual collision detection',
-                hint: 'For basic platformer gameplay, character controller contact detection is sufficient'
+                hint: 'For basic platformer gameplay, character controller contact detection is sufficient',
             });
             // Note: Collision detection will be handled manually in the update() method if needed
             // For basic platformer gameplay, contact detection via characterController is sufficient
@@ -148,10 +155,10 @@ export class PhysicsManager extends BaseManager {
 
         LOG.dev('PHYSICS_COLLISION_SETUP', {
             subsystem: 'physics',
-            message: 'Collision events set up'
+            message: 'Collision events set up',
         });
     }
-    
+
     /**
      * Register a collision handler
      * @param {string} key - Unique identifier for the handler
@@ -162,7 +169,7 @@ export class PhysicsManager extends BaseManager {
             this.collisionHandlers.set(key, handler);
         }
     }
-    
+
     /**
      * Unregister a collision handler
      * @param {string} key - Unique identifier for the handler
@@ -170,7 +177,7 @@ export class PhysicsManager extends BaseManager {
     unregisterCollisionHandler(key) {
         this.collisionHandlers.delete(key);
     }
-    
+
     /**
      * Handle a collision between two bodies
      * @param {number} bodyHandleA - Handle of the first body
@@ -187,12 +194,12 @@ export class PhysicsManager extends BaseManager {
                     error,
                     message: 'Error in collision handler',
                     bodyHandles: { A: bodyHandleA, B: bodyHandleB },
-                    hint: 'Check collision handler implementation for errors'
+                    hint: 'Check collision handler implementation for errors',
                 });
             }
         });
     }
-    
+
     /**
      * Register a body-sprite pair for synchronization
      * @param {RAPIER.RigidBody} body - The physics body
@@ -203,7 +210,7 @@ export class PhysicsManager extends BaseManager {
             this.bodyToSprite.set(body.handle, sprite);
         }
     }
-    
+
     /**
      * Register multiple body-sprite pairs from a map
      * @param {Map} bodyToSpriteMap - Map of body handles to sprites
@@ -216,7 +223,7 @@ export class PhysicsManager extends BaseManager {
             });
         }
     }
-    
+
     /**
      * Step the physics simulation with modern configuration
      * @param {number} delta - Time since last frame in milliseconds
@@ -225,7 +232,7 @@ export class PhysicsManager extends BaseManager {
         if (!this._initialized || !this.world) {
             return;
         }
-        
+
         // TRIAGE FIX: Circuit breaker for repeated errors
         if (this.errorCount > 10) {
             // Generate comprehensive crash dump for analysis
@@ -240,8 +247,8 @@ export class PhysicsManager extends BaseManager {
                         bodyCount: this.bodyToSprite?.size || 0,
                         worldStep: this.fixedTimeStep,
                         accumulator: this.accumulator,
-                        isActive: this.isActive
-                    }
+                        isActive: this.isActive,
+                    },
                 }
             );
 
@@ -252,14 +259,14 @@ export class PhysicsManager extends BaseManager {
                 threshold: 10,
                 hint: 'Check recent physics errors. May indicate Rapier API issues or invalid body state.',
                 crashDump,
-                crashDumpSummary: CrashDumpGenerator.generateSummary(crashDump)
+                crashDumpSummary: CrashDumpGenerator.generateSummary(crashDump),
             });
 
             // Disable physics to prevent further errors
             this.isActive = false;
             return;
         }
-        
+
         try {
             // TRIAGE FIX: Validate delta is a finite number
             if (!Number.isFinite(delta) || delta < 0 || delta > 1000) {
@@ -268,32 +275,33 @@ export class PhysicsManager extends BaseManager {
                     message: 'Invalid delta time received, using fallback',
                     invalidDelta: delta,
                     fallbackDelta: 16.67,
-                    hint: 'Check game loop timing. Delta should be between 0-1000ms.'
+                    hint: 'Check game loop timing. Delta should be between 0-1000ms.',
                 });
                 delta = 16.67; // Fallback to 60fps
             }
-            
+
             // Convert delta from milliseconds to seconds
             const deltaSeconds = delta ? delta / 1000 : PhysicsConfig.timeStep;
-            
+
             // TRIAGE FIX: More aggressive delta capping to prevent physics explosions
-            const cappedDelta = Math.min(deltaSeconds, 1/20); // Cap to 50ms (20 FPS minimum)
-            
+            const cappedDelta = Math.min(deltaSeconds, 1 / 20); // Cap to 50ms (20 FPS minimum)
+
             // Fixed timestep for deterministic physics (as recommended in guide)
             const fixedTimeStep = PhysicsConfig.timeStep; // 1/60 for 60Hz
             this.accumulator += cappedDelta;
-            
+
             // Limit max steps per frame to prevent freezing
             const maxStepsPerFrame = 3;
             let steps = 0;
-            
+
             // Track physics timing
             const startTime = performance.now();
 
             // Configure integration parameters for improved stability
             this.world.integrationParameters.dt = fixedTimeStep;
             this.world.integrationParameters.numSolverIterations = PhysicsConfig.maxVelIterations;
-            this.world.integrationParameters.numAdditionalFrictionIterations = PhysicsConfig.maxPosIterations;
+            this.world.integrationParameters.numAdditionalFrictionIterations =
+                PhysicsConfig.maxPosIterations;
             this.world.integrationParameters.erp = PhysicsConfig.erp; // Error reduction parameter
 
             // Step physics with event queue (Rapier 0.19+ API)
@@ -320,7 +328,7 @@ export class PhysicsManager extends BaseManager {
                                 bodyHandleA: handle1,
                                 bodyHandleB: handle2,
                                 positionA: { x: positionA.x, y: positionA.y },
-                                positionB: { x: positionB.x, y: positionB.y }
+                                positionB: { x: positionB.x, y: positionB.y },
                             });
                         }
                     }
@@ -332,38 +340,37 @@ export class PhysicsManager extends BaseManager {
 
             // Record physics metrics
             const physicsTime = performance.now() - startTime;
-            
+
             // Emit performance metrics
             if (this.eventSystem && steps > 0) {
                 this.eventSystem.emit('physics:performance', {
-                    steps: steps,
+                    steps,
                     time: physicsTime,
                     accumulator: this.accumulator,
-                    fixedTimeStep: fixedTimeStep
+                    fixedTimeStep,
                 });
             }
-            
+
             // Reset accumulator if we hit max steps (prevents permanent lag)
             if (steps >= maxStepsPerFrame) {
                 this.accumulator = 0;
                 LOG.warn('PHYSICS_FRAME_BUDGET_EXCEEDED', {
                     subsystem: 'physics',
                     message: 'Frame budget exceeded, resetting accumulator',
-                    steps: steps,
+                    steps,
                     maxSteps: maxStepsPerFrame,
-                    hint: 'Physics simulation running slowly. Consider optimizing collision shapes or reducing body count.'
+                    hint: 'Physics simulation running slowly. Consider optimizing collision shapes or reducing body count.',
                 });
             }
-            
+
             // Calculate interpolation factor for smooth rendering
             const interpolation = this.accumulator / fixedTimeStep;
-            
+
             // Update all sprites with proper scaling
             this.updateGameObjects(interpolation);
-            
+
             // Reset error count on successful update
             this.errorCount = 0;
-            
         } catch (error) {
             this.errorCount = (this.errorCount || 0) + 1;
             LOG.error('PHYSICS_UPDATE_ERROR', {
@@ -376,9 +383,9 @@ export class PhysicsManager extends BaseManager {
                     hasWorld: !!this.world,
                     accumulator: this.accumulator,
                     bodyCount: this.bodyToSprite?.size || 0,
-                    delta: arguments[0]
+                    delta: arguments[0],
                 },
-                hint: 'Check Rapier body state. Verify all bodies have valid translations. May indicate invalid body configuration.'
+                hint: 'Check Rapier body state. Verify all bodies have valid translations. May indicate invalid body configuration.',
             });
 
             // TRIAGE FIX: Emergency fallback - try to at least update sprites
@@ -391,12 +398,12 @@ export class PhysicsManager extends BaseManager {
                     subsystem: 'physics',
                     error: fallbackError,
                     message: 'Emergency fallback update also failed',
-                    hint: 'Physics system in critical state. Consider restarting scene.'
+                    hint: 'Physics system in critical state. Consider restarting scene.',
                 });
             }
         }
     }
-    
+
     /**
      * Update all game objects with proper meter-to-pixel scaling
      * @param {number} interpolation - Interpolation factor for smooth rendering (0-1)
@@ -405,7 +412,7 @@ export class PhysicsManager extends BaseManager {
         try {
             // Update all sprites based on their physics bodies with proper scaling
             // Use forEachRigidBody() for Rapier 0.19+ compatibility
-            this.world.forEachRigidBody(body => {
+            this.world.forEachRigidBody((body) => {
                 const sprite = this.bodyToSprite.get(body.handle);
 
                 if (sprite) {
@@ -427,7 +434,8 @@ export class PhysicsManager extends BaseManager {
                     if (interpolation > 0 && interpolation < 1) {
                         sprite.x = sprite.prevX + (pixelX - sprite.prevX) * interpolation;
                         sprite.y = sprite.prevY + (pixelY - sprite.prevY) * interpolation;
-                        sprite.rotation = sprite.prevRotation + (rotation - sprite.prevRotation) * interpolation;
+                        sprite.rotation =
+                            sprite.prevRotation + (rotation - sprite.prevRotation) * interpolation;
                     } else {
                         // Direct assignment when no interpolation
                         sprite.x = pixelX;
@@ -447,11 +455,11 @@ export class PhysicsManager extends BaseManager {
                 error,
                 message: 'Error updating game objects from physics bodies',
                 bodyCount: this.bodyToSprite?.size || 0,
-                hint: 'Check body-sprite synchronization. Verify all bodies have valid translation() method.'
+                hint: 'Check body-sprite synchronization. Verify all bodies have valid translation() method.',
             });
         }
     }
-    
+
     /**
      * Get the Rapier physics world
      * @returns {RAPIER.World} The physics world
@@ -459,13 +467,13 @@ export class PhysicsManager extends BaseManager {
     getWorld() {
         return this.world;
     }
-    
+
     /**
      * Check if physics is initialized
      * @returns {boolean} True if physics is initialized
      */
     // Inherited from BaseManager
-    
+
     /**
      * Get the body-to-sprite mapping
      * @returns {Map} Map of body handles to sprites
@@ -473,27 +481,27 @@ export class PhysicsManager extends BaseManager {
     getBodyToSpriteMap() {
         return this.bodyToSprite;
     }
-    
+
     /**
      * Clean up resources when the scene is shut down
      */
     shutdown() {
         // Clear collision handlers
         this.collisionHandlers.clear();
-        
+
         // Clear body-sprite mapping
         this.bodyToSprite.clear();
-        
+
         // Destroy the physics world
         if (this.world) {
             // Note: Rapier doesn't have a direct destroy method,
             // but we can help garbage collection by removing references
             this.world = null;
         }
-        
+
         this.scene = null;
         this.eventSystem = null;
-        
+
         // Call parent destroy
         super.destroy();
     }

@@ -14,16 +14,16 @@ export class ColorManager {
     constructor(scene, eventSystem) {
         this.scene = scene;
         this.eventSystem = eventSystem;
-        
+
         // Color configurations for different states
         this.colorConfigs = {
-            ground: 0x0000FF,  // Blue
-            jump1: 0x00FF00,   // Green
-            jump2: 0xFFFF00,   // Yellow
-            jump3: 0xFF0000,   // Red
-            landing: 0x0000FF  // Blue (same as ground)
+            ground: 0x0000ff, // Blue
+            jump1: 0x00ff00, // Green
+            jump2: 0xffff00, // Yellow
+            jump3: 0xff0000, // Red
+            landing: 0x0000ff, // Blue (same as ground)
         };
-        
+
         // Active color transitions
         this.activeTransitions = new Map();
 
@@ -33,27 +33,27 @@ export class ColorManager {
         LOG.dev('COLORMANAGER_INITIALIZED', {
             subsystem: 'effects',
             message: 'ColorManager initialized with color transition and accessibility features',
-            colorConfigs: this.colorConfigs
+            colorConfigs: this.colorConfigs,
         });
     }
-    
+
     /**
      * Set up event listeners for color effects
      */
     setupEventListeners() {
         if (!this.eventSystem) return;
-        
+
         // Listen for jump events
         this.eventSystem.on(EventNames.PLAYER_JUMP, this.handleJump.bind(this));
-        
+
         // Listen for land events
         this.eventSystem.on(EventNames.PLAYER_LAND, this.handleLand.bind(this));
-        
+
         // Listen for jump state events
         this.eventSystem.on(EventNames.PLAYER_JUMP_PEAK, this.handleJumpPeak.bind(this));
         this.eventSystem.on(EventNames.PLAYER_JUMP_FALL, this.handleJumpFall.bind(this));
     }
-    
+
     /**
      * Handle jump events
      * @param {object} data - Jump event data
@@ -61,9 +61,9 @@ export class ColorManager {
     handleJump(data) {
         const jumpNumber = data.jumpNumber;
         const sprite = data.sprite || this.findPlayerSprite();
-        
+
         if (!sprite) return;
-        
+
         // Determine target color based on jump number
         let targetColor;
         switch (jumpNumber) {
@@ -79,14 +79,14 @@ export class ColorManager {
             default:
                 targetColor = this.colorConfigs.jump1;
         }
-        
+
         // Apply color transition
         this.transitionColor(sprite, targetColor, 200);
-        
+
         // Add a pulse effect
         this.pulseEffect(sprite, 1.1, 100);
     }
-    
+
     /**
      * Handle land events
      * @param {object} data - Land event data
@@ -94,19 +94,19 @@ export class ColorManager {
     handleLand(data) {
         const sprite = data.sprite || this.findPlayerSprite();
         const velocity = data.velocity;
-        
+
         if (!sprite) return;
-        
+
         // Transition back to ground color
         this.transitionColor(sprite, this.colorConfigs.ground, 300);
-        
+
         // Add landing pulse effect based on impact velocity
         const impactForce = Math.min(Math.abs(velocity.y) / 20, 2); // Cap at 2x
         if (impactForce > 0.5) {
-            this.pulseEffect(sprite, 1 + (impactForce * 0.1), 150);
+            this.pulseEffect(sprite, 1 + impactForce * 0.1, 150);
         }
     }
-    
+
     /**
      * Handle jump peak events
      * @param {object} data - Jump peak event data
@@ -114,9 +114,9 @@ export class ColorManager {
     handleJumpPeak(data) {
         const sprite = data.sprite || this.findPlayerSprite();
         const jumpNumber = data.jumpNumber;
-        
+
         if (!sprite) return;
-        
+
         // Brighten the color at the peak of the jump
         let baseColor;
         switch (jumpNumber) {
@@ -132,17 +132,17 @@ export class ColorManager {
             default:
                 baseColor = this.colorConfigs.jump1;
         }
-        
+
         // Convert to a brighter version
         const brighterColor = this.brightenColor(baseColor, 0.2);
-        
+
         // Apply a quick pulse with the brighter color
         this.transitionColor(sprite, brighterColor, 100);
         setTimeout(() => {
             this.transitionColor(sprite, baseColor, 300);
         }, 100);
     }
-    
+
     /**
      * Handle jump fall events
      * @param {object} data - Jump fall event data
@@ -150,9 +150,9 @@ export class ColorManager {
     handleJumpFall(data) {
         const sprite = data.sprite || this.findPlayerSprite();
         const jumpNumber = data.jumpNumber;
-        
+
         if (!sprite) return;
-        
+
         // Slightly dim the color during fall
         let baseColor;
         switch (jumpNumber) {
@@ -168,14 +168,14 @@ export class ColorManager {
             default:
                 baseColor = this.colorConfigs.jump1;
         }
-        
+
         // Convert to a slightly dimmer version
         const dimmerColor = this.dimColor(baseColor, 0.1);
-        
+
         // Apply a gradual transition to the dimmer color
         this.transitionColor(sprite, dimmerColor, 200);
     }
-    
+
     /**
      * Transition a sprite's color from current to target
      * @param {Phaser.GameObjects.Sprite|Phaser.GameObjects.Rectangle} sprite - The sprite to color
@@ -185,7 +185,7 @@ export class ColorManager {
     transitionColor(sprite, targetColor, duration = 200) {
         // Stop any active transition for this sprite
         this.stopTransition(sprite);
-        
+
         // Get current color
         let currentColor;
         if (sprite.tintTopLeft !== undefined) {
@@ -199,42 +199,42 @@ export class ColorManager {
             this.setColor(sprite, targetColor);
             return;
         }
-        
+
         // Extract RGB components
-        const startRed = (currentColor >> 16) & 0xFF;
-        const startGreen = (currentColor >> 8) & 0xFF;
-        const startBlue = currentColor & 0xFF;
-        
-        const endRed = (targetColor >> 16) & 0xFF;
-        const endGreen = (targetColor >> 8) & 0xFF;
-        const endBlue = targetColor & 0xFF;
-        
+        const startRed = (currentColor >> 16) & 0xff;
+        const startGreen = (currentColor >> 8) & 0xff;
+        const startBlue = currentColor & 0xff;
+
+        const endRed = (targetColor >> 16) & 0xff;
+        const endGreen = (targetColor >> 8) & 0xff;
+        const endBlue = targetColor & 0xff;
+
         // Create a tween for smooth color transition
         const tween = this.scene.tweens.add({
             targets: { progress: 0 },
             progress: 1,
-            duration: duration,
+            duration,
             ease: 'Sine.easeInOut',
             onUpdate: (tween) => {
                 const progress = tween.getValue();
-                
+
                 // Interpolate RGB values
                 const red = Math.floor(startRed + (endRed - startRed) * progress);
                 const green = Math.floor(startGreen + (endGreen - startGreen) * progress);
                 const blue = Math.floor(startBlue + (endBlue - startBlue) * progress);
-                
+
                 // Combine into hex color
                 const color = (red << 16) | (green << 8) | blue;
-                
+
                 // Apply the color
                 this.setColor(sprite, color);
-            }
+            },
         });
-        
+
         // Store the active transition
         this.activeTransitions.set(sprite, tween);
     }
-    
+
     /**
      * Stop an active color transition
      * @param {Phaser.GameObjects.Sprite|Phaser.GameObjects.Rectangle} sprite - The sprite
@@ -246,7 +246,7 @@ export class ColorManager {
             this.activeTransitions.delete(sprite);
         }
     }
-    
+
     /**
      * Apply a pulse effect to a sprite
      * @param {Phaser.GameObjects.Sprite|Phaser.GameObjects.Rectangle} sprite - The sprite
@@ -257,7 +257,7 @@ export class ColorManager {
         // Store original scale
         const originalScaleX = sprite.scaleX || 1;
         const originalScaleY = sprite.scaleY || 1;
-        
+
         // Create pulse tween
         this.scene.tweens.add({
             targets: sprite,
@@ -269,10 +269,10 @@ export class ColorManager {
             onComplete: () => {
                 // Ensure scale is reset to original
                 sprite.setScale(originalScaleX, originalScaleY);
-            }
+            },
         });
     }
-    
+
     /**
      * Set a sprite's color
      * @param {Phaser.GameObjects.Sprite|Phaser.GameObjects.Rectangle} sprite - The sprite
@@ -287,7 +287,7 @@ export class ColorManager {
             sprite.fillColor = color;
         }
     }
-    
+
     /**
      * Brighten a color by a percentage
      * @param {number} color - The color in hex format
@@ -295,13 +295,13 @@ export class ColorManager {
      * @returns {number} The brightened color
      */
     brightenColor(color, percent) {
-        const red = Math.min(255, ((color >> 16) & 0xFF) + (255 * percent));
-        const green = Math.min(255, ((color >> 8) & 0xFF) + (255 * percent));
-        const blue = Math.min(255, (color & 0xFF) + (255 * percent));
-        
+        const red = Math.min(255, ((color >> 16) & 0xff) + 255 * percent);
+        const green = Math.min(255, ((color >> 8) & 0xff) + 255 * percent);
+        const blue = Math.min(255, (color & 0xff) + 255 * percent);
+
         return (Math.floor(red) << 16) | (Math.floor(green) << 8) | Math.floor(blue);
     }
-    
+
     /**
      * Dim a color by a percentage
      * @param {number} color - The color in hex format
@@ -309,13 +309,13 @@ export class ColorManager {
      * @returns {number} The dimmed color
      */
     dimColor(color, percent) {
-        const red = ((color >> 16) & 0xFF) * (1 - percent);
-        const green = ((color >> 8) & 0xFF) * (1 - percent);
-        const blue = (color & 0xFF) * (1 - percent);
-        
+        const red = ((color >> 16) & 0xff) * (1 - percent);
+        const green = ((color >> 8) & 0xff) * (1 - percent);
+        const blue = (color & 0xff) * (1 - percent);
+
         return (Math.floor(red) << 16) | (Math.floor(green) << 8) | Math.floor(blue);
     }
-    
+
     /**
      * Find the player sprite in the scene
      * @returns {Phaser.GameObjects.Sprite|Phaser.GameObjects.Rectangle} The player sprite
@@ -323,15 +323,15 @@ export class ColorManager {
     findPlayerSprite() {
         // This is a fallback method if the sprite isn't provided in the event data
         // In a real implementation, you might want to have a more reliable way to get the player sprite
-        
+
         // Try to get the player controller from the scene
         if (this.scene.playerController && this.scene.playerController.getSprite) {
             return this.scene.playerController.getSprite();
         }
-        
+
         return null;
     }
-    
+
     /**
      * Clean up resources when scene is shut down
      */
@@ -343,7 +343,7 @@ export class ColorManager {
             this.eventSystem.off(EventNames.PLAYER_JUMP_PEAK, this.handleJumpPeak);
             this.eventSystem.off(EventNames.PLAYER_JUMP_FALL, this.handleJumpFall);
         }
-        
+
         // Stop all active transitions
         this.activeTransitions.forEach((tween) => {
             tween.stop();
@@ -360,7 +360,7 @@ export class ColorManager {
             subsystem: 'effects',
             message: 'Color-blind accessibility palette applied',
             palette,
-            previousPalette: this.currentPalette
+            previousPalette: this.currentPalette,
         });
         // Apply CSS-based filter on game canvas as a simple palette simulation
         const canvas = this.scene.sys.game.canvas;

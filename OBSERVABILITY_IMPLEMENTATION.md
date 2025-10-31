@@ -14,14 +14,14 @@ This document serves as the **authoritative implementation plan** for integratin
 
 ### Integration Goals
 
-| Aspect | Current State | Target State | Priority |
-|--------|--------------|--------------|----------|
-| **Logging** | Scattered console.log() | Structured JSON with context | P0 |
-| **Error Handling** | Circuit breakers + try-catch | Integrated with observability | P0 |
-| **Documentation** | Multiple overlapping docs | Unified, cross-referenced system | P1 |
-| **Agent Support** | None | Full autonomous debugging | P0 |
-| **Performance** | Unknown overhead | <0.5ms per frame | P0 |
-| **Debugging** | Manual inspection | Automated pattern recognition | P1 |
+| Aspect             | Current State                | Target State                     | Priority |
+| ------------------ | ---------------------------- | -------------------------------- | -------- |
+| **Logging**        | Scattered console.log()      | Structured JSON with context     | P0       |
+| **Error Handling** | Circuit breakers + try-catch | Integrated with observability    | P0       |
+| **Documentation**  | Multiple overlapping docs    | Unified, cross-referenced system | P1       |
+| **Agent Support**  | None                         | Full autonomous debugging        | P0       |
+| **Performance**    | Unknown overhead             | <0.5ms per frame                 | P0       |
+| **Debugging**      | Manual inspection            | Automated pattern recognition    | P1       |
 
 ### Key Principles
 
@@ -45,18 +45,18 @@ Preparation → Implementation → Testing → Validation → Documentation → 
 
 ### Phase Timeline
 
-| Phase | Name | Duration | Dependencies | Risk |
-|-------|------|----------|--------------|------|
-| 0 | Foundation & Planning | 2 hours | None | Low |
-| 1 | Core Infrastructure | 4 hours | Phase 0 | Low |
-| 2 | Context System | 3 hours | Phase 1 | Low |
-| 3 | Logging Migration | 6 hours | Phase 2 | Medium |
-| 4 | Performance Optimization | 2 hours | Phase 3 | Low |
-| 5 | Error Integration | 3 hours | Phase 3 | Medium |
-| 6 | Documentation Consolidation | 2 hours | Phase 5 | Low |
-| 7 | Agent Tools & API | 3 hours | Phase 5 | Low |
-| 8 | Testing & Validation | 2 hours | Phase 7 | Low |
-| 9 | Production Deployment | 1 hour | Phase 8 | Medium |
+| Phase | Name                        | Duration | Dependencies | Risk   |
+| ----- | --------------------------- | -------- | ------------ | ------ |
+| 0     | Foundation & Planning       | 2 hours  | None         | Low    |
+| 1     | Core Infrastructure         | 4 hours  | Phase 0      | Low    |
+| 2     | Context System              | 3 hours  | Phase 1      | Low    |
+| 3     | Logging Migration           | 6 hours  | Phase 2      | Medium |
+| 4     | Performance Optimization    | 2 hours  | Phase 3      | Low    |
+| 5     | Error Integration           | 3 hours  | Phase 3      | Medium |
+| 6     | Documentation Consolidation | 2 hours  | Phase 5      | Low    |
+| 7     | Agent Tools & API           | 3 hours  | Phase 5      | Low    |
+| 8     | Testing & Validation        | 2 hours  | Phase 7      | Low    |
+| 9     | Production Deployment       | 1 hour   | Phase 8      | Medium |
 
 **Total Estimated Time**: 28 hours (3-4 days with breaks)
 
@@ -65,12 +65,14 @@ Preparation → Implementation → Testing → Validation → Documentation → 
 ## Phase 0: Foundation & Planning ✅
 
 ### Objectives
+
 - Set up project structure
 - Create backup points
 - Initialize status tracking
 - Validate prerequisites
 
 ### Tasks
+
 1. ✅ Create this implementation plan
 2. Create observability directory structure
 3. Back up existing error handling code
@@ -78,6 +80,7 @@ Preparation → Implementation → Testing → Validation → Documentation → 
 5. Initialize status tracking file
 
 ### Implementation
+
 ```bash
 # Create feature branch
 git checkout -b feature/observability-integration
@@ -93,6 +96,7 @@ touch STATUS_OBSERVABILITY.json
 ```
 
 ### Validation Criteria
+
 - [ ] All directories created
 - [ ] Git branch established
 - [ ] Status file initialized
@@ -103,12 +107,14 @@ touch STATUS_OBSERVABILITY.json
 ## Phase 1: Core Infrastructure
 
 ### Objectives
+
 - Implement LogSystem V2 core
 - Set up bounded buffers
 - Create base configuration
 - Maintain backward compatibility
 
 ### Implementation Files
+
 ```
 src/observability/
 ├── core/
@@ -119,6 +125,7 @@ src/observability/
 ```
 
 ### Key Code Structure
+
 ```javascript
 // src/observability/core/LogSystem.js
 export class LogSystem {
@@ -128,14 +135,23 @@ export class LogSystem {
         this.throttle = new FrameThrottle(50);
     }
 
-    dev(code, data) { /* structured logging */ }
-    warn(code, data) { /* with context */ }
-    error(code, data) { /* with stack traces */ }
-    fatal(code, data) { /* with crash dumps */ }
+    dev(code, data) {
+        /* structured logging */
+    }
+    warn(code, data) {
+        /* with context */
+    }
+    error(code, data) {
+        /* with stack traces */
+    }
+    fatal(code, data) {
+        /* with crash dumps */
+    }
 }
 ```
 
 ### Validation Criteria
+
 - [ ] LogSystem singleton works
 - [ ] Buffer limits enforced (2000 entries)
 - [ ] All log levels functional
@@ -147,12 +163,14 @@ export class LogSystem {
 ## Phase 2: Context System
 
 ### Objectives
+
 - Implement DebugContext
 - Add state providers
 - Enable context injection
 - Frame-based correlation
 
 ### Implementation Files
+
 ```
 src/observability/context/
 ├── DebugContext.js          # Global context manager
@@ -165,12 +183,14 @@ src/observability/context/
 ```
 
 ### Integration Points
+
 - Game.js: Register providers in create()
 - PlayerController: Implement state provider
 - PhysicsManager: Implement state provider
 - InputManager: Implement state provider
 
 ### Validation Criteria
+
 - [ ] Context automatically injected
 - [ ] State snapshots captured
 - [ ] Frame correlation working
@@ -181,12 +201,14 @@ src/observability/context/
 ## Phase 3: Logging Migration
 
 ### Objectives
+
 - Replace all console.log calls
 - Add structured error codes
 - Implement hints system
 - Maintain existing behavior
 
 ### Migration Map
+
 ```javascript
 // Before:
 console.log('Player jumped');
@@ -197,11 +219,12 @@ LOG.dev('PLAYER_JUMP', { height: jumpHeight });
 LOG.error('PHYSICS_ERROR', {
     error,
     hint: 'Check Rapier initialization',
-    subsystem: 'physics'
+    subsystem: 'physics',
 });
 ```
 
 ### Files to Migrate (Priority Order)
+
 1. **PhysicsManager.js** - Critical system
 2. **PlayerController.js** - Core gameplay
 3. **InputManager.js** - User interaction
@@ -210,7 +233,8 @@ LOG.error('PHYSICS_ERROR', {
 6. Remaining modules
 
 ### Validation Criteria
-- [ ] All console.* replaced
+
+- [ ] All console.\* replaced
 - [ ] Error codes documented
 - [ ] Hints provided for errors
 - [ ] Game still playable
@@ -220,12 +244,14 @@ LOG.error('PHYSICS_ERROR', {
 ## Phase 4: Performance Optimization
 
 ### Objectives
+
 - Implement frame throttling
 - Add intelligent sampling
 - Optimize buffer operations
 - Validate performance budget
 
 ### Key Optimizations
+
 ```javascript
 // Throttling
 class FrameThrottle {
@@ -245,6 +271,7 @@ class LogSampler {
 ```
 
 ### Validation Criteria
+
 - [ ] <0.5ms overhead at 60fps
 - [ ] No frame drops during logging
 - [ ] Sampling rates configurable
@@ -255,12 +282,14 @@ class LogSampler {
 ## Phase 5: Error Integration
 
 ### Objectives
+
 - Integrate with circuit breakers
 - Enhance error recovery
 - Add crash dump generation
 - Improve error visibility
 
 ### Circuit Breaker Enhancement
+
 ```javascript
 // Before:
 if (this.errorCount >= this.errorThreshold) {
@@ -274,12 +303,13 @@ if (this.errorCount >= this.errorThreshold) {
         errorCount: this.errorCount,
         lastErrors: this.errorBuffer.getLast(5),
         hint: 'Check Rapier initialization or collision setup',
-        crashDump: this.generateCrashDump()
+        crashDump: this.generateCrashDump(),
     });
 }
 ```
 
 ### Validation Criteria
+
 - [ ] Circuit breakers log structured data
 - [ ] Error recovery documented
 - [ ] Crash dumps generated
@@ -290,12 +320,14 @@ if (this.errorCount >= this.errorThreshold) {
 ## Phase 6: Documentation Consolidation
 
 ### Objectives
+
 - Merge overlapping documentation
 - Create unified observability guide
 - Update existing docs with references
 - Remove duplication
 
 ### Documentation Structure
+
 ```
 docs/
 ├── INDEX.md                    # Updated with observability
@@ -309,12 +341,14 @@ docs/
 ```
 
 ### Key Updates
+
 1. **ERROR_HANDLING_LOGGING.md** → Split and update
 2. **Observability.md** → Reference implementation
 3. **INDEX.md** → Add observability section
 4. Create **LOGGING.md** for usage guide
 
 ### Validation Criteria
+
 - [ ] No documentation duplication
 - [ ] All cross-references valid
 - [ ] Examples updated
@@ -325,29 +359,32 @@ docs/
 ## Phase 7: Agent Tools & API
 
 ### Objectives
+
 - Implement DebugAPI
 - Add query capabilities
 - Enable pattern matching
 - Support automated analysis
 
 ### API Implementation
+
 ```javascript
 class DebugAPI {
     // Query recent errors
-    getRecentErrors(count = 10) { }
+    getRecentErrors(count = 10) {}
 
     // Pattern matching
-    findPattern(regex) { }
+    findPattern(regex) {}
 
     // State at error
-    getStateSnapshot(logId) { }
+    getStateSnapshot(logId) {}
 
     // Export for agents
-    exportJSON() { }
+    exportJSON() {}
 }
 ```
 
 ### Agent Integration
+
 ```javascript
 // Agent-friendly error format
 {
@@ -361,6 +398,7 @@ class DebugAPI {
 ```
 
 ### Validation Criteria
+
 - [ ] API accessible to agents
 - [ ] JSON export working
 - [ ] Pattern matching functional
@@ -371,12 +409,14 @@ class DebugAPI {
 ## Phase 8: Testing & Validation
 
 ### Objectives
+
 - Comprehensive testing
 - Performance validation
 - Error scenario testing
 - Agent capability verification
 
 ### Test Scenarios
+
 1. **Normal Operation** - 1000 frames without errors
 2. **Error Storm** - 100 errors in 1 second
 3. **Circuit Breaker** - Trigger and recovery
@@ -384,6 +424,7 @@ class DebugAPI {
 5. **Agent Query** - Complex pattern matching
 
 ### Validation Criteria
+
 - [ ] All tests passing
 - [ ] Performance within budget
 - [ ] No memory leaks
@@ -394,12 +435,14 @@ class DebugAPI {
 ## Phase 9: Production Deployment
 
 ### Objectives
+
 - Final validation
 - Production configuration
 - Monitoring setup
 - Rollback preparation
 
 ### Deployment Checklist
+
 - [ ] All phases complete
 - [ ] Documentation updated
 - [ ] Tests passing
@@ -408,6 +451,7 @@ class DebugAPI {
 - [ ] Team notified
 
 ### Post-Deployment Monitoring
+
 - Watch for performance regression
 - Monitor error patterns
 - Validate agent effectiveness
@@ -421,23 +465,23 @@ The `STATUS_OBSERVABILITY.json` file tracks implementation progress:
 
 ```json
 {
-  "implementation": {
-    "startDate": "2025-10-29",
-    "currentPhase": 0,
-    "completedPhases": [],
-    "blockers": [],
-    "nextAction": "Create directory structure"
-  },
-  "phases": {
-    "0": { "status": "in_progress", "completion": 20 },
-    "1": { "status": "pending", "completion": 0 },
-    // ... etc
-  },
-  "validation": {
-    "testsPass": false,
-    "performanceOK": false,
-    "documentationComplete": false
-  }
+    "implementation": {
+        "startDate": "2025-10-29",
+        "currentPhase": 0,
+        "completedPhases": [],
+        "blockers": [],
+        "nextAction": "Create directory structure"
+    },
+    "phases": {
+        "0": { "status": "in_progress", "completion": 20 },
+        "1": { "status": "pending", "completion": 0 }
+        // ... etc
+    },
+    "validation": {
+        "testsPass": false,
+        "performanceOK": false,
+        "documentationComplete": false
+    }
 }
 ```
 
@@ -447,12 +491,12 @@ The `STATUS_OBSERVABILITY.json` file tracks implementation progress:
 
 ### Identified Risks
 
-| Risk | Likelihood | Impact | Mitigation |
-|------|------------|--------|------------|
-| Performance regression | Medium | High | Continuous profiling |
-| Breaking changes | Low | High | Incremental migration |
-| Documentation drift | Medium | Medium | Single source of truth |
-| Agent integration issues | Low | Medium | Early testing |
+| Risk                     | Likelihood | Impact | Mitigation             |
+| ------------------------ | ---------- | ------ | ---------------------- |
+| Performance regression   | Medium     | High   | Continuous profiling   |
+| Breaking changes         | Low        | High   | Incremental migration  |
+| Documentation drift      | Medium     | Medium | Single source of truth |
+| Agent integration issues | Low        | Medium | Early testing          |
 
 ### Rollback Strategy
 
@@ -473,12 +517,14 @@ git checkout main -- src/observability/
 ## Success Metrics
 
 ### Technical Metrics
+
 - ✅ <0.5ms frame overhead
 - ✅ 100% error capture rate
 - ✅ Zero console.log remaining
 - ✅ All tests passing
 
 ### Business Metrics
+
 - 📈 80% reduction in debugging time
 - 📈 70% of issues auto-diagnosed
 - 📈 90% reduction in duplicate bug reports
@@ -489,17 +535,17 @@ git checkout main -- src/observability/
 ## Next Actions
 
 1. **Immediate** (Phase 0):
-   - Create directory structure
-   - Initialize STATUS_OBSERVABILITY.json
-   - Set up feature branch
+    - Create directory structure
+    - Initialize STATUS_OBSERVABILITY.json
+    - Set up feature branch
 
 2. **Today**:
-   - Complete Phase 0
-   - Begin Phase 1 implementation
+    - Complete Phase 0
+    - Begin Phase 1 implementation
 
 3. **This Week**:
-   - Complete Phases 1-5
-   - Begin documentation consolidation
+    - Complete Phases 1-5
+    - Begin documentation consolidation
 
 ---
 

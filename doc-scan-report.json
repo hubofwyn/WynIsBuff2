@@ -1,1068 +1,993 @@
 {
-  "timestamp": "2025-10-29T02:24:55.414Z",
-  "stats": {
-    "total_files": 129,
-    "total_size": 643062,
-    "total_lines": 19137
-  },
-  "issues": {
-    "outdated": [
-      {
-        "file": "AIPROJECTDOCS_CATEGORIZATION.md",
-        "pattern": "deprecated",
-        "count": 4,
-        "sample": [
-          "deprecated",
-          "deprecated",
-          "deprecated"
-        ]
-      },
-      {
-        "file": "DOCUMENTATION_QUALITY_STANDARDS.md",
-        "pattern": "\\btodo\\b",
-        "count": 4,
-        "sample": [
-          "TODO",
-          "TODO",
-          "TODO"
-        ]
-      },
-      {
-        "file": "DOCUMENTATION_QUALITY_STANDARDS.md",
-        "pattern": "\\bfixme\\b",
-        "count": 2,
-        "sample": [
-          "FIXME",
-          "FIXME"
-        ]
-      },
-      {
-        "file": "DOC_ANALYSIS_SUMMARY.md",
-        "pattern": "old.*architecture",
-        "count": 1,
-        "sample": [
-          "old architecture"
-        ]
-      },
-      {
-        "file": "DOC_ANALYSIS_SUMMARY.md",
-        "pattern": "deprecated",
-        "count": 1,
-        "sample": [
-          "Deprecated"
-        ]
-      },
-      {
-        "file": "DOC_ANALYSIS_SUMMARY.md",
-        "pattern": "\\btodo\\b",
-        "count": 2,
-        "sample": [
-          "TODO",
-          "TODO"
-        ]
-      },
-      {
-        "file": "DOC_ANALYSIS_SUMMARY.md",
-        "pattern": "\\bfixme\\b",
-        "count": 1,
-        "sample": [
-          "FIXME"
-        ]
-      },
-      {
-        "file": "DOC_ANALYSIS_SUMMARY.md",
-        "pattern": "in progress",
-        "count": 1,
-        "sample": [
-          "in progress"
-        ]
-      },
-      {
-        "file": "NEXT_SESSION_PLAN.md",
-        "pattern": "\\btodo\\b",
-        "count": 2,
-        "sample": [
-          "TODO",
-          "TODO"
-        ]
-      },
-      {
-        "file": "NEXT_SESSION_PLAN.md",
-        "pattern": "\\bfixme\\b",
-        "count": 1,
-        "sample": [
-          "FIXME"
-        ]
-      },
-      {
-        "file": "SESSION_1_COMPLETE.md",
-        "pattern": "\\btodo\\b",
-        "count": 1,
-        "sample": [
-          "TODO"
-        ]
-      },
-      {
-        "file": "SESSION_1_COMPLETE.md",
-        "pattern": "\\bfixme\\b",
-        "count": 1,
-        "sample": [
-          "FIXME"
-        ]
-      },
-      {
-        "file": "SESSION_2_NOTES.md",
-        "pattern": "in progress",
-        "count": 1,
-        "sample": [
-          "In Progress"
-        ]
-      },
-      {
-        "file": "SESSION_3_COMPLETE.md",
-        "pattern": "deprecated",
-        "count": 1,
-        "sample": [
-          "deprecated"
-        ]
-      },
-      {
-        "file": "SESSION_3_NOTES.md",
-        "pattern": "in progress",
-        "count": 1,
-        "sample": [
-          "In Progress"
-        ]
-      },
-      {
-        "file": "SESSION_3_PROGRESS.md",
-        "pattern": "deprecated",
-        "count": 1,
-        "sample": [
-          "Deprecated"
-        ]
-      },
-      {
-        "file": "SESSION_3_PROGRESS.md",
-        "pattern": "in progress",
-        "count": 1,
-        "sample": [
-          "In Progress"
-        ]
-      },
-      {
-        "file": "SESSION_4_PROGRESS.md",
-        "pattern": "old.*architecture",
-        "count": 2,
-        "sample": [
-          "OLD→NEW architecture",
-          "old→new architecture"
-        ]
-      },
-      {
-        "file": "STATUS_REPORT.md",
-        "pattern": "in progress",
-        "count": 1,
-        "sample": [
-          "In Progress"
-        ]
-      },
-      {
-        "file": "baseline-creating.md",
-        "pattern": "\\btodo\\b",
-        "count": 1,
-        "sample": [
-          "TODO"
-        ]
-      },
-      {
-        "file": "baseline-creating.md",
-        "pattern": "\\bfixme\\b",
-        "count": 1,
-        "sample": [
-          "FIXME"
-        ]
-      },
-      {
-        "file": "baseline-grading.md",
-        "pattern": "old.*architecture",
-        "count": 1,
-        "sample": [
-          "olders, modules, and public APIs follow baseline architecture"
-        ]
-      },
-      {
-        "file": "docs/INDEX.md",
-        "pattern": "in progress",
-        "count": 1,
-        "sample": [
-          "In Progress"
-        ]
-      },
-      {
-        "file": "docs/archive/aiprojectdocs-historical/ImplementationProgress.md",
-        "pattern": "in progress",
-        "count": 1,
-        "sample": [
-          "in progress"
-        ]
-      },
-      {
-        "file": "docs/archive/aiprojectdocs-historical/LevelManagerWrapperIssue.md",
-        "pattern": "in progress",
-        "count": 2,
-        "sample": [
-          "in progress",
-          "in progress"
-        ]
-      },
-      {
-        "file": "docs/archive/aiprojectdocs-historical/README.md",
-        "pattern": "deprecated",
-        "count": 4,
-        "sample": [
-          "deprecated",
-          "deprecated",
-          "deprecated"
-        ]
-      },
-      {
-        "file": "docs/design/AssetManagementStrategy.md",
-        "pattern": "in progress",
-        "count": 1,
-        "sample": [
-          "in progress"
-        ]
-      }
-    ],
-    "duplicates": [
-      {
-        "title": "Find orphans",
-        "files": [
-          "DOC_ANALYSIS_SUMMARY.md",
-          "NEXT_SESSION_PLAN.md"
-        ]
-      },
-      {
-        "title": "Find TODOs",
-        "files": [
-          "DOC_ANALYSIS_SUMMARY.md",
-          "NEXT_SESSION_PLAN.md"
-        ]
-      },
-      {
-        "title": "Change Log",
-        "files": [
-          "docs/archive/codex-tasks-historical/028-audio-manager-preload.md",
-          "docs/archive/codex-tasks-historical/029-integrate-audio-playback.md",
-          "docs/archive/codex-tasks-historical/030-pause-overlay-flow.md",
-          "docs/archive/codex-tasks-historical/031-settings-ui.md",
-          "docs/archive/codex-tasks-historical/032-persist-settings.md",
-          "docs/archive/codex-tasks-historical/033-accessibility-ui.md",
-          "docs/archive/codex-tasks-historical/034-audio-build-pipeline.md"
-        ]
-      }
-    ],
-    "broken_links": [
-      {
-        "file": "Rapier.md",
-        "link": "mailto:support@phaser.io",
-        "text": "Phaser Studio"
-      },
-      {
-        "file": "AIProjectDocs/README.md",
-        "link": "../CONTRIBUTING.md#-getting-started",
-        "text": "CONTRIBUTING.md"
-      }
-    ],
-    "old_dates": [
-      {
-        "file": "CODEX.md",
-        "dates": [
-          "2024-12-17"
-        ]
-      }
-    ],
-    "empty_or_tiny": [],
-    "too_long": [],
-    "no_headers": [
-      "docs/design/pixelart-style.md"
+    "timestamp": "2025-10-29T02:24:55.414Z",
+    "stats": {
+        "total_files": 129,
+        "total_size": 643062,
+        "total_lines": 19137
+    },
+    "issues": {
+        "outdated": [
+            {
+                "file": "AIPROJECTDOCS_CATEGORIZATION.md",
+                "pattern": "deprecated",
+                "count": 4,
+                "sample": ["deprecated", "deprecated", "deprecated"]
+            },
+            {
+                "file": "DOCUMENTATION_QUALITY_STANDARDS.md",
+                "pattern": "\\btodo\\b",
+                "count": 4,
+                "sample": ["TODO", "TODO", "TODO"]
+            },
+            {
+                "file": "DOCUMENTATION_QUALITY_STANDARDS.md",
+                "pattern": "\\bfixme\\b",
+                "count": 2,
+                "sample": ["FIXME", "FIXME"]
+            },
+            {
+                "file": "DOC_ANALYSIS_SUMMARY.md",
+                "pattern": "old.*architecture",
+                "count": 1,
+                "sample": ["old architecture"]
+            },
+            {
+                "file": "DOC_ANALYSIS_SUMMARY.md",
+                "pattern": "deprecated",
+                "count": 1,
+                "sample": ["Deprecated"]
+            },
+            {
+                "file": "DOC_ANALYSIS_SUMMARY.md",
+                "pattern": "\\btodo\\b",
+                "count": 2,
+                "sample": ["TODO", "TODO"]
+            },
+            {
+                "file": "DOC_ANALYSIS_SUMMARY.md",
+                "pattern": "\\bfixme\\b",
+                "count": 1,
+                "sample": ["FIXME"]
+            },
+            {
+                "file": "DOC_ANALYSIS_SUMMARY.md",
+                "pattern": "in progress",
+                "count": 1,
+                "sample": ["in progress"]
+            },
+            {
+                "file": "NEXT_SESSION_PLAN.md",
+                "pattern": "\\btodo\\b",
+                "count": 2,
+                "sample": ["TODO", "TODO"]
+            },
+            {
+                "file": "NEXT_SESSION_PLAN.md",
+                "pattern": "\\bfixme\\b",
+                "count": 1,
+                "sample": ["FIXME"]
+            },
+            {
+                "file": "SESSION_1_COMPLETE.md",
+                "pattern": "\\btodo\\b",
+                "count": 1,
+                "sample": ["TODO"]
+            },
+            {
+                "file": "SESSION_1_COMPLETE.md",
+                "pattern": "\\bfixme\\b",
+                "count": 1,
+                "sample": ["FIXME"]
+            },
+            {
+                "file": "SESSION_2_NOTES.md",
+                "pattern": "in progress",
+                "count": 1,
+                "sample": ["In Progress"]
+            },
+            {
+                "file": "SESSION_3_COMPLETE.md",
+                "pattern": "deprecated",
+                "count": 1,
+                "sample": ["deprecated"]
+            },
+            {
+                "file": "SESSION_3_NOTES.md",
+                "pattern": "in progress",
+                "count": 1,
+                "sample": ["In Progress"]
+            },
+            {
+                "file": "SESSION_3_PROGRESS.md",
+                "pattern": "deprecated",
+                "count": 1,
+                "sample": ["Deprecated"]
+            },
+            {
+                "file": "SESSION_3_PROGRESS.md",
+                "pattern": "in progress",
+                "count": 1,
+                "sample": ["In Progress"]
+            },
+            {
+                "file": "SESSION_4_PROGRESS.md",
+                "pattern": "old.*architecture",
+                "count": 2,
+                "sample": ["OLD→NEW architecture", "old→new architecture"]
+            },
+            {
+                "file": "STATUS_REPORT.md",
+                "pattern": "in progress",
+                "count": 1,
+                "sample": ["In Progress"]
+            },
+            {
+                "file": "baseline-creating.md",
+                "pattern": "\\btodo\\b",
+                "count": 1,
+                "sample": ["TODO"]
+            },
+            {
+                "file": "baseline-creating.md",
+                "pattern": "\\bfixme\\b",
+                "count": 1,
+                "sample": ["FIXME"]
+            },
+            {
+                "file": "baseline-grading.md",
+                "pattern": "old.*architecture",
+                "count": 1,
+                "sample": ["olders, modules, and public APIs follow baseline architecture"]
+            },
+            {
+                "file": "docs/INDEX.md",
+                "pattern": "in progress",
+                "count": 1,
+                "sample": ["In Progress"]
+            },
+            {
+                "file": "docs/archive/aiprojectdocs-historical/ImplementationProgress.md",
+                "pattern": "in progress",
+                "count": 1,
+                "sample": ["in progress"]
+            },
+            {
+                "file": "docs/archive/aiprojectdocs-historical/LevelManagerWrapperIssue.md",
+                "pattern": "in progress",
+                "count": 2,
+                "sample": ["in progress", "in progress"]
+            },
+            {
+                "file": "docs/archive/aiprojectdocs-historical/README.md",
+                "pattern": "deprecated",
+                "count": 4,
+                "sample": ["deprecated", "deprecated", "deprecated"]
+            },
+            {
+                "file": "docs/design/AssetManagementStrategy.md",
+                "pattern": "in progress",
+                "count": 1,
+                "sample": ["in progress"]
+            }
+        ],
+        "duplicates": [
+            {
+                "title": "Find orphans",
+                "files": ["DOC_ANALYSIS_SUMMARY.md", "NEXT_SESSION_PLAN.md"]
+            },
+            {
+                "title": "Find TODOs",
+                "files": ["DOC_ANALYSIS_SUMMARY.md", "NEXT_SESSION_PLAN.md"]
+            },
+            {
+                "title": "Change Log",
+                "files": [
+                    "docs/archive/codex-tasks-historical/028-audio-manager-preload.md",
+                    "docs/archive/codex-tasks-historical/029-integrate-audio-playback.md",
+                    "docs/archive/codex-tasks-historical/030-pause-overlay-flow.md",
+                    "docs/archive/codex-tasks-historical/031-settings-ui.md",
+                    "docs/archive/codex-tasks-historical/032-persist-settings.md",
+                    "docs/archive/codex-tasks-historical/033-accessibility-ui.md",
+                    "docs/archive/codex-tasks-historical/034-audio-build-pipeline.md"
+                ]
+            }
+        ],
+        "broken_links": [
+            {
+                "file": "Rapier.md",
+                "link": "mailto:support@phaser.io",
+                "text": "Phaser Studio"
+            },
+            {
+                "file": "AIProjectDocs/README.md",
+                "link": "../CONTRIBUTING.md#-getting-started",
+                "text": "CONTRIBUTING.md"
+            }
+        ],
+        "old_dates": [
+            {
+                "file": "CODEX.md",
+                "dates": ["2024-12-17"]
+            }
+        ],
+        "empty_or_tiny": [],
+        "too_long": [],
+        "no_headers": ["docs/design/pixelart-style.md"]
+    },
+    "all_files": [
+        {
+            "path": "AGENTS.md",
+            "size": 4071,
+            "lines": 122,
+            "modified": "2025-10-29T02:16:46.145Z"
+        },
+        {
+            "path": "AIPROJECTDOCS_CATEGORIZATION.md",
+            "size": 8214,
+            "lines": 240,
+            "modified": "2025-10-29T01:51:09.932Z"
+        },
+        {
+            "path": "ASSET_MANAGEMENT.md",
+            "size": 5142,
+            "lines": 185,
+            "modified": "2025-10-29T02:18:05.126Z"
+        },
+        {
+            "path": "CHANGELOG.md",
+            "size": 2136,
+            "lines": 48,
+            "modified": "2025-10-11T03:04:01.530Z"
+        },
+        {
+            "path": "CLAUDE.md",
+            "size": 5742,
+            "lines": 201,
+            "modified": "2025-10-29T02:07:40.617Z"
+        },
+        {
+            "path": "CODEX.md",
+            "size": 3037,
+            "lines": 85,
+            "modified": "2025-10-11T03:04:01.530Z"
+        },
+        {
+            "path": "CONTRIBUTING.md",
+            "size": 10192,
+            "lines": 344,
+            "modified": "2025-10-29T02:13:20.303Z"
+        },
+        {
+            "path": "DOCUMENTATION_QUALITY_STANDARDS.md",
+            "size": 10386,
+            "lines": 412,
+            "modified": "2025-10-29T01:24:03.381Z"
+        },
+        {
+            "path": "DOC_ANALYSIS_SUMMARY.md",
+            "size": 5712,
+            "lines": 191,
+            "modified": "2025-10-29T01:24:12.117Z"
+        },
+        {
+            "path": "EXECUTION_CHECKLIST.md",
+            "size": 14385,
+            "lines": 608,
+            "modified": "2025-10-11T03:04:01.530Z"
+        },
+        {
+            "path": "IMPLEMENTATION_PLAN.md",
+            "size": 11172,
+            "lines": 428,
+            "modified": "2025-10-11T03:04:01.530Z"
+        },
+        {
+            "path": "IMPLEMENTATION_PLAN_V2.md",
+            "size": 18835,
+            "lines": 769,
+            "modified": "2025-10-11T03:04:01.531Z"
+        },
+        {
+            "path": "NEXT_SESSION_PLAN.md",
+            "size": 9021,
+            "lines": 321,
+            "modified": "2025-10-29T01:23:00.835Z"
+        },
+        {
+            "path": "QUICK_TEST.md",
+            "size": 2753,
+            "lines": 84,
+            "modified": "2025-10-11T03:04:01.531Z"
+        },
+        {
+            "path": "README.md",
+            "size": 6154,
+            "lines": 196,
+            "modified": "2025-10-29T02:09:47.981Z"
+        },
+        {
+            "path": "Rapier.md",
+            "size": 14549,
+            "lines": 358,
+            "modified": "2025-10-11T03:04:01.531Z"
+        },
+        {
+            "path": "SESSION_1_COMPLETE.md",
+            "size": 6724,
+            "lines": 265,
+            "modified": "2025-10-29T01:24:47.841Z"
+        },
+        {
+            "path": "SESSION_2_COMPLETE.md",
+            "size": 11204,
+            "lines": 387,
+            "modified": "2025-10-29T01:42:54.777Z"
+        },
+        {
+            "path": "SESSION_2_NOTES.md",
+            "size": 3455,
+            "lines": 130,
+            "modified": "2025-10-29T01:38:44.243Z"
+        },
+        {
+            "path": "SESSION_3_COMPLETE.md",
+            "size": 16681,
+            "lines": 483,
+            "modified": "2025-10-29T02:03:55.937Z"
+        },
+        {
+            "path": "SESSION_3_NOTES.md",
+            "size": 2681,
+            "lines": 99,
+            "modified": "2025-10-29T01:47:20.391Z"
+        },
+        {
+            "path": "SESSION_3_PROGRESS.md",
+            "size": 6816,
+            "lines": 265,
+            "modified": "2025-10-29T01:48:06.341Z"
+        },
+        {
+            "path": "SESSION_4_PROGRESS.md",
+            "size": 12567,
+            "lines": 398,
+            "modified": "2025-10-29T02:20:02.278Z"
+        },
+        {
+            "path": "STATUS_REPORT.md",
+            "size": 8580,
+            "lines": 291,
+            "modified": "2025-10-11T03:04:01.531Z"
+        },
+        {
+            "path": "WYNISBUFF2_ACTION_PLAN.md",
+            "size": 7576,
+            "lines": 254,
+            "modified": "2025-10-11T03:04:01.531Z"
+        },
+        {
+            "path": "baseline-creating.md",
+            "size": 4544,
+            "lines": 122,
+            "modified": "2025-10-11T03:04:01.611Z"
+        },
+        {
+            "path": "baseline-grading.md",
+            "size": 4069,
+            "lines": 109,
+            "modified": "2025-10-11T03:04:01.611Z"
+        },
+        {
+            "path": "codex-setup.md",
+            "size": 2931,
+            "lines": 76,
+            "modified": "2025-10-11T03:04:01.611Z"
+        },
+        {
+            "path": "docs/ARCHITECTURE.md",
+            "size": 13380,
+            "lines": 354,
+            "modified": "2025-10-29T02:15:32.928Z"
+        },
+        {
+            "path": "docs/INDEX.md",
+            "size": 12917,
+            "lines": 335,
+            "modified": "2025-10-29T01:58:29.358Z"
+        },
+        {
+            "path": "docs/PERFORMANCE_OPTIMIZATION.md",
+            "size": 4084,
+            "lines": 137,
+            "modified": "2025-10-11T03:04:01.611Z"
+        },
+        {
+            "path": "docs/SUBTITLE_SYSTEM.md",
+            "size": 4035,
+            "lines": 115,
+            "modified": "2025-10-11T03:04:01.611Z"
+        },
+        {
+            "path": "docs/architecture/ArchitecturalAssessment.md",
+            "size": 17754,
+            "lines": 581,
+            "modified": "2025-10-11T03:04:01.527Z"
+        },
+        {
+            "path": "docs/architecture/ArchitecturalOverview.md",
+            "size": 11536,
+            "lines": 231,
+            "modified": "2025-10-11T03:04:01.527Z"
+        },
+        {
+            "path": "docs/architecture/MVPArchitectureSummary.md",
+            "size": 6682,
+            "lines": 150,
+            "modified": "2025-10-29T01:59:57.352Z"
+        },
+        {
+            "path": "docs/architecture/ModularArchitecture.md",
+            "size": 6887,
+            "lines": 182,
+            "modified": "2025-10-29T02:00:08.393Z"
+        },
+        {
+            "path": "docs/architecture/README.md",
+            "size": 1542,
+            "lines": 39,
+            "modified": "2025-10-29T01:55:09.651Z"
+        },
+        {
+            "path": "docs/archive/README.md",
+            "size": 1691,
+            "lines": 55,
+            "modified": "2025-10-29T01:39:50.157Z"
+        },
+        {
+            "path": "docs/archive/aiprojectdocs-historical/ImplementationProgress.md",
+            "size": 5609,
+            "lines": 112,
+            "modified": "2025-10-29T02:00:24.976Z"
+        },
+        {
+            "path": "docs/archive/aiprojectdocs-historical/LevelManagerWrapperIssue.md",
+            "size": 2231,
+            "lines": 57,
+            "modified": "2025-10-11T03:04:01.528Z"
+        },
+        {
+            "path": "docs/archive/aiprojectdocs-historical/MVPRecommendations.md",
+            "size": 5573,
+            "lines": 114,
+            "modified": "2025-10-11T03:04:01.528Z"
+        },
+        {
+            "path": "docs/archive/aiprojectdocs-historical/README.md",
+            "size": 2232,
+            "lines": 52,
+            "modified": "2025-10-29T01:56:15.364Z"
+        },
+        {
+            "path": "docs/archive/aiprojectdocs-historical/RevisedMVPImplementationPlan.md",
+            "size": 12065,
+            "lines": 334,
+            "modified": "2025-10-11T03:04:01.529Z"
+        },
+        {
+            "path": "docs/archive/codex-tasks-historical/001-baseline-synthesis.md",
+            "size": 305,
+            "lines": 13,
+            "modified": "2025-10-11T03:04:01.524Z"
+        },
+        {
+            "path": "docs/archive/codex-tasks-historical/002-scenes-setup.md",
+            "size": 468,
+            "lines": 16,
+            "modified": "2025-10-11T03:04:01.524Z"
+        },
+        {
+            "path": "docs/archive/codex-tasks-historical/003-character-actions.md",
+            "size": 623,
+            "lines": 16,
+            "modified": "2025-10-11T03:04:01.524Z"
+        },
+        {
+            "path": "docs/archive/codex-tasks-historical/004-layouts-setup.md",
+            "size": 676,
+            "lines": 17,
+            "modified": "2025-10-11T03:04:01.524Z"
+        },
+        {
+            "path": "docs/archive/codex-tasks-historical/005-controls-configuration.md",
+            "size": 670,
+            "lines": 16,
+            "modified": "2025-10-11T03:04:01.524Z"
+        },
+        {
+            "path": "docs/archive/codex-tasks-historical/006-global-physics-config.md",
+            "size": 668,
+            "lines": 15,
+            "modified": "2025-10-11T03:04:01.524Z"
+        },
+        {
+            "path": "docs/archive/codex-tasks-historical/007-jump-physics-tuning.md",
+            "size": 897,
+            "lines": 22,
+            "modified": "2025-10-11T03:04:01.524Z"
+        },
+        {
+            "path": "docs/archive/codex-tasks-historical/008-movement-physics-tuning.md",
+            "size": 895,
+            "lines": 25,
+            "modified": "2025-10-11T03:04:01.524Z"
+        },
+        {
+            "path": "docs/archive/codex-tasks-historical/009-collision-physics-tuning.md",
+            "size": 737,
+            "lines": 20,
+            "modified": "2025-10-11T03:04:01.525Z"
+        },
+        {
+            "path": "docs/archive/codex-tasks-historical/010-level1-theme-config.md",
+            "size": 841,
+            "lines": 16,
+            "modified": "2025-10-11T03:04:01.525Z"
+        },
+        {
+            "path": "docs/archive/codex-tasks-historical/011-level1-parallax-background.md",
+            "size": 939,
+            "lines": 19,
+            "modified": "2025-10-11T03:04:01.525Z"
+        },
+        {
+            "path": "docs/archive/codex-tasks-historical/012-collectibles-theme.md",
+            "size": 733,
+            "lines": 16,
+            "modified": "2025-10-11T03:04:01.525Z"
+        },
+        {
+            "path": "docs/archive/codex-tasks-historical/013-enemy-theme.md",
+            "size": 1234,
+            "lines": 24,
+            "modified": "2025-10-11T03:04:01.525Z"
+        },
+        {
+            "path": "docs/archive/codex-tasks-historical/014-export-character-assets.md",
+            "size": 421,
+            "lines": 13,
+            "modified": "2025-10-11T03:04:01.525Z"
+        },
+        {
+            "path": "docs/archive/codex-tasks-historical/015-character-select-scene.md",
+            "size": 830,
+            "lines": 17,
+            "modified": "2025-10-11T03:04:01.525Z"
+        },
+        {
+            "path": "docs/archive/codex-tasks-historical/016-integrate-character-select.md",
+            "size": 514,
+            "lines": 13,
+            "modified": "2025-10-11T03:04:01.525Z"
+        },
+        {
+            "path": "docs/archive/codex-tasks-historical/017-game-state-selection.md",
+            "size": 490,
+            "lines": 12,
+            "modified": "2025-10-11T03:04:01.525Z"
+        },
+        {
+            "path": "docs/archive/codex-tasks-historical/018-playercontroller-selection.md",
+            "size": 536,
+            "lines": 12,
+            "modified": "2025-10-11T03:04:01.525Z"
+        },
+        {
+            "path": "docs/archive/codex-tasks-historical/019-welcome-screen.md",
+            "size": 829,
+            "lines": 18,
+            "modified": "2025-10-11T03:04:01.525Z"
+        },
+        {
+            "path": "docs/archive/codex-tasks-historical/020-integrate-welcome-screen.md",
+            "size": 643,
+            "lines": 15,
+            "modified": "2025-10-11T03:04:01.525Z"
+        },
+        {
+            "path": "docs/archive/codex-tasks-historical/021-ui-mainmenu-polish.md",
+            "size": 523,
+            "lines": 12,
+            "modified": "2025-10-11T03:04:01.525Z"
+        },
+        {
+            "path": "docs/archive/codex-tasks-historical/022-level-count-adjust.md",
+            "size": 724,
+            "lines": 16,
+            "modified": "2025-10-11T03:04:01.525Z"
+        },
+        {
+            "path": "docs/archive/codex-tasks-historical/023-update-title-logo.md",
+            "size": 816,
+            "lines": 17,
+            "modified": "2025-10-11T03:04:01.525Z"
+        },
+        {
+            "path": "docs/archive/codex-tasks-historical/024-common-theme-styles.md",
+            "size": 1092,
+            "lines": 19,
+            "modified": "2025-10-11T03:04:01.526Z"
+        },
+        {
+            "path": "docs/archive/codex-tasks-historical/025-export-additional-character-assets.md",
+            "size": 663,
+            "lines": 23,
+            "modified": "2025-10-11T03:04:01.526Z"
+        },
+        {
+            "path": "docs/archive/codex-tasks-historical/026-preload-new-characters.md",
+            "size": 496,
+            "lines": 17,
+            "modified": "2025-10-11T03:04:01.526Z"
+        },
+        {
+            "path": "docs/archive/codex-tasks-historical/027-update-character-select-options.md",
+            "size": 712,
+            "lines": 16,
+            "modified": "2025-10-11T03:04:01.526Z"
+        },
+        {
+            "path": "docs/archive/codex-tasks-historical/028-audio-manager-preload.md",
+            "size": 1596,
+            "lines": 25,
+            "modified": "2025-10-11T03:04:01.526Z"
+        },
+        {
+            "path": "docs/archive/codex-tasks-historical/029-integrate-audio-playback.md",
+            "size": 1313,
+            "lines": 22,
+            "modified": "2025-10-11T03:04:01.526Z"
+        },
+        {
+            "path": "docs/archive/codex-tasks-historical/030-pause-overlay-flow.md",
+            "size": 813,
+            "lines": 19,
+            "modified": "2025-10-11T03:04:01.526Z"
+        },
+        {
+            "path": "docs/archive/codex-tasks-historical/031-1-settings-scene-skeleton.md",
+            "size": 454,
+            "lines": 15,
+            "modified": "2025-10-11T03:04:01.526Z"
+        },
+        {
+            "path": "docs/archive/codex-tasks-historical/031-10-back-navigation.md",
+            "size": 395,
+            "lines": 15,
+            "modified": "2025-10-11T03:04:01.526Z"
+        },
+        {
+            "path": "docs/archive/codex-tasks-historical/031-11-testing-and-qa.md",
+            "size": 612,
+            "lines": 19,
+            "modified": "2025-10-11T03:04:01.526Z"
+        },
+        {
+            "path": "docs/archive/codex-tasks-historical/031-2-pause-scene-integration.md",
+            "size": 549,
+            "lines": 16,
+            "modified": "2025-10-11T03:04:01.526Z"
+        },
+        {
+            "path": "docs/archive/codex-tasks-historical/031-3-settings-panel-layout.md",
+            "size": 544,
+            "lines": 17,
+            "modified": "2025-10-11T03:04:01.526Z"
+        },
+        {
+            "path": "docs/archive/codex-tasks-historical/031-4-volume-controls.md",
+            "size": 613,
+            "lines": 17,
+            "modified": "2025-10-11T03:04:01.526Z"
+        },
+        {
+            "path": "docs/archive/codex-tasks-historical/031-5-keybinding-remapping.md",
+            "size": 592,
+            "lines": 18,
+            "modified": "2025-10-11T03:04:01.526Z"
+        },
+        {
+            "path": "docs/archive/codex-tasks-historical/031-6-graphics-quality-dropdown.md",
+            "size": 520,
+            "lines": 16,
+            "modified": "2025-10-11T03:04:01.526Z"
+        },
+        {
+            "path": "docs/archive/codex-tasks-historical/031-7-accessibility-toggles.md",
+            "size": 659,
+            "lines": 19,
+            "modified": "2025-10-11T03:04:01.526Z"
+        },
+        {
+            "path": "docs/archive/codex-tasks-historical/031-8-input-navigation-support.md",
+            "size": 683,
+            "lines": 22,
+            "modified": "2025-10-11T03:04:01.526Z"
+        },
+        {
+            "path": "docs/archive/codex-tasks-historical/031-9-settings-persistence-load.md",
+            "size": 696,
+            "lines": 18,
+            "modified": "2025-10-11T03:04:01.527Z"
+        },
+        {
+            "path": "docs/archive/codex-tasks-historical/031-settings-ui.md",
+            "size": 1526,
+            "lines": 33,
+            "modified": "2025-10-11T03:04:01.527Z"
+        },
+        {
+            "path": "docs/archive/codex-tasks-historical/032-persist-settings.md",
+            "size": 616,
+            "lines": 15,
+            "modified": "2025-10-11T03:04:01.527Z"
+        },
+        {
+            "path": "docs/archive/codex-tasks-historical/033-accessibility-ui.md",
+            "size": 844,
+            "lines": 17,
+            "modified": "2025-10-11T03:04:01.527Z"
+        },
+        {
+            "path": "docs/archive/codex-tasks-historical/034-audio-build-pipeline.md",
+            "size": 644,
+            "lines": 15,
+            "modified": "2025-10-11T03:04:01.527Z"
+        },
+        {
+            "path": "docs/assets.md",
+            "size": 6473,
+            "lines": 158,
+            "modified": "2025-10-11T03:04:01.612Z"
+        },
+        {
+            "path": "docs/birthday-minigame.md",
+            "size": 3672,
+            "lines": 107,
+            "modified": "2025-10-11T03:04:01.612Z"
+        },
+        {
+            "path": "docs/buffed_level_system_workflow.md",
+            "size": 4163,
+            "lines": 83,
+            "modified": "2025-10-11T03:04:01.612Z"
+        },
+        {
+            "path": "docs/design/ArtStyleAndAssetPlan.md",
+            "size": 13827,
+            "lines": 391,
+            "modified": "2025-10-11T03:04:01.527Z"
+        },
+        {
+            "path": "docs/design/AssetManagementStrategy.md",
+            "size": 17753,
+            "lines": 564,
+            "modified": "2025-10-11T03:04:01.527Z"
+        },
+        {
+            "path": "docs/design/GameDesignPrinciples.md",
+            "size": 8605,
+            "lines": 185,
+            "modified": "2025-10-11T03:04:01.528Z"
+        },
+        {
+            "path": "docs/design/MVPLevelDesignGuide.md",
+            "size": 8930,
+            "lines": 318,
+            "modified": "2025-10-11T03:04:01.528Z"
+        },
+        {
+            "path": "docs/design/README.md",
+            "size": 2130,
+            "lines": 64,
+            "modified": "2025-10-29T01:55:59.536Z"
+        },
+        {
+            "path": "docs/design/SillyMechanicsIdeas.md",
+            "size": 8959,
+            "lines": 206,
+            "modified": "2025-10-11T03:04:01.529Z"
+        },
+        {
+            "path": "docs/design/pixelart-style.md",
+            "size": 9247,
+            "lines": 110,
+            "modified": "2025-10-11T03:04:01.530Z"
+        },
+        {
+            "path": "docs/features/LevelImplementationArchitecture.md",
+            "size": 7498,
+            "lines": 253,
+            "modified": "2025-10-29T02:01:00.860Z"
+        },
+        {
+            "path": "docs/features/LevelImplementationSummary.md",
+            "size": 4106,
+            "lines": 90,
+            "modified": "2025-10-29T02:01:14.657Z"
+        },
+        {
+            "path": "docs/features/LevelImplementationTasks.md",
+            "size": 7272,
+            "lines": 200,
+            "modified": "2025-10-29T02:00:46.943Z"
+        },
+        {
+            "path": "docs/features/README.md",
+            "size": 2149,
+            "lines": 54,
+            "modified": "2025-10-29T01:55:45.392Z"
+        },
+        {
+            "path": "docs/features/TripleJumpRefinementImplementation.md",
+            "size": 10593,
+            "lines": 306,
+            "modified": "2025-10-11T03:04:01.530Z"
+        },
+        {
+            "path": "docs/features/TripleJumpRefinementPlan.md",
+            "size": 7652,
+            "lines": 225,
+            "modified": "2025-10-11T03:04:01.530Z"
+        },
+        {
+            "path": "docs/game-settings.md",
+            "size": 5246,
+            "lines": 136,
+            "modified": "2025-10-11T03:04:01.612Z"
+        },
+        {
+            "path": "docs/level-progression-plan.md",
+            "size": 13617,
+            "lines": 379,
+            "modified": "2025-10-11T03:04:01.612Z"
+        },
+        {
+            "path": "docs/next-implementations.md",
+            "size": 9018,
+            "lines": 123,
+            "modified": "2025-10-11T03:04:01.612Z"
+        },
+        {
+            "path": "docs/report-05122025.md",
+            "size": 6425,
+            "lines": 143,
+            "modified": "2025-10-11T03:04:01.612Z"
+        },
+        {
+            "path": "docs/systems/EventSystem.md",
+            "size": 17207,
+            "lines": 570,
+            "modified": "2025-10-11T03:04:01.528Z"
+        },
+        {
+            "path": "docs/systems/EventSystemImplementationSteps.md",
+            "size": 8728,
+            "lines": 316,
+            "modified": "2025-10-29T02:01:45.937Z"
+        },
+        {
+            "path": "docs/systems/ModularLevelArchitecture.md",
+            "size": 6412,
+            "lines": 219,
+            "modified": "2025-10-11T03:04:01.529Z"
+        },
+        {
+            "path": "docs/systems/ModularLevelSystemImplementation.md",
+            "size": 6508,
+            "lines": 241,
+            "modified": "2025-10-11T03:04:01.529Z"
+        },
+        {
+            "path": "docs/systems/ModularPlayerController.md",
+            "size": 11194,
+            "lines": 349,
+            "modified": "2025-10-11T03:04:01.529Z"
+        },
+        {
+            "path": "docs/systems/MovementSystem.md",
+            "size": 10459,
+            "lines": 270,
+            "modified": "2025-10-11T03:04:01.529Z"
+        },
+        {
+            "path": "docs/systems/README.md",
+            "size": 2103,
+            "lines": 50,
+            "modified": "2025-10-29T01:55:32.255Z"
+        },
+        {
+            "path": "docs/systems/UIManager.md",
+            "size": 4544,
+            "lines": 132,
+            "modified": "2025-10-11T03:04:01.530Z"
+        },
+        {
+            "path": "docs/technology/PhaserFramework.md",
+            "size": 8031,
+            "lines": 293,
+            "modified": "2025-10-11T03:04:01.529Z"
+        },
+        {
+            "path": "docs/technology/README.md",
+            "size": 1571,
+            "lines": 51,
+            "modified": "2025-10-29T01:55:20.291Z"
+        },
+        {
+            "path": "docs/technology/RapierPhysics.md",
+            "size": 7589,
+            "lines": 231,
+            "modified": "2025-10-11T03:04:01.529Z"
+        },
+        {
+            "path": "docs/technology/TechnologiesAndPackages.md",
+            "size": 8007,
+            "lines": 208,
+            "modified": "2025-10-11T03:04:01.529Z"
+        },
+        {
+            "path": "docs/technology/ViteBuildTool.md",
+            "size": 6584,
+            "lines": 263,
+            "modified": "2025-10-11T03:04:01.530Z"
+        },
+        {
+            "path": "AIProjectDocs/README.md",
+            "size": 4557,
+            "lines": 100,
+            "modified": "2025-10-29T01:58:52.961Z"
+        },
+        {
+            "path": ".claude/CLAUDE.md",
+            "size": 6075,
+            "lines": 168,
+            "modified": "2025-10-11T03:04:01.522Z"
+        },
+        {
+            "path": ".claude/agents/architecture-guardian.md",
+            "size": 2828,
+            "lines": 76,
+            "modified": "2025-10-11T03:04:01.522Z"
+        },
+        {
+            "path": ".claude/agents/game-design-innovator.md",
+            "size": 5823,
+            "lines": 158,
+            "modified": "2025-10-11T03:04:01.522Z"
+        },
+        {
+            "path": ".claude/agents/game-physics-expert.md",
+            "size": 2471,
+            "lines": 81,
+            "modified": "2025-10-11T03:04:01.523Z"
+        },
+        {
+            "path": ".claude/commands/debug-physics-issue.md",
+            "size": 1610,
+            "lines": 52,
+            "modified": "2025-10-11T03:04:01.523Z"
+        },
+        {
+            "path": ".claude/commands/implement-game-feature.md",
+            "size": 1497,
+            "lines": 46,
+            "modified": "2025-10-11T03:04:01.523Z"
+        },
+        {
+            "path": ".claude/commands/manage-assets.md",
+            "size": 1738,
+            "lines": 56,
+            "modified": "2025-10-11T03:04:01.523Z"
+        }
     ]
-  },
-  "all_files": [
-    {
-      "path": "AGENTS.md",
-      "size": 4071,
-      "lines": 122,
-      "modified": "2025-10-29T02:16:46.145Z"
-    },
-    {
-      "path": "AIPROJECTDOCS_CATEGORIZATION.md",
-      "size": 8214,
-      "lines": 240,
-      "modified": "2025-10-29T01:51:09.932Z"
-    },
-    {
-      "path": "ASSET_MANAGEMENT.md",
-      "size": 5142,
-      "lines": 185,
-      "modified": "2025-10-29T02:18:05.126Z"
-    },
-    {
-      "path": "CHANGELOG.md",
-      "size": 2136,
-      "lines": 48,
-      "modified": "2025-10-11T03:04:01.530Z"
-    },
-    {
-      "path": "CLAUDE.md",
-      "size": 5742,
-      "lines": 201,
-      "modified": "2025-10-29T02:07:40.617Z"
-    },
-    {
-      "path": "CODEX.md",
-      "size": 3037,
-      "lines": 85,
-      "modified": "2025-10-11T03:04:01.530Z"
-    },
-    {
-      "path": "CONTRIBUTING.md",
-      "size": 10192,
-      "lines": 344,
-      "modified": "2025-10-29T02:13:20.303Z"
-    },
-    {
-      "path": "DOCUMENTATION_QUALITY_STANDARDS.md",
-      "size": 10386,
-      "lines": 412,
-      "modified": "2025-10-29T01:24:03.381Z"
-    },
-    {
-      "path": "DOC_ANALYSIS_SUMMARY.md",
-      "size": 5712,
-      "lines": 191,
-      "modified": "2025-10-29T01:24:12.117Z"
-    },
-    {
-      "path": "EXECUTION_CHECKLIST.md",
-      "size": 14385,
-      "lines": 608,
-      "modified": "2025-10-11T03:04:01.530Z"
-    },
-    {
-      "path": "IMPLEMENTATION_PLAN.md",
-      "size": 11172,
-      "lines": 428,
-      "modified": "2025-10-11T03:04:01.530Z"
-    },
-    {
-      "path": "IMPLEMENTATION_PLAN_V2.md",
-      "size": 18835,
-      "lines": 769,
-      "modified": "2025-10-11T03:04:01.531Z"
-    },
-    {
-      "path": "NEXT_SESSION_PLAN.md",
-      "size": 9021,
-      "lines": 321,
-      "modified": "2025-10-29T01:23:00.835Z"
-    },
-    {
-      "path": "QUICK_TEST.md",
-      "size": 2753,
-      "lines": 84,
-      "modified": "2025-10-11T03:04:01.531Z"
-    },
-    {
-      "path": "README.md",
-      "size": 6154,
-      "lines": 196,
-      "modified": "2025-10-29T02:09:47.981Z"
-    },
-    {
-      "path": "Rapier.md",
-      "size": 14549,
-      "lines": 358,
-      "modified": "2025-10-11T03:04:01.531Z"
-    },
-    {
-      "path": "SESSION_1_COMPLETE.md",
-      "size": 6724,
-      "lines": 265,
-      "modified": "2025-10-29T01:24:47.841Z"
-    },
-    {
-      "path": "SESSION_2_COMPLETE.md",
-      "size": 11204,
-      "lines": 387,
-      "modified": "2025-10-29T01:42:54.777Z"
-    },
-    {
-      "path": "SESSION_2_NOTES.md",
-      "size": 3455,
-      "lines": 130,
-      "modified": "2025-10-29T01:38:44.243Z"
-    },
-    {
-      "path": "SESSION_3_COMPLETE.md",
-      "size": 16681,
-      "lines": 483,
-      "modified": "2025-10-29T02:03:55.937Z"
-    },
-    {
-      "path": "SESSION_3_NOTES.md",
-      "size": 2681,
-      "lines": 99,
-      "modified": "2025-10-29T01:47:20.391Z"
-    },
-    {
-      "path": "SESSION_3_PROGRESS.md",
-      "size": 6816,
-      "lines": 265,
-      "modified": "2025-10-29T01:48:06.341Z"
-    },
-    {
-      "path": "SESSION_4_PROGRESS.md",
-      "size": 12567,
-      "lines": 398,
-      "modified": "2025-10-29T02:20:02.278Z"
-    },
-    {
-      "path": "STATUS_REPORT.md",
-      "size": 8580,
-      "lines": 291,
-      "modified": "2025-10-11T03:04:01.531Z"
-    },
-    {
-      "path": "WYNISBUFF2_ACTION_PLAN.md",
-      "size": 7576,
-      "lines": 254,
-      "modified": "2025-10-11T03:04:01.531Z"
-    },
-    {
-      "path": "baseline-creating.md",
-      "size": 4544,
-      "lines": 122,
-      "modified": "2025-10-11T03:04:01.611Z"
-    },
-    {
-      "path": "baseline-grading.md",
-      "size": 4069,
-      "lines": 109,
-      "modified": "2025-10-11T03:04:01.611Z"
-    },
-    {
-      "path": "codex-setup.md",
-      "size": 2931,
-      "lines": 76,
-      "modified": "2025-10-11T03:04:01.611Z"
-    },
-    {
-      "path": "docs/ARCHITECTURE.md",
-      "size": 13380,
-      "lines": 354,
-      "modified": "2025-10-29T02:15:32.928Z"
-    },
-    {
-      "path": "docs/INDEX.md",
-      "size": 12917,
-      "lines": 335,
-      "modified": "2025-10-29T01:58:29.358Z"
-    },
-    {
-      "path": "docs/PERFORMANCE_OPTIMIZATION.md",
-      "size": 4084,
-      "lines": 137,
-      "modified": "2025-10-11T03:04:01.611Z"
-    },
-    {
-      "path": "docs/SUBTITLE_SYSTEM.md",
-      "size": 4035,
-      "lines": 115,
-      "modified": "2025-10-11T03:04:01.611Z"
-    },
-    {
-      "path": "docs/architecture/ArchitecturalAssessment.md",
-      "size": 17754,
-      "lines": 581,
-      "modified": "2025-10-11T03:04:01.527Z"
-    },
-    {
-      "path": "docs/architecture/ArchitecturalOverview.md",
-      "size": 11536,
-      "lines": 231,
-      "modified": "2025-10-11T03:04:01.527Z"
-    },
-    {
-      "path": "docs/architecture/MVPArchitectureSummary.md",
-      "size": 6682,
-      "lines": 150,
-      "modified": "2025-10-29T01:59:57.352Z"
-    },
-    {
-      "path": "docs/architecture/ModularArchitecture.md",
-      "size": 6887,
-      "lines": 182,
-      "modified": "2025-10-29T02:00:08.393Z"
-    },
-    {
-      "path": "docs/architecture/README.md",
-      "size": 1542,
-      "lines": 39,
-      "modified": "2025-10-29T01:55:09.651Z"
-    },
-    {
-      "path": "docs/archive/README.md",
-      "size": 1691,
-      "lines": 55,
-      "modified": "2025-10-29T01:39:50.157Z"
-    },
-    {
-      "path": "docs/archive/aiprojectdocs-historical/ImplementationProgress.md",
-      "size": 5609,
-      "lines": 112,
-      "modified": "2025-10-29T02:00:24.976Z"
-    },
-    {
-      "path": "docs/archive/aiprojectdocs-historical/LevelManagerWrapperIssue.md",
-      "size": 2231,
-      "lines": 57,
-      "modified": "2025-10-11T03:04:01.528Z"
-    },
-    {
-      "path": "docs/archive/aiprojectdocs-historical/MVPRecommendations.md",
-      "size": 5573,
-      "lines": 114,
-      "modified": "2025-10-11T03:04:01.528Z"
-    },
-    {
-      "path": "docs/archive/aiprojectdocs-historical/README.md",
-      "size": 2232,
-      "lines": 52,
-      "modified": "2025-10-29T01:56:15.364Z"
-    },
-    {
-      "path": "docs/archive/aiprojectdocs-historical/RevisedMVPImplementationPlan.md",
-      "size": 12065,
-      "lines": 334,
-      "modified": "2025-10-11T03:04:01.529Z"
-    },
-    {
-      "path": "docs/archive/codex-tasks-historical/001-baseline-synthesis.md",
-      "size": 305,
-      "lines": 13,
-      "modified": "2025-10-11T03:04:01.524Z"
-    },
-    {
-      "path": "docs/archive/codex-tasks-historical/002-scenes-setup.md",
-      "size": 468,
-      "lines": 16,
-      "modified": "2025-10-11T03:04:01.524Z"
-    },
-    {
-      "path": "docs/archive/codex-tasks-historical/003-character-actions.md",
-      "size": 623,
-      "lines": 16,
-      "modified": "2025-10-11T03:04:01.524Z"
-    },
-    {
-      "path": "docs/archive/codex-tasks-historical/004-layouts-setup.md",
-      "size": 676,
-      "lines": 17,
-      "modified": "2025-10-11T03:04:01.524Z"
-    },
-    {
-      "path": "docs/archive/codex-tasks-historical/005-controls-configuration.md",
-      "size": 670,
-      "lines": 16,
-      "modified": "2025-10-11T03:04:01.524Z"
-    },
-    {
-      "path": "docs/archive/codex-tasks-historical/006-global-physics-config.md",
-      "size": 668,
-      "lines": 15,
-      "modified": "2025-10-11T03:04:01.524Z"
-    },
-    {
-      "path": "docs/archive/codex-tasks-historical/007-jump-physics-tuning.md",
-      "size": 897,
-      "lines": 22,
-      "modified": "2025-10-11T03:04:01.524Z"
-    },
-    {
-      "path": "docs/archive/codex-tasks-historical/008-movement-physics-tuning.md",
-      "size": 895,
-      "lines": 25,
-      "modified": "2025-10-11T03:04:01.524Z"
-    },
-    {
-      "path": "docs/archive/codex-tasks-historical/009-collision-physics-tuning.md",
-      "size": 737,
-      "lines": 20,
-      "modified": "2025-10-11T03:04:01.525Z"
-    },
-    {
-      "path": "docs/archive/codex-tasks-historical/010-level1-theme-config.md",
-      "size": 841,
-      "lines": 16,
-      "modified": "2025-10-11T03:04:01.525Z"
-    },
-    {
-      "path": "docs/archive/codex-tasks-historical/011-level1-parallax-background.md",
-      "size": 939,
-      "lines": 19,
-      "modified": "2025-10-11T03:04:01.525Z"
-    },
-    {
-      "path": "docs/archive/codex-tasks-historical/012-collectibles-theme.md",
-      "size": 733,
-      "lines": 16,
-      "modified": "2025-10-11T03:04:01.525Z"
-    },
-    {
-      "path": "docs/archive/codex-tasks-historical/013-enemy-theme.md",
-      "size": 1234,
-      "lines": 24,
-      "modified": "2025-10-11T03:04:01.525Z"
-    },
-    {
-      "path": "docs/archive/codex-tasks-historical/014-export-character-assets.md",
-      "size": 421,
-      "lines": 13,
-      "modified": "2025-10-11T03:04:01.525Z"
-    },
-    {
-      "path": "docs/archive/codex-tasks-historical/015-character-select-scene.md",
-      "size": 830,
-      "lines": 17,
-      "modified": "2025-10-11T03:04:01.525Z"
-    },
-    {
-      "path": "docs/archive/codex-tasks-historical/016-integrate-character-select.md",
-      "size": 514,
-      "lines": 13,
-      "modified": "2025-10-11T03:04:01.525Z"
-    },
-    {
-      "path": "docs/archive/codex-tasks-historical/017-game-state-selection.md",
-      "size": 490,
-      "lines": 12,
-      "modified": "2025-10-11T03:04:01.525Z"
-    },
-    {
-      "path": "docs/archive/codex-tasks-historical/018-playercontroller-selection.md",
-      "size": 536,
-      "lines": 12,
-      "modified": "2025-10-11T03:04:01.525Z"
-    },
-    {
-      "path": "docs/archive/codex-tasks-historical/019-welcome-screen.md",
-      "size": 829,
-      "lines": 18,
-      "modified": "2025-10-11T03:04:01.525Z"
-    },
-    {
-      "path": "docs/archive/codex-tasks-historical/020-integrate-welcome-screen.md",
-      "size": 643,
-      "lines": 15,
-      "modified": "2025-10-11T03:04:01.525Z"
-    },
-    {
-      "path": "docs/archive/codex-tasks-historical/021-ui-mainmenu-polish.md",
-      "size": 523,
-      "lines": 12,
-      "modified": "2025-10-11T03:04:01.525Z"
-    },
-    {
-      "path": "docs/archive/codex-tasks-historical/022-level-count-adjust.md",
-      "size": 724,
-      "lines": 16,
-      "modified": "2025-10-11T03:04:01.525Z"
-    },
-    {
-      "path": "docs/archive/codex-tasks-historical/023-update-title-logo.md",
-      "size": 816,
-      "lines": 17,
-      "modified": "2025-10-11T03:04:01.525Z"
-    },
-    {
-      "path": "docs/archive/codex-tasks-historical/024-common-theme-styles.md",
-      "size": 1092,
-      "lines": 19,
-      "modified": "2025-10-11T03:04:01.526Z"
-    },
-    {
-      "path": "docs/archive/codex-tasks-historical/025-export-additional-character-assets.md",
-      "size": 663,
-      "lines": 23,
-      "modified": "2025-10-11T03:04:01.526Z"
-    },
-    {
-      "path": "docs/archive/codex-tasks-historical/026-preload-new-characters.md",
-      "size": 496,
-      "lines": 17,
-      "modified": "2025-10-11T03:04:01.526Z"
-    },
-    {
-      "path": "docs/archive/codex-tasks-historical/027-update-character-select-options.md",
-      "size": 712,
-      "lines": 16,
-      "modified": "2025-10-11T03:04:01.526Z"
-    },
-    {
-      "path": "docs/archive/codex-tasks-historical/028-audio-manager-preload.md",
-      "size": 1596,
-      "lines": 25,
-      "modified": "2025-10-11T03:04:01.526Z"
-    },
-    {
-      "path": "docs/archive/codex-tasks-historical/029-integrate-audio-playback.md",
-      "size": 1313,
-      "lines": 22,
-      "modified": "2025-10-11T03:04:01.526Z"
-    },
-    {
-      "path": "docs/archive/codex-tasks-historical/030-pause-overlay-flow.md",
-      "size": 813,
-      "lines": 19,
-      "modified": "2025-10-11T03:04:01.526Z"
-    },
-    {
-      "path": "docs/archive/codex-tasks-historical/031-1-settings-scene-skeleton.md",
-      "size": 454,
-      "lines": 15,
-      "modified": "2025-10-11T03:04:01.526Z"
-    },
-    {
-      "path": "docs/archive/codex-tasks-historical/031-10-back-navigation.md",
-      "size": 395,
-      "lines": 15,
-      "modified": "2025-10-11T03:04:01.526Z"
-    },
-    {
-      "path": "docs/archive/codex-tasks-historical/031-11-testing-and-qa.md",
-      "size": 612,
-      "lines": 19,
-      "modified": "2025-10-11T03:04:01.526Z"
-    },
-    {
-      "path": "docs/archive/codex-tasks-historical/031-2-pause-scene-integration.md",
-      "size": 549,
-      "lines": 16,
-      "modified": "2025-10-11T03:04:01.526Z"
-    },
-    {
-      "path": "docs/archive/codex-tasks-historical/031-3-settings-panel-layout.md",
-      "size": 544,
-      "lines": 17,
-      "modified": "2025-10-11T03:04:01.526Z"
-    },
-    {
-      "path": "docs/archive/codex-tasks-historical/031-4-volume-controls.md",
-      "size": 613,
-      "lines": 17,
-      "modified": "2025-10-11T03:04:01.526Z"
-    },
-    {
-      "path": "docs/archive/codex-tasks-historical/031-5-keybinding-remapping.md",
-      "size": 592,
-      "lines": 18,
-      "modified": "2025-10-11T03:04:01.526Z"
-    },
-    {
-      "path": "docs/archive/codex-tasks-historical/031-6-graphics-quality-dropdown.md",
-      "size": 520,
-      "lines": 16,
-      "modified": "2025-10-11T03:04:01.526Z"
-    },
-    {
-      "path": "docs/archive/codex-tasks-historical/031-7-accessibility-toggles.md",
-      "size": 659,
-      "lines": 19,
-      "modified": "2025-10-11T03:04:01.526Z"
-    },
-    {
-      "path": "docs/archive/codex-tasks-historical/031-8-input-navigation-support.md",
-      "size": 683,
-      "lines": 22,
-      "modified": "2025-10-11T03:04:01.526Z"
-    },
-    {
-      "path": "docs/archive/codex-tasks-historical/031-9-settings-persistence-load.md",
-      "size": 696,
-      "lines": 18,
-      "modified": "2025-10-11T03:04:01.527Z"
-    },
-    {
-      "path": "docs/archive/codex-tasks-historical/031-settings-ui.md",
-      "size": 1526,
-      "lines": 33,
-      "modified": "2025-10-11T03:04:01.527Z"
-    },
-    {
-      "path": "docs/archive/codex-tasks-historical/032-persist-settings.md",
-      "size": 616,
-      "lines": 15,
-      "modified": "2025-10-11T03:04:01.527Z"
-    },
-    {
-      "path": "docs/archive/codex-tasks-historical/033-accessibility-ui.md",
-      "size": 844,
-      "lines": 17,
-      "modified": "2025-10-11T03:04:01.527Z"
-    },
-    {
-      "path": "docs/archive/codex-tasks-historical/034-audio-build-pipeline.md",
-      "size": 644,
-      "lines": 15,
-      "modified": "2025-10-11T03:04:01.527Z"
-    },
-    {
-      "path": "docs/assets.md",
-      "size": 6473,
-      "lines": 158,
-      "modified": "2025-10-11T03:04:01.612Z"
-    },
-    {
-      "path": "docs/birthday-minigame.md",
-      "size": 3672,
-      "lines": 107,
-      "modified": "2025-10-11T03:04:01.612Z"
-    },
-    {
-      "path": "docs/buffed_level_system_workflow.md",
-      "size": 4163,
-      "lines": 83,
-      "modified": "2025-10-11T03:04:01.612Z"
-    },
-    {
-      "path": "docs/design/ArtStyleAndAssetPlan.md",
-      "size": 13827,
-      "lines": 391,
-      "modified": "2025-10-11T03:04:01.527Z"
-    },
-    {
-      "path": "docs/design/AssetManagementStrategy.md",
-      "size": 17753,
-      "lines": 564,
-      "modified": "2025-10-11T03:04:01.527Z"
-    },
-    {
-      "path": "docs/design/GameDesignPrinciples.md",
-      "size": 8605,
-      "lines": 185,
-      "modified": "2025-10-11T03:04:01.528Z"
-    },
-    {
-      "path": "docs/design/MVPLevelDesignGuide.md",
-      "size": 8930,
-      "lines": 318,
-      "modified": "2025-10-11T03:04:01.528Z"
-    },
-    {
-      "path": "docs/design/README.md",
-      "size": 2130,
-      "lines": 64,
-      "modified": "2025-10-29T01:55:59.536Z"
-    },
-    {
-      "path": "docs/design/SillyMechanicsIdeas.md",
-      "size": 8959,
-      "lines": 206,
-      "modified": "2025-10-11T03:04:01.529Z"
-    },
-    {
-      "path": "docs/design/pixelart-style.md",
-      "size": 9247,
-      "lines": 110,
-      "modified": "2025-10-11T03:04:01.530Z"
-    },
-    {
-      "path": "docs/features/LevelImplementationArchitecture.md",
-      "size": 7498,
-      "lines": 253,
-      "modified": "2025-10-29T02:01:00.860Z"
-    },
-    {
-      "path": "docs/features/LevelImplementationSummary.md",
-      "size": 4106,
-      "lines": 90,
-      "modified": "2025-10-29T02:01:14.657Z"
-    },
-    {
-      "path": "docs/features/LevelImplementationTasks.md",
-      "size": 7272,
-      "lines": 200,
-      "modified": "2025-10-29T02:00:46.943Z"
-    },
-    {
-      "path": "docs/features/README.md",
-      "size": 2149,
-      "lines": 54,
-      "modified": "2025-10-29T01:55:45.392Z"
-    },
-    {
-      "path": "docs/features/TripleJumpRefinementImplementation.md",
-      "size": 10593,
-      "lines": 306,
-      "modified": "2025-10-11T03:04:01.530Z"
-    },
-    {
-      "path": "docs/features/TripleJumpRefinementPlan.md",
-      "size": 7652,
-      "lines": 225,
-      "modified": "2025-10-11T03:04:01.530Z"
-    },
-    {
-      "path": "docs/game-settings.md",
-      "size": 5246,
-      "lines": 136,
-      "modified": "2025-10-11T03:04:01.612Z"
-    },
-    {
-      "path": "docs/level-progression-plan.md",
-      "size": 13617,
-      "lines": 379,
-      "modified": "2025-10-11T03:04:01.612Z"
-    },
-    {
-      "path": "docs/next-implementations.md",
-      "size": 9018,
-      "lines": 123,
-      "modified": "2025-10-11T03:04:01.612Z"
-    },
-    {
-      "path": "docs/report-05122025.md",
-      "size": 6425,
-      "lines": 143,
-      "modified": "2025-10-11T03:04:01.612Z"
-    },
-    {
-      "path": "docs/systems/EventSystem.md",
-      "size": 17207,
-      "lines": 570,
-      "modified": "2025-10-11T03:04:01.528Z"
-    },
-    {
-      "path": "docs/systems/EventSystemImplementationSteps.md",
-      "size": 8728,
-      "lines": 316,
-      "modified": "2025-10-29T02:01:45.937Z"
-    },
-    {
-      "path": "docs/systems/ModularLevelArchitecture.md",
-      "size": 6412,
-      "lines": 219,
-      "modified": "2025-10-11T03:04:01.529Z"
-    },
-    {
-      "path": "docs/systems/ModularLevelSystemImplementation.md",
-      "size": 6508,
-      "lines": 241,
-      "modified": "2025-10-11T03:04:01.529Z"
-    },
-    {
-      "path": "docs/systems/ModularPlayerController.md",
-      "size": 11194,
-      "lines": 349,
-      "modified": "2025-10-11T03:04:01.529Z"
-    },
-    {
-      "path": "docs/systems/MovementSystem.md",
-      "size": 10459,
-      "lines": 270,
-      "modified": "2025-10-11T03:04:01.529Z"
-    },
-    {
-      "path": "docs/systems/README.md",
-      "size": 2103,
-      "lines": 50,
-      "modified": "2025-10-29T01:55:32.255Z"
-    },
-    {
-      "path": "docs/systems/UIManager.md",
-      "size": 4544,
-      "lines": 132,
-      "modified": "2025-10-11T03:04:01.530Z"
-    },
-    {
-      "path": "docs/technology/PhaserFramework.md",
-      "size": 8031,
-      "lines": 293,
-      "modified": "2025-10-11T03:04:01.529Z"
-    },
-    {
-      "path": "docs/technology/README.md",
-      "size": 1571,
-      "lines": 51,
-      "modified": "2025-10-29T01:55:20.291Z"
-    },
-    {
-      "path": "docs/technology/RapierPhysics.md",
-      "size": 7589,
-      "lines": 231,
-      "modified": "2025-10-11T03:04:01.529Z"
-    },
-    {
-      "path": "docs/technology/TechnologiesAndPackages.md",
-      "size": 8007,
-      "lines": 208,
-      "modified": "2025-10-11T03:04:01.529Z"
-    },
-    {
-      "path": "docs/technology/ViteBuildTool.md",
-      "size": 6584,
-      "lines": 263,
-      "modified": "2025-10-11T03:04:01.530Z"
-    },
-    {
-      "path": "AIProjectDocs/README.md",
-      "size": 4557,
-      "lines": 100,
-      "modified": "2025-10-29T01:58:52.961Z"
-    },
-    {
-      "path": ".claude/CLAUDE.md",
-      "size": 6075,
-      "lines": 168,
-      "modified": "2025-10-11T03:04:01.522Z"
-    },
-    {
-      "path": ".claude/agents/architecture-guardian.md",
-      "size": 2828,
-      "lines": 76,
-      "modified": "2025-10-11T03:04:01.522Z"
-    },
-    {
-      "path": ".claude/agents/game-design-innovator.md",
-      "size": 5823,
-      "lines": 158,
-      "modified": "2025-10-11T03:04:01.522Z"
-    },
-    {
-      "path": ".claude/agents/game-physics-expert.md",
-      "size": 2471,
-      "lines": 81,
-      "modified": "2025-10-11T03:04:01.523Z"
-    },
-    {
-      "path": ".claude/commands/debug-physics-issue.md",
-      "size": 1610,
-      "lines": 52,
-      "modified": "2025-10-11T03:04:01.523Z"
-    },
-    {
-      "path": ".claude/commands/implement-game-feature.md",
-      "size": 1497,
-      "lines": 46,
-      "modified": "2025-10-11T03:04:01.523Z"
-    },
-    {
-      "path": ".claude/commands/manage-assets.md",
-      "size": 1738,
-      "lines": 56,
-      "modified": "2025-10-11T03:04:01.523Z"
-    }
-  ]
 }

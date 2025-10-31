@@ -1,6 +1,7 @@
 # Modular Level Architecture for WynIsBuff2
 
 ## Table of Contents
+
 - [Overview](#overview)
 - [SOLID Principles](#solid-principles)
 - [Module Structure](#module-structure)
@@ -54,12 +55,12 @@ The `LevelManager` class serves as a facade for the level system, coordinating t
 
 ```javascript
 // Key methods
-constructor(scene, world, eventSystem)
-loadLevel(levelId)
-nextLevel()
-resetLevel()
-update(delta)
-getBodyToSpriteMap()
+constructor(scene, world, eventSystem);
+loadLevel(levelId);
+nextLevel();
+resetLevel();
+update(delta);
+getBodyToSpriteMap();
 ```
 
 ### GroundFactory
@@ -72,10 +73,10 @@ The `GroundFactory` class is responsible for creating and managing the ground:
 
 ```javascript
 // Key methods
-constructor(scene, world, eventSystem)
-createGround(config)
-removeGround()
-getGround()
+constructor(scene, world, eventSystem);
+createGround(config);
+removeGround();
+getGround();
 ```
 
 ### PlatformFactory
@@ -88,10 +89,10 @@ The `PlatformFactory` class is responsible for creating and managing static plat
 
 ```javascript
 // Key methods
-constructor(scene, world, eventSystem)
-createPlatforms(platformConfigs)
-removePlatforms()
-getPlatforms()
+constructor(scene, world, eventSystem);
+createPlatforms(platformConfigs);
+removePlatforms();
+getPlatforms();
 ```
 
 ### MovingPlatformController
@@ -105,11 +106,11 @@ The `MovingPlatformController` class is responsible for creating and managing mo
 
 ```javascript
 // Key methods
-constructor(scene, world, eventSystem)
-createMovingPlatforms(movingPlatformConfigs)
-removeMovingPlatforms()
-updateMovingPlatforms(delta)
-getMovingPlatforms()
+constructor(scene, world, eventSystem);
+createMovingPlatforms(movingPlatformConfigs);
+removeMovingPlatforms();
+updateMovingPlatforms(delta);
+getMovingPlatforms();
 ```
 
 ### CollectibleManager
@@ -124,12 +125,12 @@ The `CollectibleManager` class is responsible for creating and managing collecti
 
 ```javascript
 // Key methods
-constructor(scene, world, eventSystem)
-createCollectibles(collectibleConfigs)
-removeCollectibles()
-collectItem(collectibleId)
-areAllCollectiblesCollected()
-getCollectibles()
+constructor(scene, world, eventSystem);
+createCollectibles(collectibleConfigs);
+removeCollectibles();
+collectItem(collectibleId);
+areAllCollectiblesCollected();
+getCollectibles();
 ```
 
 ### LevelCompletionManager
@@ -143,11 +144,11 @@ The `LevelCompletionManager` class is responsible for handling level completion 
 
 ```javascript
 // Key methods
-constructor(scene, world, eventSystem)
-createCompletionTrigger(triggerConfig)
-removeCompletionTrigger()
-checkLevelCompletion(playerPosition)
-completeLevel()
+constructor(scene, world, eventSystem);
+createCompletionTrigger(triggerConfig);
+removeCompletionTrigger();
+checkLevelCompletion(playerPosition);
+completeLevel();
 ```
 
 ### LevelTransitionController
@@ -161,9 +162,9 @@ The `LevelTransitionController` class is responsible for managing level transiti
 
 ```javascript
 // Key methods
-constructor(scene, eventSystem)
-startTransition(fromLevelId, toLevelId)
-handleTransitionComplete()
+constructor(scene, eventSystem);
+startTransition(fromLevelId, toLevelId);
+handleTransitionComplete();
 ```
 
 ### LevelLoader
@@ -177,10 +178,10 @@ The `LevelLoader` class is responsible for loading level data and initializing l
 
 ```javascript
 // Key methods
-constructor(scene, eventSystem)
-loadLevelData(levelId)
-initializeLevel(levelConfig)
-clearLevel()
+constructor(scene, eventSystem);
+loadLevelData(levelId);
+initializeLevel(levelConfig);
+clearLevel();
 ```
 
 ## Interaction Diagram

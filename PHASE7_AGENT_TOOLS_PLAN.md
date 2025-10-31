@@ -23,18 +23,21 @@
 ### Existing Capabilities (Phases 0-5)
 
 **LogSystem Query API**:
+
 - `getByLevel(level, limit)` - Filter by log level
 - `getByCode(code)` - Filter by error code
 - `getBySubsystem(subsystem, limit)` - Filter by subsystem
 - `getAll()` - Get all logs in buffer
 
 **Error Analysis**:
+
 - `ErrorPatternDetector.analyzeRecent(timeWindow)` - Detect patterns
-  - Repeating errors (same code 3+ times)
-  - Error cascades (5+ errors in 1 second)
-  - Error rates and severity
+    - Repeating errors (same code 3+ times)
+    - Error cascades (5+ errors in 1 second)
+    - Error rates and severity
 
 **Utilities**:
+
 - `CrashDumpGenerator.generate()` - Comprehensive crash dumps
 - `DebugContext.captureState()` - Game state snapshots
 
@@ -57,6 +60,7 @@
 **Location**: `src/observability/api/DebugAPI.js`
 
 **Key Methods**:
+
 ```javascript
 class DebugAPI {
     constructor(logSystem, debugContext, errorPatternDetector) {
@@ -72,8 +76,8 @@ class DebugAPI {
     }
 
     // Time-based queries
-    getLogsInTimeRange(startTime, endTime) { }
-    getRecentLogs(milliseconds) { }
+    getLogsInTimeRange(startTime, endTime) {}
+    getRecentLogs(milliseconds) {}
 
     // Correlation
     getRelatedLogs(log, options) {
@@ -111,6 +115,7 @@ class DebugAPI {
 ```
 
 **Benefits**:
+
 - Single entry point for agents
 - Combines multiple data sources
 - Higher-level abstractions
@@ -123,6 +128,7 @@ class DebugAPI {
 **Location**: `src/observability/api/QueryBuilder.js`
 
 **Example Usage**:
+
 ```javascript
 const results = new QueryBuilder(LOG)
     .level('error')
@@ -134,6 +140,7 @@ const results = new QueryBuilder(LOG)
 ```
 
 **Features**:
+
 - Method chaining
 - Type-safe filters
 - Composable queries
@@ -146,6 +153,7 @@ const results = new QueryBuilder(LOG)
 **Location**: `src/observability/api/LogAnalyzer.js`
 
 **Key Methods**:
+
 ```javascript
 class LogAnalyzer {
     // Statistical analysis
@@ -188,6 +196,7 @@ class LogAnalyzer {
 **Location**: `src/observability/api/ExportFormatter.js`
 
 **Export Formats**:
+
 ```javascript
 class ExportFormatter {
     // Rich JSON with metadata
@@ -233,19 +242,20 @@ class ExportFormatter {
 **Location**: `src/observability/api/ErrorSuggestions.js`
 
 **Knowledge Base**:
+
 ```javascript
 const ERROR_SUGGESTIONS = {
-    'PHYSICS_UPDATE_ERROR': [
+    PHYSICS_UPDATE_ERROR: [
         'Check if physics world is initialized',
         'Verify all bodies have valid handles',
         'Check for NaN in body positions or velocities',
-        'Review recent Rapier API changes'
+        'Review recent Rapier API changes',
     ],
-    'PLAYER_UPDATE_ERROR': [
+    PLAYER_UPDATE_ERROR: [
         'Verify player body exists',
         'Check character controller initialization',
         'Validate input manager state',
-        'Check for NaN in movement calculations'
+        'Check for NaN in movement calculations',
     ],
     // ... more error codes
 };
@@ -267,42 +277,49 @@ class ErrorSuggestions {
 ## Implementation Plan
 
 ### Step 1: Create Base DebugAPI (30 min)
+
 - Create `src/observability/api/` directory
 - Implement DebugAPI class with basic methods
 - Connect to existing LogSystem, DebugContext, ErrorPatternDetector
 - Add to barrel export
 
 ### Step 2: Implement QueryBuilder (30 min)
+
 - Create QueryBuilder class
 - Implement method chaining
 - Add filter methods (level, subsystem, code, timeRange, etc.)
 - Add execution logic
 
 ### Step 3: Create LogAnalyzer (45 min)
+
 - Implement statistical analysis
 - Add correlation detection
 - Create health metrics
 - Add trend analysis
 
 ### Step 4: Build ExportFormatter (30 min)
+
 - Implement rich JSON export
 - Add metadata generation
 - Create summary statistics
 - Add Markdown formatter
 
 ### Step 5: Add ErrorSuggestions (30 min)
+
 - Create knowledge base
 - Implement suggestion retrieval
 - Add context-aware filtering
 - Integrate with DebugAPI
 
 ### Step 6: Testing & Integration (30 min)
+
 - Unit tests for new components
 - Integration test with Game scene
 - Performance validation
 - Documentation updates
 
 ### Step 7: Documentation (15 min)
+
 - Update ERROR_HANDLING_LOGGING.md
 - Update DEBUGGING.md guide
 - Add API examples
@@ -324,7 +341,7 @@ const results = api.query({
     subsystem: 'physics',
     level: 'error',
     timeRange: { last: 5000 },
-    includeContext: true
+    includeContext: true,
 });
 
 console.log('Physics errors:', results);
@@ -354,7 +371,7 @@ const exportData = api.exportForAnalysis({
     format: 'json',
     includePatterns: true,
     includeGameState: true,
-    includePerformance: true
+    includePerformance: true,
 });
 
 // Save or send to AI agent
@@ -400,11 +417,7 @@ console.log('Recent physics errors:', errors);
 // In Game.js create()
 import { DebugAPI } from '@observability';
 
-this.debugAPI = new DebugAPI(
-    LOG,
-    this.debugContext,
-    this.errorPatternDetector
-);
+this.debugAPI = new DebugAPI(LOG, this.debugContext, this.errorPatternDetector);
 
 // Make available globally for console debugging
 if (typeof window !== 'undefined') {
@@ -426,17 +439,20 @@ debugAPI.query({ level: 'error', last: 10000 });
 ## Performance Considerations
 
 **Query Optimization**:
+
 - Index logs by subsystem and level
 - Cache query results (5-second TTL)
 - Lazy evaluation where possible
 - Limit default result sets
 
 **Memory Management**:
+
 - Export generation doesn't duplicate data
 - Streaming export for large datasets
 - Respect buffer limits (2000 entries)
 
 **Target Performance**:
+
 - Simple queries: <1ms
 - Complex queries: <5ms
 - Export generation: <10ms
@@ -447,29 +463,29 @@ debugAPI.query({ level: 'error', last: 10000 });
 ## Success Criteria
 
 1. **API Completeness**:
-   - ✅ All planned methods implemented
-   - ✅ Query builder functional
-   - ✅ Export formats working
+    - ✅ All planned methods implemented
+    - ✅ Query builder functional
+    - ✅ Export formats working
 
 2. **Performance**:
-   - ✅ Queries complete within targets
-   - ✅ No frame rate impact
-   - ✅ Memory usage stable
+    - ✅ Queries complete within targets
+    - ✅ No frame rate impact
+    - ✅ Memory usage stable
 
 3. **Usability**:
-   - ✅ Clear, consistent API
-   - ✅ Good error messages
-   - ✅ Comprehensive examples
+    - ✅ Clear, consistent API
+    - ✅ Good error messages
+    - ✅ Comprehensive examples
 
 4. **Documentation**:
-   - ✅ API reference complete
-   - ✅ Usage examples provided
-   - ✅ Integration guide updated
+    - ✅ API reference complete
+    - ✅ Usage examples provided
+    - ✅ Integration guide updated
 
 5. **Testing**:
-   - ✅ Unit tests pass
-   - ✅ Integration tests pass
-   - ✅ Build successful
+    - ✅ Unit tests pass
+    - ✅ Integration tests pass
+    - ✅ Build successful
 
 ---
 

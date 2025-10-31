@@ -13,6 +13,7 @@
 **Critical Find**: Complete AI asset generation system in `origin/get-more-buff`
 
 **Branch Status**:
+
 - ✅ `main` - Current, healthy (needs push: 64 commits ahead)
 - ⚠️ `feature/observability-integration` - Merged, can delete local
 - ❌ `origin/dev` - Stale (July 2025), superseded by main
@@ -33,6 +34,7 @@
 **Action**: 🚀 **PUSH TO REMOTE**
 
 **Command**:
+
 ```bash
 git push origin main
 ```
@@ -40,6 +42,7 @@ git push origin main
 **Why**: Local main has 64 commits (entire observability system implementation) that need to be pushed to remote.
 
 **Commits to be pushed include**:
+
 - Complete Phase 9 observability deployment
 - Phase 8 testing & validation
 - Phase 7 agent tools & API
@@ -59,6 +62,7 @@ git push origin main
 **Action**: 🗑️ **DELETE LOCAL BRANCH**
 
 **Command**:
+
 ```bash
 git branch -d feature/observability-integration
 ```
@@ -76,6 +80,7 @@ git branch -d feature/observability-integration
 **Commits**: 67a0d06 "feat: comprehensive logging system and asset fixes"
 
 **Notable Commits**:
+
 - Comprehensive logging system (superseded by observability in main)
 - GitHub Actions workflows (may still be useful)
 - Unit tests for PlayerController and LevelLoader (check if exist in main)
@@ -84,6 +89,7 @@ git branch -d feature/observability-integration
 **Action**: ⚠️ **AUDIT THEN DELETE**
 
 **Pre-Delete Audit**:
+
 ```bash
 # Check if these exist in main:
 git diff origin/main origin/dev -- .github/workflows/
@@ -96,6 +102,7 @@ git diff origin/main origin/dev -- tests/
 **If superseded**: Delete branch
 
 **Delete Command** (after audit):
+
 ```bash
 git push origin --delete dev
 ```
@@ -111,17 +118,20 @@ git push origin --delete dev
 **Commits**: 841c295 "fix: address architectural issues from Day 1 review"
 
 **Notable Commits**:
+
 - Core loop event architecture
 - Performance analysis implementation
 - Major game system enhancements
 - Birthday minigame fixes
 
 **Diffstat** (vs. origin/main):
+
 ```
 28 files changed, 99 insertions(+), 5566 deletions(-)
 ```
 
 **Analysis**: **MASSIVE DELETIONS** (5566 lines removed)
+
 - Removed: DeterministicRNG.js (275 lines)
 - Removed: GoldenSeedTester.js (369 lines)
 - Removed: EnhancedCloneManager.js (487 lines)
@@ -133,16 +143,19 @@ git push origin --delete dev
 **Action**: ⚠️ **REVIEW THEN DELETE**
 
 **Pre-Delete Review Questions**:
+
 1. Were these systems intentionally removed or accidentally deleted?
 2. Are any of these systems needed for future work?
 3. Were these changes intended to be permanent or experimental?
 
 **Recommendation**:
+
 - Check with user if DeterministicRNG, GoldenSeedTester, BossRewardSystem are needed
 - If NOT needed: Delete branch
 - If NEEDED: Cherry-pick back to main before deleting branch
 
 **Delete Command** (after review):
+
 ```bash
 git push origin --delete feature/level-enhancements
 ```
@@ -158,6 +171,7 @@ git push origin --delete feature/level-enhancements
 **Commits**: 57d13db "chore: System migration - saving all work in progress"
 
 **Contains**:
+
 - ✅ **Complete AI asset generation system** (`asset-generation/` directory, 17 files)
 - ✅ DALL-E 3 integration with OpenAI API
 - ✅ Budget control ($20 soft cap)
@@ -167,6 +181,7 @@ git push origin --delete feature/level-enhancements
 - ✅ Inpainting/editing capabilities
 
 **Also Contains**:
+
 - GitHub Actions workflows (agentic, biome-lint, tests, etc.)
 - Asset reports and audits
 - Generated logo variations (logov2, logov3, logov4, logov5)
@@ -177,11 +192,13 @@ git push origin --delete feature/level-enhancements
 **Migration Plan**: See `ASSET_GENERATION_MIGRATION_PLAN.md`
 
 **Phases**:
+
 1. **Phase 1** (Weeks 1-2): Extract and migrate image generation patterns
 2. **Phase 2** (Weeks 3-4): Add audio generation (Bark, MusicGen)
 3. **Phase 3** (Weeks 5-6): Unified multi-modal orchestration
 
 **Migration Workflow**:
+
 ```bash
 # 1. Create feature branch for migration
 git checkout -b feature/asset-generation-migration main
@@ -197,6 +214,7 @@ git push origin --delete get-more-buff
 ```
 
 **Why Migrate (NOT Cherry-Pick)**:
+
 - Branch has diverged significantly from main
 - Uses Bun (need Node.js portability)
 - Monolithic CLI needs refactoring
@@ -204,6 +222,7 @@ git push origin --delete get-more-buff
 - Must align with CLAUDE.md architecture
 
 **Delete Command** (AFTER migration complete):
+
 ```bash
 git push origin --delete get-more-buff
 ```
@@ -214,13 +233,13 @@ git push origin --delete get-more-buff
 
 ## Summary Table
 
-| Branch | Status | Age | Action | Priority | Timeline |
-|--------|--------|-----|--------|----------|----------|
-| `main` | ✅ Active | Current | PUSH | Critical | Immediate |
-| `feature/observability-integration` | ✅ Merged | N/A | DELETE LOCAL | Low | Immediate |
-| `origin/dev` | ❌ Stale | 5 months | AUDIT → DELETE | Medium | 1-2 days |
-| `origin/feature/level-enhancements` | ❌ Stale | 2 months | REVIEW → DELETE | Medium | 1-2 days |
-| `origin/get-more-buff` | ⭐ Valuable | 1 month | **MIGRATE → DELETE** | **Critical** | **6 weeks** |
+| Branch                              | Status      | Age      | Action               | Priority     | Timeline    |
+| ----------------------------------- | ----------- | -------- | -------------------- | ------------ | ----------- |
+| `main`                              | ✅ Active   | Current  | PUSH                 | Critical     | Immediate   |
+| `feature/observability-integration` | ✅ Merged   | N/A      | DELETE LOCAL         | Low          | Immediate   |
+| `origin/dev`                        | ❌ Stale    | 5 months | AUDIT → DELETE       | Medium       | 1-2 days    |
+| `origin/feature/level-enhancements` | ❌ Stale    | 2 months | REVIEW → DELETE      | Medium       | 1-2 days    |
+| `origin/get-more-buff`              | ⭐ Valuable | 1 month  | **MIGRATE → DELETE** | **Critical** | **6 weeks** |
 
 ---
 
@@ -229,60 +248,63 @@ git push origin --delete get-more-buff
 ### Immediate (Today)
 
 1. ✅ **Push main to origin**
-   ```bash
-   git push origin main
-   ```
+
+    ```bash
+    git push origin main
+    ```
 
 2. ✅ **Delete local merged branch**
-   ```bash
-   git branch -d feature/observability-integration
-   ```
+    ```bash
+    git branch -d feature/observability-integration
+    ```
 
 ### Short-Term (1-2 Days)
 
 3. ⚠️ **Audit origin/dev**
-   ```bash
-   # Check for unique workflows/configs
-   git diff origin/main origin/dev -- .github/workflows/ .eslintrc* .prettierrc* tests/
 
-   # If nothing valuable:
-   git push origin --delete dev
-   ```
+    ```bash
+    # Check for unique workflows/configs
+    git diff origin/main origin/dev -- .github/workflows/ .eslintrc* .prettierrc* tests/
+
+    # If nothing valuable:
+    git push origin --delete dev
+    ```
 
 4. ⚠️ **Review origin/feature/level-enhancements**
-   ```bash
-   # User decision: Keep removed systems or not?
-   # - DeterministicRNG.js
-   # - GoldenSeedTester.js
-   # - EnhancedCloneManager.js
-   # - FeedbackSystem.js
-   # - BossRewardSystem.js
 
-   # If not needed:
-   git push origin --delete feature/level-enhancements
-   ```
+    ```bash
+    # User decision: Keep removed systems or not?
+    # - DeterministicRNG.js
+    # - GoldenSeedTester.js
+    # - EnhancedCloneManager.js
+    # - FeedbackSystem.js
+    # - BossRewardSystem.js
+
+    # If not needed:
+    git push origin --delete feature/level-enhancements
+    ```
 
 ### Long-Term (6 Weeks) **CRITICAL PATH**
 
 5. 🎯 **Migrate origin/get-more-buff**
-   - **Week 1-2**: Extract image generation patterns (Phase 1)
-   - **Week 3-4**: Add audio generation (Phase 2)
-   - **Week 5-6**: Unified orchestration (Phase 3)
-   - **After migration**: Delete branch
-   ```bash
-   git push origin --delete get-more-buff
-   ```
+    - **Week 1-2**: Extract image generation patterns (Phase 1)
+    - **Week 3-4**: Add audio generation (Phase 2)
+    - **Week 5-6**: Unified orchestration (Phase 3)
+    - **After migration**: Delete branch
+    ```bash
+    git push origin --delete get-more-buff
+    ```
 
 ---
 
 ## Risk Assessment
 
-| Risk | Probability | Impact | Mitigation |
-|------|-------------|--------|------------|
-| **Lose valuable work** | Low | High | Migration plan before deleting get-more-buff |
-| **Delete needed systems** | Medium | Medium | Review level-enhancements deletions with user |
-| **Merge conflicts** | Low | Low | Main is already ahead, clean state |
-| **Branch reference issues** | Low | Low | No active development on orphaned branches |
+| Risk                        | Probability | Impact | Mitigation                                    |
+| --------------------------- | ----------- | ------ | --------------------------------------------- |
+| **Lose valuable work**      | Low         | High   | Migration plan before deleting get-more-buff  |
+| **Delete needed systems**   | Medium      | Medium | Review level-enhancements deletions with user |
+| **Merge conflicts**         | Low         | Low    | Main is already ahead, clean state            |
+| **Branch reference issues** | Low         | Low    | No active development on orphaned branches    |
 
 ---
 
@@ -291,11 +313,13 @@ git push origin --delete get-more-buff
 ### origin/dev: DELETE? ✅
 
 **Pros**:
+
 - 5 months stale
 - Logging approach superseded by observability
 - GitHub Actions may still exist in main
 
 **Cons**:
+
 - May have unique test files
 - May have unique linting configs
 
@@ -306,10 +330,12 @@ git push origin --delete get-more-buff
 ### origin/feature/level-enhancements: DELETE? ⚠️
 
 **Pros**:
+
 - 2 months stale
 - Appears to be experimental cleanup
 
 **Cons**:
+
 - Removed 5,566 lines of code
 - Unclear if deletions were intentional
 - May have valuable systems (DeterministicRNG, GoldenSeedTester, BossRewardSystem)
@@ -317,6 +343,7 @@ git push origin --delete get-more-buff
 **Decision**: ASK USER about removed systems, then decide
 
 **User Questions**:
+
 1. Do you need DeterministicRNG for reproducible gameplay testing?
 2. Do you need GoldenSeedTester for deterministic testing?
 3. Do you need BossRewardSystem, FeedbackSystem, EnhancedCloneManager?
@@ -327,10 +354,12 @@ git push origin --delete get-more-buff
 ### origin/get-more-buff: DELETE? ❌ (Not Yet!)
 
 **Pros**:
+
 - 1 month stale
 - Work not integrated
 
 **Cons**:
+
 - **Contains complete AI asset generation system**
 - **45+ asset specifications**
 - **Production-ready DALL-E integration**
@@ -398,6 +427,7 @@ git branch -a
 ## Post-Cleanup State (Target)
 
 **Branches (After Cleanup)**:
+
 ```
   * main                              # Active development
     remotes/origin/HEAD -> origin/main
@@ -405,6 +435,7 @@ git branch -a
 ```
 
 **Result**:
+
 - ✅ Clean branch structure
 - ✅ No orphaned branches
 - ✅ All valuable work preserved (via migration)
@@ -416,27 +447,28 @@ git branch -a
 ## Next Steps
 
 1. **Immediate**:
-   - [ ] Review this document with user
-   - [ ] Get approval for deletions
-   - [ ] Push main to origin
-   - [ ] Delete local merged branch
+    - [ ] Review this document with user
+    - [ ] Get approval for deletions
+    - [ ] Push main to origin
+    - [ ] Delete local merged branch
 
 2. **Short-Term**:
-   - [ ] Audit origin/dev (workflows, configs)
-   - [ ] Review origin/feature/level-enhancements with user
-   - [ ] Delete approved branches
+    - [ ] Audit origin/dev (workflows, configs)
+    - [ ] Review origin/feature/level-enhancements with user
+    - [ ] Delete approved branches
 
 3. **Long-Term**:
-   - [ ] Begin asset generation migration (Phase 1)
-   - [ ] Complete 3-phase migration plan
-   - [ ] Delete origin/get-more-buff after successful migration
+    - [ ] Begin asset generation migration (Phase 1)
+    - [ ] Complete 3-phase migration plan
+    - [ ] Delete origin/get-more-buff after successful migration
 
 ---
 
 **Report Status**: ✅ Complete
 **Related Documents**:
+
 - `ASSET_GENERATION_MIGRATION_PLAN.md`
 - `AI_ASSET_GENERATION_FRAMEWORK_REPORT.md`
-**Next Action**: User review and approval
-**Maintainer**: Claude Code AI Assistant
-**Date**: 2025-10-30
+  **Next Action**: User review and approval
+  **Maintainer**: Claude Code AI Assistant
+  **Date**: 2025-10-30

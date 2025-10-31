@@ -1,4 +1,5 @@
 import { BaseManager } from '../../core/BaseManager.js';
+
 import { BoundedBuffer } from './BoundedBuffer.js';
 import { LogLevel, LogLevelPriority, DefaultSamplingRates, shouldLog } from './LogLevel.js';
 
@@ -35,7 +36,7 @@ export class LogSystem extends BaseManager {
             minLevel: LogLevel.DEV,
             consoleEnabled: true,
             samplingRates: { ...DefaultSamplingRates },
-            frameThrottleMax: 50
+            frameThrottleMax: 50,
         };
 
         // Frame throttling state
@@ -56,8 +57,8 @@ export class LogSystem extends BaseManager {
                 [LogLevel.INFO]: 0,
                 [LogLevel.WARN]: 0,
                 [LogLevel.ERROR]: 0,
-                [LogLevel.FATAL]: 0
-            }
+                [LogLevel.FATAL]: 0,
+            },
         };
 
         this.setInitialized();
@@ -125,7 +126,7 @@ export class LogSystem extends BaseManager {
             frame: this.currentFrame,
             message: data.message || code,
             subsystem: data.subsystem || 'unknown',
-            ...data
+            ...data,
         };
 
         // Inject context if available
@@ -281,10 +282,10 @@ export class LogSystem extends BaseManager {
                 exportTime: new Date().toISOString(),
                 totalLogs: this.stats.totalLogs,
                 bufferSize: this.buffer.getUsage(),
-                stats: this.stats
+                stats: this.stats,
             },
             logs: this.buffer.getAll(),
-            config: this.config
+            config: this.config,
         };
     }
 
@@ -294,7 +295,7 @@ export class LogSystem extends BaseManager {
     getStats() {
         return {
             ...this.stats,
-            buffer: this.buffer.getStats()
+            buffer: this.buffer.getStats(),
         };
     }
 
@@ -313,8 +314,8 @@ export class LogSystem extends BaseManager {
                 [LogLevel.INFO]: 0,
                 [LogLevel.WARN]: 0,
                 [LogLevel.ERROR]: 0,
-                [LogLevel.FATAL]: 0
-            }
+                [LogLevel.FATAL]: 0,
+            },
         };
     }
 
@@ -328,7 +329,7 @@ export class LogSystem extends BaseManager {
             log: console.log,
             warn: console.warn,
             error: console.error,
-            info: console.info
+            info: console.info,
         };
 
         console.log = (...args) => {

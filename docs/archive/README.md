@@ -5,6 +5,7 @@ This directory contains historical documentation that is no longer actively used
 ## Archive Structure
 
 ### codex-tasks-historical/
+
 **Archived**: October 28, 2025
 **Reason**: Historical task tracking - all tasks completed
 **Original Location**: `.codex/tasks/`
@@ -16,6 +17,7 @@ Contains completed task files from the Codex project management system. These ta
 **Content**: Task descriptions and change logs
 
 **Why Archived**:
+
 - All tasks completed
 - No longer part of active development workflow
 - Preserved for historical context and audit trail
@@ -72,6 +74,7 @@ Contains completed task files from the Codex project management system. These ta
 - [034-audio-build-pipeline.md](./codex-tasks-historical/034-audio-build-pipeline.md)
 
 ### aiprojectdocs-historical/
+
 Historical design and planning docs from earlier phases of the project.
 
 #### Archive Catalog: aiprojectdocs-historical
@@ -87,12 +90,14 @@ Historical design and planning docs from earlier phases of the project.
 ## Archive Policy
 
 Documents are archived when they:
+
 1. Are no longer actively maintained
 2. Have been superseded by newer documentation
 3. Are historical tracking/planning docs with all items complete
 4. Reduce documentation health metrics without providing current value
 
 Archived docs are:
+
 - Preserved with git history intact
 - Documented in this README
 - Accessible for historical reference
@@ -101,6 +106,7 @@ Archived docs are:
 ## Restoration
 
 To restore archived documentation:
+
 1. Verify content is still relevant
 2. Update to current standards
 3. Add to appropriate location in `docs/`

@@ -10,4 +10,5 @@ Estimate: 4
 Task: Generate baseline bundle under .codex/baseline using baseline-creating.md instructions.
 
 ## Change Log
+
 - Populated .codex/baseline/ with current-foundation.md, includes.txt, invariants.yml, style-rules.json

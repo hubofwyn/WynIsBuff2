@@ -13,6 +13,7 @@ Integrate the fully-tested DebugContext system into the Game scene to enable aut
 ## Current State
 
 ✅ **Infrastructure Ready**:
+
 - `DebugContext.js` - Context manager with frame tracking
 - `StateProvider.js` - Base class for state capture
 - `PlayerStateProvider.js` - Player state capture
@@ -21,6 +22,7 @@ Integrate the fully-tested DebugContext system into the Game scene to enable aut
 - All tests passing (8/8 Phase 2 tests)
 
 ⚠️ **Not Yet Used**:
+
 - DebugContext not initialized in any scene
 - LogSystem not connected to DebugContext
 - State providers created but not registered
@@ -38,7 +40,7 @@ import { DebugContext } from '../observability/context/DebugContext.js';
 import {
     PlayerStateProvider,
     PhysicsStateProvider,
-    InputStateProvider
+    InputStateProvider,
 } from '../observability/providers/index.js';
 import { LOG } from '../observability/core/LogSystem.js'; // Already imported
 ```
@@ -54,7 +56,7 @@ import { LOG } from '../observability/core/LogSystem.js'; // Already imported
 // This happens after effect managers but before player creation
 LOG.info('GAME_DEBUGCONTEXT_INIT', {
     subsystem: 'observability',
-    message: 'Initializing DebugContext for automatic state capture'
+    message: 'Initializing DebugContext for automatic state capture',
 });
 
 this.debugContext = DebugContext.getInstance();
@@ -71,7 +73,7 @@ this.debugContext = DebugContext.getInstance();
 // This provides rich debugging context in all logs
 LOG.dev('GAME_REGISTERING_STATE_PROVIDERS', {
     subsystem: 'observability',
-    message: 'Registering state providers for context capture'
+    message: 'Registering state providers for context capture',
 });
 
 try {
@@ -102,15 +104,15 @@ try {
         providers: [
             this.playerController ? 'player' : null,
             this.physicsManager ? 'physics' : null,
-            this.inputManager ? 'input' : null
-        ].filter(Boolean)
+            this.inputManager ? 'input' : null,
+        ].filter(Boolean),
     });
 } catch (error) {
     LOG.error('GAME_STATE_PROVIDER_REGISTRATION_ERROR', {
         subsystem: 'observability',
         error,
         message: 'Error registering state providers',
-        hint: 'Context injection will be disabled, but logging will continue to work'
+        hint: 'Context injection will be disabled, but logging will continue to work',
     });
 }
 ```
@@ -159,15 +161,17 @@ shutdown() {
 ## Expected Behavior After Integration
 
 ### Before Integration
+
 ```javascript
 LOG.error('PLAYER_UPDATE_ERROR', {
     subsystem: 'player',
     error,
-    message: 'Player update failed'
+    message: 'Player update failed',
 });
 ```
 
 **Output**:
+
 ```json
 {
     "level": "error",
@@ -181,16 +185,18 @@ LOG.error('PLAYER_UPDATE_ERROR', {
 ```
 
 ### After Integration
+
 ```javascript
 // Same log call
 LOG.error('PLAYER_UPDATE_ERROR', {
     subsystem: 'player',
     error,
-    message: 'Player update failed'
+    message: 'Player update failed',
 });
 ```
 
 **Output with Context**:
+
 ```json
 {
     "level": "error",
@@ -244,16 +250,19 @@ LOG.error('PLAYER_UPDATE_ERROR', {
 ### Impact Analysis
 
 **DebugContext Overhead**:
+
 - Frame update: ~0.0001ms per frame
 - Context capture: ~0.0005ms per log (only when logging)
 - Caching: 85% cache hit rate reduces captures
 
 **Total Overhead**:
+
 - Per frame: ~0.0001ms (negligible)
 - Per log: ~0.0005ms (only on logs that actually fire)
 - With sampling: Most dev logs sampled at 1%, so minimal impact
 
 **Performance Budget**:
+
 - Target: <0.5ms per frame
 - Current: ~0.0003ms (LogSystem only)
 - With DebugContext: ~0.0004ms
@@ -272,6 +281,7 @@ LOG.error('PLAYER_UPDATE_ERROR', {
 ## Testing Strategy
 
 ### 1. Unit Tests (Already Passing)
+
 - ✅ Phase 2 context tests (8/8)
 - ✅ Provider registration
 - ✅ Snapshot capture
@@ -280,30 +290,32 @@ LOG.error('PLAYER_UPDATE_ERROR', {
 ### 2. Integration Testing
 
 **Test Scenarios**:
+
 1. **Normal Operation**
-   - Start game
-   - Verify context appears in console logs
-   - Check that player/physics/input data is present
+    - Start game
+    - Verify context appears in console logs
+    - Check that player/physics/input data is present
 
 2. **Error Scenarios**
-   - Trigger a player error (invalid movement)
-   - Verify context snapshot captured at error
-   - Confirm state is accurate
+    - Trigger a player error (invalid movement)
+    - Verify context snapshot captured at error
+    - Confirm state is accurate
 
 3. **Performance Testing**
-   - Run game for 5 minutes
-   - Monitor frame rate
-   - Verify no performance degradation
-   - Check memory usage (should be bounded)
+    - Run game for 5 minutes
+    - Monitor frame rate
+    - Verify no performance degradation
+    - Check memory usage (should be bounded)
 
 4. **Frame Tracking**
-   - Verify frame numbers incrementing
-   - Check deltaTime accuracy
-   - Confirm FPS calculation
+    - Verify frame numbers incrementing
+    - Check deltaTime accuracy
+    - Confirm FPS calculation
 
 ### 3. Manual Verification
 
 **Checklist**:
+
 - [ ] Start dev server: `npm run dev`
 - [ ] Open browser console
 - [ ] Observe structured logs with context
@@ -319,6 +331,7 @@ LOG.error('PLAYER_UPDATE_ERROR', {
 If integration causes issues:
 
 ### Quick Rollback
+
 ```bash
 # Revert the changes
 git checkout HEAD -- src/scenes/Game.js
@@ -329,6 +342,7 @@ npm run build
 ```
 
 ### Selective Rollback
+
 ```javascript
 // Comment out just the setContextProvider line
 // LOG.setContextProvider(this.debugContext);
@@ -337,6 +351,7 @@ npm run build
 ```
 
 ### Disable Without Removing Code
+
 ```javascript
 // Add flag at top of create()
 const ENABLE_DEBUG_CONTEXT = false;
@@ -366,6 +381,7 @@ if (ENABLE_DEBUG_CONTEXT) {
 ## Implementation Checklist
 
 ### Phase 1: Code Changes
+
 - [ ] Add imports to Game.js
 - [ ] Initialize DebugContext in create()
 - [ ] Register state providers after objects ready
@@ -374,6 +390,7 @@ if (ENABLE_DEBUG_CONTEXT) {
 - [ ] Add cleanup (optional)
 
 ### Phase 2: Testing
+
 - [ ] Run unit tests
 - [ ] Run integration tests
 - [ ] Manual testing in browser
@@ -381,12 +398,14 @@ if (ENABLE_DEBUG_CONTEXT) {
 - [ ] Extended run test (5+ minutes)
 
 ### Phase 3: Documentation
+
 - [ ] Update STATUS_OBSERVABILITY.json
 - [ ] Update OBSERVABILITY_EVALUATION.md
 - [ ] Add comments in Game.js
 - [ ] Update phase completion status
 
 ### Phase 4: Commit
+
 - [ ] Review all changes
 - [ ] Create detailed commit message
 - [ ] Commit to feature branch
@@ -397,17 +416,17 @@ if (ENABLE_DEBUG_CONTEXT) {
 ## Next Steps After Integration
 
 1. **Verify in Other Scenes** (Optional)
-   - Consider adding to RunScene, HubScene
-   - Not critical, but helpful for comprehensive coverage
+    - Consider adding to RunScene, HubScene
+    - Not critical, but helpful for comprehensive coverage
 
 2. **Move to Phase 5**: Error Integration
-   - Enhance crash dump generation
-   - Add error pattern detection
-   - Improve error recovery
+    - Enhance crash dump generation
+    - Add error pattern detection
+    - Improve error recovery
 
 3. **Documentation** (Phase 6)
-   - Update ERROR_HANDLING_LOGGING.md
-   - Create practical debugging guide
+    - Update ERROR_HANDLING_LOGGING.md
+    - Create practical debugging guide
 
 ---
 

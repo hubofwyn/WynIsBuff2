@@ -25,7 +25,7 @@ export class PlayerStateProvider extends StateProvider {
         }
 
         const state = {
-            available: true
+            available: true,
         };
 
         // Position
@@ -33,7 +33,7 @@ export class PlayerStateProvider extends StateProvider {
             const translation = player.body.translation();
             state.position = {
                 x: Math.round(translation.x * 100) / 100,
-                y: Math.round(translation.y * 100) / 100
+                y: Math.round(translation.y * 100) / 100,
             };
         } catch (e) {
             state.position = { error: e.message };
@@ -45,7 +45,7 @@ export class PlayerStateProvider extends StateProvider {
             state.velocity = {
                 x: Math.round(linvel.x * 100) / 100,
                 y: Math.round(linvel.y * 100) / 100,
-                speed: Math.round(Math.sqrt(linvel.x * linvel.x + linvel.y * linvel.y) * 100) / 100
+                speed: Math.round(Math.sqrt(linvel.x * linvel.x + linvel.y * linvel.y) * 100) / 100,
             };
         } catch (e) {
             state.velocity = { error: e.message };
@@ -53,9 +53,8 @@ export class PlayerStateProvider extends StateProvider {
 
         // Grounded status
         if (player.isGrounded !== undefined) {
-            state.isGrounded = typeof player.isGrounded === 'function'
-                ? player.isGrounded()
-                : player.isGrounded;
+            state.isGrounded =
+                typeof player.isGrounded === 'function' ? player.isGrounded() : player.isGrounded;
         }
 
         // Jump state
@@ -63,7 +62,7 @@ export class PlayerStateProvider extends StateProvider {
             state.jump = {
                 canJump: player.jumpController.canJump || false,
                 isJumping: player.jumpController.isJumping || false,
-                jumpCount: player.jumpController.jumpCount || 0
+                jumpCount: player.jumpController.jumpCount || 0,
             };
         }
 
@@ -71,7 +70,7 @@ export class PlayerStateProvider extends StateProvider {
         if (player.movementController) {
             state.movement = {
                 direction: player.movementController.direction || 0,
-                isMoving: player.movementController.isMoving || false
+                isMoving: player.movementController.isMoving || false,
             };
         }
 
@@ -86,7 +85,7 @@ export class PlayerStateProvider extends StateProvider {
                 x: Math.round(player.sprite.x),
                 y: Math.round(player.sprite.y),
                 visible: player.sprite.visible,
-                flipX: player.sprite.flipX
+                flipX: player.sprite.flipX,
             };
         }
 
@@ -94,7 +93,7 @@ export class PlayerStateProvider extends StateProvider {
         if (player.errorCount !== undefined) {
             state.errors = {
                 count: player.errorCount,
-                disabled: player.disabled || false
+                disabled: player.disabled || false,
             };
         }
 

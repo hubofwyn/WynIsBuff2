@@ -9,6 +9,7 @@ This directory contains tools for analyzing and maintaining WynIsBuff2's documen
 **File**: `doc-scanner.cjs`
 
 Fast, lightweight scanner that identifies obvious documentation issues:
+
 - Outdated references (TODO, FIXME, deprecated, "in progress")
 - Duplicate section titles across files
 - Broken internal links
@@ -17,6 +18,7 @@ Fast, lightweight scanner that identifies obvious documentation issues:
 - Empty or oversized files
 
 **Usage**:
+
 ```bash
 node scripts/doc-scanner.cjs
 ```
@@ -30,6 +32,7 @@ node scripts/doc-scanner.cjs
 **File**: `document_structurer.py`
 
 Comprehensive documentation analysis with:
+
 - Knowledge graph generation
 - Token extraction and indexing
 - Relationship mapping
@@ -39,11 +42,13 @@ Comprehensive documentation analysis with:
 - Actionable insights
 
 **Usage**:
+
 ```bash
 ./scripts/doc-analysis.sh
 ```
 
 **Output**: `doc-analysis/` directory with:
+
 - `INSIGHTS.md` - Health score and recommendations
 - `SUMMARY.md` - Statistics overview
 - `documents.db` - SQLite database for custom queries
@@ -82,28 +87,32 @@ python3 scripts/query_docs.py --db doc-analysis/documents.db --top-files --limit
 ### Initial Documentation Audit
 
 1. **Run comprehensive analysis**:
-   ```bash
-   ./scripts/doc-analysis.sh
-   ```
+
+    ```bash
+    ./scripts/doc-analysis.sh
+    ```
 
 2. **Review insights**:
-   ```bash
-   cat doc-analysis/INSIGHTS.md
-   ```
+
+    ```bash
+    cat doc-analysis/INSIGHTS.md
+    ```
 
 3. **Identify priorities**:
-   - Check health score (target: 80+)
-   - Review critical issues (broken links, orphans)
-   - Note duplication candidates
+    - Check health score (target: 80+)
+    - Review critical issues (broken links, orphans)
+    - Note duplication candidates
 
 ### Regular Maintenance
 
 **Weekly**: Run quick scanner
+
 ```bash
 node scripts/doc-scanner.cjs
 ```
 
 **Monthly**: Full analysis and compare against baseline
+
 ```bash
 ./scripts/doc-analysis.sh
 # Review improvements/regressions
@@ -112,16 +121,19 @@ node scripts/doc-scanner.cjs
 ### Specific Investigations
 
 **Find duplicate content**:
+
 ```bash
 python3 scripts/query_docs.py --db doc-analysis/documents.db --pattern "specific phrase"
 ```
 
 **Track term usage**:
+
 ```bash
 python3 scripts/query_docs.py --db doc-analysis/documents.db --token "EventBus"
 ```
 
 **Find navigation hubs**:
+
 ```bash
 # Most referenced files become natural navigation hubs
 cat doc-analysis/INSIGHTS.md | grep -A 10 "Most Referenced"
@@ -131,12 +143,12 @@ cat doc-analysis/INSIGHTS.md | grep -A 10 "Most Referenced"
 
 ### Health Score
 
-| Score | Status | Action Required |
-|-------|--------|-----------------|
-| 80-100 | Excellent | Maintain |
-| 60-79 | Good | Minor fixes |
-| 40-59 | Fair | Improvement sprint |
-| 0-39 | Poor | Immediate attention |
+| Score  | Status    | Action Required     |
+| ------ | --------- | ------------------- |
+| 80-100 | Excellent | Maintain            |
+| 60-79  | Good      | Minor fixes         |
+| 40-59  | Fair      | Improvement sprint  |
+| 0-39   | Poor      | Immediate attention |
 
 ### Key Metrics
 
@@ -150,6 +162,7 @@ cat doc-analysis/INSIGHTS.md | grep -A 10 "Most Referenced"
 ### WynIsBuff2 Documentation Structure
 
 Current state (from initial scan):
+
 - **66 documentation files**
 - **534 KB total**
 - **~8 KB average file size**
@@ -164,6 +177,7 @@ Current state (from initial scan):
 ### Documentation Standards
 
 Based on CLAUDE.md principles:
+
 - **Direct language**: No fluff, actionable content
 - **Development-focused**: Useful for coding, not history
 - **Consolidated**: No duplication, single source of truth
@@ -209,9 +223,11 @@ python3 scripts/query_docs.py --db doc-analysis/documents.db --orphaned --export
 ## Dependencies
 
 ### Node.js Scanner
+
 - Node.js 14+ (built-in modules only)
 
 ### Python Analyzer
+
 - Python 3.10+
 - `ruamel.yaml` - YAML parsing
 - `python-hcl2` - HCL/Terraform parsing

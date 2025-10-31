@@ -80,6 +80,7 @@ src/
 ### Import Patterns
 
 #### ✅ Preferred (New Code)
+
 ```javascript
 // Use barrel exports for clean, maintainable imports
 import { PlayerController } from '@features/player';
@@ -94,6 +95,7 @@ import { ImageAssets, AudioAssets } from '../constants/Assets.js';
 ```
 
 #### ⚠️ Legacy (Avoid in New Code)
+
 ```javascript
 // Direct module imports (being phased out)
 import { PlayerController } from '../modules/player/PlayerController.js';
@@ -116,20 +118,20 @@ import { BaseManager } from '../core/BaseManager.js';
 export class MyManager extends BaseManager {
     constructor() {
         super(); // Ensures singleton pattern
-        
+
         if (this.isInitialized()) {
             return; // Early return for singleton
         }
-        
+
         // Initialize your manager
         this.init();
     }
-    
+
     init() {
         // Setup logic here
         this._initialized = true; // Mark as initialized
     }
-    
+
     destroy() {
         // Cleanup logic here
         super.destroy();
@@ -150,7 +152,7 @@ import { EventNames } from '../constants/EventNames.js';
 // Emitting events
 this.eventSystem.emit(EventNames.PLAYER_JUMP, {
     position: { x: 100, y: 200 },
-    force: 45
+    force: 45,
 });
 
 // Listening for events
@@ -172,19 +174,19 @@ export class MyScene extends Scene {
     constructor() {
         super(SceneKeys.MY_SCENE); // Use constants
     }
-    
+
     init(data) {
         // Handle scene data
     }
-    
+
     preload() {
         // Load scene-specific assets
     }
-    
+
     create() {
         // Initialize scene objects
     }
-    
+
     update(time, delta) {
         // Per-frame logic
     }
@@ -194,19 +196,23 @@ export class MyScene extends Scene {
 ## 📝 Naming Conventions
 
 ### Files and Directories
+
 - **PascalCase** for class files: `PlayerController.js`, `AudioManager.js`
 - **camelCase** for directories: `src/modules/player/`
 - **kebab-case** for assets: `player-sprite.png`, `jump-sound.mp3`
 
 ### Constants
+
 - **SCREAMING_SNAKE_CASE** for constants: `SCENE_KEYS.MAIN_MENU`
 - **camelCase** for object keys: `ImageAssets.playerSprite`
 
 ### Classes and Functions
+
 - **PascalCase** for classes: `PlayerController`, `LevelManager`
 - **camelCase** for functions and variables: `loadLevel()`, `playerPosition`
 
 ### Events
+
 - **Namespaced** format: `'player:jump'`, `'level:complete'`, `'ui:click'`
 - Use `EventNames` constants: `EventNames.PLAYER_JUMP`
 
@@ -215,26 +221,29 @@ export class MyScene extends Scene {
 ### Adding New Assets
 
 1. **Add to Manifest** - Update `assets/manifest.json`:
+
 ```json
 {
-  "assets": {
-    "images": {
-      "newSprite": {
-        "type": "image",
-        "path": "images/sprites/new-sprite.png",
-        "description": "Description of the new sprite"
-      }
+    "assets": {
+        "images": {
+            "newSprite": {
+                "type": "image",
+                "path": "images/sprites/new-sprite.png",
+                "description": "Description of the new sprite"
+            }
+        }
     }
-  }
 }
 ```
 
 2. **Regenerate Constants**:
+
 ```bash
 npm run generate-assets
 ```
 
 3. **Use in Code**:
+
 ```javascript
 import { ImageAssets, ImagePaths } from '../constants/Assets.js';
 
@@ -246,6 +255,7 @@ this.add.image(100, 100, ImageAssets.NEW_SPRITE);
 ```
 
 ### Asset Organization
+
 ```
 assets/
 ├── manifest.json             # Asset catalog
@@ -263,12 +273,14 @@ assets/
 ## 🧪 Testing
 
 ### Running Tests
+
 ```bash
 npm test                    # Run all tests
 npm run generate-assets     # Regenerate asset constants
 ```
 
 ### Test Structure
+
 ```javascript
 // tests/test-myfeature.cjs
 const assert = require('assert');
@@ -285,6 +297,7 @@ console.log('MyManager tests passed.');
 ```
 
 ### Testing Guidelines
+
 - Test core managers for singleton behavior
 - Test event emission and handling
 - Verify asset loading with constants
@@ -293,6 +306,7 @@ console.log('MyManager tests passed.');
 ## 🚀 Getting Started
 
 ### Development Setup
+
 ```bash
 # Install dependencies
 npm install
@@ -327,6 +341,7 @@ npm run generate-assets
 ### Commit Messages
 
 Use conventional commit format:
+
 ```
 feat: add new particle effect system
 fix: resolve audio loading issue in Safari

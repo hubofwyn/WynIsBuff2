@@ -1,45 +1,40 @@
 import { Howl, Howler } from 'howler';
+
 // Using the new path alias introduced in Step 2
-import { BaseManager } from './BaseManager.js';
 import { AudioAssets, AudioPaths } from '../constants/Assets.js';
 import { LOG } from '../observability/core/LogSystem.js';
+
+import { BaseManager } from './BaseManager.js';
 
 // Background music sources
 const bgmList = {
     [AudioAssets.PROTEIN_PIXEL_ANTHEM]: AudioPaths.PROTEIN_PIXEL_ANTHEM,
     [AudioAssets.HYPER_BUFF_BLITZ]: AudioPaths.HYPER_BUFF_BLITZ,
-    [AudioAssets.BIRTHDAY_SONG]: AudioPaths.BIRTHDAY_SONG
+    [AudioAssets.BIRTHDAY_SONG]: AudioPaths.BIRTHDAY_SONG,
 };
 
 // Sound effect sources (multiple variants)
 const sfxList = {
-    land: [
-        AudioPaths.SFX_LAND1,
-        AudioPaths.SFX_LAND2,
-        AudioPaths.SFX_LAND3,
-        AudioPaths.SFX_LAND4
-    ],
+    land: [AudioPaths.SFX_LAND1, AudioPaths.SFX_LAND2, AudioPaths.SFX_LAND3, AudioPaths.SFX_LAND4],
     pickup: [
         AudioPaths.SFX_PICKUP1,
         AudioPaths.SFX_PICKUP2,
         AudioPaths.SFX_PICKUP3,
-        AudioPaths.SFX_PICKUP4
+        AudioPaths.SFX_PICKUP4,
     ],
     click: [
         AudioPaths.SFX_CLICK1,
         AudioPaths.SFX_CLICK2,
         AudioPaths.SFX_CLICK3,
-        AudioPaths.SFX_CLICK4
+        AudioPaths.SFX_CLICK4,
     ],
     hover: [
         AudioPaths.SFX_HOVER1,
         AudioPaths.SFX_HOVER2,
         AudioPaths.SFX_HOVER3,
-        AudioPaths.SFX_HOVER4
+        AudioPaths.SFX_HOVER4,
     ],
-    fart: [
-        AudioPaths.SFX_FART
-    ]
+    fart: [AudioPaths.SFX_FART],
 };
 
 /**
@@ -54,7 +49,6 @@ export class AudioManager extends BaseManager {
         // The BaseManager constructor guarantees the singleton, so if the
         // current instance is already initialised we can early-return.
         if (this.isInitialized()) {
-            // eslint-disable-next-line no-constructor-return
             return AudioManager.getInstance();
         }
         this.music = {};
@@ -62,7 +56,7 @@ export class AudioManager extends BaseManager {
         this.settings = {
             masterVolume: 0.8,
             musicVolume: 0.7,
-            sfxVolume: 0.9
+            sfxVolume: 0.9,
         };
         // Set master volume
         Howler.volume(this.settings.masterVolume);
@@ -70,7 +64,7 @@ export class AudioManager extends BaseManager {
         LOG.dev('AUDIO_INIT_COMPLETE', {
             subsystem: 'audio',
             message: 'AudioManager initialized',
-            settings: this.settings
+            settings: this.settings,
         });
         // Mark as initialised for BaseManager consumers
         this.setInitialized();
@@ -86,7 +80,6 @@ export class AudioManager extends BaseManager {
      * @deprecated – use BaseManager.getInstance inherited by AudioManager.
      */
     static getInstance() {
-        // eslint-disable-next-line no-useless-call
         return super.getInstance.call(this);
     }
 
@@ -101,7 +94,7 @@ export class AudioManager extends BaseManager {
                 subsystem: 'audio',
                 message: 'Loading music track',
                 track: key,
-                src: src
+                src,
             });
             this.music[key] = new Howl({
                 src: [`assets/${src}`],
@@ -109,19 +102,20 @@ export class AudioManager extends BaseManager {
                 loop: true,
                 volume: this.settings.musicVolume,
                 preload: true,
-                onload: () => LOG.dev('AUDIO_MUSIC_LOADED', {
-                    subsystem: 'audio',
-                    message: 'Music track loaded successfully',
-                    track: key
-                }),
+                onload: () =>
+                    LOG.dev('AUDIO_MUSIC_LOADED', {
+                        subsystem: 'audio',
+                        message: 'Music track loaded successfully',
+                        track: key,
+                    }),
                 onloaderror: (id, err) => {
                     LOG.error('AUDIO_MUSIC_LOAD_ERROR', {
                         subsystem: 'audio',
                         error: err,
                         message: 'Failed to load music track',
                         track: key,
-                        src: src,
-                        hint: 'Check if audio file exists at assets/' + src
+                        src,
+                        hint: 'Check if audio file exists at assets/' + src,
                     });
                     // Try fallback if available
                     if (src.endsWith('.mp3')) {
@@ -130,7 +124,7 @@ export class AudioManager extends BaseManager {
                             subsystem: 'audio',
                             message: 'Trying fallback audio format',
                             track: key,
-                            fallbackSrc: fallbackSrc
+                            fallbackSrc,
                         });
                     }
                 },
@@ -140,28 +134,32 @@ export class AudioManager extends BaseManager {
                         error: err,
                         message: 'Playback error for music track',
                         track: key,
-                        hint: 'May require user interaction to unlock audio. Check browser autoplay policy.'
+                        hint: 'May require user interaction to unlock audio. Check browser autoplay policy.',
                     });
                     // Unlock audio on next user interaction
                     window.Howler.ctx && window.Howler.ctx.resume();
-                }
+                },
             });
         });
         // Setup sound effects
         Object.entries(sfxList).forEach(([key, list]) => {
-            this.sfx[key] = list.map((src) => new Howl({
-                src: [`assets/${src}`],
-                volume: this.settings.sfxVolume,
-                preload: true,
-                onloaderror: (id, err) => LOG.warn('AUDIO_SFX_LOAD_ERROR', {
-                    subsystem: 'audio',
-                    error: err,
-                    message: 'Failed to load SFX',
-                    sfxKey: key,
-                    src: src,
-                    hint: 'Check if SFX file exists at assets/' + src
-                })
-            }));
+            this.sfx[key] = list.map(
+                (src) =>
+                    new Howl({
+                        src: [`assets/${src}`],
+                        volume: this.settings.sfxVolume,
+                        preload: true,
+                        onloaderror: (id, err) =>
+                            LOG.warn('AUDIO_SFX_LOAD_ERROR', {
+                                subsystem: 'audio',
+                                error: err,
+                                message: 'Failed to load SFX',
+                                sfxKey: key,
+                                src,
+                                hint: 'Check if SFX file exists at assets/' + src,
+                            }),
+                    })
+            );
         });
     }
 
@@ -175,7 +173,7 @@ export class AudioManager extends BaseManager {
             subsystem: 'audio',
             message: 'playMusic called',
             track: key,
-            trackExists: !!track
+            trackExists: !!track,
         });
         if (track) {
             // Handle browser autoplay policy
@@ -183,19 +181,22 @@ export class AudioManager extends BaseManager {
                 LOG.dev('AUDIO_RESUMING_CONTEXT', {
                     subsystem: 'audio',
                     message: 'Resuming suspended audio context',
-                    track: key
+                    track: key,
                 });
-                window.Howler.ctx.resume().then(() => {
-                    this._playTrack(track, key);
-                }).catch(err => {
-                    LOG.warn('AUDIO_RESUME_FAILED', {
-                        subsystem: 'audio',
-                        error: err,
-                        message: 'Could not resume audio context',
-                        track: key,
-                        hint: 'User interaction may be required to unlock audio'
+                window.Howler.ctx
+                    .resume()
+                    .then(() => {
+                        this._playTrack(track, key);
+                    })
+                    .catch((err) => {
+                        LOG.warn('AUDIO_RESUME_FAILED', {
+                            subsystem: 'audio',
+                            error: err,
+                            message: 'Could not resume audio context',
+                            track: key,
+                            hint: 'User interaction may be required to unlock audio',
+                        });
                     });
-                });
             } else {
                 this._playTrack(track, key);
             }
@@ -205,7 +206,9 @@ export class AudioManager extends BaseManager {
                 message: 'Music track not found',
                 track: key,
                 availableTracks: Object.keys(this.music),
-                hint: 'Check if track key exists in bgmList. Available tracks: ' + Object.keys(this.music).join(', ')
+                hint:
+                    'Check if track key exists in bgmList. Available tracks: ' +
+                    Object.keys(this.music).join(', '),
             });
         }
     }
@@ -219,7 +222,7 @@ export class AudioManager extends BaseManager {
             LOG.dev('AUDIO_STARTING_PLAYBACK', {
                 subsystem: 'audio',
                 message: 'Starting music playback',
-                track: key
+                track: key,
             });
             const id = track.play();
             if (id === undefined) {
@@ -227,14 +230,14 @@ export class AudioManager extends BaseManager {
                     subsystem: 'audio',
                     message: 'Failed to play music track',
                     track: key,
-                    hint: 'User interaction may be required. Check browser autoplay policy.'
+                    hint: 'User interaction may be required. Check browser autoplay policy.',
                 });
             }
         } else {
             LOG.dev('AUDIO_ALREADY_PLAYING', {
                 subsystem: 'audio',
                 message: 'Music track is already playing',
-                track: key
+                track: key,
             });
         }
     }
@@ -263,7 +266,9 @@ export class AudioManager extends BaseManager {
                 message: 'No SFX found for key',
                 sfxKey: key,
                 availableKeys: Object.keys(this.sfx),
-                hint: 'Check if SFX key exists in sfxList. Available keys: ' + Object.keys(this.sfx).join(', ')
+                hint:
+                    'Check if SFX key exists in sfxList. Available keys: ' +
+                    Object.keys(this.sfx).join(', '),
             });
             return;
         }
@@ -299,6 +304,8 @@ export class AudioManager extends BaseManager {
      */
     setSFXVolume(value) {
         this.settings.sfxVolume = value;
-        Object.values(this.sfx).flat().forEach((s) => s.volume(value));
+        Object.values(this.sfx)
+            .flat()
+            .forEach((s) => s.volume(value));
     }
 }

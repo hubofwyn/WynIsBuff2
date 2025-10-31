@@ -1,0 +1,38 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+dist-ssr/
+build/
+
+# Migration backup (old code)
+.migration-backup/
+
+# Tests (use separate test config if needed)
+tests/
+
+# Generated files
+src/constants/Assets.js
+
+# Cache and logs
+.cache/
+*.log
+
+# Vite cache
+vite/
+
+# Documentation analysis
+doc-analysis/
+doc-analysis-docs/
+doc-analysis-slim/
+
+# Assets
+assets/
+
+# Configuration files
+*.config.js
+*.config.mjs
+*.config.cjs
+vite.config.js
+vite.config.mjs

@@ -1,8 +1,9 @@
+import { EventNames } from '../constants/EventNames.js';
+import { LOG } from '../observability/core/LogSystem.js';
+
 import { BaseManager } from './BaseManager.js';
 import { EconomyManager } from './EconomyManager.js';
 import { EventBus } from './EventBus.js';
-import { EventNames } from '../constants/EventNames.js';
-import { LOG } from '../observability/core/LogSystem.js';
 
 /**
  * GameStateManager class handles game state persistence,
@@ -17,16 +18,16 @@ export class GameStateManager extends BaseManager {
 
     constructor() {
         super();
-        
+
         // Return early if already initialized (singleton pattern)
         if (this.isInitialized()) {
             return;
         }
-        
+
         this.storageKey = 'wynIsBuff2Progress';
         this.charKey = 'wynIsBuff2SelectedCharacter';
         this.settingsKey = 'wynIsBuff2Settings';
-        
+
         // Idle/Automation System Storage Keys
         this.idleStateKey = 'wynIsBuff2IdleState';
         this.resourcesKey = 'wynIsBuff2Resources';
@@ -36,13 +37,13 @@ export class GameStateManager extends BaseManager {
         this.prestigeKey = 'wynIsBuff2Prestige';
         this.achievementsKey = 'wynIsBuff2Achievements';
         this.lastSaveKey = 'wynIsBuff2LastSave';
-        
+
         this.initialized = false;
         // Initialize storage and load persisted data
         this.initialize();
         this.settings = this.loadSettings();
     }
-    
+
     /**
      * Initialize the game state manager
      */
@@ -53,7 +54,7 @@ export class GameStateManager extends BaseManager {
                 LOG.warn('GAMESTATE_NO_LOCALSTORAGE', {
                     subsystem: 'gamestate',
                     message: 'localStorage not available, progress will not be saved',
-                    hint: 'Check browser environment. localStorage may be disabled or unavailable in this context.'
+                    hint: 'Check browser environment. localStorage may be disabled or unavailable in this context.',
                 });
                 this.initialized = false;
                 this._initialized = false;
@@ -68,7 +69,7 @@ export class GameStateManager extends BaseManager {
             LOG.dev('GAMESTATE_INIT_SUCCESS', {
                 subsystem: 'gamestate',
                 message: 'GameStateManager initialized successfully',
-                defaultCharacter: 'axelSprite'
+                defaultCharacter: 'axelSprite',
             });
             this.initialized = true;
             this._initialized = true;
@@ -80,13 +81,13 @@ export class GameStateManager extends BaseManager {
                 subsystem: 'gamestate',
                 error,
                 message: 'Error initializing GameStateManager',
-                hint: 'Check localStorage permissions. Browser may block localStorage access.'
+                hint: 'Check localStorage permissions. Browser may block localStorage access.',
             });
             this.initialized = false;
             this._initialized = false;
         }
     }
-    
+
     /**
      * Save level progress
      * @param {string} levelId - The level ID
@@ -98,19 +99,19 @@ export class GameStateManager extends BaseManager {
         if (!this.initialized) {
             return false;
         }
-        
+
         try {
             // Load existing progress
             const progress = this.loadProgress();
-            
+
             // Update or add level progress
             progress[levelId] = {
                 completed: true,
                 collectiblesCollected,
                 totalCollectibles,
-                completedAt: new Date().toISOString()
+                completedAt: new Date().toISOString(),
             };
-            
+
             // Save progress
             localStorage.setItem(this.storageKey, JSON.stringify(progress));
 
@@ -119,7 +120,7 @@ export class GameStateManager extends BaseManager {
                 message: 'Level progress saved',
                 levelId,
                 collectiblesCollected,
-                totalCollectibles
+                totalCollectibles,
             });
             return true;
         } catch (error) {
@@ -128,12 +129,12 @@ export class GameStateManager extends BaseManager {
                 error,
                 message: 'Error saving level progress',
                 levelId,
-                hint: 'Check localStorage quota. Storage may be full.'
+                hint: 'Check localStorage quota. Storage may be full.',
             });
             return false;
         }
     }
-    
+
     /**
      * Load game progress
      * @returns {Object} Game progress object
@@ -142,11 +143,11 @@ export class GameStateManager extends BaseManager {
         if (!this.initialized) {
             return {};
         }
-        
+
         try {
             // Get progress from localStorage
             const progressJson = localStorage.getItem(this.storageKey);
-            
+
             // Parse progress or return empty object if not found
             return progressJson ? JSON.parse(progressJson) : {};
         } catch (error) {
@@ -154,12 +155,12 @@ export class GameStateManager extends BaseManager {
                 subsystem: 'gamestate',
                 error,
                 message: 'Error loading game progress',
-                hint: 'Check localStorage data integrity. Data may be corrupted.'
+                hint: 'Check localStorage data integrity. Data may be corrupted.',
             });
             return {};
         }
     }
-    
+
     /**
      * Check if a level is completed
      * @param {string} levelId - The level ID
@@ -169,7 +170,7 @@ export class GameStateManager extends BaseManager {
         if (!this.initialized) {
             return false;
         }
-        
+
         try {
             const progress = this.loadProgress();
             return progress[levelId] && progress[levelId].completed;
@@ -179,12 +180,12 @@ export class GameStateManager extends BaseManager {
                 error,
                 message: 'Error checking level completion',
                 levelId,
-                hint: 'Check progress data integrity.'
+                hint: 'Check progress data integrity.',
             });
             return false;
         }
     }
-    
+
     /**
      * Get level progress
      * @param {string} levelId - The level ID
@@ -194,7 +195,7 @@ export class GameStateManager extends BaseManager {
         if (!this.initialized) {
             return null;
         }
-        
+
         try {
             const progress = this.loadProgress();
             return progress[levelId] || null;
@@ -204,12 +205,12 @@ export class GameStateManager extends BaseManager {
                 error,
                 message: 'Error getting level progress',
                 levelId,
-                hint: 'Check progress data structure.'
+                hint: 'Check progress data structure.',
             });
             return null;
         }
     }
-    
+
     /**
      * Get all completed levels
      * @returns {Array} Array of completed level IDs
@@ -218,23 +219,23 @@ export class GameStateManager extends BaseManager {
         if (!this.initialized) {
             return [];
         }
-        
+
         try {
             const progress = this.loadProgress();
-            return Object.keys(progress).filter(levelId =>
-                progress[levelId] && progress[levelId].completed
+            return Object.keys(progress).filter(
+                (levelId) => progress[levelId] && progress[levelId].completed
             );
         } catch (error) {
             LOG.error('GAMESTATE_GET_COMPLETED_ERROR', {
                 subsystem: 'gamestate',
                 error,
                 message: 'Error getting completed levels',
-                hint: 'Check progress data structure.'
+                hint: 'Check progress data structure.',
             });
             return [];
         }
     }
-    
+
     /**
      * Get total collectibles collected across all levels
      * @returns {Object} Object with collected and total counts
@@ -243,31 +244,31 @@ export class GameStateManager extends BaseManager {
         if (!this.initialized) {
             return { collected: 0, total: 0 };
         }
-        
+
         try {
             const progress = this.loadProgress();
             let collected = 0;
             let total = 0;
-            
-            Object.values(progress).forEach(levelProgress => {
+
+            Object.values(progress).forEach((levelProgress) => {
                 if (levelProgress) {
                     collected += levelProgress.collectiblesCollected || 0;
                     total += levelProgress.totalCollectibles || 0;
                 }
             });
-            
+
             return { collected, total };
         } catch (error) {
             LOG.error('GAMESTATE_GET_COLLECTIBLES_ERROR', {
                 subsystem: 'gamestate',
                 error,
                 message: 'Error getting total collectibles',
-                hint: 'Check progress data structure.'
+                hint: 'Check progress data structure.',
             });
             return { collected: 0, total: 0 };
         }
     }
-    
+
     /**
      * Reset all progress
      * @returns {boolean} Whether the reset was successful
@@ -276,14 +277,14 @@ export class GameStateManager extends BaseManager {
         if (!this.initialized) {
             return false;
         }
-        
+
         try {
             localStorage.removeItem(this.storageKey);
             // Reset character selection as well
             localStorage.removeItem(this.charKey);
             LOG.dev('GAMESTATE_PROGRESS_RESET', {
                 subsystem: 'gamestate',
-                message: 'All progress reset'
+                message: 'All progress reset',
             });
             return true;
         } catch (error) {
@@ -291,12 +292,12 @@ export class GameStateManager extends BaseManager {
                 subsystem: 'gamestate',
                 error,
                 message: 'Error resetting progress',
-                hint: 'Check localStorage access permissions.'
+                hint: 'Check localStorage access permissions.',
             });
             return false;
         }
     }
-    
+
     /**
      * Set the selected character key
      * @param {string} key - Character texture key
@@ -312,12 +313,12 @@ export class GameStateManager extends BaseManager {
                     error,
                     message: 'Error persisting character selection',
                     character: key,
-                    hint: 'Check localStorage quota and permissions.'
+                    hint: 'Check localStorage quota and permissions.',
                 });
             }
         }
     }
-    
+
     /**
      * Get the selected character key
      * @returns {string} The selected character key
@@ -337,7 +338,7 @@ export class GameStateManager extends BaseManager {
         try {
             const payload = {
                 schemaVersion: GameStateManager.SETTINGS_SCHEMA_VERSION,
-                settings
+                settings,
             };
             localStorage.setItem(this.settingsKey, JSON.stringify(payload));
             this.settings = settings;
@@ -347,7 +348,7 @@ export class GameStateManager extends BaseManager {
                 subsystem: 'gamestate',
                 error,
                 message: 'Error saving settings',
-                hint: 'Check localStorage quota and permissions.'
+                hint: 'Check localStorage quota and permissions.',
             });
             return false;
         }
@@ -361,7 +362,7 @@ export class GameStateManager extends BaseManager {
             volumes: { master: 0.8, music: 0.7, sfx: 0.9 },
             keybindings: { jump: 'SPACE', left: 'A', right: 'D', pause: 'ESC' },
             graphicsQuality: 'Medium',
-            accessibility: { palette: 'Off', highContrast: false, subtitles: false }
+            accessibility: { palette: 'Off', highContrast: false, subtitles: false },
         };
         if (!this.initialized) {
             return defaults;
@@ -383,7 +384,7 @@ export class GameStateManager extends BaseManager {
                     message: 'Settings schema version mismatch, resetting to defaults',
                     foundVersion: parsed.schemaVersion,
                     expectedVersion: GameStateManager.SETTINGS_SCHEMA_VERSION,
-                    hint: 'Settings schema was updated. User settings have been reset.'
+                    hint: 'Settings schema was updated. User settings have been reset.',
                 });
                 this.resetSettings();
                 return defaults;
@@ -391,7 +392,7 @@ export class GameStateManager extends BaseManager {
             // Legacy unversioned settings
             LOG.info('GAMESTATE_LEGACY_SETTINGS_UPGRADE', {
                 subsystem: 'gamestate',
-                message: 'Loading legacy settings and upgrading schema'
+                message: 'Loading legacy settings and upgrading schema',
             });
             this.saveSettings(parsed);
             return parsed;
@@ -400,12 +401,12 @@ export class GameStateManager extends BaseManager {
                 subsystem: 'gamestate',
                 error,
                 message: 'Error loading settings',
-                hint: 'Check localStorage data integrity. Settings may be corrupted.'
+                hint: 'Check localStorage data integrity. Settings may be corrupted.',
             });
             return defaults;
         }
     }
-    
+
     /**
      * Reset all persisted settings to defaults
      * @returns {boolean} Whether the reset was successful
@@ -419,7 +420,7 @@ export class GameStateManager extends BaseManager {
             this.settings = this.loadSettings();
             LOG.dev('GAMESTATE_SETTINGS_RESET', {
                 subsystem: 'gamestate',
-                message: 'Settings reset to defaults'
+                message: 'Settings reset to defaults',
             });
             return true;
         } catch (error) {
@@ -427,7 +428,7 @@ export class GameStateManager extends BaseManager {
                 subsystem: 'gamestate',
                 error,
                 message: 'Error resetting settings',
-                hint: 'Check localStorage access permissions.'
+                hint: 'Check localStorage access permissions.',
             });
             return false;
         }
@@ -439,11 +440,11 @@ export class GameStateManager extends BaseManager {
     isInitialized() {
         return this.initialized;
     }
-    
+
     // ========================================
     // Idle/Automation System State Management
     // ========================================
-    
+
     /**
      * Save idle game state
      * @param {Object} idleState - Complete idle state object
@@ -453,21 +454,21 @@ export class GameStateManager extends BaseManager {
         if (!this.initialized) {
             return false;
         }
-        
+
         try {
             const saveData = {
                 ...idleState,
                 timestamp: Date.now(),
-                version: 1
+                version: 1,
             };
-            
+
             localStorage.setItem(this.idleStateKey, JSON.stringify(saveData));
             localStorage.setItem(this.lastSaveKey, Date.now().toString());
 
             LOG.dev('GAMESTATE_IDLE_STATE_SAVED', {
                 subsystem: 'gamestate',
                 message: 'Idle state saved',
-                timestamp: saveData.timestamp
+                timestamp: saveData.timestamp,
             });
             return true;
         } catch (error) {
@@ -475,12 +476,12 @@ export class GameStateManager extends BaseManager {
                 subsystem: 'gamestate',
                 error,
                 message: 'Error saving idle state',
-                hint: 'Check localStorage quota and permissions.'
+                hint: 'Check localStorage quota and permissions.',
             });
             return false;
         }
     }
-    
+
     /**
      * Load idle game state
      * @returns {Object|null} Idle state object or null if not found
@@ -489,7 +490,7 @@ export class GameStateManager extends BaseManager {
         if (!this.initialized) {
             return null;
         }
-        
+
         try {
             const stateJson = localStorage.getItem(this.idleStateKey);
             return stateJson ? JSON.parse(stateJson) : null;
@@ -498,12 +499,12 @@ export class GameStateManager extends BaseManager {
                 subsystem: 'gamestate',
                 error,
                 message: 'Error loading idle state',
-                hint: 'Check localStorage data integrity.'
+                hint: 'Check localStorage data integrity.',
             });
             return null;
         }
     }
-    
+
     /**
      * Save resources state
      * @param {Object} resources - Resources object with buffCoins, buffGems, etc.
@@ -513,7 +514,7 @@ export class GameStateManager extends BaseManager {
         if (!this.initialized) {
             return false;
         }
-        
+
         try {
             localStorage.setItem(this.resourcesKey, JSON.stringify(resources));
             return true;
@@ -522,12 +523,12 @@ export class GameStateManager extends BaseManager {
                 subsystem: 'gamestate',
                 error,
                 message: 'Error saving resources',
-                hint: 'Check localStorage quota and permissions.'
+                hint: 'Check localStorage quota and permissions.',
             });
             return false;
         }
     }
-    
+
     /**
      * Load resources state
      * @returns {Object} Resources object with default values if not found
@@ -536,21 +537,23 @@ export class GameStateManager extends BaseManager {
         if (!this.initialized) {
             return { buffCoins: 0, buffGems: 0, dna: 0, timeEchoes: 0 };
         }
-        
+
         try {
             const resourcesJson = localStorage.getItem(this.resourcesKey);
-            return resourcesJson ? JSON.parse(resourcesJson) : { buffCoins: 0, buffGems: 0, dna: 0, timeEchoes: 0 };
+            return resourcesJson
+                ? JSON.parse(resourcesJson)
+                : { buffCoins: 0, buffGems: 0, dna: 0, timeEchoes: 0 };
         } catch (error) {
             LOG.error('GAMESTATE_LOAD_RESOURCES_ERROR', {
                 subsystem: 'gamestate',
                 error,
                 message: 'Error loading resources',
-                hint: 'Check localStorage data integrity.'
+                hint: 'Check localStorage data integrity.',
             });
             return { buffCoins: 0, buffGems: 0, dna: 0, timeEchoes: 0 };
         }
     }
-    
+
     /**
      * Save upgrades state
      * @param {Object} upgrades - Upgrades purchased and levels
@@ -560,7 +563,7 @@ export class GameStateManager extends BaseManager {
         if (!this.initialized) {
             return false;
         }
-        
+
         try {
             localStorage.setItem(this.upgradesKey, JSON.stringify(upgrades));
             return true;
@@ -569,7 +572,7 @@ export class GameStateManager extends BaseManager {
                 subsystem: 'gamestate',
                 error,
                 message: 'Error saving upgrades',
-                hint: 'Check localStorage quota and permissions.'
+                hint: 'Check localStorage quota and permissions.',
             });
             return false;
         }
@@ -592,7 +595,7 @@ export class GameStateManager extends BaseManager {
                 subsystem: 'gamestate',
                 error,
                 message: 'Error loading upgrades',
-                hint: 'Check localStorage data integrity.'
+                hint: 'Check localStorage data integrity.',
             });
             return {};
         }
@@ -616,7 +619,7 @@ export class GameStateManager extends BaseManager {
                 subsystem: 'gamestate',
                 error,
                 message: 'Error saving automation',
-                hint: 'Check localStorage quota and permissions.'
+                hint: 'Check localStorage quota and permissions.',
             });
             return false;
         }
@@ -639,7 +642,7 @@ export class GameStateManager extends BaseManager {
                 subsystem: 'gamestate',
                 error,
                 message: 'Error loading automation',
-                hint: 'Check localStorage data integrity.'
+                hint: 'Check localStorage data integrity.',
             });
             return {};
         }
@@ -663,7 +666,7 @@ export class GameStateManager extends BaseManager {
                 subsystem: 'gamestate',
                 error,
                 message: 'Error saving factory',
-                hint: 'Check localStorage quota and permissions.'
+                hint: 'Check localStorage quota and permissions.',
             });
             return false;
         }
@@ -686,7 +689,7 @@ export class GameStateManager extends BaseManager {
                 subsystem: 'gamestate',
                 error,
                 message: 'Error loading factory',
-                hint: 'Check localStorage data integrity.'
+                hint: 'Check localStorage data integrity.',
             });
             return {};
         }
@@ -710,7 +713,7 @@ export class GameStateManager extends BaseManager {
                 subsystem: 'gamestate',
                 error,
                 message: 'Error saving prestige',
-                hint: 'Check localStorage quota and permissions.'
+                hint: 'Check localStorage quota and permissions.',
             });
             return false;
         }
@@ -727,13 +730,15 @@ export class GameStateManager extends BaseManager {
 
         try {
             const prestigeJson = localStorage.getItem(this.prestigeKey);
-            return prestigeJson ? JSON.parse(prestigeJson) : { prestigePoints: 0, totalPrestiges: 0, bonuses: {} };
+            return prestigeJson
+                ? JSON.parse(prestigeJson)
+                : { prestigePoints: 0, totalPrestiges: 0, bonuses: {} };
         } catch (error) {
             LOG.error('GAMESTATE_LOAD_PRESTIGE_ERROR', {
                 subsystem: 'gamestate',
                 error,
                 message: 'Error loading prestige',
-                hint: 'Check localStorage data integrity.'
+                hint: 'Check localStorage data integrity.',
             });
             return { prestigePoints: 0, totalPrestiges: 0, bonuses: {} };
         }
@@ -757,7 +762,7 @@ export class GameStateManager extends BaseManager {
                 subsystem: 'gamestate',
                 error,
                 message: 'Error saving achievements',
-                hint: 'Check localStorage quota and permissions.'
+                hint: 'Check localStorage quota and permissions.',
             });
             return false;
         }
@@ -780,12 +785,12 @@ export class GameStateManager extends BaseManager {
                 subsystem: 'gamestate',
                 error,
                 message: 'Error loading achievements',
-                hint: 'Check localStorage data integrity.'
+                hint: 'Check localStorage data integrity.',
             });
             return { unlocked: [], progress: {} };
         }
     }
-    
+
     /**
      * Get last save timestamp
      * @returns {number|null} Timestamp in milliseconds or null if not found
@@ -794,7 +799,7 @@ export class GameStateManager extends BaseManager {
         if (!this.initialized) {
             return null;
         }
-        
+
         try {
             const timestamp = localStorage.getItem(this.lastSaveKey);
             return timestamp ? parseInt(timestamp, 10) : null;
@@ -803,12 +808,12 @@ export class GameStateManager extends BaseManager {
                 subsystem: 'gamestate',
                 error,
                 message: 'Error getting last save time',
-                hint: 'Check localStorage data integrity.'
+                hint: 'Check localStorage data integrity.',
             });
             return null;
         }
     }
-    
+
     /**
      * Calculate offline time since last save
      * @returns {number} Milliseconds since last save, or 0 if no save found
@@ -818,11 +823,11 @@ export class GameStateManager extends BaseManager {
         if (!lastSave) {
             return 0;
         }
-        
+
         const now = Date.now();
         return Math.max(0, now - lastSave);
     }
-    
+
     /**
      * Save all idle-related state at once
      * @param {Object} fullState - Complete idle game state
@@ -832,9 +837,9 @@ export class GameStateManager extends BaseManager {
         if (!this.initialized) {
             return false;
         }
-        
+
         let success = true;
-        
+
         if (fullState.resources) {
             success = this.saveResources(fullState.resources) && success;
         }
@@ -853,13 +858,13 @@ export class GameStateManager extends BaseManager {
         if (fullState.achievements) {
             success = this.saveAchievements(fullState.achievements) && success;
         }
-        
+
         // Save the main idle state
         success = this.saveIdleState(fullState.idle || {}) && success;
-        
+
         return success;
     }
-    
+
     /**
      * Load all idle-related state at once
      * @returns {Object} Complete idle game state
@@ -873,10 +878,10 @@ export class GameStateManager extends BaseManager {
             factory: this.loadFactory(),
             prestige: this.loadPrestige(),
             achievements: this.loadAchievements(),
-            offlineTime: this.getOfflineTime()
+            offlineTime: this.getOfflineTime(),
         };
     }
-    
+
     /**
      * Reset all idle-related progress
      * @returns {boolean} Whether the reset was successful
@@ -885,7 +890,7 @@ export class GameStateManager extends BaseManager {
         if (!this.initialized) {
             return false;
         }
-        
+
         try {
             localStorage.removeItem(this.idleStateKey);
             localStorage.removeItem(this.resourcesKey);
@@ -899,7 +904,7 @@ export class GameStateManager extends BaseManager {
 
             LOG.dev('GAMESTATE_IDLE_RESET', {
                 subsystem: 'gamestate',
-                message: 'Idle progress reset'
+                message: 'Idle progress reset',
             });
             return true;
         } catch (error) {
@@ -907,12 +912,12 @@ export class GameStateManager extends BaseManager {
                 subsystem: 'gamestate',
                 error,
                 message: 'Error resetting idle progress',
-                hint: 'Check localStorage access permissions.'
+                hint: 'Check localStorage access permissions.',
             });
             return false;
         }
     }
-    
+
     /**
      * Central save method - coordinates all manager saves
      * @returns {boolean} Success status
@@ -922,33 +927,33 @@ export class GameStateManager extends BaseManager {
             // Get all manager instances (lazy loading pattern)
             const managers = this.getManagerInstances();
             const saveData = {};
-            
+
             // Collect serialized data from each manager
             for (const [name, manager] of Object.entries(managers)) {
                 if (manager && typeof manager.serialize === 'function') {
                     saveData[name] = manager.serialize();
                 }
             }
-            
+
             // Save to a central key
             localStorage.setItem('wynisbuff2_managers', JSON.stringify(saveData));
-            
+
             // Update last save time
             localStorage.setItem(this.lastSaveKey, Date.now().toString());
-            
+
             // Emit save complete event
             EventBus.getInstance().emit(EventNames.custom('save', 'complete'), {
                 timestamp: Date.now(),
-                managers: Object.keys(saveData)
+                managers: Object.keys(saveData),
             });
-            
+
             return true;
         } catch (error) {
             LOG.error('GAMESTATE_CENTRAL_SAVE_ERROR', {
                 subsystem: 'gamestate',
                 error,
                 message: 'Error in central save',
-                hint: 'Check localStorage quota and permissions. Manager serialization may have failed.'
+                hint: 'Check localStorage quota and permissions. Manager serialization may have failed.',
             });
             return false;
         }
@@ -964,7 +969,7 @@ export class GameStateManager extends BaseManager {
             if (!saveDataJson) {
                 LOG.dev('GAMESTATE_NO_SAVE_DATA', {
                     subsystem: 'gamestate',
-                    message: 'No save data found for managers'
+                    message: 'No save data found for managers',
                 });
                 return false;
             }
@@ -982,7 +987,7 @@ export class GameStateManager extends BaseManager {
             // Emit load complete event
             EventBus.getInstance().emit(EventNames.custom('load', 'complete'), {
                 timestamp: Date.now(),
-                managers: Object.keys(saveData)
+                managers: Object.keys(saveData),
             });
 
             return true;
@@ -991,12 +996,12 @@ export class GameStateManager extends BaseManager {
                 subsystem: 'gamestate',
                 error,
                 message: 'Error in central load',
-                hint: 'Check localStorage data integrity. Manager deserialization may have failed.'
+                hint: 'Check localStorage data integrity. Manager deserialization may have failed.',
             });
             return false;
         }
     }
-    
+
     /**
      * Get instances of all managers that need saving
      * Uses lazy loading to avoid circular dependencies
@@ -1004,23 +1009,23 @@ export class GameStateManager extends BaseManager {
      */
     getManagerInstances() {
         const managers = {};
-        
+
         // Dynamically import to avoid circular dependencies
         try {
             // Core managers
             managers.economy = EconomyManager.getInstance();
-            
+
             // Lazy load optional managers
             if (typeof BossRewardSystem !== 'undefined') {
                 const { BossRewardSystem } = require('@features/boss');
                 managers.bossRewards = BossRewardSystem.getInstance();
             }
-            
+
             if (typeof EnhancedCloneManager !== 'undefined') {
                 const { EnhancedCloneManager } = require('@features/idle');
                 managers.clones = EnhancedCloneManager.getInstance();
             }
-            
+
             if (typeof DeterministicRNG !== 'undefined') {
                 const { DeterministicRNG } = require('@features/core');
                 managers.rng = DeterministicRNG.getInstance();
@@ -1031,7 +1036,7 @@ export class GameStateManager extends BaseManager {
                 LOG.dev('GAMESTATE_MANAGERS_UNAVAILABLE', {
                     subsystem: 'gamestate',
                     message: 'Some managers not available for save/load',
-                    error: e.message
+                    error: e.message,
                 });
             }
         }

@@ -16,5 +16,10 @@ export { PhysicsManager } from '../../core/PhysicsManager.js';
 export { UIManager } from '../../core/UIManager.js';
 
 // Physics constants and configuration
-export { PIXELS_PER_METER, METERS_PER_PIXEL, pixelsToMeters, metersToPixels } from '../../constants/PhysicsConstants.js';
+export {
+    PIXELS_PER_METER,
+    METERS_PER_PIXEL,
+    pixelsToMeters,
+    metersToPixels,
+} from '../../constants/PhysicsConstants.js';
 export { PhysicsConfig } from '../../constants/PhysicsConfig.js';

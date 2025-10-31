@@ -3,6 +3,7 @@ node_modules/
 
 # Build outputs
 dist/
+dist-ssr/
 build/
 
 # Assets
@@ -11,11 +12,29 @@ assets/
 # Generated files
 *.min.js
 *.min.css
+src/constants/Assets.js
 
 # Package files
 package-lock.json
 pnpm-lock.yaml
 yarn.lock
+
+# Migration backup
+.migration-backup/
+
+# Claude and dev tools
+.claude/
+.codex/
+.mcp.json
+.claude-orchestration.json
+
+# Documentation analysis
+doc-analysis/
+doc-analysis-docs/
+doc-analysis-slim/
+
+# Tests
+tests/
 
 # IDE
 .idea/

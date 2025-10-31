@@ -15,7 +15,7 @@ Codex must follow these steps on every new session:
 
 1. `source .codex/run-codex.sh <role>` — loads env vars and helpers.
 2. Read `baseline/current-foundation.md` (core architecture).
-3. Read **only** the *goal* files listed in `.codex/goals/active-goals.txt`.
+3. Read **only** the _goal_ files listed in `.codex/goals/active-goals.txt`.
 4. Open all files in `.codex/tasks/` with the label `READY`.
 5. Display a **concise session plan** (≤ 8 bullets) and wait for approval.
 
@@ -30,7 +30,7 @@ Codex must follow these steps on every new session:
 | `game-designer`  | Jeffrey (design) | read edit browser command mcp | Gameplay iterations                        |
 | `physics-expert` | Jeffrey          | read edit command mcp         | Physics tuning & performance               |
 
-*Default role* when none is specified: **`phaser-coder`**.
+_Default role_ when none is specified: **`phaser-coder`**.
 
 ---
 
@@ -47,17 +47,16 @@ Codex must follow these steps on every new session:
 | `Scope:`    | "feature", "bugfix", "chore", "research"      |
 | `Estimate:` | hours (whole numbers)                         |
 
-> Codex may **only** pick up tasks marked `READY`.  When finishing, it **must** update `Status:` and append a brief change‑log.
+> Codex may **only** pick up tasks marked `READY`. When finishing, it **must** update `Status:` and append a brief change‑log.
 
 ---
 
 ## 5  Coding & Commit Rules
 
-* Follow **global standards** (§4 in home instructions) **plus**:
-
-  * **Namespace prefix** all new JS files under `src/scenes/` with the sprint id, e.g., `s04_LevelBuilder.js`.
-  * Keep PRs ≤ 400 LOC unless architect role signs off.
-  * Include a **`Test Plan:`** block in the commit body.
+- Follow **global standards** (§4 in home instructions) **plus**:
+    - **Namespace prefix** all new JS files under `src/scenes/` with the sprint id, e.g., `s04_LevelBuilder.js`.
+    - Keep PRs ≤ 400 LOC unless architect role signs off.
+    - Include a **`Test Plan:`** block in the commit body.
 
 ---
 
@@ -73,4 +72,4 @@ Codex should abort the push and request human review if any check fails.
 
 ## 7  Extending This File
 
-Add new sections as needed; keep numbering stable.  Use the table below to track changes.
+Add new sections as needed; keep numbering stable. Use the table below to track changes.

@@ -43,7 +43,7 @@ export class DebugContext extends BaseManager {
             totalSnapshots: 0,
             cacheHits: 0,
             cacheMisses: 0,
-            providerErrors: 0
+            providerErrors: 0,
         };
 
         this.setInitialized();
@@ -59,7 +59,7 @@ export class DebugContext extends BaseManager {
             LOG.warn('DEBUGCONTEXT_PROVIDER_REPLACED', {
                 subsystem: 'observability',
                 message: `Provider '${name}' already registered, replacing`,
-                providerName: name
+                providerName: name,
             });
         }
         this.providers.set(name, provider);
@@ -119,8 +119,8 @@ export class DebugContext extends BaseManager {
             timestamp: Date.now(),
             performance: {
                 fps: this.deltaTime > 0 ? Math.round(1 / this.deltaTime) : 0,
-                frameTime: this.deltaTime * 1000
-            }
+                frameTime: this.deltaTime * 1000,
+            },
         };
 
         // Capture state from all enabled providers
@@ -141,11 +141,11 @@ export class DebugContext extends BaseManager {
                     providerName: name,
                     error,
                     errorMessage: error.message,
-                    stack: error.stack
+                    stack: error.stack,
                 });
                 snapshot[name] = {
                     _error: error.message,
-                    _errorStack: error.stack
+                    _errorStack: error.stack,
                 };
                 this.stats.providerErrors++;
             }
@@ -166,7 +166,7 @@ export class DebugContext extends BaseManager {
     captureMinimal(providerNames) {
         const snapshot = {
             frame: this.currentFrame,
-            timestamp: Date.now()
+            timestamp: Date.now(),
         };
 
         for (const name of providerNames) {
@@ -197,9 +197,10 @@ export class DebugContext extends BaseManager {
             providers: providerStats,
             registeredProviders: this.providers.size,
             currentFrame: this.currentFrame,
-            cacheEfficiency: this.stats.totalSnapshots > 0
-                ? (this.stats.cacheHits / this.stats.totalSnapshots * 100).toFixed(1) + '%'
-                : '0%'
+            cacheEfficiency:
+                this.stats.totalSnapshots > 0
+                    ? ((this.stats.cacheHits / this.stats.totalSnapshots) * 100).toFixed(1) + '%'
+                    : '0%',
         };
     }
 
@@ -211,7 +212,7 @@ export class DebugContext extends BaseManager {
             totalSnapshots: 0,
             cacheHits: 0,
             cacheMisses: 0,
-            providerErrors: 0
+            providerErrors: 0,
         };
 
         for (const provider of this.providers.values()) {

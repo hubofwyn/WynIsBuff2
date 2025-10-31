@@ -26,7 +26,7 @@ export class InputStateProvider extends StateProvider {
 
         const state = {
             available: true,
-            initialized: input.isInitialized ? input.isInitialized() : false
+            initialized: input.isInitialized ? input.isInitialized() : false,
         };
 
         // Current action states
@@ -43,7 +43,18 @@ export class InputStateProvider extends StateProvider {
         if (input.keyboard) {
             const keys = [];
             // Common game keys
-            const commonKeys = ['left', 'right', 'up', 'down', 'space', 'shift', 'w', 'a', 's', 'd'];
+            const commonKeys = [
+                'left',
+                'right',
+                'up',
+                'down',
+                'space',
+                'shift',
+                'w',
+                'a',
+                's',
+                'd',
+            ];
             for (const key of commonKeys) {
                 if (input.keyboard[key]?.isDown) {
                     keys.push(key);
@@ -61,7 +72,7 @@ export class InputStateProvider extends StateProvider {
                 state.mouse = {
                     x: Math.round(pointer.x || 0),
                     y: Math.round(pointer.y || 0),
-                    isDown: pointer.isDown || false
+                    isDown: pointer.isDown || false,
                 };
             }
         }
@@ -70,7 +81,7 @@ export class InputStateProvider extends StateProvider {
         if (input.gamepad) {
             state.gamepad = {
                 connected: input.gamepad.connected || false,
-                buttons: input.gamepad.buttons?.filter(b => b)?.length || 0
+                buttons: input.gamepad.buttons?.filter((b) => b)?.length || 0,
             };
         }
 
@@ -78,7 +89,7 @@ export class InputStateProvider extends StateProvider {
         if (input.errorCount !== undefined) {
             state.errors = {
                 count: input.errorCount,
-                disabled: input.disabled || false
+                disabled: input.disabled || false,
             };
         }
 

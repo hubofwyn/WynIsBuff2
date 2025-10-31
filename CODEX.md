@@ -7,9 +7,9 @@ WynIsBuff2 is a 2D platformer game built with Phaser and the Rapier physics engi
 ## Project Structure
 
 - `src/` - Source code for the game
-  - `scenes/` - Phaser scenes
-  - `modules/` - Game modules (player, enemies, level, etc.)
-  - `constants/` - Game constants and configuration
+    - `scenes/` - Phaser scenes
+    - `modules/` - Game modules (player, enemies, level, etc.)
+    - `constants/` - Game constants and configuration
 - `assets/` - Game assets (images, sounds, etc.)
 - `docs/` - Project documentation
 - `AIProjectDocs/` - AI-generated documentation
@@ -38,9 +38,9 @@ The codex system helps maintain project consistency and alignment with establish
 
 1. Run `./run-codex` to start a new session (simplified launcher)
 2. If you encounter model access issues, try one of these alternative launchers:
-   - `./run-codex-gpt4o` - Uses the gpt-4o model
-   - `./run-codex-gpt4` - Uses the gpt-4 model
-   - `./run-codex-allowed [model]` - Uses models from the allowed list
+    - `./run-codex-gpt4o` - Uses the gpt-4o model
+    - `./run-codex-gpt4` - Uses the gpt-4 model
+    - `./run-codex-allowed [model]` - Uses models from the allowed list
 3. Work on tasks marked as READY in the `.codex/tasks/` directory
 4. Update task status when complete
 
@@ -49,6 +49,7 @@ The scripts automatically use this CODEX.md file for project-level guidance.
 ### Allowed Models
 
 The following models are allowed in the OpenAI platform settings:
+
 - gpt-4.1
 - gpt-4o-realtime-preview-2024-12-17
 - chatgpt-4o-latest

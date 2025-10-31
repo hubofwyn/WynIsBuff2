@@ -4,11 +4,11 @@ Documentation for the core technologies and frameworks used in WynIsBuff2.
 
 ## Contents
 
-| Document | Purpose |
-|----------|---------|
-| [PhaserFramework.md](./PhaserFramework.md) | Phaser 3 game framework integration and usage |
-| [RapierPhysics.md](./RapierPhysics.md) | Rapier 2D physics engine integration |
-| [ViteBuildTool.md](./ViteBuildTool.md) | Vite build tool configuration and workflow |
+| Document                                                   | Purpose                                       |
+| ---------------------------------------------------------- | --------------------------------------------- |
+| [PhaserFramework.md](./PhaserFramework.md)                 | Phaser 3 game framework integration and usage |
+| [RapierPhysics.md](./RapierPhysics.md)                     | Rapier 2D physics engine integration          |
+| [ViteBuildTool.md](./ViteBuildTool.md)                     | Vite build tool configuration and workflow    |
 | [TechnologiesAndPackages.md](./TechnologiesAndPackages.md) | Complete tech stack overview and package list |
 
 ## Tech Stack Overview

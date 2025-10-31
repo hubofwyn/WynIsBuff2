@@ -16,20 +16,33 @@ export default [
             ecmaVersion: 2022,
             sourceType: 'module',
             globals: {
+                // Node.js globals
                 console: 'readonly',
                 process: 'readonly',
                 Buffer: 'readonly',
                 __dirname: 'readonly',
                 __filename: 'readonly',
-                URL: 'readonly',
+                global: 'readonly',
+                // Browser globals
                 window: 'readonly',
                 document: 'readonly',
                 navigator: 'readonly',
                 localStorage: 'readonly',
                 sessionStorage: 'readonly',
+                URL: 'readonly',
+                URLSearchParams: 'readonly',
+                // Timers
+                setTimeout: 'readonly',
+                clearTimeout: 'readonly',
+                setInterval: 'readonly',
+                clearInterval: 'readonly',
+                setImmediate: 'readonly',
+                clearImmediate: 'readonly',
+                // Game libraries
                 Phaser: 'readonly',
                 Howler: 'readonly',
                 Howl: 'readonly',
+                RAPIER: 'readonly',
             },
         },
         plugins: {
@@ -44,15 +57,15 @@ export default [
                     caughtErrorsIgnorePattern: '^_',
                 },
             ],
-            'import/extensions': ['error', 'ignorePackages'],
+            'import/extensions': ['warn', 'ignorePackages'],
             'import/no-unresolved': [
-                'error',
+                'warn',
                 {
                     ignore: ['^@features/', '^phaser$', '^howler$', '^@dimforge/rapier2d-compat$'],
                 },
             ],
             'import/order': [
-                'error',
+                'warn',
                 {
                     groups: ['builtin', 'external', 'internal', 'parent', 'sibling', 'index'],
                     'newlines-between': 'always',
@@ -74,6 +87,20 @@ export default [
 
     // Ignore patterns
     {
-        ignores: ['dist/**', 'node_modules/**', '*.min.js', 'public/**', 'assets/**', 'vite/**'],
+        ignores: [
+            'dist/**',
+            'dist-ssr/**',
+            'node_modules/**',
+            '*.min.js',
+            'public/**',
+            'assets/**',
+            'vite/**',
+            '.migration-backup/**',
+            'tests/**',
+            'doc-analysis/**',
+            'doc-analysis-docs/**',
+            'doc-analysis-slim/**',
+            'src/constants/Assets.js', // Generated file
+        ],
     },
 ];

@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import RAPIER from '@dimforge/rapier2d-compat';
+
 import { EventNames } from '../../constants/EventNames';
 
 /**

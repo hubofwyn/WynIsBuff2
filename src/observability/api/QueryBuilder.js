@@ -187,20 +187,20 @@ export class QueryBuilder {
 
         // Apply filters
         if (this.filters.level) {
-            results = results.filter(log => log.level === this.filters.level);
+            results = results.filter((log) => log.level === this.filters.level);
         }
 
         if (this.filters.subsystem) {
-            results = results.filter(log => log.subsystem === this.filters.subsystem);
+            results = results.filter((log) => log.subsystem === this.filters.subsystem);
         }
 
         if (this.filters.code) {
-            results = results.filter(log => log.code === this.filters.code);
+            results = results.filter((log) => log.code === this.filters.code);
         }
 
         // Apply critical filter (errors + fatals)
         if (this._criticalFilter) {
-            results = results.filter(log => log.level === 'error' || log.level === 'fatal');
+            results = results.filter((log) => log.level === 'error' || log.level === 'fatal');
         }
 
         // Apply time range filter
@@ -216,7 +216,7 @@ export class QueryBuilder {
                 endTime = this.filters.timeRange.end || now;
             }
 
-            results = results.filter(log => {
+            results = results.filter((log) => {
                 const logTime = new Date(log.timestamp).getTime();
                 return logTime >= startTime && logTime <= endTime;
             });
@@ -248,9 +248,9 @@ export class QueryBuilder {
 
         // Handle context inclusion
         if (!this._includeContext) {
-            results = results.map(log => ({
+            results = results.map((log) => ({
                 ...log,
-                context: log.context ? { frame: log.context.frame } : null
+                context: log.context ? { frame: log.context.frame } : null,
             }));
         }
 

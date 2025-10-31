@@ -13,7 +13,7 @@ export const UIConfig = {
         shadowColor: 0x000000,
         shadowAlpha: 0.6,
         shadowOffsetX: 5,
-        shadowOffsetY: 5
+        shadowOffsetY: 5,
     },
     // Modern button styling with gradients and better effects
     menuButton: {
@@ -35,8 +35,8 @@ export const UIConfig = {
             color: 0x000000,
             alpha: 0.5,
             offsetX: 3,
-            offsetY: 3
-        }
+            offsetY: 3,
+        },
     },
     // Modern text styles with better typography
     text: {
@@ -52,8 +52,8 @@ export const UIConfig = {
                 color: '#000000',
                 alpha: 0.7,
                 offsetX: 4,
-                offsetY: 4
-            }
+                offsetY: 4,
+            },
         },
         // Subtitle or prompt
         subtitle: {
@@ -67,8 +67,8 @@ export const UIConfig = {
                 color: '#000000',
                 alpha: 0.5,
                 offsetX: 2,
-                offsetY: 2
-            }
+                offsetY: 2,
+            },
         },
         // Section headings (CharacterSelect, MainMenu title)
         heading: {
@@ -82,8 +82,8 @@ export const UIConfig = {
                 color: '#000000',
                 alpha: 0.6,
                 offsetX: 3,
-                offsetY: 3
-            }
+                offsetY: 3,
+            },
         },
         // General labels (CharacterSelect options)
         label: {
@@ -92,7 +92,7 @@ export const UIConfig = {
             color: '#E0E0E0',
             stroke: '#0F3460',
             strokeThickness: 2,
-            align: 'center'
+            align: 'center',
         },
         // Stats or informational text
         stats: {
@@ -101,7 +101,7 @@ export const UIConfig = {
             color: '#E0E0E0',
             stroke: '#0F3460',
             strokeThickness: 2,
-            align: 'center'
+            align: 'center',
         },
         // Message text for feedback messages
         message: {
@@ -110,7 +110,7 @@ export const UIConfig = {
             color: '#FFD700',
             stroke: '#0F3460',
             strokeThickness: 2,
-            align: 'center'
+            align: 'center',
         },
         // Button text (GameOver buttons, etc.)
         button: {
@@ -119,8 +119,8 @@ export const UIConfig = {
             color: '#FFD700',
             stroke: '#0F3460',
             strokeThickness: 3,
-            align: 'center'
-        }
+            align: 'center',
+        },
     },
     // Modern animation configurations
     animations: {
@@ -130,27 +130,27 @@ export const UIConfig = {
             start: 0.7,
             end: 1.0,
             duration: 500,
-            ease: 'Back.easeOut'
+            ease: 'Back.easeOut',
         },
         buttonHover: {
             scale: 1.1,
             duration: 200,
-            ease: 'Power2.easeOut'
+            ease: 'Power2.easeOut',
         },
         buttonPress: {
             scale: 0.95,
             duration: 100,
-            ease: 'Power2.easeOut'
+            ease: 'Power2.easeOut',
         },
         slideInFromLeft: {
             startX: -200,
             duration: 600,
-            ease: 'Power3.easeOut'
+            ease: 'Power3.easeOut',
         },
         slideInFromBottom: {
             startY: 100,
             duration: 700,
-            ease: 'Back.easeOut'
+            ease: 'Back.easeOut',
         },
         pulse: {
             scaleStart: 1.0,
@@ -158,15 +158,15 @@ export const UIConfig = {
             duration: 1000,
             ease: 'Sine.easeInOut',
             repeat: -1,
-            yoyo: true
+            yoyo: true,
         },
         glow: {
             alpha: 0.7,
             duration: 1500,
             ease: 'Sine.easeInOut',
             repeat: -1,
-            yoyo: true
-        }
+            yoyo: true,
+        },
     },
     // Character selection specific styling
     characterSelect: {
@@ -175,12 +175,12 @@ export const UIConfig = {
         cardPadding: 20,
         cardBackgroundColor: 0x16213e,
         cardBackgroundAlpha: 0.9,
-        cardBorderColor: 0xFFD700,
+        cardBorderColor: 0xffd700,
         cardBorderWidth: 2,
         cardBorderRadius: 15,
         hoverScale: 1.05,
         selectedScale: 1.1,
-        selectedBorderColor: 0xFF6B6B,
-        selectedBorderWidth: 4
-    }
+        selectedBorderColor: 0xff6b6b,
+        selectedBorderWidth: 4,
+    },
 };

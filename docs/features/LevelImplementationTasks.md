@@ -29,16 +29,16 @@ update(time, delta) {
     if (!this.physicsManager || !this.physicsManager.isInitialized()) {
         return;
     }
-    
+
     try {
         // Update physics (steps the world and updates sprites)
         this.physicsManager.update();
-        
+
         // Update level elements with delta time
         if (this.levelManager) {
             this.levelManager.update(delta);
         }
-        
+
         // Update player
         if (this.playerController) {
             this.playerController.update();
@@ -62,12 +62,12 @@ this.world.contactPairEvents.on('begin', (event) => {
     // Extract the body handles from the event
     const bodyHandleA = event.collider1.parent().handle;
     const bodyHandleB = event.collider2.parent().handle;
-    
+
     // Emit collision event
     if (this.eventSystem) {
         this.eventSystem.emit(EventNames.COLLISION_START, {
             bodyHandleA,
-            bodyHandleB
+            bodyHandleB,
         });
     }
 });
@@ -84,12 +84,12 @@ this.world.contactPairEvents.on('begin', (event) => {
 // Example level completion handling in Game.js
 this.eventSystem.on(EventNames.LEVEL_COMPLETE, (data) => {
     console.log(`Level ${data.levelId} completed!`);
-    
+
     // Show completion UI
     this.uiManager.showLevelCompleteUI({
         levelName: data.name,
         collectiblesCollected: data.collectiblesCollected,
-        totalCollectibles: data.totalCollectibles
+        totalCollectibles: data.totalCollectibles,
     });
 });
 ```
@@ -118,14 +118,14 @@ createLevelButtons() {
         { id: 'level4', name: 'Momentum Master', x: 200, y: 300 },
         { id: 'level5', name: 'The Gauntlet', x: 400, y: 300 }
     ];
-    
+
     levels.forEach(level => {
         const button = this.add.text(level.x, level.y, level.name, {
             fontFamily: 'Arial',
             fontSize: 24,
             color: '#ffffff'
         }).setInteractive();
-        
+
         button.on('pointerdown', () => {
             this.scene.start('Game', { levelId: level.id });
         });
@@ -148,21 +148,21 @@ class GameStateManager {
         progress[levelId] = {
             completed: true,
             collectiblesCollected,
-            totalCollectibles
+            totalCollectibles,
         };
         localStorage.setItem('wynIsBuff2Progress', JSON.stringify(progress));
     }
-    
+
     loadProgress() {
         const progress = localStorage.getItem('wynIsBuff2Progress');
         return progress ? JSON.parse(progress) : {};
     }
-    
+
     isLevelCompleted(levelId) {
         const progress = this.loadProgress();
         return progress[levelId] && progress[levelId].completed;
     }
-    
+
     resetProgress() {
         localStorage.removeItem('wynIsBuff2Progress');
     }

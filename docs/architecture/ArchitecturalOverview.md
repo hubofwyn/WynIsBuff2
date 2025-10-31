@@ -1,6 +1,7 @@
 # WynIsBuff2 Architectural Overview
 
 ## Table of Contents
+
 - [Introduction](#introduction)
 - [Architectural Vision](#architectural-vision)
 - [System Architecture](#system-architecture)
@@ -64,7 +65,9 @@ The system architecture follows a modular design with the following key componen
 ### Key Components
 
 #### 1. Scenes
+
 Phaser scenes manage the game's states and serve as containers for game objects:
+
 - **Boot**: Initializes the game and loads minimal assets
 - **Preloader**: Loads assets and shows loading progress
 - **MainMenu**: Displays the main menu and options
@@ -72,14 +75,18 @@ Phaser scenes manage the game's states and serve as containers for game objects:
 - **GameOver**: Displays game over screen and stats
 
 #### 2. Core Systems
+
 Fundamental systems that support the game's functionality:
+
 - **Asset Manager**: Handles loading, caching, and unloading of game assets
 - **State Manager**: Manages game state and persistence
 - **UI Manager**: Creates and manages UI elements
 - **Entity Component System**: Manages game entities and their components
 
 #### 3. Modules
+
 Specialized components that implement specific game features:
+
 - **Physics Manager**: Integrates with Rapier physics engine
 - **Level Manager**: Creates and manages level elements
 - **Player Controller**: Handles player input and movement
@@ -87,7 +94,9 @@ Specialized components that implement specific game features:
 - **Collectible Manager**: Manages collectible items
 
 #### 4. Services
+
 Cross-cutting concerns that support multiple components:
+
 - **Event System**: Facilitates communication between modules
 - **Input Handler**: Processes and maps user input
 - **Audio Manager**: Controls sound effects and music
@@ -115,30 +124,32 @@ The modules interact primarily through the Event System, which decouples the com
 ### Example Interactions
 
 1. **Player Jump**:
-   - Player Controller detects jump input
-   - Player Controller emits `PLAYER_JUMP` event
-   - Physics Manager applies jump force
-   - Audio Manager plays jump sound
-   - UI Manager updates jump counter
+    - Player Controller detects jump input
+    - Player Controller emits `PLAYER_JUMP` event
+    - Physics Manager applies jump force
+    - Audio Manager plays jump sound
+    - UI Manager updates jump counter
 
 2. **Collectible Collection**:
-   - Physics Manager detects collision
-   - Physics Manager emits `COLLISION` event
-   - Entity Manager identifies collectible
-   - Entity Manager emits `ITEM_COLLECT` event
-   - State Manager updates score
-   - UI Manager updates score display
-   - Audio Manager plays collection sound
+    - Physics Manager detects collision
+    - Physics Manager emits `COLLISION` event
+    - Entity Manager identifies collectible
+    - Entity Manager emits `ITEM_COLLECT` event
+    - State Manager updates score
+    - UI Manager updates score display
+    - Audio Manager plays collection sound
 
 ## Technical Stack
 
 ### Core Technologies
+
 - **Phaser 3.88.0**: HTML5 game framework
 - **Rapier 0.14.0**: 2D physics engine
 - **Vite 5.3.1**: Build tool and development server
 - **JavaScript (ES6+)**: Programming language
 
 ### Development Tools
+
 - **Visual Studio Code**: Primary IDE
 - **Git**: Version control
 - **npm**: Package management
@@ -188,18 +199,21 @@ src/
 ## Performance Considerations
 
 ### Rendering Optimization
+
 - Use texture atlases to reduce draw calls
 - Implement object pooling for frequently created/destroyed objects
 - Optimize animations with sprite sheets
 - Use appropriate image formats and compression
 
 ### Physics Optimization
+
 - Limit active physics bodies
 - Use simplified collision shapes
 - Implement physics culling for off-screen objects
 - Optimize physics step rate for balance of accuracy and performance
 
 ### Memory Management
+
 - Implement progressive asset loading
 - Unload unused assets when changing scenes
 - Monitor memory usage during development
@@ -210,16 +224,19 @@ src/
 The architecture is designed to scale in the following ways:
 
 ### Content Expansion
+
 - **Level System**: Easily add new levels through data files
 - **Entity System**: Add new entity types without modifying core code
 - **Asset Pipeline**: Structured for efficient addition of new assets
 
 ### Feature Expansion
+
 - **Power-up System**: Framework for adding new player abilities
 - **Enemy Behaviors**: Extensible AI system for new enemy types
 - **Game Modes**: Scene-based architecture supports new game modes
 
 ### Technical Expansion
+
 - **Networking**: Architecture can accommodate multiplayer features
 - **Persistence**: State management supports save/load functionality
 - **Platforms**: Design considers potential for mobile adaptation

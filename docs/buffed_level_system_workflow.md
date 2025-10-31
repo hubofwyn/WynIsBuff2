@@ -5,7 +5,9 @@ This workflow upgrades WynIsBuff2’s level/progression architecture to match th
 ---
 
 ### Overview
+
 Current code uses hardcoded JS objects for level data, and separate classes for platform/collectible instantiation and progression. To "buff" the system:
+
 - All levels/zones will move to data-driven YAML (validated by schema)
 - Level objects will be spawned through a unified prefab registry
 - Difficulty/variation will rely on a scalable API
@@ -15,6 +17,7 @@ Current code uses hardcoded JS objects for level data, and separate classes for 
 ---
 
 ### 1. Data-Driven Level Pipeline (YAML)
+
 1. **Create** `assets/levels/` directory. Store all levels here as YAML files:
     - Naming: `Z2_MomentumMountains/stage-1.yaml`, etc.
 2. **Write** level schema to `schemas/levels.schema.json` — based on the Bible doc.
@@ -26,6 +29,7 @@ Current code uses hardcoded JS objects for level data, and separate classes for 
 ---
 
 ### 2. Modular & Extensible Prefab Registry
+
 1. **Create** a `PrefabRegistry` mapping type string (e.g. `"ledge"`, `"pit"`, `"mover"`) to a factory method/class.
     - E.g. `"ledge"` → `PlatformFactory`, `"mover"` → `MovingPlatformController`, etc.
 2. Extend `LevelLoader` to, for each object in the YAML's `objects` array:
@@ -37,6 +41,7 @@ Current code uses hardcoded JS objects for level data, and separate classes for 
 ---
 
 ### 3. Difficulty-Scaler API & Dynamic Level Props
+
 1. **Write/extend** a `makeScaler(zoneIndex)` API:
     - Outputs param set: gap, platformW, moverSpeed, etc.
 2. At level load time, **injects** scaler props according to zone/stage (can be read from YAML meta).
@@ -45,6 +50,7 @@ Current code uses hardcoded JS objects for level data, and separate classes for 
 ---
 
 ### 4. Zone/Stage Progression Matrix
+
 1. **Implement** explicit support for zones and stages:
     - Levels get IDs like `{ zone, stage }`, not just `level1`
 2. Progression/next-level logic uses the matrix, not a flat list.
@@ -54,6 +60,7 @@ Current code uses hardcoded JS objects for level data, and separate classes for 
 ---
 
 ### 5. Event Triggers, UX, and Boss-Escape Hooks
+
 1. Level objects include support for triggers/events (e.g., checkpoints, gates, tutorials, sensors).
 2. Factories emit to the in-game Event System (analytics/debug ready).
 3. Future‑proof: Effects/polish layers and boss-escape system can be layered on without touching other code.
@@ -61,12 +68,14 @@ Current code uses hardcoded JS objects for level data, and separate classes for 
 ---
 
 ### 6. Physics & Unit Consistency
+
 1. **Centralize** physics units/scaling (e.g., `PX_PER_M`, masks) in a constants file, imported by all modules.
 2. All prefab/entity factories must respect these units.
 
 ---
 
 ### 7. Migration, Testing, and Documentation
+
 1. Begin with a test YAML level and migrate over time. Proxy old data via the loader when bootstrapping.
 2. Document new workflows in `docs/` and `AIProjectDocs/`. Update readme and onboarding docs.
 3. Ensure all progression/hardness is testable with debug toggles + interfaces (step through progression, force scaler, etc).
@@ -75,6 +84,7 @@ Current code uses hardcoded JS objects for level data, and separate classes for 
 ---
 
 ### Architectural Strengths Provided
+
 - **Easy expansion:** Designers add levels/zones/objects in YAML and registry, not code.
 - **Strict validation & reliability** via schema and modular prefab enforcement.
 - **Cleaner codebase:** No more growing monoliths or duplicative switch-cases.

@@ -23,10 +23,10 @@ export class ErrorPatternDetector {
 
         // Pattern detection thresholds
         this.thresholds = {
-            repeatingErrorCount: 3,      // Min occurrences to be considered repeating
-            cascadeWindowMs: 1000,        // Time window for cascade detection
-            cascadeMinErrors: 5,          // Min errors in window for cascade
-            cycleDetectionDepth: 10       // Max depth for cycle detection
+            repeatingErrorCount: 3, // Min occurrences to be considered repeating
+            cascadeWindowMs: 1000, // Time window for cascade detection
+            cascadeMinErrors: 5, // Min errors in window for cascade
+            cycleDetectionDepth: 10, // Max depth for cycle detection
         };
 
         // Pattern history
@@ -49,7 +49,7 @@ export class ErrorPatternDetector {
         const fatal = this.logSystem.getByLevel('fatal', 50);
 
         // Filter to time window
-        const recentErrors = [...errors, ...warnings, ...fatal].filter(log => {
+        const recentErrors = [...errors, ...warnings, ...fatal].filter((log) => {
             const logTime = new Date(log.timestamp).getTime();
             return logTime >= cutoffTime;
         });
@@ -62,7 +62,7 @@ export class ErrorPatternDetector {
             cascades: this.findCascades(recentErrors),
             mostCommon: this.getMostCommon(recentErrors),
             errorRate: this.calculateErrorRate(recentErrors, timeWindowMs),
-            severity: this.assessSeverity(recentErrors)
+            severity: this.assessSeverity(recentErrors),
         };
 
         // Store in history
@@ -79,7 +79,7 @@ export class ErrorPatternDetector {
         const codeCounts = new Map();
 
         // Count occurrences of each error code
-        errors.forEach(error => {
+        errors.forEach((error) => {
             const code = error.code;
             codeCounts.set(code, (codeCounts.get(code) || 0) + 1);
         });
@@ -88,14 +88,14 @@ export class ErrorPatternDetector {
         const repeating = [];
         codeCounts.forEach((count, code) => {
             if (count >= this.thresholds.repeatingErrorCount) {
-                const instances = errors.filter(e => e.code === code);
+                const instances = errors.filter((e) => e.code === code);
                 repeating.push({
                     code,
                     count,
                     firstOccurrence: instances[0].timestamp,
                     lastOccurrence: instances[instances.length - 1].timestamp,
-                    subsystems: [...new Set(instances.map(e => e.subsystem))],
-                    instances: instances.slice(0, 5) // Include first 5 instances
+                    subsystems: [...new Set(instances.map((e) => e.subsystem))],
+                    instances: instances.slice(0, 5), // Include first 5 instances
                 });
             }
         });
@@ -119,9 +119,7 @@ export class ErrorPatternDetector {
         const windowMs = this.thresholds.cascadeWindowMs;
 
         // Sort by timestamp
-        const sorted = [...errors].sort((a, b) => {
-            return new Date(a.timestamp) - new Date(b.timestamp);
-        });
+        const sorted = [...errors].sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
 
         // Sliding window to find cascades
         for (let i = 0; i < sorted.length; i++) {
@@ -137,7 +135,7 @@ export class ErrorPatternDetector {
 
             if (errorsInWindow.length >= this.thresholds.cascadeMinErrors) {
                 // Check if this is a new cascade (not overlapping with previous)
-                const isNewCascade = cascades.every(cascade => {
+                const isNewCascade = cascades.every((cascade) => {
                     const cascadeStart = new Date(cascade.startTime).getTime();
                     const cascadeEnd = new Date(cascade.endTime).getTime();
                     return windowStart > cascadeEnd || windowEnd < cascadeStart;
@@ -149,9 +147,9 @@ export class ErrorPatternDetector {
                         endTime: errorsInWindow[errorsInWindow.length - 1].timestamp,
                         duration: windowMs,
                         errorCount: errorsInWindow.length,
-                        uniqueCodes: [...new Set(errorsInWindow.map(e => e.code))].length,
-                        subsystems: [...new Set(errorsInWindow.map(e => e.subsystem))],
-                        errors: errorsInWindow.slice(0, 10) // Include first 10 errors
+                        uniqueCodes: [...new Set(errorsInWindow.map((e) => e.code))].length,
+                        subsystems: [...new Set(errorsInWindow.map((e) => e.subsystem))],
+                        errors: errorsInWindow.slice(0, 10), // Include first 10 errors
                     });
                 }
             }
@@ -167,13 +165,13 @@ export class ErrorPatternDetector {
     getMostCommon(errors) {
         const codeCounts = new Map();
 
-        errors.forEach(error => {
+        errors.forEach((error) => {
             const code = error.code;
             const existing = codeCounts.get(code) || {
                 code,
                 count: 0,
                 level: error.level,
-                subsystem: error.subsystem
+                subsystem: error.subsystem,
             };
             existing.count++;
             codeCounts.set(code, existing);
@@ -196,7 +194,7 @@ export class ErrorPatternDetector {
         const rate = errors.length / timeWindowSec;
         return {
             errorsPerSecond: rate.toFixed(2),
-            timeWindowSec
+            timeWindowSec,
         };
     }
 
@@ -207,9 +205,9 @@ export class ErrorPatternDetector {
     assessSeverity(errors) {
         let severity = 'low';
 
-        const fatalCount = errors.filter(e => e.level === 'fatal').length;
-        const errorCount = errors.filter(e => e.level === 'error').length;
-        const warnCount = errors.filter(e => e.level === 'warn').length;
+        const fatalCount = errors.filter((e) => e.level === 'fatal').length;
+        const errorCount = errors.filter((e) => e.level === 'error').length;
+        const warnCount = errors.filter((e) => e.level === 'warn').length;
 
         if (fatalCount > 0) {
             severity = 'critical';
@@ -224,8 +222,8 @@ export class ErrorPatternDetector {
             breakdown: {
                 fatal: fatalCount,
                 error: errorCount,
-                warn: warnCount
-            }
+                warn: warnCount,
+            },
         };
     }
 
@@ -236,7 +234,7 @@ export class ErrorPatternDetector {
     recordPattern(pattern) {
         this.detectedPatterns.push({
             timestamp: new Date().toISOString(),
-            pattern
+            pattern,
         });
 
         // Limit history size
@@ -285,7 +283,7 @@ export class ErrorPatternDetector {
 
         if (recent.repeatingErrors.length > 0) {
             lines.push('Repeating Errors:');
-            recent.repeatingErrors.forEach(rep => {
+            recent.repeatingErrors.forEach((rep) => {
                 lines.push(`  - ${rep.code}: ${rep.count} occurrences`);
             });
             lines.push('');
@@ -294,7 +292,9 @@ export class ErrorPatternDetector {
         if (recent.cascades.length > 0) {
             lines.push('Error Cascades:');
             recent.cascades.forEach((cascade, idx) => {
-                lines.push(`  Cascade ${idx + 1}: ${cascade.errorCount} errors in ${cascade.duration}ms`);
+                lines.push(
+                    `  Cascade ${idx + 1}: ${cascade.errorCount} errors in ${cascade.duration}ms`
+                );
             });
             lines.push('');
         }

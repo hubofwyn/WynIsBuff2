@@ -1,5 +1,6 @@
 import { Scene } from 'phaser';
 import { AudioManager } from '@features/core';
+
 import { UIConfig } from '../constants/UIConfig';
 import { SceneKeys } from '../constants/SceneKeys.js';
 
@@ -18,22 +19,19 @@ export class PauseScene extends Scene {
 
         // Panel background
         const panelCfg = UIConfig.panel;
-        this.add.rectangle(
-            width / 2,
-            height / 2,
-            width * 0.5,
-            height * 0.6,
-            panelCfg.backgroundColor,
-            panelCfg.backgroundAlpha
-        ).setOrigin(0.5);
+        this.add
+            .rectangle(
+                width / 2,
+                height / 2,
+                width * 0.5,
+                height * 0.6,
+                panelCfg.backgroundColor,
+                panelCfg.backgroundAlpha
+            )
+            .setOrigin(0.5);
 
         // Title text
-        this.add.text(
-            width / 2,
-            height / 2 - 100,
-            'Paused',
-            UIConfig.text.title
-        ).setOrigin(0.5);
+        this.add.text(width / 2, height / 2 - 100, 'Paused', UIConfig.text.title).setOrigin(0.5);
 
         // Lower music volume
         const audio = AudioManager.getInstance();
@@ -44,15 +42,11 @@ export class PauseScene extends Scene {
         const buttons = [
             { key: 'resume', label: 'Resume', yOffset: -20 },
             { key: 'mainMenu', label: 'Main Menu', yOffset: 60 },
-            { key: 'settings', label: 'Settings', yOffset: 140 }
+            { key: 'settings', label: 'Settings', yOffset: 140 },
         ];
-        buttons.forEach(btnCfg => {
-            const btn = this.add.text(
-                width / 2,
-                height / 2 + btnCfg.yOffset,
-                btnCfg.label,
-                UIConfig.menuButton
-            )
+        buttons.forEach((btnCfg) => {
+            const btn = this.add
+                .text(width / 2, height / 2 + btnCfg.yOffset, btnCfg.label, UIConfig.menuButton)
                 .setOrigin(0.5)
                 .setInteractive();
 

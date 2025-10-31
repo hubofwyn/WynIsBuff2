@@ -6,11 +6,11 @@
  */
 
 export const LogLevel = {
-    FATAL: 'fatal',  // System-critical errors requiring immediate attention
-    ERROR: 'error',  // Errors that affect functionality but don't crash the system
-    WARN: 'warn',    // Warning conditions that should be investigated
-    INFO: 'info',    // Informational messages about system state
-    DEV: 'dev'       // Development/debug information (high volume)
+    FATAL: 'fatal', // System-critical errors requiring immediate attention
+    ERROR: 'error', // Errors that affect functionality but don't crash the system
+    WARN: 'warn', // Warning conditions that should be investigated
+    INFO: 'info', // Informational messages about system state
+    DEV: 'dev', // Development/debug information (high volume)
 };
 
 export const LogLevelPriority = {
@@ -18,7 +18,7 @@ export const LogLevelPriority = {
     [LogLevel.ERROR]: 4,
     [LogLevel.WARN]: 3,
     [LogLevel.INFO]: 2,
-    [LogLevel.DEV]: 1
+    [LogLevel.DEV]: 1,
 };
 
 /**
@@ -33,7 +33,7 @@ export const DefaultSamplingRates = {
     [LogLevel.ERROR]: 1.0,
     [LogLevel.WARN]: 0.5,
     [LogLevel.INFO]: 0.1,
-    [LogLevel.DEV]: 0.01
+    [LogLevel.DEV]: 0.01,
 };
 
 /**

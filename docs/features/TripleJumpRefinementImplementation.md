@@ -1,6 +1,7 @@
 # Triple Jump Refinement Implementation
 
 ## Table of Contents
+
 - [Overview](#overview)
 - [Architectural Changes](#architectural-changes)
 - [Visual Feedback Enhancements](#visual-feedback-enhancements)
@@ -24,6 +25,7 @@ The most significant architectural change is the modularization of the PlayerCon
 4. **CollisionController**: Handles collision detection and ground state
 
 This modular approach provides several benefits:
+
 - Better separation of concerns
 - More maintainable and testable code
 - Easier to extend and modify
@@ -44,12 +46,14 @@ These effect systems are integrated with the Event System to provide decoupled v
 ### 1. Improved Color Changes
 
 The original implementation used instant color changes based on jump state:
+
 - Ground state: Blue (0x0000FF)
 - First jump: Green (0x00FF00)
 - Second jump: Yellow (0xFFFF00)
 - Third jump: Red (0xFF0000)
 
 The enhanced implementation uses the ColorManager to provide:
+
 - Smooth color transitions between states
 - Brightness changes based on jump phase (rising, peak, falling)
 - Pulse effects for jumps and landings
@@ -60,15 +64,18 @@ The enhanced implementation uses the ColorManager to provide:
 The ParticleManager provides rich particle effects for various player actions:
 
 #### Jump Particles
+
 - **First Jump**: Simple dust cloud below player
 - **Second Jump**: Energy particles in a wider pattern
 - **Third Jump**: Burst effect in all directions
 
 #### Landing Particles
+
 - Dust cloud proportional to landing velocity
 - Impact ripple effect for high-velocity landings
 
 #### Movement Particles
+
 - Subtle dust trail when moving quickly on the ground
 
 ### 3. Screen Shake
@@ -76,17 +83,18 @@ The ParticleManager provides rich particle effects for various player actions:
 The CameraManager provides contextual screen shake effects:
 
 - **Jump Shake**:
-  - No shake for first jump
-  - Subtle shake for second jump
-  - Stronger shake for third jump
+    - No shake for first jump
+    - Subtle shake for second jump
+    - Stronger shake for third jump
 
 - **Landing Shake**:
-  - Intensity based on landing velocity
-  - Direction influenced by movement direction
+    - Intensity based on landing velocity
+    - Direction influenced by movement direction
 
 ### 4. Squash and Stretch Effects
 
 Added squash and stretch effects for jumps and landings:
+
 - Stretch effect when jumping
 - Squash effect when landing
 - Intensity based on jump type and landing velocity
@@ -104,7 +112,7 @@ bufferJump() {
     if (this._jumpBufferTimer) {
         this._jumpBufferTimer.remove();
     }
-    
+
     // Create a new buffer timer
     this._jumpBufferTimer = this.scene.time.delayedCall(
         this.jumpParams.bufferTime,
@@ -123,15 +131,15 @@ Implemented variable jump height based on button press duration. If the player r
 // Variable jump height implementation
 trackJumpKeyState(input) {
     // Check if any jump key is held
-    const jumpKeyDown = 
-        input.spaceKey.isDown || 
-        input.wasd.up.isDown || 
+    const jumpKeyDown =
+        input.spaceKey.isDown ||
+        input.wasd.up.isDown ||
         input.cursors.up.isDown;
-    
+
     // Track when jump key is released during a jump
     if (this._jumpKeyHeld && !jumpKeyDown && this.jumpState === 'rising') {
         this._jumpReleased = true;
-        
+
         // Apply variable jump height by cutting the upward velocity
         if (this.body && this._jumpReleased) {
             const currentVel = this.body.linvel();
@@ -144,7 +152,7 @@ trackJumpKeyState(input) {
             }
         }
     }
-    
+
     // Update jump key held state
     this._jumpKeyHeld = jumpKeyDown;
 }
@@ -157,18 +165,18 @@ Implemented different movement parameters for ground and air to provide more rea
 ```javascript
 // Ground movement parameters
 groundParams = {
-    moveSpeed: 35,         // Moderate max speed
-    snapFactor: 0.8,       // How quickly to snap to target velocity (0-1)
-    stopSnapFactor: 0.9,   // How quickly to stop (0-1)
-    directionChangeFactor: 1.5 // Multiplier for direction changes
+    moveSpeed: 35, // Moderate max speed
+    snapFactor: 0.8, // How quickly to snap to target velocity (0-1)
+    stopSnapFactor: 0.9, // How quickly to stop (0-1)
+    directionChangeFactor: 1.5, // Multiplier for direction changes
 };
 
 // Air movement parameters
 airParams = {
-    moveSpeed: 30,         // Slightly lower max speed in air
-    snapFactor: 0.6,       // Slower acceleration in air
-    stopSnapFactor: 0.05,  // Much slower stopping in air
-    directionChangeFactor: 1.2 // Less responsive direction changes in air
+    moveSpeed: 30, // Slightly lower max speed in air
+    snapFactor: 0.6, // Slower acceleration in air
+    stopSnapFactor: 0.05, // Much slower stopping in air
+    directionChangeFactor: 1.2, // Less responsive direction changes in air
 };
 ```
 
@@ -182,28 +190,28 @@ calculateFallingVelocity(currentVelY) {
     // Only apply falling acceleration if moving downward and not on ground
     if (currentVelY > 0 && !this.isOnGround) {
         let newVelY = currentVelY;
-        
+
         if (this.fallingParams.accelerationCurve) {
             // Accelerate falling speed with a curve for better feel
             // Slower acceleration at first, then faster as player falls
             const fallProgress = Math.min(currentVelY / 20, 1); // 0-1 based on fall speed
-            const accelerationFactor = this.fallingParams.baseAcceleration + 
+            const accelerationFactor = this.fallingParams.baseAcceleration +
                 (this.fallingParams.maxAcceleration - this.fallingParams.baseAcceleration) * fallProgress;
-            
+
             newVelY = currentVelY * accelerationFactor;
         } else {
             // Simple constant acceleration
             newVelY = currentVelY * this.fallingParams.baseAcceleration;
         }
-        
+
         // Cap maximum fall speed
         if (newVelY > this.fallingParams.maxFallSpeed) {
             newVelY = this.fallingParams.maxFallSpeed;
         }
-        
+
         return newVelY;
     }
-    
+
     // If not falling or on ground, return current velocity unchanged
     return currentVelY;
 }
@@ -225,10 +233,10 @@ handleLanding(body, sprite) {
             this._landingRecoveryTimer = null;
         }
     );
-    
+
     // Apply a small squash effect on landing
     this.applySquashEffect(sprite, 1.2, 0.8, 100);
-    
+
     // Emit landing events...
 }
 ```
@@ -241,7 +249,7 @@ Implemented comprehensive jump state tracking to detect different phases of a ju
 // Jump state tracking
 updateJumpState(body, sprite) {
     const currentVel = body.linvel();
-    
+
     // Only track jump state if we're in the air and have used jumps
     if (!this.isOnGround && this._currentJumpNumber > 0) {
         // Detect rising to peak transition

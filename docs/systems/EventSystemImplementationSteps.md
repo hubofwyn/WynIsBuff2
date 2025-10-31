@@ -16,7 +16,7 @@ export class EventSystem {
         this.events = new Map();
         this.debugMode = false;
     }
-    
+
     on(event, callback) {
         if (!this.events.has(event)) {
             this.events.set(event, []);
@@ -24,22 +24,25 @@ export class EventSystem {
         this.events.get(event).push(callback);
         return () => this.off(event, callback);
     }
-    
+
     off(event, callback) {
         if (!this.events.has(event)) return;
         const callbacks = this.events.get(event);
-        this.events.set(event, callbacks.filter(cb => cb !== callback));
+        this.events.set(
+            event,
+            callbacks.filter((cb) => cb !== callback)
+        );
         if (this.events.get(event).length === 0) {
             this.events.delete(event);
         }
     }
-    
+
     emit(event, data) {
         if (this.debugMode) {
             console.log(`[EventSystem] Event emitted: ${event}`, data);
         }
         if (!this.events.has(event)) return;
-        this.events.get(event).forEach(callback => {
+        this.events.get(event).forEach((callback) => {
             try {
                 callback(data);
             } catch (error) {
@@ -47,7 +50,7 @@ export class EventSystem {
             }
         });
     }
-    
+
     once(event, callback) {
         const onceCallback = (data) => {
             this.off(event, onceCallback);
@@ -55,7 +58,7 @@ export class EventSystem {
         };
         return this.on(event, onceCallback);
     }
-    
+
     setDebugMode(enabled) {
         this.debugMode = enabled;
     }
@@ -72,24 +75,24 @@ export const EventNames = {
     GAME_INIT: 'game:init',
     GAME_START: 'game:start',
     LEVEL_COMPLETE: 'level:complete',
-    
+
     // Player events
     PLAYER_SPAWN: 'player:spawn',
     PLAYER_JUMP: 'player:jump',
     PLAYER_LAND: 'player:land',
     PLAYER_MOVE: 'player:move',
-    
+
     // Physics events
     COLLISION_START: 'physics:collisionStart',
-    
+
     // UI events
     UI_UPDATE: 'ui:update',
-    
+
     // Audio events
     PLAY_SOUND: 'audio:playSound',
-    
+
     // Helper function for custom events
-    custom: (category, action) => `${category}:${action}`
+    custom: (category, action) => `${category}:${action}`,
 };
 ```
 
@@ -98,12 +101,14 @@ export const EventNames = {
 Modify `src/scenes/Game.js` to use the Event System:
 
 1. Import the Event System and EventNames:
+
 ```javascript
 import { EventSystem } from '../modules/EventSystem';
 import { EventNames } from '../constants/EventNames';
 ```
 
 2. Add an eventSystem property to the Game class:
+
 ```javascript
 constructor() {
     super('Game');
@@ -113,18 +118,19 @@ constructor() {
 ```
 
 3. Initialize the Event System in the create method:
+
 ```javascript
 async create() {
     try {
         // Initialize event system
         this.eventSystem = new EventSystem();
         this.eventSystem.setDebugMode(true);
-        
+
         // Set up event listeners
         this.setupEventListeners();
-        
+
         // ... existing code
-        
+
         // Pass eventSystem to managers
         this.physicsManager = new PhysicsManager(this, this.eventSystem);
         // ... existing code
@@ -136,9 +142,9 @@ async create() {
             this.eventSystem,
             512, 300
         );
-        
+
         // ... existing code
-        
+
         // Emit game init event
         this.eventSystem.emit(EventNames.GAME_INIT, { scene: 'Game' });
     } catch (error) {
@@ -148,6 +154,7 @@ async create() {
 ```
 
 4. Add a setupEventListeners method:
+
 ```javascript
 setupEventListeners() {
     // Listen for player jump events to update UI
@@ -156,7 +163,7 @@ setupEventListeners() {
             this.jumpText.setText(`Jumps Used: ${data.jumpsUsed} / ${data.maxJumps}`);
         }
     });
-    
+
     // Listen for player land events
     this.eventSystem.on(EventNames.PLAYER_LAND, (data) => {
         // Could add screen shake or other effects here
@@ -169,11 +176,13 @@ setupEventListeners() {
 Modify `src/modules/PhysicsManager.js`:
 
 1. Import EventNames:
+
 ```javascript
 import { EventNames } from '../constants/EventNames';
 ```
 
 2. Update the constructor to accept the Event System:
+
 ```javascript
 constructor(scene, eventSystem) {
     this.scene = scene;
@@ -183,18 +192,19 @@ constructor(scene, eventSystem) {
 ```
 
 3. Emit events in the initialize method:
+
 ```javascript
 async initialize(gravityX = 0.0, gravityY = 20.0) {
     try {
         // ... existing code
-        
+
         if (this.eventSystem) {
-            this.eventSystem.emit(EventNames.GAME_INIT, { 
+            this.eventSystem.emit(EventNames.GAME_INIT, {
                 module: 'physics',
                 gravity: { x: gravityX, y: gravityY }
             });
         }
-        
+
         return true;
     } catch (error) {
         // ... existing error handling
@@ -207,18 +217,20 @@ async initialize(gravityX = 0.0, gravityY = 20.0) {
 Modify `src/modules/PlayerController.js`:
 
 1. Import EventNames:
+
 ```javascript
 import { EventNames } from '../constants/EventNames';
 ```
 
 2. Update the constructor to accept the Event System:
+
 ```javascript
 constructor(scene, world, eventSystem, x = 512, y = 300) {
     this.scene = scene;
     this.world = world;
     this.eventSystem = eventSystem;
     // ... existing code
-    
+
     // Emit player spawn event
     if (this.eventSystem) {
         this.eventSystem.emit(EventNames.PLAYER_SPAWN, {
@@ -230,15 +242,16 @@ constructor(scene, world, eventSystem, x = 512, y = 300) {
 ```
 
 3. Emit jump events in the handleJumping method:
+
 ```javascript
 handleJumping(jumpText) {
     try {
         // ... existing code
-        
+
         if (jumpPressed) {
             if (this.isOnGround || this.jumpsUsed < this.maxJumps) {
                 // ... existing jump code
-                
+
                 // Emit jump event
                 if (this.eventSystem) {
                     this.eventSystem.emit(EventNames.PLAYER_JUMP, {
@@ -255,11 +268,11 @@ handleJumping(jumpText) {
                         jumpNumber: this.jumpsUsed
                     });
                 }
-                
+
                 // ... existing code
             }
         }
-        
+
         // ... existing code
     } catch (error) {
         // ... existing error handling
@@ -268,14 +281,15 @@ handleJumping(jumpText) {
 ```
 
 4. Emit land events in the processCollisions method:
+
 ```javascript
 processCollisions(platforms) {
     try {
         // Store previous ground state
         const wasOnGround = this.isOnGround;
-        
+
         // ... existing collision detection code
-        
+
         // Emit land event if just landed
         if (!wasOnGround && this.isOnGround && this.eventSystem) {
             this.eventSystem.emit(EventNames.PLAYER_LAND, {
@@ -289,7 +303,7 @@ processCollisions(platforms) {
                 }
             });
         }
-        
+
         // ... existing code
     } catch (error) {
         // ... existing error handling

@@ -1,6 +1,7 @@
 import { EventNames } from '../constants/EventNames';
-import { BaseManager } from './BaseManager';
 import { LOG } from '../observability/core/LogSystem.js';
+
+import { BaseManager } from './BaseManager';
 
 /**
  * UIManager class handles all UI-related functionality including
@@ -14,14 +15,14 @@ export class UIManager extends BaseManager {
     constructor() {
         super();
         if (this.isInitialized()) return;
-        
+
         this.scene = null;
         this.events = null;
         this.elements = new Map();
         this.groups = new Map();
         this.screenWidth = 0;
         this.screenHeight = 0;
-        
+
         // Subtitle system
         this.subtitlesEnabled = false;
         this.subtitleContainer = null;
@@ -29,7 +30,7 @@ export class UIManager extends BaseManager {
         this.subtitleQueue = [];
         this.currentSubtitle = null;
     }
-    
+
     /**
      * Initialize the UIManager
      * @param {Phaser.Scene} scene - The scene this manager belongs to
@@ -38,24 +39,24 @@ export class UIManager extends BaseManager {
     init(scene, eventSystem) {
         this.scene = scene;
         this.events = eventSystem;
-        
+
         // Store screen dimensions for responsive positioning
         this.screenWidth = this.scene.cameras.main.width;
         this.screenHeight = this.scene.cameras.main.height;
-        
+
         // Listen for UI update events
         if (this.events) {
             this.events.on(EventNames.UI_UPDATE, this.handleUIUpdate.bind(this));
             this.events.on(EventNames.PLAYER_JUMP, this.handlePlayerJump.bind(this));
         }
-        
+
         // Listen for resize events to update responsive positioning
         this.scene.scale.on('resize', this.handleResize, this);
-        
+
         // Mark as initialized
         this._initialized = true;
     }
-    
+
     /**
      * Create a text element
      * @param {string} key - Unique identifier for the element
@@ -71,13 +72,13 @@ export class UIManager extends BaseManager {
         this.elements.set(key, {
             element: textElement,
             type: 'text',
-            responsive: responsive,
+            responsive,
             originalPosition: { x, y },
-            originalStyle: Object.assign({}, style)
+            originalStyle: Object.assign({}, style),
         });
         return textElement;
     }
-    
+
     /**
      * Create a button
      * @param {string} key - Unique identifier for the element
@@ -89,21 +90,22 @@ export class UIManager extends BaseManager {
      * @returns {Phaser.GameObjects.Image} The created button
      */
     createButton(key, x, y, texture, callback, responsive = false) {
-        const button = this.scene.add.image(x, y, texture)
+        const button = this.scene.add
+            .image(x, y, texture)
             .setInteractive()
             .on('pointerdown', callback)
             .on('pointerover', () => button.setTint(0xdddddd))
             .on('pointerout', () => button.clearTint());
-            
+
         this.elements.set(key, {
             element: button,
             type: 'button',
-            responsive: responsive,
-            originalPosition: { x, y }
+            responsive,
+            originalPosition: { x, y },
         });
         return button;
     }
-    
+
     /**
      * Create a UI group to organize elements
      * @param {string} key - Unique identifier for the group
@@ -112,12 +114,12 @@ export class UIManager extends BaseManager {
     createGroup(key) {
         const group = {
             elements: [],
-            visible: true
+            visible: true,
         };
         this.groups.set(key, group);
         return group;
     }
-    
+
     /**
      * Add an element to a group
      * @param {string} groupKey - Group identifier
@@ -126,12 +128,12 @@ export class UIManager extends BaseManager {
     addToGroup(groupKey, elementKey) {
         const group = this.groups.get(groupKey);
         const elementData = this.elements.get(elementKey);
-        
+
         if (group && elementData) {
             group.elements.push(elementKey);
         }
     }
-    
+
     /**
      * Update text content
      * @param {string} key - Element identifier
@@ -143,7 +145,7 @@ export class UIManager extends BaseManager {
             elementData.element.setText(text);
         }
     }
-    
+
     /**
      * Handle UI update events
      * @param {object} data - Event data
@@ -159,7 +161,7 @@ export class UIManager extends BaseManager {
             }
         }
     }
-    
+
     /**
      * Handle player jump events
      * @param {object} data - Jump event data
@@ -167,7 +169,7 @@ export class UIManager extends BaseManager {
     handlePlayerJump(data) {
         this.updateText('jumpCounter', `Jumps Used: ${data.jumpsUsed} / ${data.maxJumps}`);
     }
-    
+
     /**
      * Get a UI element
      * @param {string} key - Element identifier
@@ -177,7 +179,7 @@ export class UIManager extends BaseManager {
         const elementData = this.elements.get(key);
         return elementData ? elementData.element : null;
     }
-    
+
     /**
      * Show a UI element
      * @param {string} key - Element identifier
@@ -188,7 +190,7 @@ export class UIManager extends BaseManager {
             elementData.element.setVisible(true);
         }
     }
-    
+
     /**
      * Hide a UI element
      * @param {string} key - Element identifier
@@ -199,7 +201,7 @@ export class UIManager extends BaseManager {
             elementData.element.setVisible(false);
         }
     }
-    
+
     /**
      * Show all elements in a group
      * @param {string} groupKey - Group identifier
@@ -208,12 +210,12 @@ export class UIManager extends BaseManager {
         const group = this.groups.get(groupKey);
         if (group) {
             group.visible = true;
-            group.elements.forEach(elementKey => {
+            group.elements.forEach((elementKey) => {
                 this.showElement(elementKey);
             });
         }
     }
-    
+
     /**
      * Hide all elements in a group
      * @param {string} groupKey - Group identifier
@@ -222,12 +224,12 @@ export class UIManager extends BaseManager {
         const group = this.groups.get(groupKey);
         if (group) {
             group.visible = false;
-            group.elements.forEach(elementKey => {
+            group.elements.forEach((elementKey) => {
                 this.hideElement(elementKey);
             });
         }
     }
-    
+
     /**
      * Handle screen resize events
      * @param {Phaser.Scale.ScaleManager} gameSize - The new game size
@@ -236,50 +238,53 @@ export class UIManager extends BaseManager {
         // Update stored screen dimensions
         this.screenWidth = gameSize.width;
         this.screenHeight = gameSize.height;
-        
+
         // Update positions of responsive elements
         this.elements.forEach((data, key) => {
             if (data.responsive && data.element) {
                 this.updateResponsivePosition(data);
             }
         });
-        
+
         // Update subtitle position if exists
         if (this.subtitleContainer && this.subtitleText) {
             const subtitleY = this.screenHeight - 100;
-            
+
             // Update background
             const bg = this.subtitleContainer.list[0];
             if (bg && bg.clear) {
                 bg.clear();
                 bg.fillStyle(0x000000, 0.8);
-                bg.fillRoundedRect(this.screenWidth * 0.1, subtitleY - 30, this.screenWidth * 0.8, 60, 10);
+                bg.fillRoundedRect(
+                    this.screenWidth * 0.1,
+                    subtitleY - 30,
+                    this.screenWidth * 0.8,
+                    60,
+                    10
+                );
             }
-            
+
             // Update text position
             this.subtitleText.setPosition(this.screenWidth / 2, subtitleY);
             this.subtitleText.setWordWrapWidth(this.screenWidth * 0.7);
         }
     }
-    
+
     /**
      * Update the position of a responsive element
      * @param {object} elementData - Element data
      */
     updateResponsivePosition(elementData) {
         const { element, originalPosition } = elementData;
-        
+
         // Calculate new position based on screen size
         // This is a simple implementation - can be expanded for more complex positioning
         const relativeX = originalPosition.x / this.screenWidth;
         const relativeY = originalPosition.y / this.screenHeight;
-        
-        element.setPosition(
-            relativeX * this.screenWidth,
-            relativeY * this.screenHeight
-        );
+
+        element.setPosition(relativeX * this.screenWidth, relativeY * this.screenHeight);
     }
-    
+
     /**
      * Position an element relative to screen edges
      * @param {string} key - Element identifier
@@ -290,10 +295,10 @@ export class UIManager extends BaseManager {
     positionRelativeToScreen(key, position, offsetX = 0, offsetY = 0) {
         const elementData = this.elements.get(key);
         if (!elementData || !elementData.element) return;
-        
+
         const element = elementData.element;
         let x, y;
-        
+
         switch (position) {
             case 'top-left':
                 x = offsetX;
@@ -325,21 +330,21 @@ export class UIManager extends BaseManager {
                 y = offsetY;
                 element.setOrigin(0, 0);
         }
-        
+
         element.setPosition(x, y);
-        
+
         // Update original position for responsive positioning
         elementData.originalPosition = { x, y };
         elementData.responsive = true;
     }
-    
+
     /**
      * Clean up event listeners when scene is shut down
      */
     shutdown() {
         this.destroy();
     }
-    
+
     /**
      * Clean up resources
      */
@@ -348,11 +353,11 @@ export class UIManager extends BaseManager {
             this.events.off(EventNames.UI_UPDATE, this.handleUIUpdate);
             this.events.off(EventNames.PLAYER_JUMP, this.handlePlayerJump);
         }
-        
+
         if (this.scene && this.scene.scale) {
             this.scene.scale.off('resize', this.handleResize, this);
         }
-        
+
         // Clean up subtitle system
         if (this.currentSubtitle && this.scene) {
             this.scene.time.removeEvent(this.currentSubtitle);
@@ -361,12 +366,12 @@ export class UIManager extends BaseManager {
         this.subtitleQueue = [];
         this.subtitleContainer = null;
         this.subtitleText = null;
-        
+
         this.elements.clear();
         this.groups.clear();
         this.scene = null;
         this.events = null;
-        
+
         // Call parent destroy
         super.destroy();
     }
@@ -379,7 +384,7 @@ export class UIManager extends BaseManager {
             subsystem: 'ui',
             message: 'High contrast accessibility mode toggled',
             enabled,
-            affectedElements: this.elements.size
+            affectedElements: this.elements.size,
         });
         // Apply CSS contrast filter to game canvas
         const canvas = this.scene.sys.game.canvas;
@@ -396,7 +401,7 @@ export class UIManager extends BaseManager {
                     const size = parseInt(base.fontSize, 10) || 16;
                     el.setStyle({
                         fontSize: `${size + 4}px`,
-                        strokeThickness: (base.strokeThickness || 0) + 2
+                        strokeThickness: (base.strokeThickness || 0) + 2,
                     });
                 } else {
                     // Revert to original style
@@ -414,12 +419,12 @@ export class UIManager extends BaseManager {
             subsystem: 'ui',
             message: 'Subtitle accessibility feature toggled',
             enabled,
-            hasContainer: !!this.subtitleContainer
+            hasContainer: !!this.subtitleContainer,
         });
         this.subtitlesEnabled = enabled;
-        
+
         if (!this.scene) return;
-        
+
         if (enabled && !this.subtitleContainer) {
             // Create subtitle container
             this.createSubtitleUI();
@@ -432,44 +437,46 @@ export class UIManager extends BaseManager {
             }
         }
     }
-    
+
     /**
      * Create the subtitle UI elements
      */
     createSubtitleUI() {
         // Create container for subtitles at bottom of screen
         const subtitleY = this.screenHeight - 100;
-        
+
         // Background panel
         const bg = this.scene.add.graphics();
         bg.fillStyle(0x000000, 0.8);
         bg.fillRoundedRect(this.screenWidth * 0.1, subtitleY - 30, this.screenWidth * 0.8, 60, 10);
-        
+
         // Subtitle text
-        this.subtitleText = this.scene.add.text(this.screenWidth / 2, subtitleY, '', {
-            fontFamily: 'Arial',
-            fontSize: '20px',
-            color: '#ffffff',
-            align: 'center',
-            wordWrap: {
-                width: this.screenWidth * 0.7
-            }
-        }).setOrigin(0.5);
-        
+        this.subtitleText = this.scene.add
+            .text(this.screenWidth / 2, subtitleY, '', {
+                fontFamily: 'Arial',
+                fontSize: '20px',
+                color: '#ffffff',
+                align: 'center',
+                wordWrap: {
+                    width: this.screenWidth * 0.7,
+                },
+            })
+            .setOrigin(0.5);
+
         // Create container
         this.subtitleContainer = this.scene.add.container(0, 0, [bg, this.subtitleText]);
         this.subtitleContainer.setDepth(9999); // Always on top
         this.subtitleContainer.setScrollFactor(0); // Fixed to camera
         this.subtitleContainer.setVisible(false);
-        
+
         // Store in elements for management
         this.elements.set('subtitleContainer', {
             element: this.subtitleContainer,
             type: 'container',
-            responsive: false
+            responsive: false,
         });
     }
-    
+
     /**
      * Display a subtitle message
      * @param {string} text - The subtitle text to display
@@ -477,22 +484,22 @@ export class UIManager extends BaseManager {
      */
     displaySubtitle(text, duration = 3000) {
         if (!this.subtitlesEnabled || !this.subtitleContainer) return;
-        
+
         // Clear any existing subtitle timer
         if (this.currentSubtitle) {
             this.scene.time.removeEvent(this.currentSubtitle);
             this.currentSubtitle = null;
         }
-        
+
         // Show subtitle
         this.subtitleText.setText(text);
         this.subtitleContainer.setVisible(true);
-        
+
         // Hide after duration
         this.currentSubtitle = this.scene.time.delayedCall(duration, () => {
             this.subtitleContainer.setVisible(false);
             this.currentSubtitle = null;
-            
+
             // Process next subtitle in queue if any
             if (this.subtitleQueue.length > 0) {
                 const next = this.subtitleQueue.shift();
@@ -500,7 +507,7 @@ export class UIManager extends BaseManager {
             }
         });
     }
-    
+
     /**
      * Queue a subtitle to be displayed
      * @param {string} text - The subtitle text
@@ -508,7 +515,7 @@ export class UIManager extends BaseManager {
      */
     queueSubtitle(text, duration = 3000) {
         if (!this.subtitlesEnabled) return;
-        
+
         if (!this.currentSubtitle) {
             // No subtitle currently showing, display immediately
             this.displaySubtitle(text, duration);

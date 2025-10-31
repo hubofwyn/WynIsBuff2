@@ -31,7 +31,7 @@ export class ExportFormatter {
             includeStats = true,
             includeAnalysis = true,
             gameState = null,
-            patterns = null
+            patterns = null,
         } = options;
 
         const exportData = {
@@ -39,9 +39,9 @@ export class ExportFormatter {
                 exportTime: new Date().toISOString(),
                 version: '1.0.0',
                 logCount: logs.length,
-                format: 'json'
+                format: 'json',
             },
-            logs
+            logs,
         };
 
         // Add statistics
@@ -54,7 +54,7 @@ export class ExportFormatter {
         if (includeAnalysis) {
             exportData.analysis = {
                 causalRelationships: this.analyzer.findCausalRelationships(logs),
-                trends: this.analyzer.getTrends(logs)
+                trends: this.analyzer.getTrends(logs),
             };
 
             // Analyze subsystems
@@ -62,9 +62,11 @@ export class ExportFormatter {
             const subsystems = Object.keys(stats.bySubsystem);
             exportData.analysis.subsystemHealth = {};
 
-            subsystems.forEach(subsystem => {
-                exportData.analysis.subsystemHealth[subsystem] =
-                    this.analyzer.getSubsystemHealth(subsystem, logs);
+            subsystems.forEach((subsystem) => {
+                exportData.analysis.subsystemHealth[subsystem] = this.analyzer.getSubsystemHealth(
+                    subsystem,
+                    logs
+                );
             });
 
             // Generate recommendations
@@ -72,7 +74,7 @@ export class ExportFormatter {
                 stats: exportData.statistics,
                 subsystemHealth: exportData.analysis.subsystemHealth,
                 trend: exportData.analysis.trends.trend,
-                patterns
+                patterns,
             });
         }
 
@@ -162,7 +164,7 @@ export class ExportFormatter {
 
         // Recent errors
         const recentErrors = logs
-            .filter(log => log.level === 'error' || log.level === 'fatal')
+            .filter((log) => log.level === 'error' || log.level === 'fatal')
             .slice(-10)
             .reverse();
 
@@ -196,7 +198,7 @@ export class ExportFormatter {
 
         let csv = 'timestamp,level,subsystem,code,message,frame\n';
 
-        logs.forEach(log => {
+        logs.forEach((log) => {
             const frame = log.context && log.context.frame ? log.context.frame : '';
             const message = (log.message || '').replace(/"/g, '""'); // Escape quotes
             csv += `"${log.timestamp}","${log.level}","${log.subsystem}","${log.code}","${message}","${frame}"\n`;
@@ -214,16 +216,16 @@ export class ExportFormatter {
         return {
             meta: {
                 time: new Date().toISOString(),
-                count: logs.length
+                count: logs.length,
             },
-            logs: logs.map(log => ({
+            logs: logs.map((log) => ({
                 t: log.timestamp,
                 l: log.level,
                 s: log.subsystem,
                 c: log.code,
                 m: log.message,
-                f: log.context?.frame
-            }))
+                f: log.context?.frame,
+            })),
         };
     }
 
@@ -234,10 +236,7 @@ export class ExportFormatter {
      * @returns {Object} Summary export
      */
     toSummary(logs, options = {}) {
-        const {
-            includePatterns = false,
-            patterns = null
-        } = options;
+        const { includePatterns = false, patterns = null } = options;
 
         const stats = this.analyzer.getStatistics(logs);
         const errorFreq = this.analyzer.getErrorFrequency(logs);
@@ -246,27 +245,26 @@ export class ExportFormatter {
         const summary = {
             metadata: {
                 exportTime: new Date().toISOString(),
-                totalLogs: logs.length
+                totalLogs: logs.length,
             },
             statistics: stats,
             errorFrequency: errorFreq,
-            trends
+            trends,
         };
 
         // Analyze all subsystems
         const subsystems = Object.keys(stats.bySubsystem);
         summary.subsystemHealth = {};
 
-        subsystems.forEach(subsystem => {
-            summary.subsystemHealth[subsystem] =
-                this.analyzer.getSubsystemHealth(subsystem, logs);
+        subsystems.forEach((subsystem) => {
+            summary.subsystemHealth[subsystem] = this.analyzer.getSubsystemHealth(subsystem, logs);
         });
 
         // Overall health score
         const totalErrors = errorFreq.total;
         const totalLogs = logs.length;
         const errorRate = totalLogs > 0 ? totalErrors / totalLogs : 0;
-        summary.overallHealth = Math.max(0, Math.round(100 - (errorRate * 100)));
+        summary.overallHealth = Math.max(0, Math.round(100 - errorRate * 100));
 
         // Add patterns if requested
         if (includePatterns && patterns) {
@@ -278,7 +276,7 @@ export class ExportFormatter {
             stats,
             subsystemHealth: summary.subsystemHealth,
             trend: trends.trend,
-            patterns
+            patterns,
         });
 
         return summary;

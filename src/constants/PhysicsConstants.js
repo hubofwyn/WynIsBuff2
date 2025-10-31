@@ -6,7 +6,7 @@
 /**
  * PIXELS_PER_METER - The fundamental scaling constant that translates between
  * Phaser's pixel-based rendering coordinates and Rapier's meter-based physics simulation
- * 
+ *
  * Rapier is optimized for SI units (meters, kilograms, seconds) with gravity = 9.81
  * Using 100 pixels = 1 meter provides a clean, manageable conversion factor
  */
@@ -28,7 +28,7 @@ export function pixelsToMeters(pixels) {
 
 /**
  * Convert meters to pixels for rendering
- * @param {number} meters - Value in meters  
+ * @param {number} meters - Value in meters
  * @returns {number} Value in pixels
  */
 export function metersToPixels(meters) {
@@ -43,18 +43,18 @@ export function metersToPixels(meters) {
 export function vectorPixelsToMeters(pixelVector) {
     return {
         x: pixelsToMeters(pixelVector.x),
-        y: pixelsToMeters(pixelVector.y)
+        y: pixelsToMeters(pixelVector.y),
     };
 }
 
 /**
- * Convert a meter-based Vector2 to pixels  
+ * Convert a meter-based Vector2 to pixels
  * @param {{x: number, y: number}} meterVector - Vector in meters
  * @returns {{x: number, y: number}} Vector in pixels
  */
 export function vectorMetersToPixels(meterVector) {
     return {
         x: metersToPixels(meterVector.x),
-        y: metersToPixels(meterVector.y)
+        y: metersToPixels(meterVector.y),
     };
 }

@@ -1,14 +1,15 @@
 # WynIsBuff2 - Technologies and Packages Documentation
 
 ## Table of Contents
+
 - [Project Overview](#project-overview)
 - [Core Technologies](#core-technologies)
-  - [Phaser](#phaser)
-  - [Rapier Physics](#rapier-physics)
-  - [Vite](#vite)
+    - [Phaser](#phaser)
+    - [Rapier Physics](#rapier-physics)
+    - [Vite](#vite)
 - [Project Dependencies](#project-dependencies)
-  - [Production Dependencies](#production-dependencies)
-  - [Development Dependencies](#development-dependencies)
+    - [Production Dependencies](#production-dependencies)
+    - [Development Dependencies](#development-dependencies)
 - [Project Structure](#project-structure)
 - [Build System](#build-system)
 - [Asset Management](#asset-management)
@@ -51,18 +52,18 @@
 
 ### Production Dependencies
 
-| Package | Version | Description | Usage |
-|---------|---------|-------------|-------|
-| @dimforge/rapier2d-compat | 0.19.x | 2D physics engine with JavaScript bindings | Provides physics simulation for the game |
-| phaser | 3.90.x | HTML5 game framework | Core game engine |
-| howler | 2.2.4 | Audio library for JavaScript | Audio management via AudioManager |
+| Package                   | Version | Description                                | Usage                                    |
+| ------------------------- | ------- | ------------------------------------------ | ---------------------------------------- |
+| @dimforge/rapier2d-compat | 0.19.x  | 2D physics engine with JavaScript bindings | Provides physics simulation for the game |
+| phaser                    | 3.90.x  | HTML5 game framework                       | Core game engine                         |
+| howler                    | 2.2.4   | Audio library for JavaScript               | Audio management via AudioManager        |
 
 ### Development Dependencies
 
-| Package | Version | Description | Usage |
-|---------|---------|-------------|-------|
-| terser | 5.44.x | JavaScript parser, mangler and compressor | Used for minifying JavaScript in production builds |
-| vite | 7.1.x | Frontend build tool | Used for development server and production builds |
+| Package | Version | Description                               | Usage                                              |
+| ------- | ------- | ----------------------------------------- | -------------------------------------------------- |
+| terser  | 5.44.x  | JavaScript parser, mangler and compressor | Used for minifying JavaScript in production builds |
+| vite    | 7.1.x   | Frontend build tool                       | Used for development server and production builds  |
 
 ## Project Structure
 
@@ -101,27 +102,29 @@ The project follows a standard structure for Phaser games:
 The project uses Vite for its build system with the following npm scripts:
 
 - **dev**: `node log.js dev & vite --config vite/config.dev.mjs`
-  - Starts the development server with hot module replacement
-  - Runs on http://localhost:8080 by default
+    - Starts the development server with hot module replacement
+    - Runs on http://localhost:8080 by default
 
 - **build**: `node log.js build & vite build --config vite/config.prod.mjs`
-  - Creates a production build in the `dist` folder
-  - Optimizes and minifies the code using Terser
+    - Creates a production build in the `dist` folder
+    - Optimizes and minifies the code using Terser
 
 - **dev-nolog**: `vite --config vite/config.dev.mjs`
-  - Same as `dev` but without sending anonymous usage data
+    - Same as `dev` but without sending anonymous usage data
 
 - **build-nolog**: `vite build --config vite/config.prod.mjs`
-  - Same as `build` but without sending anonymous usage data
+    - Same as `build` but without sending anonymous usage data
 
 ### Vite Configuration
 
 #### Development Configuration (config.dev.mjs)
+
 - Sets the base path to './'
 - Configures Rollup to separate Phaser into its own chunk
 - Sets the development server port to 8080
 
 #### Production Configuration (config.prod.mjs)
+
 - Sets the base path to './'
 - Configures Rollup to separate Phaser into its own chunk
 - Enables minification with Terser
@@ -133,6 +136,7 @@ The project uses Vite for its build system with the following npm scripts:
 Assets are organized in a structured manner as detailed in `docs/assets.md`:
 
 ### Main Asset Directory Structure
+
 ```
 assets/
 ├── 2D Pixel Dungeon Asset Pack v2.0/  # Original dungeon tileset assets
@@ -154,10 +158,14 @@ this.load.image('logo', 'logo.png');
 this.load.image('dungeon-tiles', 'images/tilesets/Dungeon_Tileset.png');
 
 // Load spritesheets
-this.load.spritesheet('player', '2D Pixel Dungeon Asset Pack v2.0/2D Pixel Dungeon Asset Pack/character and tileset/Dungeon_Character.png', {
-    frameWidth: 16,
-    frameHeight: 16
-});
+this.load.spritesheet(
+    'player',
+    '2D Pixel Dungeon Asset Pack v2.0/2D Pixel Dungeon Asset Pack/character and tileset/Dungeon_Character.png',
+    {
+        frameWidth: 16,
+        frameHeight: 16,
+    }
+);
 ```
 
 ## Game Architecture
@@ -175,31 +183,34 @@ The game uses Phaser's scene system with the following scenes:
 The game integrates Rapier physics in the Game scene:
 
 1. **Initialization**:
-   ```javascript
-   await RAPIER.init();
-   this.rapierWorld = new RAPIER.World(new RAPIER.Vector2(0.0, 9.81));
-   ```
+
+    ```javascript
+    await RAPIER.init();
+    this.rapierWorld = new RAPIER.World(new RAPIER.Vector2(0.0, 9.81));
+    ```
 
 2. **Creating Physics Bodies**:
-   ```javascript
-   const bodyDesc = RAPIER.RigidBodyDesc.dynamic();
-   bodyDesc.setTranslation(x, y);
-   const rigidBody = this.rapierWorld.createRigidBody(bodyDesc);
-   ```
+
+    ```javascript
+    const bodyDesc = RAPIER.RigidBodyDesc.dynamic();
+    bodyDesc.setTranslation(x, y);
+    const rigidBody = this.rapierWorld.createRigidBody(bodyDesc);
+    ```
 
 3. **Creating Colliders**:
-   ```javascript
-   const colliderDesc = RAPIER.ColliderDesc.cuboid(width/2, height/2);
-   this.rapierWorld.createCollider(colliderDesc, rigidBody);
-   ```
+
+    ```javascript
+    const colliderDesc = RAPIER.ColliderDesc.cuboid(width / 2, height / 2);
+    this.rapierWorld.createCollider(colliderDesc, rigidBody);
+    ```
 
 4. **Updating Physics**:
-   ```javascript
-   update() {
-       this.rapierWorld.step();
-       // Update game objects based on physics
-   }
-   ```
+    ```javascript
+    update() {
+        this.rapierWorld.step();
+        // Update game objects based on physics
+    }
+    ```
 
 ### Game Features
 

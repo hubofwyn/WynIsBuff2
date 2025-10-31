@@ -5,36 +5,35 @@
  */
 
 export class BaseController {
-  /**
-   * @param {Phaser.Scene} scene – owning scene (may be `null` in tests)
-   */
-  constructor(scene) {
-    if (new.target === BaseController) {
-      throw new TypeError('BaseController is an abstract class and cannot be instantiated directly');
+    /**
+     * @param {Phaser.Scene} scene – owning scene (may be `null` in tests)
+     */
+    constructor(scene) {
+        if (new.target === BaseController) {
+            throw new TypeError(
+                'BaseController is an abstract class and cannot be instantiated directly'
+            );
+        }
+
+        this.scene = scene;
+        this.gameObject = null; // subclasses assign sprite / container / etc.
+        this._destroyed = false;
     }
 
-    this.scene = scene;
-    this.gameObject = null; // subclasses assign sprite / container / etc.
-    this._destroyed = false;
-  }
-
-  // eslint-disable-next-line no-unused-vars, class-methods-use-this
-  create(/* ...args */) {
-    throw new Error('create() must be implemented by subclass');
-  }
-
-  // eslint-disable-next-line no-unused-vars, class-methods-use-this
-  update(/* dt */) {}
-
-  destroy() {
-    this._destroyed = true;
-    if (this.gameObject && typeof this.gameObject.destroy === 'function') {
-      this.gameObject.destroy();
+    create(/* ...args */) {
+        throw new Error('create() must be implemented by subclass');
     }
-  }
 
-  isDestroyed() {
-    return this._destroyed;
-  }
+    update(/* dt */) {}
+
+    destroy() {
+        this._destroyed = true;
+        if (this.gameObject && typeof this.gameObject.destroy === 'function') {
+            this.gameObject.destroy();
+        }
+    }
+
+    isDestroyed() {
+        return this._destroyed;
+    }
 }
-

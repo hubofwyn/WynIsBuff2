@@ -5,18 +5,19 @@
 **For Breaking Changes**: See [RAPIER_019_MIGRATION.md](./RAPIER_019_MIGRATION.md)
 
 ## Table of Contents
+
 - [Overview](#overview)
 - [Version Information](#version-information)
 - [Integration with Phaser](#integration-with-phaser)
 - [Core Concepts](#core-concepts)
-  - [World](#world)
-  - [Rigid Bodies](#rigid-bodies)
-  - [Colliders](#colliders)
+    - [World](#world)
+    - [Rigid Bodies](#rigid-bodies)
+    - [Colliders](#colliders)
 - [Implementation in WynIsBuff2](#implementation-in-wynisbuff2)
-  - [Initialization](#initialization)
-  - [Creating Game Objects with Physics](#creating-game-objects-with-physics)
-  - [Physics Simulation Loop](#physics-simulation-loop)
-  - [Collision Detection](#collision-detection)
+    - [Initialization](#initialization)
+    - [Creating Game Objects with Physics](#creating-game-objects-with-physics)
+    - [Physics Simulation Loop](#physics-simulation-loop)
+    - [Collision Detection](#collision-detection)
 - [Best Practices](#best-practices)
 - [Common Issues and Solutions](#common-issues-and-solutions)
 - [Resources](#resources)
@@ -74,7 +75,7 @@ Colliders define the shape used for collision detection:
 
 ```javascript
 // Create a cuboid collider
-const colliderDesc = RAPIER.ColliderDesc.cuboid(width/2, height/2);
+const colliderDesc = RAPIER.ColliderDesc.cuboid(width / 2, height / 2);
 colliderDesc.setRestitution(0.7); // Bounciness
 world.createCollider(colliderDesc, rigidBody);
 ```
@@ -113,13 +114,12 @@ The game uses a pattern of creating Phaser game objects with corresponding Rapie
 const sprite = this.add.rectangle(x, y, width, height, color);
 
 // Create a Rapier rigid body
-const bodyDesc = RAPIER.RigidBodyDesc.dynamic()
-    .setTranslation(x, y);
+const bodyDesc = RAPIER.RigidBodyDesc.dynamic().setTranslation(x, y);
 
 const rigidBody = this.rapierWorld.createRigidBody(bodyDesc);
 
 // Create a collider
-const colliderDesc = RAPIER.ColliderDesc.cuboid(width/2, height/2);
+const colliderDesc = RAPIER.ColliderDesc.cuboid(width / 2, height / 2);
 this.rapierWorld.createCollider(colliderDesc, rigidBody);
 
 // Store the association between body and sprite
@@ -164,6 +164,7 @@ update() {
 ```
 
 **⚠️ Breaking Changes**:
+
 - `world.step()` now requires EventQueue parameter (0.19+)
 - `world.bodies.forEach()` replaced with `world.forEachRigidBody()` (0.19+)
 - See [RAPIER_019_MIGRATION.md#2-world-body-iteration](./RAPIER_019_MIGRATION.md#2-world-body-iteration) for details
@@ -223,25 +224,31 @@ this.updateGroundState(desiredMovement, correctedMovement);
 ### Rapier 0.19+ Specific
 
 1. **EventQueue Creation**: Always create EventQueue before first physics step
-   ```javascript
-   this.eventQueue = new RAPIER.EventQueue(true);
-   this.world.step(this.eventQueue); // Required!
-   ```
+
+    ```javascript
+    this.eventQueue = new RAPIER.EventQueue(true);
+    this.world.step(this.eventQueue); // Required!
+    ```
 
 2. **Use Iterator Methods**: Use `forEachRigidBody()` instead of `world.bodies`
-   ```javascript
-   // ✅ Correct
-   this.world.forEachRigidBody(body => { /* ... */ });
-   // ❌ Wrong (0.14 API)
-   this.world.bodies.forEach(body => { /* ... */ });
-   ```
+
+    ```javascript
+    // ✅ Correct
+    this.world.forEachRigidBody((body) => {
+        /* ... */
+    });
+    // ❌ Wrong (0.14 API)
+    this.world.bodies.forEach((body) => {
+        /* ... */
+    });
+    ```
 
 3. **Ground Detection After Movement**: Call ground detection AFTER `computeColliderMovement()`
-   ```javascript
-   characterController.computeColliderMovement(collider, desired);
-   const corrected = characterController.computedMovement();
-   this.updateGroundState(desired, corrected); // Order matters!
-   ```
+    ```javascript
+    characterController.computeColliderMovement(collider, desired);
+    const corrected = characterController.computedMovement();
+    this.updateGroundState(desired, corrected); // Order matters!
+    ```
 
 ### General Best Practices
 
@@ -252,17 +259,17 @@ this.updateGroundState(desiredMovement, correctedMovement);
 6. **Consistent Units**: Use consistent units for positions, sizes, and forces (WynIsBuff2 uses meters for physics, pixels for rendering).
 
 7. **Performance Optimization**:
-   - Use appropriate collision shapes (cuboid for rectangles, ball for circles)
-   - Limit the number of dynamic bodies
-   - Consider using sensor colliders for triggers that don't need physical response
-   - Use fixed timestep (1/60) for deterministic physics
+    - Use appropriate collision shapes (cuboid for rectangles, ball for circles)
+    - Limit the number of dynamic bodies
+    - Consider using sensor colliders for triggers that don't need physical response
+    - Use fixed timestep (1/60) for deterministic physics
 
 8. **Error Handling**: Wrap Rapier operations in try-catch blocks with circuit breakers (see [ERROR_HANDLING_LOGGING.md](../systems/ERROR_HANDLING_LOGGING.md))
 
 9. **Movement Implementation**:
-   - Use CharacterController for player movement
-   - Apply appropriate friction when no movement keys are pressed
-   - Balance movement speed with game scale and physics simulation
+    - Use CharacterController for player movement
+    - Apply appropriate friction when no movement keys are pressed
+    - Balance movement speed with game scale and physics simulation
 
 10. **Jumping Mechanics**:
     - Implement variable jump heights for more dynamic gameplay
@@ -277,33 +284,33 @@ this.updateGroundState(desiredMovement, correctedMovement);
 ## Common Issues and Solutions
 
 1. **Physics Objects Not Moving**:
-   - Ensure gravity is set correctly
-   - Check that bodies are dynamic, not static
-   - Verify forces are being applied correctly
-   - Movement speed might be too low - increase velocity values
+    - Ensure gravity is set correctly
+    - Check that bodies are dynamic, not static
+    - Verify forces are being applied correctly
+    - Movement speed might be too low - increase velocity values
 
 2. **Collision Detection Issues**:
-   - Ensure colliders are properly sized
-   - Check that colliders are attached to the correct bodies
-   - Verify collision groups and filters if used
-   - Implement more precise collision detection using object positions and dimensions
+    - Ensure colliders are properly sized
+    - Check that colliders are attached to the correct bodies
+    - Verify collision groups and filters if used
+    - Implement more precise collision detection using object positions and dimensions
 
 3. **Performance Problems**:
-   - Reduce the number of physics bodies
-   - Simplify collision shapes
-   - Increase the time step for physics simulation
+    - Reduce the number of physics bodies
+    - Simplify collision shapes
+    - Increase the time step for physics simulation
 
 4. **Movement Feels Sluggish**:
-   - Increase movement speed values
-   - Implement acceleration for smoother movement
-   - Reduce friction to allow for better momentum
-   - Consider the scale of your game world when setting velocity values
+    - Increase movement speed values
+    - Implement acceleration for smoother movement
+    - Reduce friction to allow for better momentum
+    - Consider the scale of your game world when setting velocity values
 
 5. **Jumping Feels Unresponsive**:
-   - Increase jump force
-   - Implement coyote time for more forgiving jump timing
-   - Consider variable jump heights based on button press duration
-   - Make multi-jumps (double/triple jumps) progressively stronger
+    - Increase jump force
+    - Implement coyote time for more forgiving jump timing
+    - Consider variable jump heights based on button press duration
+    - Make multi-jumps (double/triple jumps) progressively stronger
 
 ## Resources
 

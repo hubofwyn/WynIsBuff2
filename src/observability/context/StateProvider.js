@@ -58,7 +58,7 @@ export class StateProvider {
             const state = this.getState();
             this.lastCapture = {
                 timestamp: Date.now(),
-                state
+                state,
             };
             this.captureCount++;
             return state;
@@ -69,11 +69,11 @@ export class StateProvider {
                 providerName: this.getName(),
                 error,
                 errorMessage: error.message,
-                stack: error.stack
+                stack: error.stack,
             });
             return {
                 _error: error.message,
-                _errorStack: error.stack
+                _errorStack: error.stack,
             };
         }
     }
@@ -107,7 +107,7 @@ export class StateProvider {
             name: this.getName(),
             enabled: this.enabled,
             captureCount: this.captureCount,
-            lastCaptureTime: this.lastCapture?.timestamp || null
+            lastCaptureTime: this.lastCapture?.timestamp || null,
         };
     }
 

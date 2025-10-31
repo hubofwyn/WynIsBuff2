@@ -6,6 +6,7 @@ Estimate: 2
 # Input & Navigation Support (031-8)
 
 Task: Ensure `SettingsScene` UI supports:
+
 - Mouse/touch pointer interactions (via `.setInteractive()`).
 - Keyboard navigation:
   • TAB/Shift+TAB to cycle focus.
@@ -18,6 +19,7 @@ Task: Ensure `SettingsScene` UI supports:
 - Visual focus indicator via background-color highlight.
 
 Acceptance Criteria:
+
 - All controls reachable via mouse, keyboard, and gamepad.
 - Focus highlight indicates the active element.
-> Archived Notice: This historical task is preserved for reference and superseded by the current documentation set. Start at docs/INDEX.md for canonical guidance. Related: CONTRIBUTING.md, docs/ARCHITECTURE.md, ASSET_MANAGEMENT.md.
+    > Archived Notice: This historical task is preserved for reference and superseded by the current documentation set. Start at docs/INDEX.md for canonical guidance. Related: CONTRIBUTING.md, docs/ARCHITECTURE.md, ASSET_MANAGEMENT.md.

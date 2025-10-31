@@ -11,22 +11,22 @@ This documentation provides comprehensive information about the technologies, fr
 ### Documentation Categories
 
 - Architecture Documentation → docs/architecture/README.md
-  - ArchitecturalAssessment.md, ArchitecturalOverview.md, ModularArchitecture.md, MVPArchitectureSummary.md
+    - ArchitecturalAssessment.md, ArchitecturalOverview.md, ModularArchitecture.md, MVPArchitectureSummary.md
 
 - Technology Stack → docs/technology/README.md
-  - PhaserFramework.md, RapierPhysics.md, ViteBuildTool.md, TechnologiesAndPackages.md
+    - PhaserFramework.md, RapierPhysics.md, ViteBuildTool.md, TechnologiesAndPackages.md
 
 - Core Systems → docs/systems/README.md
-  - EventSystem.md, EventSystemImplementationSteps.md, ModularPlayerController.md, MovementSystem.md, ModularLevelArchitecture.md, ModularLevelSystemImplementation.md, UIManager.md
+    - EventSystem.md, EventSystemImplementationSteps.md, ModularPlayerController.md, MovementSystem.md, ModularLevelArchitecture.md, ModularLevelSystemImplementation.md, UIManager.md
 
 - Feature Implementations → docs/features/README.md
-  - TripleJumpRefinementPlan.md, TripleJumpRefinementImplementation.md, LevelImplementationArchitecture.md, LevelImplementationSummary.md, LevelImplementationTasks.md
+    - TripleJumpRefinementPlan.md, TripleJumpRefinementImplementation.md, LevelImplementationArchitecture.md, LevelImplementationSummary.md, LevelImplementationTasks.md
 
 - Game Design & Art → docs/design/README.md
-  - GameDesignPrinciples.md, MVPLevelDesignGuide.md, SillyMechanicsIdeas.md, ArtStyleAndAssetPlan.md, AssetManagementStrategy.md, pixelart-style.md
+    - GameDesignPrinciples.md, MVPLevelDesignGuide.md, SillyMechanicsIdeas.md, ArtStyleAndAssetPlan.md, AssetManagementStrategy.md, pixelart-style.md
 
 - Historical Archive → docs/archive/aiprojectdocs-historical/README.md
-  - Superseded and historical documentation preserved for reference
+    - Superseded and historical documentation preserved for reference
 
 ### Navigation
 
@@ -47,11 +47,13 @@ The game features a character that can move and perform triple jumps across plat
 For complete development setup instructions, see [CONTRIBUTING.md](../CONTRIBUTING.md#getting-started).
 
 **Quick Start**:
+
 ```bash
 npm install && npm run dev
 ```
 
 See [CONTRIBUTING.md](../CONTRIBUTING.md) for:
+
 - Detailed development workflow
 - Architecture patterns and conventions
 - Asset management and testing guidelines

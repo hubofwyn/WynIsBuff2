@@ -14,29 +14,29 @@ export class CollisionController {
     constructor(scene, eventSystem) {
         this.scene = scene;
         this.eventSystem = eventSystem;
-        
+
         // Collision state
         this.isOnGround = false;
         this._lastOnGround = false;
-        
+
         // Collision parameters
         this.collisionParams = {
             playerWidth: 32,
             playerHeight: 32,
-            feetOffset: 2,       // Offset from center to feet position
-            platformMargin: 5,   // Margin for platform width collision
-            groundTopOffset: 5,  // Offset for ground top collision
-            groundY: 700,        // Y position of the ground
-            groundHeight: 50     // Height of the ground
+            feetOffset: 2, // Offset from center to feet position
+            platformMargin: 5, // Margin for platform width collision
+            groundTopOffset: 5, // Offset for ground top collision
+            groundY: 700, // Y position of the ground
+            groundHeight: 50, // Height of the ground
         };
 
         LOG.dev('COLLISIONCONTROLLER_INITIALIZED', {
             subsystem: 'player',
             message: 'CollisionController initialized',
-            params: this.collisionParams
+            params: this.collisionParams,
         });
     }
-    
+
     /**
      * Update method called every frame
      * @param {RAPIER.RigidBody} body - The player's physics body
@@ -45,14 +45,14 @@ export class CollisionController {
      */
     update(body, platforms) {
         if (!body) return false;
-        
+
         // Process collisions to detect ground contact
         this.processCollisions(body, platforms);
-        
+
         // Return current ground state
         return this.isOnGround;
     }
-    
+
     /**
      * Process collisions to detect if player is on ground
      * @param {RAPIER.RigidBody} body - The player's physics body
@@ -62,25 +62,25 @@ export class CollisionController {
         try {
             // Reset ground state at the beginning of each frame
             this.isOnGround = false;
-            
+
             // Only proceed if player body exists
             if (!body) return;
-            
+
             // Get player position and velocity
             const playerPos = body.translation();
             const playerVel = body.linvel();
-            
+
             // Player dimensions
             const playerHeight = this.collisionParams.playerHeight;
             const playerWidth = this.collisionParams.playerWidth;
-            const playerFeet = playerPos.y + (playerHeight / 2) - this.collisionParams.feetOffset;
-            
+            const playerFeet = playerPos.y + playerHeight / 2 - this.collisionParams.feetOffset;
+
             // Check platform collisions
             this.checkPlatformCollisions(playerPos, playerVel, playerFeet, platforms);
-            
+
             // Check ground collision
             this.checkGroundCollision(playerPos, playerVel, playerFeet);
-            
+
             // Store previous ground state
             this._lastOnGround = this.isOnGround;
         } catch (error) {
@@ -88,11 +88,11 @@ export class CollisionController {
                 subsystem: 'player',
                 error,
                 message: 'Error during collision processing',
-                hint: 'Check player body state and platform array integrity'
+                hint: 'Check player body state and platform array integrity',
             });
         }
     }
-    
+
     /**
      * Check for collisions with platforms
      * @param {object} playerPos - Player position
@@ -106,21 +106,25 @@ export class CollisionController {
             const platformPos = platform.body.translation();
             const platformWidth = 200; // From platform creation
             const platformHeight = 20; // From platform creation
-            const platformTop = platformPos.y - (platformHeight / 2);
-            
+            const platformTop = platformPos.y - platformHeight / 2;
+
             // More precise collision check
             // 1. Player must be within the platform width
             // 2. Player's feet must be very close to the platform top
             // 3. Player must be moving downward or stationary (not jumping up)
-            if (Math.abs(playerPos.x - platformPos.x) < (platformWidth / 2) - this.collisionParams.platformMargin && // Within platform width with margin
+            if (
+                Math.abs(playerPos.x - platformPos.x) <
+                    platformWidth / 2 - this.collisionParams.platformMargin && // Within platform width with margin
                 Math.abs(playerFeet - platformTop) < this.collisionParams.groundTopOffset && // Very close to platform top
-                playerVel.y >= 0) { // Moving down or stationary
+                playerVel.y >= 0
+            ) {
+                // Moving down or stationary
                 this.isOnGround = true;
                 break;
             }
         }
     }
-    
+
     /**
      * Check for collision with the main ground
      * @param {object} playerPos - Player position
@@ -129,13 +133,13 @@ export class CollisionController {
      */
     checkGroundCollision(playerPos, playerVel, playerFeet) {
         // Check if on the main ground with improved precision
-        const groundTop = this.collisionParams.groundY - (this.collisionParams.groundHeight / 2);
-        if (playerFeet >= groundTop - this.collisionParams.groundTopOffset && 
-            playerVel.y >= 0) { // Close to ground top and moving down or stationary
+        const groundTop = this.collisionParams.groundY - this.collisionParams.groundHeight / 2;
+        if (playerFeet >= groundTop - this.collisionParams.groundTopOffset && playerVel.y >= 0) {
+            // Close to ground top and moving down or stationary
             this.isOnGround = true;
         }
     }
-    
+
     /**
      * Check if a specific point is inside a platform
      * @param {number} x - X position to check
@@ -148,23 +152,25 @@ export class CollisionController {
             const platformPos = platform.body.translation();
             const platformWidth = 200; // From platform creation
             const platformHeight = 20; // From platform creation
-            
+
             // Check if point is inside platform bounds
-            if (Math.abs(x - platformPos.x) < platformWidth / 2 &&
-                Math.abs(y - platformPos.y) < platformHeight / 2) {
+            if (
+                Math.abs(x - platformPos.x) < platformWidth / 2 &&
+                Math.abs(y - platformPos.y) < platformHeight / 2
+            ) {
                 return true;
             }
         }
-        
+
         // Check if point is inside ground bounds
-        const groundTop = this.collisionParams.groundY - (this.collisionParams.groundHeight / 2);
+        const groundTop = this.collisionParams.groundY - this.collisionParams.groundHeight / 2;
         if (y > groundTop) {
             return true;
         }
-        
+
         return false;
     }
-    
+
     /**
      * Cast a ray from the player in a specific direction
      * @param {RAPIER.RigidBody} body - The player's physics body
@@ -175,90 +181,90 @@ export class CollisionController {
      */
     castRay(body, direction, distance, platforms) {
         if (!body) return null;
-        
+
         const start = body.translation();
         const end = {
             x: start.x + direction.x * distance,
-            y: start.y + direction.y * distance
+            y: start.y + direction.y * distance,
         };
-        
+
         // Simple ray casting implementation
         // In a real implementation, you would use Rapier's ray casting API
         // This is a simplified version for demonstration
-        
+
         // Check each platform for intersection
         for (const platform of platforms) {
             const platformPos = platform.body.translation();
             const platformWidth = 200;
             const platformHeight = 20;
-            
+
             // Platform bounds
             const platformLeft = platformPos.x - platformWidth / 2;
             const platformRight = platformPos.x + platformWidth / 2;
             const platformTop = platformPos.y - platformHeight / 2;
             const platformBottom = platformPos.y + platformHeight / 2;
-            
+
             // Check if ray intersects platform
             // This is a simplified line-box intersection test
-            
+
             // Horizontal ray components
             if (direction.x !== 0) {
                 const tNear = (platformLeft - start.x) / direction.x;
                 const tFar = (platformRight - start.x) / direction.x;
-                
+
                 // Ensure tNear is less than tFar
-                let t1 = Math.min(tNear, tFar);
-                let t2 = Math.max(tNear, tFar);
-                
+                const t1 = Math.min(tNear, tFar);
+                const t2 = Math.max(tNear, tFar);
+
                 // Check vertical intersection
                 const y = start.y + direction.y * t1;
                 if (y >= platformTop && y <= platformBottom && t1 >= 0 && t1 <= distance) {
                     return {
                         distance: t1,
                         normal: { x: -Math.sign(direction.x), y: 0 },
-                        point: { x: start.x + direction.x * t1, y }
+                        point: { x: start.x + direction.x * t1, y },
                     };
                 }
             }
-            
+
             // Vertical ray components
             if (direction.y !== 0) {
                 const tNear = (platformTop - start.y) / direction.y;
                 const tFar = (platformBottom - start.y) / direction.y;
-                
+
                 // Ensure tNear is less than tFar
-                let t1 = Math.min(tNear, tFar);
-                let t2 = Math.max(tNear, tFar);
-                
+                const t1 = Math.min(tNear, tFar);
+                const t2 = Math.max(tNear, tFar);
+
                 // Check horizontal intersection
                 const x = start.x + direction.x * t1;
                 if (x >= platformLeft && x <= platformRight && t1 >= 0 && t1 <= distance) {
                     return {
                         distance: t1,
                         normal: { x: 0, y: -Math.sign(direction.y) },
-                        point: { x, y: start.y + direction.y * t1 }
+                        point: { x, y: start.y + direction.y * t1 },
                     };
                 }
             }
         }
-        
+
         // Check ground intersection
         if (direction.y > 0) {
-            const groundTop = this.collisionParams.groundY - (this.collisionParams.groundHeight / 2);
+            const groundTop = this.collisionParams.groundY - this.collisionParams.groundHeight / 2;
             const t = (groundTop - start.y) / direction.y;
-            
+
             if (t >= 0 && t <= distance) {
                 return {
                     distance: t,
                     normal: { x: 0, y: -1 },
-                    point: { x: start.x + direction.x * t, y: groundTop }
+                    point: { x: start.x + direction.x * t, y: groundTop },
                 };
             }
         }
-        
+
         return null;
     }
-    
+
     /**
      * Get the current collision state
      * @returns {object} Collision state information
@@ -266,7 +272,7 @@ export class CollisionController {
     getCollisionState() {
         return {
             isOnGround: this.isOnGround,
-            lastOnGround: this._lastOnGround
+            lastOnGround: this._lastOnGround,
         };
     }
 }

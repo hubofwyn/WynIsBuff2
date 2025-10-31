@@ -1,15 +1,21 @@
 import Phaser from 'phaser';
 import RAPIER from '@dimforge/rapier2d-compat';
+
 import { EventNames } from '../../constants/EventNames';
 import { PhysicsConfig } from '../../constants/PhysicsConfig.js';
-import { PIXELS_PER_METER, pixelsToMeters, metersToPixels } from '../../constants/PhysicsConstants.js';
+import {
+    PIXELS_PER_METER,
+    pixelsToMeters,
+    metersToPixels,
+} from '../../constants/PhysicsConstants.js';
 import { createEmptyInputState } from '../../types/InputState.js';
+import { LOG } from '../../observability/core/LogSystem.js';
+import { CrashDumpGenerator } from '../../observability/utils/CrashDumpGenerator.js';
+
 import { JumpController } from './JumpController';
 import { MovementController } from './MovementController';
 import { CollisionController } from './CollisionController';
 import { WallJumpController } from './WallJumpController';
-import { LOG } from '../../observability/core/LogSystem.js';
-import { CrashDumpGenerator } from '../../observability/utils/CrashDumpGenerator.js';
 
 /**
  * PlayerController class for modern 2D platformer using KinematicCharacterController
@@ -31,49 +37,49 @@ export class PlayerController {
         this.world = world;
         this.eventSystem = eventSystem;
         this.textureKey = textureKey;
-        
+
         // Modern character controller setup
-        this.body = null;                    // KinematicPositionBased body
-        this.collider = null;                // Character collider
-        this.characterController = null;     // Rapier's KinematicCharacterController
-        this.sprite = null;                  // Visual representation
-        
+        this.body = null; // KinematicPositionBased body
+        this.collider = null; // Character collider
+        this.characterController = null; // Rapier's KinematicCharacterController
+        this.sprite = null; // Visual representation
+
         // Movement state for proper physics integration
-        this.velocity = new RAPIER.Vector2(0, 0);  // In meters per second
+        this.velocity = new RAPIER.Vector2(0, 0); // In meters per second
         this.isGrounded = false;
         this.groundContactTimer = 0;
-        
+
         // Game feel timers
         this.coyoteTimer = 0;
         this.jumpBufferTimer = 0;
         this.landingRecoveryTimer = 0;
-        
+
         // Create the player at the specified position
         this.create(x, y);
-        
+
         // Set up input handlers
         LOG.dev('PLAYER_SETUP_CONTROLS', {
             subsystem: 'player',
             message: 'Setting up player controls',
-            inputManagerAvailable: !!this.scene.inputManager
+            inputManagerAvailable: !!this.scene.inputManager,
         });
         this.setupControls();
-        
+
         // Emit player spawn event
         if (this.eventSystem) {
             this.eventSystem.emit(EventNames.PLAYER_SPAWN, {
                 position: { x, y },
-                sprite: this.sprite
+                sprite: this.sprite,
             });
         }
-        
+
         LOG.info('PLAYER_INITIALIZED', {
             subsystem: 'player',
             message: 'Player initialized with KinematicCharacterController',
-            position: { x, y }
+            position: { x, y },
         });
     }
-    
+
     /**
      * Create the modern character controller setup with proper scaling
      * @param {number} x - Initial x position in pixels
@@ -84,19 +90,19 @@ export class PlayerController {
             LOG.dev('PLAYER_CREATE_START', {
                 subsystem: 'player',
                 message: 'Creating modern character controller',
-                position: { x, y }
+                position: { x, y },
             });
 
             // Player dimensions in pixels
-            const playerWidth = 32;   // Smaller, more precise hitbox
-            const playerHeight = 48;  // Taller for platformer character feel
+            const playerWidth = 32; // Smaller, more precise hitbox
+            const playerHeight = 48; // Taller for platformer character feel
 
             // Create visual representation
             if (this.scene.textures.exists(this.textureKey)) {
                 LOG.dev('PLAYER_TEXTURE_LOADED', {
                     subsystem: 'player',
                     message: 'Using texture for player sprite',
-                    textureKey: this.textureKey
+                    textureKey: this.textureKey,
                 });
                 this.sprite = this.scene.add.sprite(x, y, this.textureKey);
                 this.sprite.setDisplaySize(playerWidth, playerHeight);
@@ -105,41 +111,46 @@ export class PlayerController {
                     subsystem: 'player',
                     message: 'Texture not found, using fallback rectangle',
                     textureKey: this.textureKey,
-                    hint: 'Check if texture is loaded in Preloader scene'
+                    hint: 'Check if texture is loaded in Preloader scene',
                 });
                 this.sprite = this.scene.add.rectangle(x, y, playerWidth, playerHeight, 0x00ff00);
             }
             this.sprite.setDepth(100);
             this.sprite.setVisible(true);
-            
+
             // Add glow effect
             this.createGlowEffect();
-            
+
             // Create KinematicPositionBased body (not Dynamic!)
-            const bodyDesc = RAPIER.RigidBodyDesc
-                .kinematicPositionBased()
-                .setTranslation(pixelsToMeters(x), pixelsToMeters(y));
-            
+            const bodyDesc = RAPIER.RigidBodyDesc.kinematicPositionBased().setTranslation(
+                pixelsToMeters(x),
+                pixelsToMeters(y)
+            );
+
             this.body = this.world.createRigidBody(bodyDesc);
             LOG.dev('PLAYER_BODY_CREATED', {
                 subsystem: 'player',
                 message: 'Kinematic body created',
-                positionMeters: { x: pixelsToMeters(x), y: pixelsToMeters(y) }
+                positionMeters: { x: pixelsToMeters(x), y: pixelsToMeters(y) },
             });
-            
+
             // Create capsule collider for smooth movement over edges
             const halfHeight = pixelsToMeters(playerHeight / 2) - PhysicsConfig.player.radius;
-            const colliderDesc = RAPIER.ColliderDesc
-                .capsule(halfHeight, PhysicsConfig.player.radius)
+            const colliderDesc = RAPIER.ColliderDesc.capsule(
+                halfHeight,
+                PhysicsConfig.player.radius
+            )
                 .setFriction(PhysicsConfig.player.friction)
                 .setRestitution(PhysicsConfig.player.restitution)
                 .setDensity(PhysicsConfig.player.density);
-            
+
             this.collider = this.world.createCollider(colliderDesc, this.body);
-            
+
             // Create the KinematicCharacterController - the key to responsive movement
-            this.characterController = this.world.createCharacterController(PhysicsConfig.player.offset);
-            
+            this.characterController = this.world.createCharacterController(
+                PhysicsConfig.player.offset
+            );
+
             // Configure modern platformer features
             if (PhysicsConfig.player.enableAutostep) {
                 this.characterController.enableAutostep(
@@ -148,27 +159,29 @@ export class PlayerController {
                     true
                 );
             }
-            
+
             if (PhysicsConfig.player.enableSnapToGround) {
-                this.characterController.enableSnapToGround(PhysicsConfig.player.snapToGroundDistance);
+                this.characterController.enableSnapToGround(
+                    PhysicsConfig.player.snapToGroundDistance
+                );
             }
-            
+
             this.characterController.setMaxSlopeClimbAngle(PhysicsConfig.player.maxSlopeClimbAngle);
 
             LOG.info('PLAYER_CREATE_SUCCESS', {
                 subsystem: 'player',
-                message: 'Modern character controller created successfully'
+                message: 'Modern character controller created successfully',
             });
         } catch (error) {
             LOG.error('PLAYER_CREATE_ERROR', {
                 subsystem: 'player',
                 error,
                 message: 'Error creating player character controller',
-                hint: 'Check Rapier world initialization and PhysicsConfig settings'
+                hint: 'Check Rapier world initialization and PhysicsConfig settings',
             });
         }
     }
-    
+
     /**
      * Set up keyboard controls - Modern InputState snapshot architecture
      */
@@ -180,7 +193,7 @@ export class PlayerController {
             LOG.warn('PLAYER_INPUT_FALLBACK', {
                 subsystem: 'player',
                 message: 'InputManager not available, creating fallback direct keyboard controls',
-                hint: 'InputManager should be initialized before PlayerController'
+                hint: 'InputManager should be initialized before PlayerController',
             });
 
             // Emergency fallback - direct key polling
@@ -189,14 +202,15 @@ export class PlayerController {
                 up: this.scene.input.keyboard.addKey('W'),
                 down: this.scene.input.keyboard.addKey('S'),
                 left: this.scene.input.keyboard.addKey('A'),
-                right: this.scene.input.keyboard.addKey('D')
+                right: this.scene.input.keyboard.addKey('D'),
             };
             this.spaceKey = this.scene.input.keyboard.addKey('SPACE');
             this.duckKey = this.scene.input.keyboard.addKey('C');
         } else {
             LOG.dev('PLAYER_INPUT_READY', {
                 subsystem: 'player',
-                message: 'InputManager confirmed available, using snapshot-based input architecture'
+                message:
+                    'InputManager confirmed available, using snapshot-based input architecture',
             });
             // Store reference to InputManager (not individual keys)
             this.inputManager = inputManager;
@@ -206,12 +220,12 @@ export class PlayerController {
             subsystem: 'player',
             message: 'Player input configured',
             architecture: 'snapshot-based',
-            mode: 'consuming InputState per frame'
+            mode: 'consuming InputState per frame',
         });
 
         this.isDucking = false;
     }
-    
+
     /**
      * Modern character controller update - Snapshot-based input architecture
      * @param {number} deltaTime - Frame time in milliseconds
@@ -226,9 +240,9 @@ export class PlayerController {
                     body: !!this.body,
                     controller: !!this.characterController,
                     collider: !!this.collider,
-                    sprite: !!this.sprite
+                    sprite: !!this.sprite,
                 },
-                hint: 'Player may not have been properly initialized'
+                hint: 'Player may not have been properly initialized',
             });
             return;
         }
@@ -248,8 +262,8 @@ export class PlayerController {
                         isGrounded: this.isGrounded(),
                         hasBody: !!this.body,
                         hasController: !!this.characterController,
-                        hasSprite: !!this.sprite
-                    }
+                        hasSprite: !!this.sprite,
+                    },
                 }
             );
 
@@ -260,7 +274,7 @@ export class PlayerController {
                 threshold: 5,
                 hint: 'Check recent player update errors. May indicate physics or input issues.',
                 crashDump,
-                crashDumpSummary: CrashDumpGenerator.generateSummary(crashDump)
+                crashDumpSummary: CrashDumpGenerator.generateSummary(crashDump),
             });
 
             // Disable player to prevent further errors
@@ -278,7 +292,7 @@ export class PlayerController {
                     subsystem: 'player',
                     message: 'Invalid deltaTime in player update',
                     deltaTime,
-                    hint: 'Check game loop timing'
+                    hint: 'Check game loop timing',
                 });
                 return;
             }
@@ -298,7 +312,7 @@ export class PlayerController {
                     LOG.dev('PLAYER_INPUT_STATE', {
                         subsystem: 'player',
                         message: 'Input state snapshot',
-                        inputState
+                        inputState,
                     });
                 }
             } else {
@@ -308,7 +322,7 @@ export class PlayerController {
                     message: 'Using fallback input polling',
                     hasInputManager: !!this.inputManager,
                     hasGetSnapshot: !!this.inputManager?.getSnapshot,
-                    hint: 'InputManager should provide getSnapshot() method'
+                    hint: 'InputManager should provide getSnapshot() method',
                 });
                 inputState = this.createFallbackInputState();
             }
@@ -323,12 +337,16 @@ export class PlayerController {
             const desiredMovement = this.calculateMovementFromInput(inputState, dt);
 
             // Validate movement
-            if (!desiredMovement || !Number.isFinite(desiredMovement.x) || !Number.isFinite(desiredMovement.y)) {
+            if (
+                !desiredMovement ||
+                !Number.isFinite(desiredMovement.x) ||
+                !Number.isFinite(desiredMovement.y)
+            ) {
                 LOG.warn('PLAYER_INVALID_MOVEMENT', {
                     subsystem: 'player',
                     message: 'Invalid movement vector calculated',
                     desiredMovement,
-                    hint: 'Check movement calculation logic'
+                    hint: 'Check movement calculation logic',
                 });
                 return;
             }
@@ -351,16 +369,20 @@ export class PlayerController {
                     correctedY: correctedMovement.y,
                     velocityY: this.velocity.y,
                     coyoteTimer: this.coyoteTimer,
-                    jumpBufferTimer: this.jumpBufferTimer
+                    jumpBufferTimer: this.jumpBufferTimer,
                 });
             }
 
-            if (!correctedMovement || !Number.isFinite(correctedMovement.x) || !Number.isFinite(correctedMovement.y)) {
+            if (
+                !correctedMovement ||
+                !Number.isFinite(correctedMovement.x) ||
+                !Number.isFinite(correctedMovement.y)
+            ) {
                 LOG.warn('PLAYER_INVALID_CORRECTED_MOVEMENT', {
                     subsystem: 'player',
                     message: 'Invalid corrected movement from character controller',
                     correctedMovement,
-                    hint: 'Check character controller physics computation'
+                    hint: 'Check character controller physics computation',
                 });
                 return;
             }
@@ -369,7 +391,7 @@ export class PlayerController {
             if (currentPosition) {
                 this.body.setNextKinematicTranslation({
                     x: currentPosition.x + correctedMovement.x,
-                    y: currentPosition.y + correctedMovement.y
+                    y: currentPosition.y + correctedMovement.y,
                 });
             }
 
@@ -379,7 +401,6 @@ export class PlayerController {
             this.handleDuckingFromInput(inputState);
 
             this.errorCount = 0;
-
         } catch (error) {
             this.errorCount = (this.errorCount || 0) + 1;
             LOG.error('PLAYER_UPDATE_ERROR', {
@@ -396,9 +417,9 @@ export class PlayerController {
                     hasInputManager: !!this.inputManager,
                     velocity: { x: this.velocity?.x || 'N/A', y: this.velocity?.y || 'N/A' },
                     isGrounded: this.isGrounded,
-                    deltaTime: arguments[0]
+                    deltaTime: arguments[0],
                 },
-                hint: 'Check player physics state. Verify character controller and body are valid.'
+                hint: 'Check player physics state. Verify character controller and body are valid.',
             });
 
             // Emergency fallback
@@ -411,7 +432,7 @@ export class PlayerController {
                     subsystem: 'player',
                     error: fallbackError,
                     message: 'Emergency fallback sprite sync failed',
-                    hint: 'Player controller in critical state'
+                    hint: 'Player controller in critical state',
                 });
             }
         }
@@ -449,16 +470,16 @@ export class PlayerController {
         if (this.coyoteTimer > 0) {
             this.coyoteTimer -= dt;
         }
-        
+
         if (this.jumpBufferTimer > 0) {
             this.jumpBufferTimer -= dt;
         }
-        
+
         if (this.landingRecoveryTimer > 0) {
             this.landingRecoveryTimer -= dt;
         }
     }
-    
+
     /**
      * Update ground state using character controller
      * Rapier 0.19+ API: Ground detection via movement comparison
@@ -476,8 +497,9 @@ export class PlayerController {
         const GROUND_THRESHOLD = 0.01; // Small epsilon for floating point comparison
 
         const isFalling = this.velocity.y > 0; // Positive Y = down in our physics
-        const verticalBlocked = isFalling &&
-                               Math.abs(correctedMovement.y) < Math.abs(desiredMovement.y) - GROUND_THRESHOLD;
+        const verticalBlocked =
+            isFalling &&
+            Math.abs(correctedMovement.y) < Math.abs(desiredMovement.y) - GROUND_THRESHOLD;
         const atRest = Math.abs(this.velocity.y) < GROUND_THRESHOLD;
 
         this.isGrounded = verticalBlocked || atRest;
@@ -491,10 +513,10 @@ export class PlayerController {
         if (this.isGrounded) {
             this.groundContactTimer = 0;
         } else {
-            this.groundContactTimer += 1/60; // Rough frame time
+            this.groundContactTimer += 1 / 60; // Rough frame time
         }
     }
-    
+
     /**
      * Calculate movement from InputState snapshot
      *
@@ -516,9 +538,9 @@ export class PlayerController {
         const targetSpeed = horizontalInput * PhysicsConfig.movement.walkSpeed;
 
         // Choose acceleration based on ground state
-        const acceleration = this.isGrounded ?
-            PhysicsConfig.movement.groundAcceleration :
-            PhysicsConfig.movement.airAcceleration * PhysicsConfig.movement.airControlFactor;
+        const acceleration = this.isGrounded
+            ? PhysicsConfig.movement.groundAcceleration
+            : PhysicsConfig.movement.airAcceleration * PhysicsConfig.movement.airControlFactor;
 
         // Validate
         if (!Number.isFinite(targetSpeed) || !Number.isFinite(acceleration)) {
@@ -527,25 +549,25 @@ export class PlayerController {
                 message: 'Invalid movement parameters calculated',
                 targetSpeed,
                 acceleration,
-                hint: 'Check PhysicsConfig movement settings'
+                hint: 'Check PhysicsConfig movement settings',
             });
             return new RAPIER.Vector2(0, 0);
         }
 
         // Apply landing recovery
-        const recoveryMultiplier = this.landingRecoveryTimer > 0 ?
-            PhysicsConfig.gameFeel.landingSpeedMultiplier : 1.0;
+        const recoveryMultiplier =
+            this.landingRecoveryTimer > 0 ? PhysicsConfig.gameFeel.landingSpeedMultiplier : 1.0;
 
         if (horizontalInput !== 0) {
             // Accelerate toward target
-            const speedDiff = (targetSpeed * recoveryMultiplier) - this.velocity.x;
+            const speedDiff = targetSpeed * recoveryMultiplier - this.velocity.x;
             const maxAccel = acceleration * dt;
             this.velocity.x += Math.sign(speedDiff) * Math.min(Math.abs(speedDiff), maxAccel);
         } else {
             // Decelerate to zero
-            const deceleration = this.isGrounded ?
-                PhysicsConfig.movement.deceleration :
-                PhysicsConfig.movement.airAcceleration;
+            const deceleration = this.isGrounded
+                ? PhysicsConfig.movement.deceleration
+                : PhysicsConfig.movement.airAcceleration;
             const decel = deceleration * dt;
 
             if (Math.abs(this.velocity.x) <= decel) {
@@ -602,7 +624,7 @@ export class PlayerController {
 
         return movement;
     }
-    
+
     /**
      * Handle jump input from snapshot
      * @param {InputState} input
@@ -627,21 +649,21 @@ export class PlayerController {
             if (this.eventSystem) {
                 this.eventSystem.emit(EventNames.PLAYER_JUMP, {
                     position: this.body.translation(),
-                    velocity: { x: this.velocity.x, y: this.velocity.y }
+                    velocity: { x: this.velocity.x, y: this.velocity.y },
                 });
             }
         }
 
         // Variable jump height
         if (input.jumpReleased && this.velocity.y < 0) {
-            const minJumpVel = -PhysicsConfig.movement.jumpVelocity *
-                               PhysicsConfig.gameFeel.variableJumpMinHeight;
+            const minJumpVel =
+                -PhysicsConfig.movement.jumpVelocity * PhysicsConfig.gameFeel.variableJumpMinHeight;
             if (this.velocity.y < minJumpVel) {
                 this.velocity.y = minJumpVel;
             }
         }
     }
-    
+
     /**
      * Update velocity based on actual movement that occurred
      * @param {RAPIER.Vector2} correctedMovement - The actual movement after collision
@@ -653,7 +675,7 @@ export class PlayerController {
         if (Math.abs(correctedMovement.x) < Math.abs(expectedHorizontal) * 0.5) {
             this.velocity.x = 0;
         }
-        
+
         // If we didn't move vertically as expected, we hit floor/ceiling
         const expectedVertical = this.velocity.y * dt;
         if (Math.abs(correctedMovement.y) < Math.abs(expectedVertical) * 0.5) {
@@ -666,7 +688,7 @@ export class PlayerController {
             }
         }
     }
-    
+
     /**
      * Handle landing detection and recovery period
      */
@@ -674,48 +696,45 @@ export class PlayerController {
         if (this.isGrounded && this.landingRecoveryTimer <= 0 && this.velocity.y === 0) {
             // We just landed - start recovery period
             this.landingRecoveryTimer = PhysicsConfig.gameFeel.landingRecoveryTime;
-            
+
             // Emit landing event with properly structured data
             if (this.eventSystem) {
                 const position = this.body.translation();
                 this.eventSystem.emit(EventNames.PLAYER_LAND, {
                     position: {
                         x: position.x,
-                        y: position.y
+                        y: position.y,
                     },
                     velocity: {
                         x: this.velocity.x,
-                        y: this.velocity.y
-                    }
+                        y: this.velocity.y,
+                    },
                 });
             }
         }
     }
-    
+
     /**
      * Update sprite position with proper scaling
      */
     updateSpritePosition() {
         if (!this.body || !this.sprite) return;
-        
+
         const position = this.body.translation();
         // Convert from physics meters to render pixels
-        this.sprite.setPosition(
-            metersToPixels(position.x), 
-            metersToPixels(position.y)
-        );
-        
+        this.sprite.setPosition(metersToPixels(position.x), metersToPixels(position.y));
+
         // Don't update rotation from physics if ducking
         if (!this.isDucking) {
             this.sprite.setRotation(this.body.rotation());
         }
-        
+
         // Update glow position
         if (this.glowGraphics) {
             this.updateGlow(0.4);
         }
     }
-    
+
     /**
      * Handle ducking from input snapshot
      * @param {InputState} input
@@ -738,11 +757,14 @@ export class PlayerController {
             this.world.removeCollider(this.collider);
 
             // Create SHORTER capsule in METERS
-            const duckPixelHeight = 24;  // Duck height in pixels
-            const duckHalfHeight = pixelsToMeters(duckPixelHeight / 2) - PhysicsConfig.player.radius;
+            const duckPixelHeight = 24; // Duck height in pixels
+            const duckHalfHeight =
+                pixelsToMeters(duckPixelHeight / 2) - PhysicsConfig.player.radius;
 
-            const colliderDesc = RAPIER.ColliderDesc
-                .capsule(duckHalfHeight, PhysicsConfig.player.radius)  // ✅ METERS
+            const colliderDesc = RAPIER.ColliderDesc.capsule(
+                duckHalfHeight,
+                PhysicsConfig.player.radius
+            ) // ✅ METERS
                 .setFriction(PhysicsConfig.player.friction)
                 .setRestitution(PhysicsConfig.player.restitution)
                 .setDensity(PhysicsConfig.player.density);
@@ -751,10 +773,9 @@ export class PlayerController {
 
             if (this.eventSystem) {
                 this.eventSystem.emit(EventNames.PLAYER_DUCK, {
-                    position: this.body.translation()
+                    position: this.body.translation(),
                 });
             }
-
         } else if (!this.isDucking && wasDucking) {
             // Stop ducking
             this.sprite.setRotation(0);
@@ -762,11 +783,14 @@ export class PlayerController {
             // Restore original capsule
             this.world.removeCollider(this.collider);
 
-            const standPixelHeight = 48;  // Standing height
-            const standHalfHeight = pixelsToMeters(standPixelHeight / 2) - PhysicsConfig.player.radius;
+            const standPixelHeight = 48; // Standing height
+            const standHalfHeight =
+                pixelsToMeters(standPixelHeight / 2) - PhysicsConfig.player.radius;
 
-            const colliderDesc = RAPIER.ColliderDesc
-                .capsule(standHalfHeight, PhysicsConfig.player.radius)  // ✅ METERS
+            const colliderDesc = RAPIER.ColliderDesc.capsule(
+                standHalfHeight,
+                PhysicsConfig.player.radius
+            ) // ✅ METERS
                 .setFriction(PhysicsConfig.player.friction)
                 .setRestitution(PhysicsConfig.player.restitution)
                 .setDensity(PhysicsConfig.player.density);
@@ -774,7 +798,7 @@ export class PlayerController {
             this.collider = this.world.createCollider(colliderDesc, this.body);
         }
     }
-    
+
     /**
      * Get the player's physics body
      * @returns {RAPIER.RigidBody} The player's physics body
@@ -782,7 +806,7 @@ export class PlayerController {
     getBody() {
         return this.body;
     }
-    
+
     /**
      * Get the player's sprite
      * @returns {Phaser.GameObjects.Sprite|Phaser.GameObjects.Rectangle} The player's sprite
@@ -790,7 +814,7 @@ export class PlayerController {
     getSprite() {
         return this.sprite;
     }
-    
+
     /**
      * Get velocity information for debugging
      * @returns {object} Current velocity and movement state
@@ -800,10 +824,10 @@ export class PlayerController {
             velocity: { x: this.velocity.x, y: this.velocity.y },
             isGrounded: this.isGrounded,
             coyoteTimer: this.coyoteTimer,
-            jumpBufferTimer: this.jumpBufferTimer
+            jumpBufferTimer: this.jumpBufferTimer,
         };
     }
-    
+
     /**
      * Set the player position (called by level loader)
      * @param {number} x - X position in pixels
@@ -816,12 +840,12 @@ export class PlayerController {
         if (this.sprite) {
             this.sprite.setPosition(x, y);
         }
-        
+
         // Reset velocity
         this.velocity.x = 0;
         this.velocity.y = 0;
     }
-    
+
     /**
      * Reset the player state (called by level loader)
      */
@@ -829,16 +853,16 @@ export class PlayerController {
         // Reset velocity
         this.velocity.x = 0;
         this.velocity.y = 0;
-        
+
         // Reset timers
         this.coyoteTimer = 0;
         this.jumpBufferTimer = 0;
         this.landingRecoveryTimer = 0;
-        
+
         // Reset ground state
         this.isGrounded = false;
         this.groundContactTimer = 0;
-        
+
         // Reset ducking
         this.isDucking = false;
         if (this.sprite) {
@@ -847,20 +871,20 @@ export class PlayerController {
 
         LOG.info('PLAYER_STATE_RESET', {
             subsystem: 'player',
-            message: 'Player state reset to initial values'
+            message: 'Player state reset to initial values',
         });
     }
-    
+
     /**
      * Create a glow effect around the player
      */
     createGlowEffect() {
         if (!this.sprite) return;
-        
+
         // Create glow graphics behind the sprite
         this.glowGraphics = this.scene.add.graphics();
         this.glowGraphics.setDepth(99); // Just below the sprite
-        
+
         // Create pulsing glow animation
         this.scene.tweens.add({
             targets: { intensity: 0.3 },
@@ -872,33 +896,29 @@ export class PlayerController {
             onUpdate: (tween) => {
                 const intensity = tween.getValue();
                 this.updateGlow(intensity);
-            }
+            },
         });
     }
-    
+
     /**
      * Update the glow effect
      * @param {number} intensity - Glow intensity
      */
     updateGlow(intensity) {
         if (!this.glowGraphics || !this.sprite) return;
-        
+
         this.glowGraphics.clear();
-        
+
         // Create multiple circles for soft glow
         const colors = [0x00ff00, 0x44ff44, 0x88ff88];
         const sizes = [40, 30, 20];
-        
+
         colors.forEach((color, i) => {
             this.glowGraphics.fillStyle(color, intensity * (0.3 - i * 0.1));
-            this.glowGraphics.fillCircle(
-                this.sprite.x,
-                this.sprite.y,
-                sizes[i]
-            );
+            this.glowGraphics.fillCircle(this.sprite.x, this.sprite.y, sizes[i]);
         });
     }
-    
+
     /**
      * Clean up resources when scene is shut down
      */
@@ -907,12 +927,12 @@ export class PlayerController {
         if (this.world && this.body) {
             this.world.removeRigidBody(this.body);
         }
-        
+
         // Clean up graphics
         if (this.glowGraphics) {
             this.glowGraphics.destroy();
         }
-        
+
         // Clean up input listeners via InputManager
         if (this.scene.inputManager) {
             this.scene.inputManager.destroy();
@@ -920,7 +940,7 @@ export class PlayerController {
 
         LOG.info('PLAYER_RESOURCES_CLEANUP', {
             subsystem: 'player',
-            message: 'Player resources cleaned up and destroyed'
+            message: 'Player resources cleaned up and destroyed',
         });
     }
 }

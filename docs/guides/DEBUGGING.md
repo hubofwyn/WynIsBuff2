@@ -17,7 +17,7 @@ import { LOG } from '@observability';
 // Simple log
 LOG.info('PLAYER_SPAWN', {
     subsystem: 'player',
-    message: 'Player spawned successfully'
+    message: 'Player spawned successfully',
 });
 
 // Error with diagnostic data
@@ -27,9 +27,9 @@ LOG.error('PHYSICS_UPDATE_ERROR', {
     message: 'Failed to update physics world',
     state: {
         bodyCount: this.world.bodies.length,
-        accumulator: this.accumulator
+        accumulator: this.accumulator,
     },
-    hint: 'Check if physics world is initialized'
+    hint: 'Check if physics world is initialized',
 });
 ```
 
@@ -58,22 +58,25 @@ const playerLogs = LOG.getBySubsystem('player', 50);
 **Diagnosis Steps**:
 
 1. **Check console for circuit breaker**:
-   ```
-   [PlayerController] Too many errors, player disabled
-   ```
+
+    ```
+    [PlayerController] Too many errors, player disabled
+    ```
 
 2. **Query recent player errors**:
-   ```javascript
-   const errors = LOG.getBySubsystem('player');
-   console.log('Player errors:', errors);
-   ```
+
+    ```javascript
+    const errors = LOG.getBySubsystem('player');
+    console.log('Player errors:', errors);
+    ```
 
 3. **Check common causes**:
-   - Physics body missing
-   - Input manager not initialized
-   - Movement calculation returning NaN
+    - Physics body missing
+    - Input manager not initialized
+    - Movement calculation returning NaN
 
 **Solution Pattern**:
+
 ```javascript
 // Check player state
 if (!this.body || !this.characterController) {
@@ -83,9 +86,9 @@ if (!this.body || !this.characterController) {
         state: {
             hasBody: !!this.body,
             hasController: !!this.characterController,
-            hasSprite: !!this.sprite
+            hasSprite: !!this.sprite,
         },
-        hint: 'Verify player initialization completed'
+        hint: 'Verify player initialization completed',
     });
     return;
 }
@@ -98,33 +101,36 @@ if (!this.body || !this.characterController) {
 **Diagnosis Steps**:
 
 1. **Check circuit breaker status**:
-   ```javascript
-   // In console or debug code
-   const physicsErrors = LOG.getByCode('PHYSICS_CIRCUIT_BREAKER');
-   if (physicsErrors.length > 0) {
-       console.log('Circuit breaker triggered:', physicsErrors[0]);
-   }
-   ```
+
+    ```javascript
+    // In console or debug code
+    const physicsErrors = LOG.getByCode('PHYSICS_CIRCUIT_BREAKER');
+    if (physicsErrors.length > 0) {
+        console.log('Circuit breaker triggered:', physicsErrors[0]);
+    }
+    ```
 
 2. **Check crash dump** (if circuit breaker triggered):
-   ```javascript
-   const crashLogs = LOG.getByLevel('fatal');
-   if (crashLogs.length > 0) {
-       const dump = crashLogs[0].crashDump;
-       console.log('Crash dump:', dump);
-       console.log('Summary:', CrashDumpGenerator.generateSummary(dump));
-   }
-   ```
+
+    ```javascript
+    const crashLogs = LOG.getByLevel('fatal');
+    if (crashLogs.length > 0) {
+        const dump = crashLogs[0].crashDump;
+        console.log('Crash dump:', dump);
+        console.log('Summary:', CrashDumpGenerator.generateSummary(dump));
+    }
+    ```
 
 3. **Analyze error patterns**:
-   ```javascript
-   import { ErrorPatternDetector } from '@observability';
-   const detector = new ErrorPatternDetector(LOG);
-   const patterns = detector.analyzeRecent(10000);
-   console.log('Error patterns:', patterns);
-   ```
+    ```javascript
+    import { ErrorPatternDetector } from '@observability';
+    const detector = new ErrorPatternDetector(LOG);
+    const patterns = detector.analyzeRecent(10000);
+    console.log('Error patterns:', patterns);
+    ```
 
 **Common Causes**:
+
 - Invalid Rapier API usage
 - Body handles pointing to deleted bodies
 - Frame rate drop causing accumulator overflow
@@ -143,7 +149,7 @@ const patterns = detector.analyzeRecent(5000);
 
 if (patterns.repeatingErrors.length > 0) {
     console.log('Repeating errors detected:');
-    patterns.repeatingErrors.forEach(pattern => {
+    patterns.repeatingErrors.forEach((pattern) => {
         console.log(`- ${pattern.code}: ${pattern.count} times`);
         console.log(`  First: ${pattern.first.message}`);
         console.log(`  Last: ${pattern.last.message}`);
@@ -152,6 +158,7 @@ if (patterns.repeatingErrors.length > 0) {
 ```
 
 **Solutions**:
+
 - **NaN propagation**: Add validation before calculations
 - **Missing initialization**: Check component lifecycle
 - **API misuse**: Review Rapier/Phaser documentation
@@ -167,9 +174,9 @@ const patterns = detector.analyzeRecent(5000);
 
 if (patterns.cascades.length > 0) {
     console.log('Error cascades detected:');
-    patterns.cascades.forEach(cascade => {
+    patterns.cascades.forEach((cascade) => {
         console.log(`Cascade: ${cascade.errors.length} errors in ${cascade.duration}ms`);
-        cascade.errors.forEach(err => {
+        cascade.errors.forEach((err) => {
             console.log(`  - [${err.subsystem}] ${err.code}: ${err.message}`);
         });
     });
@@ -179,6 +186,7 @@ if (patterns.cascades.length > 0) {
 **Common Cause**: One system failure causing dependent systems to fail
 
 **Solution Pattern**:
+
 1. Fix the first error in the cascade
 2. Other errors often resolve automatically
 3. Add defensive checks in dependent systems
@@ -228,6 +236,7 @@ When DebugContext is initialized (automatically in Game scene), all logs include
 ```
 
 **Why This Matters**:
+
 - Frame-accurate debugging
 - Understand exact game state when error occurred
 - Correlate errors across subsystems
@@ -262,11 +271,11 @@ if (errors.length > 0) {
 const allLogs = LOG.getAll();
 console.log('Total logs:', allLogs.length);
 console.log('Buffer size:', 2000);
-console.log('Buffer utilization:', (allLogs.length / 2000 * 100).toFixed(1) + '%');
+console.log('Buffer utilization:', ((allLogs.length / 2000) * 100).toFixed(1) + '%');
 
 // Check subsystem distribution
 const subsystems = {};
-allLogs.forEach(log => {
+allLogs.forEach((log) => {
     subsystems[log.subsystem] = (subsystems[log.subsystem] || 0) + 1;
 });
 console.log('Logs by subsystem:', subsystems);
@@ -277,7 +286,7 @@ console.log('Logs by subsystem:', subsystems);
 ```javascript
 // Find most frequently logged codes
 const codes = {};
-allLogs.forEach(log => {
+allLogs.forEach((log) => {
     codes[log.code] = (codes[log.code] || 0) + 1;
 });
 
@@ -342,6 +351,7 @@ if (fatalLogs.length > 0) {
 ```
 
 **Crash Dump Contents**:
+
 - Error details and stack trace
 - Recent 50 log entries
 - Complete game state (player, physics, input)
@@ -360,7 +370,7 @@ const allLogs = LOG.getAll();
 const json = JSON.stringify(allLogs, null, 2);
 
 // In browser console:
-copy(json);  // Copies to clipboard
+copy(json); // Copies to clipboard
 
 // In Node.js:
 fs.writeFileSync('logs.json', json);
@@ -371,8 +381,8 @@ fs.writeFileSync('logs.json', json);
 ```javascript
 // Get errors from last 100 frames
 const recentErrors = LOG.getAll()
-    .filter(log => log.level === 'error')
-    .filter(log => log.context && log.context.frame > (currentFrame - 100));
+    .filter((log) => log.level === 'error')
+    .filter((log) => log.context && log.context.frame > currentFrame - 100);
 
 // Group by subsystem
 const bySubsystem = recentErrors.reduce((acc, log) => {
@@ -399,7 +409,7 @@ The DebugAPI is globally available in the browser console:
 window.debugAPI.getSummary();
 
 // Query recent errors
-window.debugAPI.getRecentLogs(60000);  // Last 60 seconds
+window.debugAPI.getRecentLogs(60000); // Last 60 seconds
 
 // Analyze a specific subsystem
 window.debugAPI.analyzeSubsystem('physics');
@@ -426,26 +436,17 @@ const recentPhysicsErrors = new QueryBuilder(LOG)
     .execute();
 
 // Count warnings in last 30 seconds
-const warningCount = new QueryBuilder(LOG)
-    .level('warn')
-    .inLastSeconds(30)
-    .count();
+const warningCount = new QueryBuilder(LOG).level('warn').inLastSeconds(30).count();
 
 // Get most recent player circuit breaker event
-const circuitBreaker = new QueryBuilder(LOG)
-    .code('PLAYER_CIRCUIT_BREAKER')
-    .withContext()
-    .last();
+const circuitBreaker = new QueryBuilder(LOG).code('PLAYER_CIRCUIT_BREAKER').withContext().last();
 
 // Get all critical errors with context
-const critical = new QueryBuilder(LOG)
-    .criticalOnly()
-    .withContext()
-    .sortByTimeDesc()
-    .execute();
+const critical = new QueryBuilder(LOG).criticalOnly().withContext().sortByTimeDesc().execute();
 ```
 
 **Available Query Methods**:
+
 - `level(level)` - Filter by log level
 - `subsystem(subsystem)` - Filter by subsystem
 - `code(code)` - Filter by error code
@@ -461,6 +462,7 @@ const critical = new QueryBuilder(LOG)
 - `sortByTimeAsc()` / `sortByTimeDesc()` - Sort by timestamp
 
 **Execution Methods**:
+
 - `execute()` - Returns array of matching logs
 - `count()` - Returns count only
 - `first()` - Returns first match or null
@@ -476,10 +478,7 @@ import { LogAnalyzer, QueryBuilder, LOG } from '@observability';
 const analyzer = new LogAnalyzer();
 
 // Get recent errors
-const errors = new QueryBuilder(LOG)
-    .errorsOnly()
-    .inLastMinutes(10)
-    .execute();
+const errors = new QueryBuilder(LOG).errorsOnly().inLastMinutes(10).execute();
 
 // Get statistics
 const stats = analyzer.getStatistics(errors);
@@ -489,7 +488,7 @@ console.log('Top error codes:', stats.topCodes);
 
 // Find causal relationships
 const relationships = analyzer.findCausalRelationships(errors);
-relationships.forEach(rel => {
+relationships.forEach((rel) => {
     console.log(`${rel.cause.code} may cause ${rel.effect.code} (${rel.timeDiff}ms apart)`);
 });
 
@@ -500,19 +499,20 @@ console.log(`Error rate: ${health.errorRate} errors/minute`);
 console.log(`Trend: ${health.trend}`);
 
 // Analyze trends over time
-const trends = analyzer.getTrends(errors, 10000);  // 10-second buckets
-console.log(`Trend: ${trends.trend}`);  // 'improving', 'degrading', or 'stable'
+const trends = analyzer.getTrends(errors, 10000); // 10-second buckets
+console.log(`Trend: ${trends.trend}`); // 'improving', 'degrading', or 'stable'
 
 // Get recommendations
 const recommendations = analyzer.generateRecommendations({
     statistics: stats,
     health: health,
-    trends: trends
+    trends: trends,
 });
 console.log('Recommendations:', recommendations);
 ```
 
 **Health Scoring**:
+
 - **90-100**: Healthy (green status)
 - **70-89**: Warning (yellow status)
 - **0-69**: Critical (red status)
@@ -529,24 +529,20 @@ import { ExportFormatter, QueryBuilder, LOG } from '@observability';
 const formatter = new ExportFormatter();
 
 // Get errors to export
-const errors = new QueryBuilder(LOG)
-    .errorsOnly()
-    .inLastMinutes(10)
-    .withContext()
-    .execute();
+const errors = new QueryBuilder(LOG).errorsOnly().inLastMinutes(10).withContext().execute();
 
 // Rich JSON export with metadata
 const json = formatter.toJSON(errors, {
     includeStatistics: true,
     includeAnalysis: true,
-    includeRecommendations: true
+    includeRecommendations: true,
 });
 console.log(json);
 
 // Human-readable Markdown report
 const markdown = formatter.toMarkdown(errors, {
     statistics: analyzer.getStatistics(errors),
-    health: analyzer.getSubsystemHealth('physics', errors)
+    health: analyzer.getSubsystemHealth('physics', errors),
 });
 console.log(markdown);
 // Copy to clipboard: copy(markdown);
@@ -561,14 +557,15 @@ const compact = formatter.toCompactJSON(errors);
 // Summary only (no individual logs)
 const summary = formatter.toSummary(errors, {
     includePatterns: true,
-    includeRecommendations: true
+    includeRecommendations: true,
 });
 
 // Console-friendly output
-formatter.toConsole(errors, 20);  // Print last 20 to console
+formatter.toConsole(errors, 20); // Print last 20 to console
 ```
 
 **Export Use Cases**:
+
 - **JSON**: Automated analysis, long-term storage
 - **Markdown**: Bug reports, documentation, team sharing
 - **CSV**: Excel/Google Sheets analysis, charting
@@ -587,9 +584,9 @@ const suggestions = new ErrorSuggestions();
 
 // Get suggestions for specific error
 const help = suggestions.getSuggestions('PHYSICS_UPDATE_ERROR');
-console.log('Category:', help.category);       // 'physics'
-console.log('Severity:', help.severity);       // 'high'
-console.log('Confidence:', help.confidence);   // 'high'
+console.log('Category:', help.category); // 'physics'
+console.log('Severity:', help.severity); // 'high'
+console.log('Confidence:', help.confidence); // 'high'
 console.log('Suggestions:', help.suggestions);
 console.log('Related errors:', help.relatedCodes);
 console.log('Documentation:', help.documentation);
@@ -610,6 +607,7 @@ const categories = suggestions.getCategories();
 ```
 
 **Known Error Codes** (15+ in knowledge base):
+
 - **Physics**: `PHYSICS_INIT_ERROR`, `PHYSICS_UPDATE_ERROR`, `PHYSICS_CIRCUIT_BREAKER`, `PHYSICS_FRAME_BUDGET_EXCEEDED`
 - **Player**: `PLAYER_UPDATE_ERROR`, `PLAYER_CIRCUIT_BREAKER`, `PLAYER_MOVEMENT_NAN`
 - **Input**: `INPUT_MANAGER_ERROR`
@@ -626,7 +624,10 @@ const categories = suggestions.getCategories();
 // Step 1: Get system health overview
 const summary = window.debugAPI.getSummary();
 console.log('Overall health:', summary.overallHealth);
-console.log('Critical subsystems:', summary.subsystems.filter(s => s.status === 'critical'));
+console.log(
+    'Critical subsystems:',
+    summary.subsystems.filter((s) => s.status === 'critical')
+);
 
 // Step 2: Analyze physics subsystem in detail
 const physicsAnalysis = window.debugAPI.analyzeSubsystem('physics', 120000);
@@ -644,9 +645,9 @@ if (physicsAnalysis.errorCount > 0) {
 // Step 4: Export comprehensive report
 const report = window.debugAPI.exportForAnalysis({
     format: 'markdown',
-    timeWindow: 300000,  // Last 5 minutes
+    timeWindow: 300000, // Last 5 minutes
     includePatterns: true,
-    includeRecommendations: true
+    includeRecommendations: true,
 });
 
 // Step 5: Copy to clipboard for bug report
@@ -659,27 +660,27 @@ Common commands you can run directly in the browser console:
 
 ```javascript
 // Health check
-window.debugAPI.getSummary()
+window.debugAPI.getSummary();
 
 // Recent errors
-window.debugAPI.getRecentLogs(60000)
+window.debugAPI.getRecentLogs(60000);
 
 // Subsystem analysis
-window.debugAPI.analyzeSubsystem('physics')
-window.debugAPI.analyzeSubsystem('player')
+window.debugAPI.analyzeSubsystem('physics');
+window.debugAPI.analyzeSubsystem('player');
 
 // Get help
-window.debugAPI.getSuggestions('PHYSICS_UPDATE_ERROR')
+window.debugAPI.getSuggestions('PHYSICS_UPDATE_ERROR');
 
 // Export report
-copy(window.debugAPI.exportForAnalysis({ format: 'markdown', timeWindow: 300000 }))
+copy(window.debugAPI.exportForAnalysis({ format: 'markdown', timeWindow: 300000 }));
 
 // Time-range analysis
-window.debugAPI.analyzeTimeWindow(120000)  // Last 2 minutes
+window.debugAPI.analyzeTimeWindow(120000); // Last 2 minutes
 
 // Related logs
 const error = window.debugAPI.query({ code: 'PHYSICS_CIRCUIT_BREAKER' })[0];
-window.debugAPI.getRelatedLogs(error, { timeWindow: 5000 })
+window.debugAPI.getRelatedLogs(error, { timeWindow: 5000 });
 ```
 
 ---
@@ -689,6 +690,7 @@ window.debugAPI.getRelatedLogs(error, { timeWindow: 5000 })
 ### DO:
 
 ✅ **Use appropriate log levels**:
+
 - `LOG.dev()` - Normal flow, verbose debugging (1% sampling)
 - `LOG.info()` - Important state changes
 - `LOG.warn()` - Unexpected but handled situations
@@ -696,6 +698,7 @@ window.debugAPI.getRelatedLogs(error, { timeWindow: 5000 })
 - `LOG.fatal()` - Critical failures, crash dumps
 
 ✅ **Include diagnostic context**:
+
 ```javascript
 LOG.error('PLATFORM_CREATE_ERROR', {
     subsystem: 'level',
@@ -704,35 +707,40 @@ LOG.error('PLATFORM_CREATE_ERROR', {
     state: {
         platformIndex: i,
         totalPlatforms: config.platforms.length,
-        platformConfig: config.platforms[i]
+        platformConfig: config.platforms[i],
     },
-    hint: 'Check sprite key exists in assets'
+    hint: 'Check sprite key exists in assets',
 });
 ```
 
 ✅ **Use error codes consistently**:
+
 - Format: `SUBSYSTEM_DESCRIPTION`
 - Examples: `PHYSICS_INIT_ERROR`, `PLAYER_MOVEMENT_NAN`, `LEVEL_LOAD_TIMEOUT`
 
 ✅ **Provide hints for resolution**:
+
 ```javascript
-hint: 'Check if physics world is initialized. Verify Rapier loaded correctly.'
+hint: 'Check if physics world is initialized. Verify Rapier loaded correctly.';
 ```
 
 ### DON'T:
 
-❌ **Don't use console.* in new code**:
+❌ **Don't use console.\* in new code**:
+
 ```javascript
 console.log('Player moved');  // ❌ No structure, no query, lost in console
 LOG.dev('PLAYER_MOVED', { subsystem: 'player', ... });  // ✅
 ```
 
 ❌ **Don't log sensitive data**:
+
 ```javascript
-LOG.info('USER_LOGIN', { password: 'secret123' });  // ❌ NEVER
+LOG.info('USER_LOGIN', { password: 'secret123' }); // ❌ NEVER
 ```
 
 ❌ **Don't log in tight loops without sampling**:
+
 ```javascript
 // ❌ Logs 60 times per second
 update() {
@@ -754,24 +762,27 @@ update() {
 ### Logs Not Appearing
 
 **Check 1**: LogSystem initialized?
+
 ```javascript
 import { LOG } from '@observability';
 console.log('LogSystem:', LOG);
 ```
 
 **Check 2**: Correct import path?
+
 ```javascript
 // ✅ Correct
 import { LOG } from '@observability';
 import { LOG } from '../observability/core/LogSystem.js';
 
 // ❌ Incorrect
-import { LOG } from './LogSystem.js';  // Wrong path
+import { LOG } from './LogSystem.js'; // Wrong path
 ```
 
 ### Context Not Injecting
 
 **Check 1**: DebugContext initialized in Game.js?
+
 ```javascript
 // Should see this in logs during game start:
 // GAME_DEBUGCONTEXT_INIT
@@ -779,6 +790,7 @@ import { LOG } from './LogSystem.js';  // Wrong path
 ```
 
 **Check 2**: StateProviders registered?
+
 ```javascript
 const scene = game.scene.scenes[0];
 console.log('DebugContext:', scene.debugContext);
@@ -790,6 +802,7 @@ console.log('Providers:', scene.debugContext?.providers);
 **Cause**: Circular buffer (2000 entries) is full, oldest logs evicted
 
 **Solution**: Export logs before buffer fills
+
 ```javascript
 // Check buffer status
 const logs = LOG.getAll();
@@ -807,17 +820,20 @@ if (logs.length > 1800) {
 ## Reference
 
 **Documentation**:
+
 - [ERROR_HANDLING_LOGGING.md](../systems/ERROR_HANDLING_LOGGING.md) - Complete system guide
 - [OBSERVABILITY_IMPLEMENTATION.md](../../OBSERVABILITY_IMPLEMENTATION.md) - Implementation details
 - [STATUS_OBSERVABILITY.json](../../STATUS_OBSERVABILITY.json) - Current status
 
 **Code**:
+
 - `src/observability/core/LogSystem.js` - Main logging system
 - `src/observability/context/DebugContext.js` - Context injection
 - `src/observability/utils/CrashDumpGenerator.js` - Crash dumps
 - `src/observability/utils/ErrorPatternDetector.js` - Pattern detection
 
 **Support**:
+
 - Check [Known Issues](../systems/ERROR_HANDLING_LOGGING.md#7-known-issues)
 - Review [Debugging Procedures](../systems/ERROR_HANDLING_LOGGING.md#9-debugging-procedures)
 - Consult [Best Practices](../systems/ERROR_HANDLING_LOGGING.md#8-development-guidelines)

@@ -1,26 +1,17 @@
 import { Scene } from 'phaser';
-import { SceneKeys } from '../constants/SceneKeys.js';
-import { EventNames } from '../constants/EventNames.js';
-import { ImageAssets, AudioAssets } from '../constants/Assets.js';
-import { 
+import {
     PlayerController,
     EnhancedMovementController,
     EnhancedJumpController,
-    WallDashController
+    WallDashController,
 } from '@features/player';
-import { 
-    LevelManager,
-    PlatformFactory
-} from '@features/level';
-import {
-    EventBus,
-    AudioManager,
-    GameStateManager
-} from '@features/core';
-import {
-    DNAExtractor,
-    TimeEchoRecorder
-} from '@features/idle';
+import { LevelManager, PlatformFactory } from '@features/level';
+import { EventBus, AudioManager, GameStateManager } from '@features/core';
+import { DNAExtractor, TimeEchoRecorder } from '@features/idle';
+
+import { ImageAssets, AudioAssets } from '../constants/Assets.js';
+import { EventNames } from '../constants/EventNames.js';
+import { SceneKeys } from '../constants/SceneKeys.js';
 
 export class RunScene extends Scene {
     constructor() {
@@ -44,61 +35,55 @@ export class RunScene extends Scene {
         this.eventBus = EventBus.getInstance();
         this.audioManager = AudioManager.getInstance();
         this.gameStateManager = GameStateManager.getInstance();
-        
+
         // Initialize performance tracking
         this.dnaExtractor = new DNAExtractor(this, this.eventBus);
         this.timeEchoRecorder = new TimeEchoRecorder(this, this.eventBus);
-        
+
         // Start recording
         this.timeEchoRecorder.startRecording();
-        this.eventBus.emit(EventNames.RUN_STARTED, { 
+        this.eventBus.emit(EventNames.RUN_STARTED, {
             level: this.levelData,
-            timestamp: this.runStartTime 
+            timestamp: this.runStartTime,
         });
-        
+
         // Create world background
         this.createBackground();
-        
+
         // Set up physics world bounds
         this.physics.world.setBounds(0, 0, 3200, 600);
-        
+
         // Initialize level systems
         this.levelManager = new LevelManager(this, this.eventBus);
         this.platformFactory = new PlatformFactory(this, this.physics.world);
-        
+
         // Load level data
         this.levelManager.loadLevel(this.levelData);
-        
+
         // Create player
         this.createPlayer();
-        
+
         // Initialize enhanced movement systems
         this.enhancedMovement = new EnhancedMovementController(
             this,
             this.eventBus,
             this.playerController
         );
-        this.enhancedJump = new EnhancedJumpController(
-            this,
-            this.eventBus
-        );
-        this.wallDash = new WallDashController(
-            this,
-            this.eventBus
-        );
-        
+        this.enhancedJump = new EnhancedJumpController(this, this.eventBus);
+        this.wallDash = new WallDashController(this, this.eventBus);
+
         // Set up camera
         this.setupCamera();
-        
+
         // Create UI overlay
         this.createUI();
-        
+
         // Set up input
         this.setupInput();
-        
+
         // Subscribe to events
         this.setupEventListeners();
-        
+
         // Start idle systems
         this.eventBus.emit(EventNames.IDLE_TICK);
     }
@@ -107,7 +92,7 @@ export class RunScene extends Scene {
         // Dynamic gradient background
         const graphics = this.add.graphics();
         const colors = this.getBiomeColors();
-        
+
         // Create gradient
         for (let i = 0; i < 600; i++) {
             const color = Phaser.Display.Color.Interpolate.ColorWithColor(
@@ -119,11 +104,11 @@ export class RunScene extends Scene {
             graphics.fillStyle(color.color, 1);
             graphics.fillRect(0, i, 3200, 1);
         }
-        
+
         // Add parallax layers if available
         if (ImageAssets[`${this.levelData.toUpperCase()}_BG`]) {
-            this.add.tileSprite(0, 0, 3200, 600, 
-                ImageAssets[`${this.levelData.toUpperCase()}_BG`])
+            this.add
+                .tileSprite(0, 0, 3200, 600, ImageAssets[`${this.levelData.toUpperCase()}_BG`])
                 .setOrigin(0, 0)
                 .setScrollFactor(0.5);
         }
@@ -131,12 +116,12 @@ export class RunScene extends Scene {
 
     getBiomeColors() {
         const biomeColors = {
-            'protein-plant': { top: 0x2E7D32, bottom: 0x81C784 },
-            'metronome-mines': { top: 0x1A237E, bottom: 0x7986CB },
-            'isometric-icebox': { top: 0x006064, bottom: 0x80DEEA },
-            'vascular-vault': { top: 0x8E0000, bottom: 0xEF5350 }
+            'protein-plant': { top: 0x2e7d32, bottom: 0x81c784 },
+            'metronome-mines': { top: 0x1a237e, bottom: 0x7986cb },
+            'isometric-icebox': { top: 0x006064, bottom: 0x80deea },
+            'vascular-vault': { top: 0x8e0000, bottom: 0xef5350 },
         };
-        return biomeColors[this.levelData] || { top: 0x1976D2, bottom: 0x64B5F6 };
+        return biomeColors[this.levelData] || { top: 0x1976d2, bottom: 0x64b5f6 };
     }
 
     createPlayer() {
@@ -148,7 +133,7 @@ export class RunScene extends Scene {
             spawnPoint.y,
             this.eventBus
         );
-        
+
         // Initialize player sprite and physics
         this.player = this.playerController.getSprite();
         this.playerBody = this.playerController.getBody();
@@ -159,7 +144,7 @@ export class RunScene extends Scene {
         this.cameras.main.setBounds(0, 0, 3200, 600);
         this.cameras.main.startFollow(this.player, true, 0.08, 0.08);
         this.cameras.main.setZoom(1.2);
-        
+
         // Add subtle camera shake on landing
         this.eventBus.on(EventNames.PLAYER_LAND_IMPACT, () => {
             this.cameras.main.shake(50, 0.002);
@@ -170,40 +155,40 @@ export class RunScene extends Scene {
         // Create fixed UI container
         this.uiContainer = this.add.container(0, 0);
         this.uiContainer.setScrollFactor(0);
-        
+
         // Combo display
         this.comboText = this.add.text(400, 20, 'COMBO: 0', {
             fontSize: '32px',
             fontFamily: 'Arial Black',
             color: '#FFFFFF',
             stroke: '#000000',
-            strokeThickness: 4
+            strokeThickness: 4,
         });
         this.comboText.setOrigin(0.5, 0);
         this.uiContainer.add(this.comboText);
-        
+
         // Flow multiplier
         this.flowText = this.add.text(400, 60, 'FLOW: 1.0x', {
             fontSize: '24px',
             fontFamily: 'Arial',
             color: '#FFD700',
             stroke: '#000000',
-            strokeThickness: 3
+            strokeThickness: 3,
         });
         this.flowText.setOrigin(0.5, 0);
         this.uiContainer.add(this.flowText);
-        
+
         // Timer
         this.timerText = this.add.text(750, 20, '00:00', {
             fontSize: '28px',
             fontFamily: 'Courier',
             color: '#FFFFFF',
             stroke: '#000000',
-            strokeThickness: 3
+            strokeThickness: 3,
         });
         this.timerText.setOrigin(1, 0);
         this.uiContainer.add(this.timerText);
-        
+
         // Performance indicators
         this.createPerformanceIndicators();
     }
@@ -211,7 +196,7 @@ export class RunScene extends Scene {
     createPerformanceIndicators() {
         const indicators = ['S', 'C', 'H', 'R', 'B'];
         const colors = ['#00FF00', '#FFD700', '#FF0000', '#00FFFF', '#FF00FF'];
-        
+
         indicators.forEach((indicator, index) => {
             const x = 20 + index * 40;
             const text = this.add.text(x, 20, `${indicator}:0`, {
@@ -219,7 +204,7 @@ export class RunScene extends Scene {
                 fontFamily: 'Arial',
                 color: colors[index],
                 stroke: '#000000',
-                strokeThickness: 2
+                strokeThickness: 2,
             });
             this.uiContainer.add(text);
             this[`${indicator.toLowerCase()}Indicator`] = text;
@@ -233,7 +218,7 @@ export class RunScene extends Scene {
         this.jumpKey = this.input.keyboard.addKey('SPACE');
         this.dashKey = this.input.keyboard.addKey('SHIFT');
         this.duckKey = this.input.keyboard.addKey('C');
-        
+
         // Mobile touch controls if needed
         if (this.game.device.input.touch) {
             this.createTouchControls();
@@ -242,21 +227,24 @@ export class RunScene extends Scene {
 
     createTouchControls() {
         // Left/Right zones
-        const leftZone = this.add.zone(100, 400, 200, 200)
+        const leftZone = this.add
+            .zone(100, 400, 200, 200)
             .setInteractive()
-            .on('pointerdown', () => this.touchLeft = true)
-            .on('pointerup', () => this.touchLeft = false);
-            
-        const rightZone = this.add.zone(700, 400, 200, 200)
+            .on('pointerdown', () => (this.touchLeft = true))
+            .on('pointerup', () => (this.touchLeft = false));
+
+        const rightZone = this.add
+            .zone(700, 400, 200, 200)
             .setInteractive()
-            .on('pointerdown', () => this.touchRight = true)
-            .on('pointerup', () => this.touchRight = false);
-            
+            .on('pointerdown', () => (this.touchRight = true))
+            .on('pointerup', () => (this.touchRight = false));
+
         // Jump zone
-        const jumpZone = this.add.zone(400, 300, 400, 300)
+        const jumpZone = this.add
+            .zone(400, 300, 400, 300)
             .setInteractive()
-            .on('pointerdown', () => this.touchJump = true)
-            .on('pointerup', () => this.touchJump = false);
+            .on('pointerdown', () => (this.touchJump = true))
+            .on('pointerup', () => (this.touchJump = false));
     }
 
     setupEventListeners() {
@@ -264,28 +252,28 @@ export class RunScene extends Scene {
         this.eventBus.on(EventNames.COLLECTIBLE_COLLECTED, (data) => {
             this.handleCollectible(data);
         });
-        
+
         // Combo events
         this.eventBus.on(EventNames.COMBO_INCREASE, () => {
             this.updateCombo(this.combo + 1);
         });
-        
+
         this.eventBus.on(EventNames.COMBO_BREAK, () => {
             this.updateCombo(0);
         });
-        
+
         // Damage events
         this.eventBus.on(EventNames.PLAYER_EXPLODE, () => {
             this.hitsThaken++;
             this.performanceScore.H = this.hitsThaken;
             this.updateCombo(0);
         });
-        
+
         // Level completion
         this.eventBus.on(EventNames.LEVEL_COMPLETE, () => {
             this.completeRun();
         });
-        
+
         // Boss events
         this.eventBus.on(EventNames.BOSS_DEFEATED, (data) => {
             this.performanceScore.B = data.rating || 1.0;
@@ -294,8 +282,8 @@ export class RunScene extends Scene {
 
     handleCollectible(data) {
         const { type, value } = data;
-        
-        switch(type) {
+
+        switch (type) {
             case 'coin':
                 this.gameStateManager.addCoins(value);
                 break;
@@ -305,11 +293,13 @@ export class RunScene extends Scene {
                 break;
             case 'speed':
                 this.checkpointTimes.push(Date.now() - this.runStartTime);
-                this.performanceScore.S = Math.max(this.performanceScore.S, 
-                    this.calculateSpeedRating());
+                this.performanceScore.S = Math.max(
+                    this.performanceScore.S,
+                    this.calculateSpeedRating()
+                );
                 break;
         }
-        
+
         // Update flow state
         this.updateFlowState(0.1);
     }
@@ -318,10 +308,10 @@ export class RunScene extends Scene {
         this.combo = newCombo;
         this.maxCombo = Math.max(this.maxCombo, this.combo);
         this.performanceScore.C = this.maxCombo;
-        
+
         // Update UI
         this.comboText.setText(`COMBO: ${this.combo}`);
-        
+
         // Scale effect on combo
         if (this.combo > 0) {
             this.tweens.add({
@@ -329,10 +319,10 @@ export class RunScene extends Scene {
                 scaleX: 1.2,
                 scaleY: 1.2,
                 duration: 100,
-                yoyo: true
+                yoyo: true,
             });
         }
-        
+
         // Update flow state based on combo
         if (this.combo > 0) {
             this.updateFlowState(this.combo * 0.05);
@@ -342,20 +332,28 @@ export class RunScene extends Scene {
     updateFlowState(delta) {
         this.flowMultiplier = Math.min(50, this.flowMultiplier + delta);
         this.flowText.setText(`FLOW: ${this.flowMultiplier.toFixed(1)}x`);
-        
+
         // Color change based on flow level
         const flowLevel = Math.floor(this.flowMultiplier / 5);
         const colors = [
-            '#FFFFFF', '#FFD700', '#FFA500', '#FF4500', 
-            '#FF0000', '#FF00FF', '#00FFFF', '#00FF00',
-            '#FFFF00', '#FF1493', '#00BFFF'
+            '#FFFFFF',
+            '#FFD700',
+            '#FFA500',
+            '#FF4500',
+            '#FF0000',
+            '#FF00FF',
+            '#00FFFF',
+            '#00FF00',
+            '#FFFF00',
+            '#FF1493',
+            '#00BFFF',
         ];
         this.flowText.setColor(colors[Math.min(flowLevel, colors.length - 1)]);
-        
+
         // Emit flow state change
         this.eventBus.emit(EventNames.FLOW_STATE_CHANGED, {
             multiplier: this.flowMultiplier,
-            level: flowLevel
+            level: flowLevel,
         });
     }
 
@@ -373,12 +371,12 @@ export class RunScene extends Scene {
             right: this.cursors.right.isDown || this.wasd.D.isDown || this.touchRight,
             jump: this.jumpKey.isDown || this.wasd.W.isDown || this.touchJump,
             dash: this.dashKey.isDown,
-            duck: this.duckKey.isDown || this.wasd.S.isDown
+            duck: this.duckKey.isDown || this.wasd.S.isDown,
         };
-        
+
         // Record input for time echo
         this.timeEchoRecorder.recordInput(input);
-        
+
         return input;
     }
 
@@ -390,51 +388,33 @@ export class RunScene extends Scene {
         this.timerText.setText(
             `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
         );
-        
+
         // Process input
         const input = this.processInput();
-        
+
         // Update player with enhanced movement
         const dt = delta / 1000;
         const isGrounded = this.playerController.isGrounded();
-        
+
         // Update movement systems
-        this.enhancedMovement.update(
-            time,
-            delta,
-            this.playerBody,
-            this.player,
-            input,
-            isGrounded
-        );
-        
-        this.enhancedJump.update(
-            this.playerBody,
-            this.player,
-            input,
-            isGrounded,
-            dt
-        );
-        
-        this.wallDash.update(
-            this.playerBody,
-            this.player,
-            input,
-            dt
-        );
-        
+        this.enhancedMovement.update(time, delta, this.playerBody, this.player, input, isGrounded);
+
+        this.enhancedJump.update(this.playerBody, this.player, input, isGrounded, dt);
+
+        this.wallDash.update(this.playerBody, this.player, input, dt);
+
         // Update player controller
         this.playerController.update(delta);
-        
+
         // Update level systems
         this.levelManager.update(delta);
-        
+
         // Update performance tracking
         this.dnaExtractor.update(delta);
-        
+
         // Update UI indicators
         this.updateIndicators();
-        
+
         // Check for run completion
         if (this.playerController.getSprite().x > 3000) {
             this.completeRun();
@@ -452,7 +432,7 @@ export class RunScene extends Scene {
     completeRun() {
         // Stop recording
         this.timeEchoRecorder.stopRecording();
-        
+
         // Calculate final performance
         const runTime = Date.now() - this.runStartTime;
         const finalScore = {
@@ -462,29 +442,29 @@ export class RunScene extends Scene {
             R: this.performanceScore.R,
             B: this.performanceScore.B || 1.0,
             flowPeak: this.flowMultiplier,
-            runTime: runTime
+            runTime,
         };
-        
+
         // Extract DNA
         const dna = this.dnaExtractor.extractDNA();
-        
+
         // Get time echo
         const timeEcho = this.timeEchoRecorder.getRecording();
-        
+
         // Emit run complete event
         this.eventBus.emit(EventNames.RUN_ENDED, {
             score: finalScore,
-            dna: dna,
-            timeEcho: timeEcho,
-            level: this.levelData
+            dna,
+            timeEcho,
+            level: this.levelData,
         });
-        
+
         // Transition to results
         this.scene.start(SceneKeys.RESULTS, {
             score: finalScore,
-            dna: dna,
-            timeEcho: timeEcho,
-            level: this.levelData
+            dna,
+            timeEcho,
+            level: this.levelData,
         });
     }
 

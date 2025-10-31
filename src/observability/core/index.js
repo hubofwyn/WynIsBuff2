@@ -6,4 +6,10 @@
 
 export { LogSystem, LOG } from './LogSystem.js';
 export { BoundedBuffer } from './BoundedBuffer.js';
-export { LogLevel, LogLevelPriority, DefaultSamplingRates, shouldLog, parseLogLevel } from './LogLevel.js';
+export {
+    LogLevel,
+    LogLevelPriority,
+    DefaultSamplingRates,
+    shouldLog,
+    parseLogLevel,
+} from './LogLevel.js';

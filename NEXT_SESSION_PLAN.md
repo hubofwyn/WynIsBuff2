@@ -3,6 +3,7 @@
 ## Session 1 Complete ✅
 
 **Accomplished**:
+
 - Deployed analysis tools (Node.js + Python)
 - Scanned 129 documentation files
 - Generated health score: 64/100
@@ -18,6 +19,7 @@
 **Goal**: Fix critical issues and establish documentation structure
 
 **Quality Standards**:
+
 - Zero broken links (verified by scanner)
 - All moves/renames tracked in git
 - Every decision documented
@@ -27,66 +29,79 @@
 ### Tasks (Estimated: 120 minutes - extended for quality)
 
 #### 1. Create Documentation Index (30 min)
+
 Create `docs/INDEX.md` as the central navigation hub
 
 **Actions**:
+
 - Map current documentation landscape (comprehensive)
 - Define canonical locations for each topic
 - Create topic-based organization with clear hierarchy
 - Document decision rationale for structure
 
 **Validation**:
+
 - All major documentation areas represented
 - Every link in index verified to exist
 - Index follows project naming conventions
 - Run scanner: verify index has no broken links
 
 #### 2. Fix Broken References (40 min)
+
 Priority files with surgical precision
 
 **Actions**:
+
 - `AIProjectDocs/README.md`: Fix all 6 broken links
 - Update anchor links across AIProjectDocs files
 - Verify target sections exist before linking
 - Update links to match new structure
 
 **Validation**:
+
 - Run scanner: zero broken references in updated files
 - Manual verification of each fixed link
 - Test navigation paths end-to-end
 - Document any structural changes made
 
 #### 3. Handle Empty/Stub Files (30 min)
+
 Make definitive decisions, no placeholders
 
 **Actions**:
+
 - `docs/config-settings-modern.md`: Complete with actual content OR remove entirely
 - `.codex/tasks/` stub files: Archive to `docs/archive/tasks-historical/` with README
 - Create `docs/archive/README.md` explaining archive purpose
 - Update any references to archived files
 
 **Validation**:
+
 - Zero files with <10 tokens remaining (except intentional stubs with TODOs)
 - Archive has clear README explaining contents
 - No broken links to archived files
 - Git history preserved for all moves
 
 #### 4. Link High-Value Orphans (20 min)
+
 Integrate valuable content into structure
 
 **Actions**:
+
 - Add each orphan to appropriate index section
 - Create cross-references where relevant
 - Verify content is current and valuable
 - Update file headers with context
 
 **Validation**:
+
 - Run scanner: orphan ratio reduced to <60%
 - Each linked file accessible from index
 - No duplicate content introduced
 - All links bidirectional where appropriate
 
 **Session 2 Validation Checklist**:
+
 - [ ] Run `./scripts/doc-analysis.sh`
 - [ ] Health score 70+ achieved
 - [ ] Zero broken references in scanner output
@@ -102,6 +117,7 @@ Integrate valuable content into structure
 **Goal**: Eliminate duplication, merge related content
 
 **Quality Standards**:
+
 - Content accuracy maintained during merges
 - No information loss
 - Clear git history showing what was merged
@@ -113,6 +129,7 @@ Integrate valuable content into structure
 #### 1. Consolidate Duplicate Content (40 min)
 
 **Actions**:
+
 - Compare duplicate sections side-by-side
 - Identify unique content in each version
 - Merge into single canonical source (preserve all unique info)
@@ -120,6 +137,7 @@ Integrate valuable content into structure
 - Archive superseded versions with clear explanation
 
 **Validation**:
+
 - No information loss (manual review of diffs)
 - Scanner shows duplicate reduction
 - All internal references updated
@@ -128,6 +146,7 @@ Integrate valuable content into structure
 #### 2. Restructure AIProjectDocs (60 min)
 
 **Actions**:
+
 - Categorize each AIProjectDocs file by topic
 - Create target directory structure
 - Move files with git mv (preserve history)
@@ -135,6 +154,7 @@ Integrate valuable content into structure
 - Create redirect notes in old locations
 
 **Validation**:
+
 - Git log shows clean moves (not delete+add)
 - All inbound links updated
 - Directory structure matches plan
@@ -144,6 +164,7 @@ Integrate valuable content into structure
 #### 3. Finalize Topic-Based Organization (50 min)
 
 **Actions**:
+
 - Implement complete directory structure
 - Move remaining files to appropriate locations
 - Create README.md in each directory explaining purpose
@@ -151,6 +172,7 @@ Integrate valuable content into structure
 - Document organization principles
 
 **Structure**:
+
 ```
 docs/
 ├── README.md              # Entry point
@@ -168,12 +190,14 @@ docs/
 ```
 
 **Validation**:
+
 - Every directory has README
 - No files in wrong category
 - Clear separation of concerns
 - Scanner shows improved metrics
 
 **Session 3 Validation Checklist**:
+
 - [ ] Run `./scripts/doc-analysis.sh`
 - [ ] Health score 78+ achieved
 - [ ] File count reduced by 30%
@@ -190,6 +214,7 @@ docs/
 **Goal**: Apply direct, actionable language to core documentation
 
 **Quality Standards**:
+
 - Every rewrite reviewed for accuracy
 - Technical correctness verified against codebase
 - All claims validated
@@ -201,12 +226,14 @@ docs/
 #### 1. Identify & Prioritize Hub Documents (20 min)
 
 **Actions**:
+
 - Run query tool to find most-referenced docs
 - Identify top 10 by PageRank/references
 - Assess current quality and rewrite needs
 - Create rewrite order (critical → important → nice-to-have)
 
 **Priority List** (to be validated):
+
 1. CLAUDE.md
 2. README.md
 3. AGENTS.md
@@ -219,6 +246,7 @@ docs/
 #### 2. Rewrite Core Documents (120 min, ~12 min each)
 
 **For Each Document**:
+
 - Read through completely
 - Remove historical/outdated content
 - Rewrite in direct, actionable language
@@ -228,6 +256,7 @@ docs/
 - Validate all links
 
 **Rewrite Principles**:
+
 - **Direct**: No fluff, no unnecessary context
 - **Development-focused**: Useful for coding now, not history
 - **Actionable**: Every section enables a task
@@ -236,6 +265,7 @@ docs/
 - **Tested**: All examples and commands verified
 
 **Per-Document Validation**:
+
 - Technical accuracy verified (check code)
 - All links functional
 - No TODO/FIXME left without resolution
@@ -245,6 +275,7 @@ docs/
 #### 3. Final Polish & Cross-Reference Pass (40 min)
 
 **Actions**:
+
 - Review all rewritten docs as a set
 - Ensure consistent terminology
 - Add missing cross-references
@@ -253,12 +284,14 @@ docs/
 - Update INDEX.md with improved summaries
 
 **Validation**:
+
 - Consistent voice across all docs
 - No dead-end pages (all have next steps)
 - Technical terms used consistently
 - Cross-reference graph is logical
 
 **Session 4 Validation Checklist**:
+
 - [ ] Run `./scripts/doc-analysis.sh`
 - [ ] Health score 85+ achieved
 - [ ] Orphan ratio <20%
@@ -295,18 +328,19 @@ python3 scripts/query_docs.py --db doc-analysis/documents.db --orphaned --export
 
 ## Success Metrics
 
-| Session | Health Score | Orphan Ratio | Broken Refs | File Count |
-|---------|--------------|--------------|-------------|------------|
-| 1 (Done) | 64/100 | 76% | 248 | 129 |
-| 2 (Next) | 70/100 | 60% | 0 | 125 |
-| 3 | 78/100 | 40% | 0 | 90 |
-| 4 | 85/100 | <20% | 0 | 80 |
+| Session  | Health Score | Orphan Ratio | Broken Refs | File Count |
+| -------- | ------------ | ------------ | ----------- | ---------- |
+| 1 (Done) | 64/100       | 76%          | 248         | 129        |
+| 2 (Next) | 70/100       | 60%          | 0           | 125        |
+| 3        | 78/100       | 40%          | 0           | 90         |
+| 4        | 85/100       | <20%         | 0           | 80         |
 
 ---
 
 ## Ready to Start Session 2?
 
 Just run:
+
 ```bash
 # Refresh analysis
 ./scripts/doc-analysis.sh

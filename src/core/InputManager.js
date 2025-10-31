@@ -1,9 +1,11 @@
 import Phaser from 'phaser';
+
 import { EventNames } from '../constants/EventNames';
-import { GameStateManager } from './GameStateManager';
-import { BaseManager } from './BaseManager';
 import { createEmptyInputState } from '../types/InputState.js';
 import { LOG } from '../observability/core/LogSystem.js';
+
+import { GameStateManager } from './GameStateManager';
+import { BaseManager } from './BaseManager';
 
 /**
  * InputManager handles mapping of keyboard inputs to game events.
@@ -16,7 +18,7 @@ export class InputManager extends BaseManager {
     constructor() {
         super();
         if (this.isInitialized()) return;
-        
+
         this.scene = null;
         this.eventSystem = null;
         this.keys = {};
@@ -30,7 +32,7 @@ export class InputManager extends BaseManager {
     init(scene, eventSystem) {
         LOG.dev('INPUT_INIT_START', {
             subsystem: 'input',
-            message: 'Initializing InputManager'
+            message: 'Initializing InputManager',
         });
         this.scene = scene;
         this.eventSystem = eventSystem;
@@ -40,17 +42,17 @@ export class InputManager extends BaseManager {
         this.keys.cursors = keyboard.createCursorKeys();
         LOG.dev('INPUT_CURSOR_KEYS_CREATED', {
             subsystem: 'input',
-            message: 'Created cursor keys'
+            message: 'Created cursor keys',
         });
-        
+
         // WASD and SPACE keys for movement and jumping
-        ['W', 'A', 'S', 'D', 'SPACE'].forEach(keyName => {
+        ['W', 'A', 'S', 'D', 'SPACE'].forEach((keyName) => {
             this.keys[keyName] = keyboard.addKey(Phaser.Input.Keyboard.KeyCodes[keyName]);
         });
         LOG.dev('INPUT_WASD_KEYS_CREATED', {
             subsystem: 'input',
             message: 'Created WASD and SPACE keys',
-            keys: ['W', 'A', 'S', 'D', 'SPACE']
+            keys: ['W', 'A', 'S', 'D', 'SPACE'],
         });
 
         // Reset key (R)
@@ -60,7 +62,7 @@ export class InputManager extends BaseManager {
         LOG.dev('INPUT_ACTION_KEYS_CREATED', {
             subsystem: 'input',
             message: 'Created R and C keys',
-            keys: ['R', 'C']
+            keys: ['R', 'C'],
         });
 
         // Arrow key events
@@ -68,7 +70,7 @@ export class InputManager extends BaseManager {
         this.keys.cursors.right.on('down', () => this.eventSystem.emit(EventNames.MOVE_RIGHT));
         this.keys.cursors.up.on('down', () => this.eventSystem.emit(EventNames.MOVE_UP));
         this.keys.cursors.down.on('down', () => this.eventSystem.emit(EventNames.MOVE_DOWN));
-        
+
         // Dynamic keybindings (Jump, Move Left/Right, Pause)
         const gs = new GameStateManager();
         const bindings = gs.settings.keybindings;
@@ -76,7 +78,7 @@ export class InputManager extends BaseManager {
             jump: EventNames.JUMP,
             left: EventNames.MOVE_LEFT,
             right: EventNames.MOVE_RIGHT,
-            pause: EventNames.PAUSE
+            pause: EventNames.PAUSE,
         };
         Object.entries(actionMap).forEach(([action, eventName]) => {
             const keyName = bindings[action];
@@ -95,14 +97,14 @@ export class InputManager extends BaseManager {
             subsystem: 'input',
             message: 'All keys initialized',
             keyCount: Object.keys(this.keys).length,
-            keys: Object.keys(this.keys)
+            keys: Object.keys(this.keys),
         });
 
         // Mark as initialized
         this.setInitialized();
         LOG.dev('INPUT_INIT_COMPLETE', {
             subsystem: 'input',
-            message: 'InputManager initialization complete'
+            message: 'InputManager initialization complete',
         });
     }
 
@@ -118,8 +120,8 @@ export class InputManager extends BaseManager {
                 message: 'getSnapshot called (sampled)',
                 state: {
                     hasCursors: !!this.keys.cursors,
-                    hasSpace: !!this.keys.SPACE
-                }
+                    hasSpace: !!this.keys.SPACE,
+                },
             });
         }
 
@@ -130,8 +132,8 @@ export class InputManager extends BaseManager {
                 hint: 'Ensure InputManager.init() is called before getSnapshot()',
                 state: {
                     hasCursors: !!this.keys.cursors,
-                    hasSpace: !!this.keys.SPACE
-                }
+                    hasSpace: !!this.keys.SPACE,
+                },
             });
             return createEmptyInputState();
         }
@@ -155,7 +157,7 @@ export class InputManager extends BaseManager {
      * Remove listeners (cleanup)
      */
     destroy() {
-        Object.values(this.keys).forEach(key => {
+        Object.values(this.keys).forEach((key) => {
             if (key && key.off) {
                 key.removeAllListeners?.();
             }
@@ -163,7 +165,7 @@ export class InputManager extends BaseManager {
         this.keys = {};
         this.scene = null;
         this.eventSystem = null;
-        
+
         // Call parent destroy
         super.destroy();
     }

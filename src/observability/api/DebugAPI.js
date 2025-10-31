@@ -37,29 +37,22 @@ export class DebugAPI {
      * @returns {Array} Filtered log entries
      */
     query(filters = {}) {
-        const {
-            level,
-            subsystem,
-            code,
-            timeRange,
-            includeContext = false,
-            limit = 100
-        } = filters;
+        const { level, subsystem, code, timeRange, includeContext = false, limit = 100 } = filters;
 
         // Start with all logs
         let results = this.logSystem.buffer.getAll();
 
         // Apply filters
         if (level) {
-            results = results.filter(log => log.level === level);
+            results = results.filter((log) => log.level === level);
         }
 
         if (subsystem) {
-            results = results.filter(log => log.subsystem === subsystem);
+            results = results.filter((log) => log.subsystem === subsystem);
         }
 
         if (code) {
-            results = results.filter(log => log.code === code);
+            results = results.filter((log) => log.code === code);
         }
 
         if (timeRange) {
@@ -74,7 +67,7 @@ export class DebugAPI {
                 endTime = timeRange.end || now;
             }
 
-            results = results.filter(log => {
+            results = results.filter((log) => {
                 const logTime = new Date(log.timestamp).getTime();
                 return logTime >= startTime && logTime <= endTime;
             });
@@ -85,9 +78,9 @@ export class DebugAPI {
 
         // Optionally include full context
         if (!includeContext) {
-            results = results.map(log => ({
+            results = results.map((log) => ({
                 ...log,
-                context: log.context ? { frame: log.context.frame } : null
+                context: log.context ? { frame: log.context.frame } : null,
             }));
         }
 
@@ -103,7 +96,7 @@ export class DebugAPI {
     getRecentLogs(milliseconds, options = {}) {
         return this.query({
             timeRange: { last: milliseconds },
-            ...options
+            ...options,
         });
     }
 
@@ -117,7 +110,7 @@ export class DebugAPI {
     getLogsInTimeRange(startTime, endTime, options = {}) {
         return this.query({
             timeRange: { start: startTime, end: endTime },
-            ...options
+            ...options,
         });
     }
 
@@ -131,16 +124,12 @@ export class DebugAPI {
      * @returns {Array} Related logs
      */
     getRelatedLogs(log, options = {}) {
-        const {
-            sameFrame = true,
-            sameSubsystem = true,
-            timeWindow = 1000
-        } = options;
+        const { sameFrame = true, sameSubsystem = true, timeWindow = 1000 } = options;
 
         const logTime = new Date(log.timestamp).getTime();
         const allLogs = this.logSystem.buffer.getAll();
 
-        return allLogs.filter(other => {
+        return allLogs.filter((other) => {
             if (other.timestamp === log.timestamp) return false; // Skip self
 
             // Check frame match
@@ -171,28 +160,30 @@ export class DebugAPI {
     analyzeSubsystem(subsystem, timeWindow = 60000) {
         const logs = this.getRecentLogs(timeWindow, { subsystem });
 
-        const errorCount = logs.filter(log => log.level === 'error' || log.level === 'fatal').length;
-        const warnCount = logs.filter(log => log.level === 'warn').length;
+        const errorCount = logs.filter(
+            (log) => log.level === 'error' || log.level === 'fatal'
+        ).length;
+        const warnCount = logs.filter((log) => log.level === 'warn').length;
         const totalLogs = logs.length;
 
         // Calculate health score (0-100)
         const errorRate = totalLogs > 0 ? errorCount / totalLogs : 0;
         const warnRate = totalLogs > 0 ? warnCount / totalLogs : 0;
-        const health = Math.max(0, 100 - (errorRate * 100) - (warnRate * 25));
+        const health = Math.max(0, 100 - errorRate * 100 - warnRate * 25);
 
         // Get error patterns
-        const patterns = this.patternDetector ?
-            this.patternDetector.analyzeRecent(timeWindow) :
-            { repeatingErrors: [], cascades: [] };
+        const patterns = this.patternDetector
+            ? this.patternDetector.analyzeRecent(timeWindow)
+            : { repeatingErrors: [], cascades: [] };
 
         // Get recent issues
         const recentIssues = logs
-            .filter(log => log.level === 'error' || log.level === 'fatal')
+            .filter((log) => log.level === 'error' || log.level === 'fatal')
             .slice(-5)
-            .map(log => ({
+            .map((log) => ({
                 code: log.code,
                 message: log.message,
-                timestamp: log.timestamp
+                timestamp: log.timestamp,
             }));
 
         return {
@@ -203,16 +194,21 @@ export class DebugAPI {
                 totalLogs,
                 errorCount,
                 warnCount,
-                errorRate: (errorRate * 100).toFixed(2) + '%'
+                errorRate: (errorRate * 100).toFixed(2) + '%',
             },
             patterns: {
                 repeating: patterns.repeatingErrors.length,
-                cascades: patterns.cascades.length
+                cascades: patterns.cascades.length,
             },
             recentIssues,
-            status: health >= 90 ? 'healthy' :
-                    health >= 70 ? 'degraded' :
-                    health >= 50 ? 'unhealthy' : 'critical'
+            status:
+                health >= 90
+                    ? 'healthy'
+                    : health >= 70
+                      ? 'degraded'
+                      : health >= 50
+                        ? 'unhealthy'
+                        : 'critical',
         };
     }
 
@@ -226,7 +222,7 @@ export class DebugAPI {
 
         // Group by subsystem
         const bySubsystem = {};
-        logs.forEach(log => {
+        logs.forEach((log) => {
             if (!bySubsystem[log.subsystem]) {
                 bySubsystem[log.subsystem] = { total: 0, errors: 0, warns: 0 };
             }
@@ -245,27 +241,29 @@ export class DebugAPI {
             info: 0,
             warn: 0,
             error: 0,
-            fatal: 0
+            fatal: 0,
         };
-        logs.forEach(log => {
+        logs.forEach((log) => {
             byLevel[log.level]++;
         });
 
         // Get patterns
-        const patterns = this.patternDetector ?
-            this.patternDetector.analyzeRecent(timeWindow) :
-            null;
+        const patterns = this.patternDetector
+            ? this.patternDetector.analyzeRecent(timeWindow)
+            : null;
 
         return {
             timeWindow,
             totalLogs: logs.length,
             byLevel,
             bySubsystem,
-            patterns: patterns ? {
-                repeating: patterns.repeatingErrors,
-                cascades: patterns.cascades,
-                severity: patterns.severity
-            } : null
+            patterns: patterns
+                ? {
+                      repeating: patterns.repeatingErrors,
+                      cascades: patterns.cascades,
+                      severity: patterns.severity,
+                  }
+                : null,
         };
     }
 
@@ -278,14 +276,16 @@ export class DebugAPI {
         const stats = this.logSystem.getStats();
 
         // Calculate overall health
-        const errorCount = recentLogs.filter(log => log.level === 'error' || log.level === 'fatal').length;
+        const errorCount = recentLogs.filter(
+            (log) => log.level === 'error' || log.level === 'fatal'
+        ).length;
         const totalRecent = recentLogs.length;
         const errorRate = totalRecent > 0 ? errorCount / totalRecent : 0;
-        const overallHealth = Math.max(0, 100 - (errorRate * 100));
+        const overallHealth = Math.max(0, 100 - errorRate * 100);
 
         // Get subsystem breakdown
         const subsystems = {};
-        recentLogs.forEach(log => {
+        recentLogs.forEach((log) => {
             if (!subsystems[log.subsystem]) {
                 subsystems[log.subsystem] = 0;
             }
@@ -297,8 +297,8 @@ export class DebugAPI {
         // Get top error codes
         const errorCodes = {};
         recentLogs
-            .filter(log => log.level === 'error' || log.level === 'fatal')
-            .forEach(log => {
+            .filter((log) => log.level === 'error' || log.level === 'fatal')
+            .forEach((log) => {
                 errorCodes[log.code] = (errorCodes[log.code] || 0) + 1;
             });
 
@@ -309,18 +309,23 @@ export class DebugAPI {
 
         return {
             overallHealth: Math.round(overallHealth),
-            status: overallHealth >= 90 ? 'healthy' :
-                    overallHealth >= 70 ? 'degraded' :
-                    overallHealth >= 50 ? 'unhealthy' : 'critical',
+            status:
+                overallHealth >= 90
+                    ? 'healthy'
+                    : overallHealth >= 70
+                      ? 'degraded'
+                      : overallHealth >= 50
+                        ? 'unhealthy'
+                        : 'critical',
             stats: {
                 totalLogs: stats.totalLogs,
                 recentErrors: errorCount,
                 bufferUsage: stats.buffer.usage,
-                droppedLogs: stats.droppedLogs
+                droppedLogs: stats.droppedLogs,
             },
             subsystemErrors: subsystems,
             topErrors,
-            timestamp: new Date().toISOString()
+            timestamp: new Date().toISOString(),
         };
     }
 
@@ -340,13 +345,12 @@ export class DebugAPI {
             includePatterns = true,
             includeGameState = true,
             includeStats = true,
-            filters = {}
+            filters = {},
         } = options;
 
         // Get logs (filtered or all)
-        const logs = Object.keys(filters).length > 0 ?
-            this.query(filters) :
-            this.logSystem.buffer.getAll();
+        const logs =
+            Object.keys(filters).length > 0 ? this.query(filters) : this.logSystem.buffer.getAll();
 
         const exportData = {
             metadata: {
@@ -354,9 +358,9 @@ export class DebugAPI {
                 logCount: logs.length,
                 bufferSize: this.logSystem.buffer.size,
                 format,
-                version: '1.0.0'
+                version: '1.0.0',
             },
-            logs
+            logs,
         };
 
         // Add patterns
@@ -393,7 +397,7 @@ export class DebugAPI {
         return [
             'Check the error message and context for specific details',
             'Review recent logs for related errors',
-            'Consult ERROR_HANDLING_LOGGING.md documentation'
+            'Consult ERROR_HANDLING_LOGGING.md documentation',
         ];
     }
 }

@@ -19,6 +19,7 @@ This document provides a comprehensive evaluation of WynIsBuff2's error handling
 4. **Living System** - Updated as error handling evolves and improves
 
 **Why This Matters for Agentic Programming:**
+
 - AI assistants need to understand error recovery patterns
 - Circuit breakers affect system behavior that agents must know about
 - Logging conventions guide agents in adding debug output
@@ -34,11 +35,13 @@ import { LOG } from '../observability/core/LogSystem.js';
 
 // 2. Use structured logging with error codes
 LOG.error('SUBSYSTEM_WHAT_FAILED', {
-    subsystem: 'physics',  // Required: which system
-    error,                 // Include error object
+    subsystem: 'physics', // Required: which system
+    error, // Include error object
     message: 'Human-readable description',
-    state: { /* diagnostic data */ },
-    hint: 'How to fix this issue'
+    state: {
+        /* diagnostic data */
+    },
+    hint: 'How to fix this issue',
 });
 
 // 3. Automatic context injection
@@ -49,11 +52,11 @@ LOG.error('SUBSYSTEM_WHAT_FAILED', {
 // - Input state (keys pressed, mouse position)
 
 // 4. Use appropriate log levels
-LOG.dev()   // Development/debug info (1% sampling)
-LOG.info()  // Important state changes (100%)
-LOG.warn()  // Degradation, unexpected states (100%)
-LOG.error() // Failures, exceptions (100%)
-LOG.fatal() // Critical failures, crash dumps (100%)
+LOG.dev(); // Development/debug info (1% sampling)
+LOG.info(); // Important state changes (100%)
+LOG.warn(); // Degradation, unexpected states (100%)
+LOG.error(); // Failures, exceptions (100%)
+LOG.fatal(); // Critical failures, crash dumps (100%)
 
 // 5. Query logs programmatically
 const recentErrors = LOG.getByLevel('error', 10);
@@ -61,6 +64,7 @@ const physicsErrors = LOG.getByCode('PHYSICS_UPDATE_ERROR');
 ```
 
 **See Also:**
+
 - [Section 5: Logging Standards](#5-logging-standards) - Complete API documentation
 - [Section 11: Observability System](#11-observability-system) - Architecture and features
 - [OBSERVABILITY_IMPLEMENTATION.md](../../OBSERVABILITY_IMPLEMENTATION.md) - Implementation plan
@@ -92,6 +96,7 @@ WynIsBuff2 employs a **multi-layered error handling architecture** with defensiv
 **Recent Major Fix (October 2025)**: Successfully resolved Rapier 0.19+ API compatibility issues that were causing circuit breaker triggers. See [Section 10.1](#101-october-2025-rapier-019-migration-fixes) for details.
 
 **Architecture Philosophy:**
+
 - ✅ **Resilient**: Multiple layers of error containment
 - ✅ **Graceful Degradation**: Systems disable rather than crash
 - ✅ **Improved**: Comprehensive error logging with state dumps (October 2025)
@@ -100,25 +105,26 @@ WynIsBuff2 employs a **multi-layered error handling architecture** with defensiv
 
 ### Key Metrics
 
-| Metric | Count | Status |
-|--------|-------|--------|
-| Try-catch blocks in src/ | 17 | ✅ Good coverage |
-| Circuit breakers | 2 | ✅ **ENHANCED** - Now generate crash dumps |
-| **Structured logging migration** | **278/293 (95%)** | ✅ **COMPLETE** - All critical systems migrated |
-| Remaining console.* | 15 | ✅ Infrastructure-only (LogSystem output) |
-| **DebugContext integration** | **Complete** | ✅ Automatic context injection in Game scene |
-| **Error pattern detection** | **Active** | ✅ Analyzes errors every 5 seconds |
-| **Crash dump generation** | **Active** | ✅ Circuit breakers generate full state dumps |
-| Logging statements | 293 total | ✅ Structured format with context |
-| Error handling documentation | 100% | ✅ **DOCUMENTED + VALIDATED** |
-| **Rapier 0.19+ Migration** | **Complete** | ✅ **RESOLVED** - All physics errors fixed |
-| **Observability System** | **Phase 5/10** | ✅ **PRODUCTION-READY** - Core features complete |
+| Metric                           | Count             | Status                                           |
+| -------------------------------- | ----------------- | ------------------------------------------------ |
+| Try-catch blocks in src/         | 17                | ✅ Good coverage                                 |
+| Circuit breakers                 | 2                 | ✅ **ENHANCED** - Now generate crash dumps       |
+| **Structured logging migration** | **278/293 (95%)** | ✅ **COMPLETE** - All critical systems migrated  |
+| Remaining console.\*             | 15                | ✅ Infrastructure-only (LogSystem output)        |
+| **DebugContext integration**     | **Complete**      | ✅ Automatic context injection in Game scene     |
+| **Error pattern detection**      | **Active**        | ✅ Analyzes errors every 5 seconds               |
+| **Crash dump generation**        | **Active**        | ✅ Circuit breakers generate full state dumps    |
+| Logging statements               | 293 total         | ✅ Structured format with context                |
+| Error handling documentation     | 100%              | ✅ **DOCUMENTED + VALIDATED**                    |
+| **Rapier 0.19+ Migration**       | **Complete**      | ✅ **RESOLVED** - All physics errors fixed       |
+| **Observability System**         | **Phase 5/10**    | ✅ **PRODUCTION-READY** - Core features complete |
 
 ### Most Common Error Scenario (Historical - Now Resolved)
 
 ~~**"Too many errors, player disabled"** or **"Too many errors, physics disabled"**~~ **✅ FIXED**
 
 **What this meant** (before Rapier 0.19+ fixes):
+
 - Circuit breaker triggered after repeated errors (5 for player, 10 for physics)
 - Root cause: Rapier 0.19+ API breaking changes
 - **Resolution**: See [Section 10.1](#101-october-2025-rapier-019-migration-fixes)
@@ -164,6 +170,7 @@ WynIsBuff2 employs a **multi-layered error handling architecture** with defensiv
 **Primary Goal**: Prevent single component failure from crashing entire game
 
 **Strategy:**
+
 1. **Containment**: Try-catch blocks isolate failures to specific systems
 2. **Circuit Breakers**: Disable failing systems after threshold (5-10 errors)
 3. **Fallbacks**: Emergency recovery paths (fallback input, sprite updates)
@@ -172,13 +179,13 @@ WynIsBuff2 employs a **multi-layered error handling architecture** with defensiv
 
 ### 2.3 Error Recovery Mechanisms
 
-| Mechanism | Location | Purpose |
-|-----------|----------|---------|
-| **Input Fallback** | PlayerController.js:272-289 | Direct key polling if InputManager fails |
-| **Sprite Position Fallback** | PlayerController.js:263-269 | Emergency render update if physics fails |
-| **Physics Sprite Update** | PhysicsManager.js:269-276 | Update sprites even if stepping fails |
-| **Audio Context Resume** | AudioManager.js:138-144 | Retry audio on autoplay failures |
-| **localStorage Graceful Failure** | GameStateManager.js:49-73 | Silent disable if storage unavailable |
+| Mechanism                         | Location                    | Purpose                                  |
+| --------------------------------- | --------------------------- | ---------------------------------------- |
+| **Input Fallback**                | PlayerController.js:272-289 | Direct key polling if InputManager fails |
+| **Sprite Position Fallback**      | PlayerController.js:263-269 | Emergency render update if physics fails |
+| **Physics Sprite Update**         | PhysicsManager.js:269-276   | Update sprites even if stepping fails    |
+| **Audio Context Resume**          | AudioManager.js:138-144     | Retry audio on autoplay failures         |
+| **localStorage Graceful Failure** | GameStateManager.js:49-73   | Silent disable if storage unavailable    |
 
 ---
 
@@ -187,6 +194,7 @@ WynIsBuff2 employs a **multi-layered error handling architecture** with defensiv
 ### 3.1 Overview
 
 Circuit breakers disable systems after repeated failures to prevent:
+
 - Infinite error loops
 - Performance degradation from continuous exception handling
 - Cascading failures affecting unrelated systems
@@ -200,7 +208,7 @@ Circuit breakers disable systems after repeated failures to prevent:
 // Guard (Line 183-186)
 if (this.errorCount > 5) {
     console.warn('[PlayerController] Too many errors, player disabled');
-    return;  // EXITS UPDATE LOOP - NO MOVEMENT/PHYSICS
+    return; // EXITS UPDATE LOOP - NO MOVEMENT/PHYSICS
 }
 
 // Success reset (Line 256)
@@ -217,6 +225,7 @@ console.error(`[PlayerController] Error (${this.errorCount}/5):`, error);
 **User Impact**: Player becomes unresponsive, "too many errors" in console
 
 **Common Causes:**
+
 - Physics body missing or invalid
 - NaN in movement calculations
 - Invalid collider state
@@ -231,7 +240,7 @@ console.error(`[PlayerController] Error (${this.errorCount}/5):`, error);
 // Guard (Line 192-196)
 if (this.errorCount > 10) {
     console.warn('[PhysicsManager] Too many errors, physics disabled');
-    return;  // EXITS UPDATE - NO PHYSICS SIMULATION
+    return; // EXITS UPDATE - NO PHYSICS SIMULATION
 }
 
 // Success reset (Line 263)
@@ -248,6 +257,7 @@ console.error(`[PhysicsManager] Error (${this.errorCount}/10):`, error);
 **User Impact**: All physics-based entities freeze, players can't move
 
 **Common Causes:**
+
 - Rapier world.step() failures
 - Invalid rigid body states
 - Accumulator overflow
@@ -257,20 +267,22 @@ console.error(`[PhysicsManager] Error (${this.errorCount}/10):`, error);
 
 **Threshold Evaluation:**
 
-| Threshold | System | Aggressive? | Justification |
-|-----------|--------|-------------|---------------|
-| 5 errors | PlayerController | ⚠️ **Maybe** | 5 frames at 60fps = 83ms to disable |
-| 10 errors | PhysicsManager | ✅ **Reasonable** | 10 frames = 166ms, affects entire game |
+| Threshold | System           | Aggressive?       | Justification                          |
+| --------- | ---------------- | ----------------- | -------------------------------------- |
+| 5 errors  | PlayerController | ⚠️ **Maybe**      | 5 frames at 60fps = 83ms to disable    |
+| 10 errors | PhysicsManager   | ✅ **Reasonable** | 10 frames = 166ms, affects entire game |
 
 **Issue: Threshold May Be Too Low**
+
 - Transient errors (e.g., one bad frame) can accumulate quickly
 - No timeout-based reset - counter only resets on success
 - If physics fails, player can't succeed → permanent disable
 
 **Potential Improvement:**
+
 ```javascript
 // Time-based circuit breaker (not currently implemented)
-if (this.errorCount > 5 && (Date.now() - this.lastErrorTime) < 1000) {
+if (this.errorCount > 5 && Date.now() - this.lastErrorTime < 1000) {
     console.warn('[PlayerController] Too many errors in <1s, disabling');
     return;
 }
@@ -283,6 +295,7 @@ if (this.errorCount > 5 && (Date.now() - this.lastErrorTime) < 1000) {
 ### 4.1 Pattern Catalog
 
 **Pattern 1: Component Initialization**
+
 ```javascript
 // Game.js:53-169, PlayerController.js:73-134
 try {
@@ -294,11 +307,13 @@ try {
     // Display error to user or return early
 }
 ```
+
 - **Used in**: Game scene create(), manager init() methods
 - **Purpose**: Catch construction/initialization failures
 - **Recovery**: Often terminal - display error, return early
 
 **Pattern 2: Update Loop Protection**
+
 ```javascript
 // PlayerController.js:188-270, PhysicsManager.js:187-277
 try {
@@ -306,7 +321,7 @@ try {
     this.calculateMovement(dt);
     this.physicsManager.update(delta);
 
-    this.errorCount = 0;  // Reset on success
+    this.errorCount = 0; // Reset on success
 } catch (error) {
     this.errorCount = (this.errorCount || 0) + 1;
     console.error(`[System] Error (${this.errorCount}/MAX):`, error);
@@ -319,27 +334,31 @@ try {
     }
 }
 ```
+
 - **Used in**: All manager/controller update() methods
 - **Purpose**: Prevent single frame error from crashing game
 - **Recovery**: Increment error counter, try fallback
 
 **Pattern 3: Loop with Per-Item Catch**
+
 ```javascript
 // LevelLoader.js:141-156, PlatformFactory.js, CollectibleManager.js
 platforms.forEach((cfg, index) => {
     try {
         this.createPlatform(cfg);
     } catch (error) {
-        console.error(`[Factory] Error creating platform ${index+1}:`, error);
+        console.error(`[Factory] Error creating platform ${index + 1}:`, error);
         // Continue to next item - partial failure OK
     }
 });
 ```
+
 - **Used in**: Level loading, entity spawning
 - **Purpose**: Prevent one bad item from stopping entire level load
 - **Recovery**: Log error, continue with remaining items
 
 **Pattern 4: Async Import with Catch**
+
 ```javascript
 // LevelLoader.js:165-181, 184-199
 import('../enemy/PulsatingBoss.js')
@@ -351,11 +370,13 @@ import('../enemy/PulsatingBoss.js')
         // ⚠️ NO FALLBACK - boss simply doesn't spawn
     });
 ```
+
 - **Used in**: Dynamic enemy/boss imports
 - **Purpose**: Prevent import failure from blocking level load
 - **Recovery**: ⚠️ **None** - entity missing, level continues (potentially unwinnable)
 
 **Pattern 5: Storage Access Guard**
+
 ```javascript
 // GameStateManager.js:49-73
 try {
@@ -368,22 +389,23 @@ try {
     // ⚠️ Silent degradation - progress saving disabled
 }
 ```
+
 - **Used in**: GameStateManager, persistence features
 - **Purpose**: Handle environments where localStorage is blocked
 - **Recovery**: Silent degradation - feature disabled without user notification
 
 ### 4.2 Try-Catch Coverage by File
 
-| File | Blocks | Critical? | Coverage |
-|------|--------|-----------|----------|
-| Game.js | 2 | ✅ Yes | 🟢 Good |
-| PhysicsManager.js | 3 | ✅ Yes | 🟢 Good |
-| PlayerController.js | 2 | ✅ Yes | 🟢 Good |
-| LevelLoader.js | 6+ | ⚠️ Medium | 🟡 Partial |
-| GameStateManager.js | 4 | ⚠️ Medium | 🟢 Good |
-| InputManager.js | 0 | ⚠️ Medium | 🟡 Relies on Phaser |
-| AudioManager.js | 0 | ⚠️ Medium | 🟡 Uses callbacks |
-| EventBus.js | 1 | ✅ Yes | 🟢 Good |
+| File                | Blocks | Critical? | Coverage            |
+| ------------------- | ------ | --------- | ------------------- |
+| Game.js             | 2      | ✅ Yes    | 🟢 Good             |
+| PhysicsManager.js   | 3      | ✅ Yes    | 🟢 Good             |
+| PlayerController.js | 2      | ✅ Yes    | 🟢 Good             |
+| LevelLoader.js      | 6+     | ⚠️ Medium | 🟡 Partial          |
+| GameStateManager.js | 4      | ⚠️ Medium | 🟢 Good             |
+| InputManager.js     | 0      | ⚠️ Medium | 🟡 Relies on Phaser |
+| AudioManager.js     | 0      | ⚠️ Medium | 🟡 Uses callbacks   |
+| EventBus.js         | 1      | ✅ Yes    | 🟢 Good             |
 
 ---
 
@@ -394,12 +416,14 @@ try {
 **Status**: Production-ready observability system
 
 **Migration Progress**: 278/293 statements migrated (95%)
+
 - ✅ All core systems: Physics, Player, Input, Audio, GameState
 - ✅ All game scenes: Game, Boot, Preloader, Hub, Test
 - ✅ All managers: LevelManager, UIManager, CameraManager, etc.
 - ✅ 15 remaining: Infrastructure output in LogSystem.js (intentional)
 
 **Architecture**: Centralized LogSystem with bounded buffers
+
 - Location: `src/observability/core/LogSystem.js`
 - Buffer: 2000 entries max (circular buffer, automatic cleanup)
 - Performance: <0.0003ms per operation (1666x better than 0.5ms target)
@@ -409,13 +433,14 @@ try {
 ### 5.2 Structured Logging API
 
 **Standard Format**:
+
 ```javascript
 LOG.error('ERROR_CODE_NAME', {
-    subsystem: 'physics',     // Required: identifies system
-    error,                    // Include Error object
-    message: 'Description',   // Human-readable
-    state: {},               // Diagnostic data
-    hint: 'How to fix'       // Remediation guidance
+    subsystem: 'physics', // Required: identifies system
+    error, // Include Error object
+    message: 'Description', // Human-readable
+    state: {}, // Diagnostic data
+    hint: 'How to fix', // Remediation guidance
 });
 ```
 
@@ -429,16 +454,18 @@ LOG.error('ERROR_CODE_NAME', {
 | **DEV** | `LOG.dev()` | Normal flow, debug info | 1% | ⚠️ Sampled |
 
 **Error Code Naming**: `SUBSYSTEM_DESCRIPTION`
+
 - Examples: `PHYSICS_INIT_ERROR`, `PLAYER_UPDATE_ERROR`, `GAMESTATE_SAVE_PROGRESS_ERROR`
 - Machine-parsable for AI agent debugging
 - Enables pattern matching and automated analysis
 
 **Real Examples from Codebase**:
+
 ```javascript
 // Physics initialization
 LOG.info('PHYSICS_INIT_START', {
     subsystem: 'physics',
-    message: 'Initializing Rapier physics engine'
+    message: 'Initializing Rapier physics engine',
 });
 
 // Error with circuit breaker
@@ -451,9 +478,9 @@ LOG.error('PLAYER_UPDATE_ERROR', {
     state: {
         position: this.getPosition(),
         velocity: this.getVelocity(),
-        isGrounded: this.isGrounded()
+        isGrounded: this.isGrounded(),
     },
-    hint: 'Check physics body state and input manager'
+    hint: 'Check physics body state and input manager',
 });
 
 // Fatal error with crash dump
@@ -462,7 +489,7 @@ LOG.fatal('PHYSICS_CIRCUIT_BREAKER', {
     message: 'Too many errors, physics disabled',
     errorCount: 10,
     crashDump,
-    crashDumpSummary: CrashDumpGenerator.generateSummary(crashDump)
+    crashDumpSummary: CrashDumpGenerator.generateSummary(crashDump),
 });
 ```
 
@@ -529,9 +556,10 @@ if (patterns.repeatingErrors.length > 0) {
 
 ### 5.5 Legacy Console Logging (✅ **PHASED OUT**)
 
-**DO NOT use console.* in new code** - use LOG.* methods instead
+**DO NOT use console.\* in new code** - use LOG.\* methods instead
 
 **Remaining Console Statements**: 15 in LogSystem.js
+
 - These are intentional output mechanisms for the logging infrastructure itself
 - Not part of application logging (infrastructure only)
 
@@ -542,6 +570,7 @@ if (patterns.repeatingErrors.length > 0) {
 **Purpose**: Reduce console spam while maintaining diagnostic capability
 
 **Pattern:**
+
 ```javascript
 // Low-frequency sampling (0.5% - 1% of frames)
 if (Math.random() < 0.01) {
@@ -550,6 +579,7 @@ if (Math.random() < 0.01) {
 ```
 
 **Locations:**
+
 - InputManager.js:92-94 (0.5% chance per frame)
 - PlayerController.js:209-211 (1% chance per frame)
 
@@ -560,6 +590,7 @@ if (Math.random() < 0.01) {
 **All managers log during init** - GOOD for debugging, verbose but necessary
 
 **Example (InputManager.js):**
+
 ```
 Line 30: '[InputManager] Initializing...'
 Line 37: '[InputManager] Created cursor keys'
@@ -576,6 +607,7 @@ Line 83: '[InputManager] Initialization complete'
 **Performance-Critical**: Runs 60 times per second
 
 **Current Practice**: ✅ **Minimal logging in hot paths**
+
 - PhysicsManager.update(): Only logs when frame budget exceeded
 - PlayerController.update(): Only conditional debug logs
 - Game.update(): No logging unless error
@@ -606,21 +638,20 @@ try {
 
     let steps = 0;
     while (this.accumulator >= this.fixedTimeStep && steps < this.maxStepsPerFrame) {
-        this.world.step();  // ⚠️ CAN THROW
+        this.world.step(); // ⚠️ CAN THROW
         this.accumulator -= this.fixedTimeStep;
         steps++;
     }
 
     // Success
     this.errorCount = 0;
-
 } catch (error) {
     this.errorCount = (this.errorCount || 0) + 1;
     console.error(`[PhysicsManager] Error (${this.errorCount}/10):`, error);
 
     // Fallback: Try to update sprites at least
     try {
-        this.updateGameObjects(0);  // Zero interpolation
+        this.updateGameObjects(0); // Zero interpolation
     } catch (fallbackError) {
         console.error('[PhysicsManager] Fallback update failed:', fallbackError);
     }
@@ -628,11 +659,13 @@ try {
 ```
 
 **Vulnerabilities:**
+
 1. **Accumulator not reset on error** (Line 252) - Could skip physics frames silently
 2. **Root cause lost** - Only final exception logged, not what caused Rapier failure
 3. **10 error threshold may be too high** - 166ms of failures before disable
 
 **Strengths:**
+
 - Emergency sprite update fallback prevents render freeze
 - Circuit breaker prevents infinite error loops
 - Error count included in messages
@@ -669,14 +702,18 @@ try {
         inputState = this.inputManager.getSnapshot();
     } else {
         console.warn('[PlayerController] Using fallback input polling');
-        inputState = this.createFallbackInputState();  // ✅ FALLBACK
+        inputState = this.createFallbackInputState(); // ✅ FALLBACK
     }
 
     // Calculate movement
     const desiredMovement = this.calculateMovementFromInput(inputState, dt);
 
     // Validate movement vector
-    if (!desiredMovement || !Number.isFinite(desiredMovement.x) || !Number.isFinite(desiredMovement.y)) {
+    if (
+        !desiredMovement ||
+        !Number.isFinite(desiredMovement.x) ||
+        !Number.isFinite(desiredMovement.y)
+    ) {
         console.warn('[PlayerController] Invalid movement vector');
         return;
     }
@@ -687,8 +724,7 @@ try {
 
     // More validation...
 
-    this.errorCount = 0;  // Success
-
+    this.errorCount = 0; // Success
 } catch (error) {
     this.errorCount = (this.errorCount || 0) + 1;
     console.error(`[PlayerController] Error (${this.errorCount}/5):`, error);
@@ -705,12 +741,14 @@ try {
 ```
 
 **Strengths:**
+
 - ✅ Defensive programming with multiple validation checkpoints
 - ✅ Fallback input system if InputManager unavailable
 - ✅ Emergency sprite update if main update fails
 - ✅ Clear error count in messages
 
 **Vulnerabilities:**
+
 1. **5 error threshold aggressive** - 83ms to disable at 60fps
 2. **"Too many errors" message non-specific** - Doesn't indicate what failed
 3. **No timeout-based reset** - Once disabled, stays disabled until restart
@@ -724,6 +762,7 @@ try {
 **NO try-catch blocks** - Relies on Phaser's input system
 
 **Defensive Patterns:**
+
 ```javascript
 // getSnapshot() (Lines 90-108)
 getSnapshot() {
@@ -742,10 +781,12 @@ getSnapshot() {
 ```
 
 **Strengths:**
+
 - ✅ Safe fallback (empty InputState) if keys not initialized
 - ✅ No complex error handling needed (Phaser handles key events)
 
 **Vulnerabilities:**
+
 1. ⚠️ If Phaser key creation silently fails, InputManager won't catch it
 2. ⚠️ No validation that keyboard actually exists in browser
 3. ⚠️ Assumption that Phaser types are always valid
@@ -807,11 +848,13 @@ update(time, delta) {
 ```
 
 **Strengths:**
+
 - ✅ Displays initialization errors on screen (user-visible)
 - ✅ Per-enemy error handling prevents one bad enemy from breaking all
 - ✅ Main managers (physics, level, player) have their own error handling
 
 **Issue:**
+
 - Main managers NOT wrapped in try-catch in update()
 - Assumption: They handle their own errors (which they do)
 
@@ -826,6 +869,7 @@ update(time, delta) {
 **Severity**: 🔴 **HIGH** - Affects debugging and user experience
 
 **Location**:
+
 - PlayerController.js:184
 - PhysicsManager.js:194
 
@@ -833,6 +877,7 @@ update(time, delta) {
 When circuit breaker triggers, users see generic "too many errors" message but actual error context is lost in previous frames.
 
 **Example Scenario:**
+
 ```
 Frame 1: Physics body missing → error 1
 Frame 2: Movement calculation returns NaN → error 2
@@ -843,11 +888,13 @@ Frame 6: "Too many errors, player disabled" → NO INFO ABOUT ROOT CAUSE
 ```
 
 **Impact**:
+
 - Users can't self-diagnose issues
 - Developers need to reproduce bug to see actual errors
 - Support burden increases
 
 **Recommended Fix**:
+
 ```javascript
 // Track first error for context
 if (!this.firstError && error) {
@@ -871,20 +918,22 @@ if (this.errorCount > 5) {
 Dynamic imports fail silently - boss/enemy simply doesn't spawn. Level becomes unwinnable without indication.
 
 **Example:**
+
 ```javascript
-import('../enemy/PulsatingBoss.js')
-    .catch(error => {
-        console.error('[LevelLoader] Error importing boss:', error);
-        // ⚠️ NO FALLBACK - Level continues without boss
-    });
+import('../enemy/PulsatingBoss.js').catch((error) => {
+    console.error('[LevelLoader] Error importing boss:', error);
+    // ⚠️ NO FALLBACK - Level continues without boss
+});
 ```
 
 **Impact**:
+
 - Network failures result in missing critical entities
 - No retry mechanism
 - No user notification
 
 **Recommended Fix**:
+
 ```javascript
 .catch(error => {
     console.error('[LevelLoader] Boss import failed, using fallback:', error);
@@ -903,6 +952,7 @@ import('../enemy/PulsatingBoss.js')
 Once circuit breaker triggers, it never resets unless update succeeds. If physics permanently fails, player is permanently disabled.
 
 **Example Cascade:**
+
 ```
 Physics fails → Player can't move → Player errors accumulate
 → Player circuit breaker triggers → Player permanently disabled
@@ -910,6 +960,7 @@ Physics fails → Player can't move → Player errors accumulate
 ```
 
 **Recommended Fix**:
+
 ```javascript
 // Time-based reset
 const ERROR_RESET_TIMEOUT = 2000; // 2 seconds
@@ -984,135 +1035,147 @@ If localStorage fails (blocked, quota exceeded), progress saving silently disabl
 **When adding a new system, follow this checklist:**
 
 1. ✅ **Wrap initialization in try-catch**
-   ```javascript
-   init() {
-       try {
-           // Initialize
-           this.setInitialized();
-       } catch (error) {
-           console.error('[NewSystem] Initialization failed:', error);
-           return false;
-       }
-   }
-   ```
+
+    ```javascript
+    init() {
+        try {
+            // Initialize
+            this.setInitialized();
+        } catch (error) {
+            console.error('[NewSystem] Initialization failed:', error);
+            return false;
+        }
+    }
+    ```
 
 2. ✅ **Wrap update loops in try-catch**
-   ```javascript
-   update(delta) {
-       try {
-           // Update logic
-           this.errorCount = 0;
-       } catch (error) {
-           this.errorCount = (this.errorCount || 0) + 1;
-           console.error(`[NewSystem] Error (${this.errorCount}/MAX):`, error);
-       }
-   }
-   ```
+
+    ```javascript
+    update(delta) {
+        try {
+            // Update logic
+            this.errorCount = 0;
+        } catch (error) {
+            this.errorCount = (this.errorCount || 0) + 1;
+            console.error(`[NewSystem] Error (${this.errorCount}/MAX):`, error);
+        }
+    }
+    ```
 
 3. ✅ **Add circuit breaker if critical**
-   ```javascript
-   update(delta) {
-       if (this.errorCount > THRESHOLD) {
-           console.warn('[NewSystem] Too many errors, disabling');
-           return;
-       }
-       // ... rest of update
-   }
-   ```
+
+    ```javascript
+    update(delta) {
+        if (this.errorCount > THRESHOLD) {
+            console.warn('[NewSystem] Too many errors, disabling');
+            return;
+        }
+        // ... rest of update
+    }
+    ```
 
 4. ✅ **Provide fallback mechanisms**
-   ```javascript
-   try {
-       this.primaryMethod();
-   } catch (error) {
-       console.warn('[NewSystem] Primary method failed, using fallback');
-       this.fallbackMethod();
-   }
-   ```
+
+    ```javascript
+    try {
+        this.primaryMethod();
+    } catch (error) {
+        console.warn('[NewSystem] Primary method failed, using fallback');
+        this.fallbackMethod();
+    }
+    ```
 
 5. ✅ **Use consistent logging format**
-   ```javascript
-   console.log('[ModuleName] Initialization complete');
-   console.warn('[ModuleName] Degraded mode: using fallback');
-   console.error('[ModuleName] Critical failure:', error);
-   ```
+    ```javascript
+    console.log('[ModuleName] Initialization complete');
+    console.warn('[ModuleName] Degraded mode: using fallback');
+    console.error('[ModuleName] Critical failure:', error);
+    ```
 
 ### 8.2 Error Handling Anti-Patterns
 
 **❌ DON'T DO THIS:**
 
 1. **Empty Catch Blocks**
-   ```javascript
-   try {
-       dangerousOperation();
-   } catch (error) {
-       // Silent failure - NO! At minimum log the error
-   }
-   ```
+
+    ```javascript
+    try {
+        dangerousOperation();
+    } catch (error) {
+        // Silent failure - NO! At minimum log the error
+    }
+    ```
 
 2. **Catch Without Context**
-   ```javascript
-   catch (error) {
-       console.error(error);  // Missing module prefix and context
-   }
-   ```
+
+    ```javascript
+    catch (error) {
+        console.error(error);  // Missing module prefix and context
+    }
+    ```
 
 3. **No Recovery Strategy**
-   ```javascript
-   try {
-       criticalOperation();
-   } catch (error) {
-       console.error('Failed');
-       // No fallback, no circuit breaker, no graceful degradation
-   }
-   ```
+
+    ```javascript
+    try {
+        criticalOperation();
+    } catch (error) {
+        console.error('Failed');
+        // No fallback, no circuit breaker, no graceful degradation
+    }
+    ```
 
 4. **Swallowing Errors in Async**
-   ```javascript
-   async function loadData() {
-       try {
-           const data = await fetch('/api/data');
-           return data;
-       } catch (error) {
-           return null;  // Silently returns null, caller doesn't know about error
-       }
-   }
-   ```
+    ```javascript
+    async function loadData() {
+        try {
+            const data = await fetch('/api/data');
+            return data;
+        } catch (error) {
+            return null; // Silently returns null, caller doesn't know about error
+        }
+    }
+    ```
 
 ### 8.3 Logging Best Practices
 
 **✅ DO THIS:**
 
 1. **Use Module Prefixes**
-   ```javascript
-   console.log('[PhysicsManager] World initialized at 60Hz');
-   ```
+
+    ```javascript
+    console.log('[PhysicsManager] World initialized at 60Hz');
+    ```
 
 2. **Include Error Counts**
-   ```javascript
-   console.error(`[System] Error (${this.errorCount}/${MAX}):`, error);
-   ```
+
+    ```javascript
+    console.error(`[System] Error (${this.errorCount}/${MAX}):`, error);
+    ```
 
 3. **Log State Transitions**
-   ```javascript
-   console.log('[Manager] Transitioning from LOADING → READY');
-   ```
+
+    ```javascript
+    console.log('[Manager] Transitioning from LOADING → READY');
+    ```
 
 4. **Conditional Logging in Hot Paths**
-   ```javascript
-   if (Math.random() < 0.01) {  // 1% sampling
-       console.log('[HotPath] Current state:', state);
-   }
-   ```
+
+    ```javascript
+    if (Math.random() < 0.01) {
+        // 1% sampling
+        console.log('[HotPath] Current state:', state);
+    }
+    ```
 
 5. **Include Context**
-   ```javascript
-   console.error('[LevelLoader] Failed to create platform', {
-       index: i,
-       config: platformConfig,
-       error: error.message
-   });
-   ```
+    ```javascript
+    console.error('[LevelLoader] Failed to create platform', {
+        index: i,
+        config: platformConfig,
+        error: error.message,
+    });
+    ```
 
 ---
 
@@ -1125,58 +1188,62 @@ If localStorage fails (blocked, quota exceeded), progress saving silently disabl
 **Root Cause Analysis:**
 
 1. **Check Console for Previous Errors**
-   - Look for errors BEFORE "too many errors" message
-   - First error in sequence is usually the root cause
+    - Look for errors BEFORE "too many errors" message
+    - First error in sequence is usually the root cause
 
 2. **Common Root Causes:**
-   - ❌ Physics body missing/invalid
-   - ❌ NaN in velocity/movement calculations
-   - ❌ Invalid collider state
-   - ❌ Rapier physics errors
+    - ❌ Physics body missing/invalid
+    - ❌ NaN in velocity/movement calculations
+    - ❌ Invalid collider state
+    - ❌ Rapier physics errors
 
 3. **Diagnostic Steps:**
 
-   **Step 1**: Enable temporary detailed logging
-   ```javascript
-   // In PlayerController.js update() - temporarily add:
-   console.log('[DEBUG] errorCount:', this.errorCount);
-   console.log('[DEBUG] body:', !!this.body);
-   console.log('[DEBUG] characterController:', !!this.characterController);
-   console.log('[DEBUG] velocity:', this.velocity);
-   ```
+    **Step 1**: Enable temporary detailed logging
 
-   **Step 2**: Check for NaN propagation
-   ```javascript
-   // Add after movement calculation:
-   if (!Number.isFinite(desiredMovement.x) || !Number.isFinite(desiredMovement.y)) {
-       console.error('[DEBUG] Movement is NaN!', {
-           velocity: this.velocity,
-           dt: dt,
-           input: inputState
-       });
-   }
-   ```
+    ```javascript
+    // In PlayerController.js update() - temporarily add:
+    console.log('[DEBUG] errorCount:', this.errorCount);
+    console.log('[DEBUG] body:', !!this.body);
+    console.log('[DEBUG] characterController:', !!this.characterController);
+    console.log('[DEBUG] velocity:', this.velocity);
+    ```
 
-   **Step 3**: Verify physics state
-   ```javascript
-   // Check if physics is also failing:
-   console.log('[DEBUG] Physics errorCount:', this.physicsManager.errorCount);
-   ```
+    **Step 2**: Check for NaN propagation
+
+    ```javascript
+    // Add after movement calculation:
+    if (!Number.isFinite(desiredMovement.x) || !Number.isFinite(desiredMovement.y)) {
+        console.error('[DEBUG] Movement is NaN!', {
+            velocity: this.velocity,
+            dt: dt,
+            input: inputState,
+        });
+    }
+    ```
+
+    **Step 3**: Verify physics state
+
+    ```javascript
+    // Check if physics is also failing:
+    console.log('[DEBUG] Physics errorCount:', this.physicsManager.errorCount);
+    ```
 
 4. **Recovery Options:**
 
-   **Option A**: Reload the level
-   - Press R key (level reset)
-   - Circuit breaker will reset
+    **Option A**: Reload the level
+    - Press R key (level reset)
+    - Circuit breaker will reset
 
-   **Option B**: Restart scene
-   ```javascript
-   this.scene.restart();
-   ```
+    **Option B**: Restart scene
 
-   **Option C**: Hot reload (dev mode)
-   - Save any file to trigger Vite HMR
-   - Error counters reset
+    ```javascript
+    this.scene.restart();
+    ```
+
+    **Option C**: Hot reload (dev mode)
+    - Save any file to trigger Vite HMR
+    - Error counters reset
 
 ### 9.2 "Too Many Errors, Physics Disabled"
 
@@ -1185,39 +1252,43 @@ If localStorage fails (blocked, quota exceeded), progress saving silently disabl
 **Root Cause Analysis:**
 
 1. **Check Rapier Initialization**
-   ```javascript
-   console.log('[DEBUG] Rapier initialized:', !!RAPIER);
-   console.log('[DEBUG] World exists:', !!this.world);
-   ```
+
+    ```javascript
+    console.log('[DEBUG] Rapier initialized:', !!RAPIER);
+    console.log('[DEBUG] World exists:', !!this.world);
+    ```
 
 2. **Check for Invalid Bodies**
-   - Look for errors about "body removed" or "invalid handle"
-   - Bodies deleted but still referenced
+    - Look for errors about "body removed" or "invalid handle"
+    - Bodies deleted but still referenced
 
 3. **Check Frame Rate**
-   - If FPS drops, accumulator can overflow
-   - `maxStepsPerFrame` exceeded
+    - If FPS drops, accumulator can overflow
+    - `maxStepsPerFrame` exceeded
 
 4. **Diagnostic Steps:**
 
-   **Step 1**: Log physics state
-   ```javascript
-   // In PhysicsManager.js update():
-   console.log('[DEBUG] Accumulator:', this.accumulator);
-   console.log('[DEBUG] World.bodies count:', this.world.bodies.len());
-   console.log('[DEBUG] ErrorCount:', this.errorCount);
-   ```
+    **Step 1**: Log physics state
 
-   **Step 2**: Check for memory issues
-   ```javascript
-   console.log('[DEBUG] Performance memory:', performance.memory);
-   ```
+    ```javascript
+    // In PhysicsManager.js update():
+    console.log('[DEBUG] Accumulator:', this.accumulator);
+    console.log('[DEBUG] World.bodies count:', this.world.bodies.len());
+    console.log('[DEBUG] ErrorCount:', this.errorCount);
+    ```
 
-   **Step 3**: Try stepping physics manually
-   ```javascript
-   // In browser console:
-   game.scene.scenes[0].physicsManager.world.step();
-   ```
+    **Step 2**: Check for memory issues
+
+    ```javascript
+    console.log('[DEBUG] Performance memory:', performance.memory);
+    ```
+
+    **Step 3**: Try stepping physics manually
+
+    ```javascript
+    // In browser console:
+    game.scene.scenes[0].physicsManager.world.step();
+    ```
 
 ### 9.3 Silent Failures (Boss/Enemy Missing)
 
@@ -1228,24 +1299,25 @@ If localStorage fails (blocked, quota exceeded), progress saving silently disabl
 **Diagnostic Steps:**
 
 1. **Check Network Tab**
-   - Open DevTools → Network
-   - Look for failed requests to .js files
+    - Open DevTools → Network
+    - Look for failed requests to .js files
 
 2. **Check Console for Import Errors**
-   - Search for "Error importing"
+    - Search for "Error importing"
 
 3. **Verify File Exists**
-   ```bash
-   ls src/enemy/PulsatingBoss.js
-   ```
+
+    ```bash
+    ls src/enemy/PulsatingBoss.js
+    ```
 
 4. **Test Import Directly**
-   ```javascript
-   // In browser console:
-   import('../enemy/PulsatingBoss.js')
-       .then(m => console.log('Import success:', m))
-       .catch(e => console.error('Import failed:', e));
-   ```
+    ```javascript
+    // In browser console:
+    import('../enemy/PulsatingBoss.js')
+        .then((m) => console.log('Import success:', m))
+        .catch((e) => console.error('Import failed:', e));
+    ```
 
 ---
 
@@ -1261,6 +1333,7 @@ If localStorage fails (blocked, quota exceeded), progress saving silently disabl
 Circuit breakers were triggering with "too many errors" messages due to Rapier 0.19+ API breaking changes. The error handling system was working as designed, but the underlying cause was API incompatibility.
 
 **Console Output (Before Fix)**:
+
 ```
 [PhysicsManager] ERROR 1/10 in update loop
 Error Type: Error
@@ -1282,6 +1355,7 @@ Error Message: this.characterController.isGrounded is not a function
 #### Root Causes Identified
 
 **1. EventQueue Requirement** (`Error: expected instance of z`)
+
 - **Location**: PhysicsManager.js:231
 - **Cause**: `world.step()` signature changed in Rapier 0.19+
 - **Old API**: `world.step(integrationParameters)`
@@ -1289,6 +1363,7 @@ Error Message: this.characterController.isGrounded is not a function
 - **Fix**: Created EventQueue and migrated integration parameters to world object
 
 **2. Body Iteration API** (`world.bodies.forEach is not a function`)
+
 - **Location**: PhysicsManager.js:287
 - **Cause**: `world.bodies` collection removed in Rapier 0.19+
 - **Old API**: `world.bodies.forEach(body => {...})`
@@ -1296,12 +1371,14 @@ Error Message: this.characterController.isGrounded is not a function
 - **Fix**: Replaced all forEach calls with forEachRigidBody iterator
 
 **3. Ground Detection API** (`isGrounded is not a function`, `numGroundedColliders is undefined`)
+
 - **Location**: PlayerController.js:337
 - **Cause**: Both `isGrounded()` and `numGroundedColliders` removed in Rapier 0.19+
 - **Discovery**: Property introspection revealed APIs don't exist
 - **Fix**: Implemented physics-based ground detection algorithm
 
 **4. Landing Event Data Structure** (`Cannot read properties of undefined (reading 'y')`)
+
 - **Location**: PlayerController.js:559, ParticleManager.js:209
 - **Cause**: Event emitted incomplete data structure
 - **Fix**: Structured event data with both position and velocity as plain objects
@@ -1309,6 +1386,7 @@ Error Message: this.characterController.isGrounded is not a function
 #### Solutions Implemented
 
 **PhysicsManager.js Fixes**:
+
 ```javascript
 // EventQueue creation (lines 55-57)
 this.eventQueue = new RAPIER.EventQueue(true);
@@ -1326,13 +1404,14 @@ this.eventQueue.drainCollisionEvents((handle1, handle2, started) => {
 });
 
 // Body iteration (line 329)
-this.world.forEachRigidBody(body => {
+this.world.forEachRigidBody((body) => {
     const sprite = this.bodyToSprite.get(body.handle);
     // ... update sprite
 });
 ```
 
 **PlayerController.js Fixes**:
+
 ```javascript
 // Physics-based ground detection (lines 347-381)
 updateGroundState(desiredMovement, correctedMovement) {
@@ -1360,6 +1439,7 @@ this.eventSystem.emit(EventNames.PLAYER_LAND, {
 #### Error Handling Enhancements
 
 **Enhanced State Dumps**:
+
 ```javascript
 // PhysicsManager error logging (lines 295-306)
 console.error(`[PhysicsManager] ═══════════════════════════════════════════`);
@@ -1376,10 +1456,13 @@ console.error(`  - delta: ${arguments[0]}`);
 ```
 
 **Property Introspection for Debugging**:
+
 ```javascript
 // Revealed actual available API
-console.log('[PlayerController] CharacterController properties:',
-    Object.keys(this.characterController));
+console.log(
+    '[PlayerController] CharacterController properties:',
+    Object.keys(this.characterController)
+);
 // Output: ['params', 'bodies', 'colliders', 'queries', 'raw',
 //          'rawCharacterCollision', '_applyImpulsesToDynamicBodies', '_characterMass']
 // Notably missing: numGroundedColliders, isGrounded
@@ -1388,6 +1471,7 @@ console.log('[PlayerController] CharacterController properties:',
 #### Circuit Breaker Validation
 
 **Result**: Circuit breakers functioned perfectly during migration
+
 - **PhysicsManager**: Stopped at 10 errors, preventing infinite error loops
 - **PlayerController**: Stopped at 5 errors, preserving system stability
 - **Emergency Fallbacks**: Sprite updates continued even when physics failed
@@ -1404,12 +1488,14 @@ console.log('[PlayerController] CharacterController properties:',
 #### Outcome
 
 **Before**:
+
 - ❌ Physics disabled after 10 errors
 - ❌ Player disabled after 5 errors
 - ❌ No jumping functionality
 - ❌ Sprites frozen in place
 
 **After**:
+
 - ✅ Physics running at 60 FPS
 - ✅ Player movement smooth
 - ✅ Jumping fully functional
@@ -1418,6 +1504,7 @@ console.log('[PlayerController] CharacterController properties:',
 - ✅ No errors in console
 
 **Commits**:
+
 - `dd1bcfe` - Implement EventQueue for Rapier 0.19+
 - `fdcb0e9` - Use numGroundedColliders() API
 - `4b6711b` - Access as property not method
@@ -1438,6 +1525,7 @@ console.log('[PlayerController] CharacterController properties:',
 5. **Documentation matters**: Breaking changes need comprehensive guides
 
 **See Also**:
+
 - [RAPIER_019_MIGRATION.md](../technology/RAPIER_019_MIGRATION.md) - Complete migration guide
 - [RapierPhysics.md](../technology/RapierPhysics.md) - Updated Rapier integration patterns
 - [MovementSystem.md](./MovementSystem.md) - Modern movement implementation
@@ -1448,6 +1536,7 @@ console.log('[PlayerController] CharacterController properties:',
 ### 10.2 Improvement Roadmap
 
 **Phase 1: Immediate (This Session)**
+
 - ✅ Document current error handling architecture
 - ✅ Create debugging procedures
 - ✅ Establish logging standards
@@ -1455,30 +1544,34 @@ console.log('[PlayerController] CharacterController properties:',
 - ✅ **Enhance state dump logging** (October 2025)
 
 **Phase 2: Short Term (Next Session)**
+
 - ⏳ Implement enhanced error context logging
 - ⏳ Add timeout-based circuit breaker reset
 - ⏳ Fix silent boss/enemy import failures
 
 **Phase 3: Medium Term**
+
 - ⏳ Implement error aggregation service
 - ⏳ Add user-visible error notifications for critical failures
 - ⏳ Create error metrics collection
 
 **Phase 4: Long Term**
+
 - ⏳ Centralized error handling service
 - ⏳ Error recovery strategies documentation
 - ⏳ Automated error testing
 
 ### 10.3 Version History
 
-| Version | Date | Changes |
-|---------|------|---------|
-| 1.0 | 2025-10-29 | Initial comprehensive audit and documentation |
-| 1.1 | 2025-10-29 | Added Rapier 0.19+ migration fixes documentation, updated status |
+| Version | Date       | Changes                                                          |
+| ------- | ---------- | ---------------------------------------------------------------- |
+| 1.0     | 2025-10-29 | Initial comprehensive audit and documentation                    |
+| 1.1     | 2025-10-29 | Added Rapier 0.19+ migration fixes documentation, updated status |
 
 ### 10.4 Related Improvements
 
 **When error handling improves, update:**
+
 - This document (ERROR_HANDLING_LOGGING.md)
 - CLAUDE.md (if patterns change)
 - Individual system docs (if specific systems change)
@@ -1492,6 +1585,7 @@ console.log('[PlayerController] CharacterController properties:',
 WynIsBuff2's observability system transforms logging from passive record-keeping into active diagnostic infrastructure. The system enables AI agents and developers to perform autonomous debugging, root cause analysis, and automated remediation.
 
 **Implementation Status**: Phases 0-7 Complete (Production-Ready)
+
 - ✅ Phase 0: Foundation & Planning
 - ✅ Phase 1: Core Infrastructure (LogSystem, BoundedBuffer)
 - ✅ Phase 2: Context System (DebugContext, StateProviders)
@@ -1519,8 +1613,10 @@ LOG.error('ERROR_CODE', {
     subsystem: 'physics',
     error,
     message: 'Description',
-    state: { /* data */ },
-    hint: 'How to fix'
+    state: {
+        /* data */
+    },
+    hint: 'How to fix',
 });
 
 // Query API
@@ -1530,6 +1626,7 @@ const specificErrors = LOG.getByCode('PHYSICS_UPDATE_ERROR');
 ```
 
 **Features**:
+
 - Bounded circular buffer (2000 entries)
 - Automatic context injection
 - Query API for agents
@@ -1541,6 +1638,7 @@ const specificErrors = LOG.getByCode('PHYSICS_UPDATE_ERROR');
 High-performance circular buffer with automatic cleanup:
 
 **Features**:
+
 - Fixed size (prevents memory leaks)
 - O(1) insert/read operations
 - Automatic oldest entry eviction
@@ -1567,6 +1665,7 @@ const state = context.captureState();
 ```
 
 **Features**:
+
 - Frame-accurate state capture
 - Provider-based architecture
 - 85% cache hit rate
@@ -1578,11 +1677,13 @@ const state = context.captureState();
 Base class for subsystem state capture:
 
 **Available Providers**:
+
 - `PlayerStateProvider` - Position, velocity, grounded state
 - `PhysicsStateProvider` - Body count, world state, timestep
 - `InputStateProvider` - Keys, mouse, gamepad state
 
 **Custom Provider Example**:
+
 ```javascript
 class CustomStateProvider extends StateProvider {
     constructor(system) {
@@ -1593,7 +1694,7 @@ class CustomStateProvider extends StateProvider {
     captureState() {
         return {
             customData: this.system.getData(),
-            timestamp: Date.now()
+            timestamp: Date.now(),
         };
     }
 }
@@ -1611,17 +1712,20 @@ import { CrashDumpGenerator } from '@observability';
 const crashDump = CrashDumpGenerator.generate(error, {
     subsystem: 'physics',
     errorCount: 10,
-    additionalContext: { /* extra data */ }
+    additionalContext: {
+        /* extra data */
+    },
 });
 
 LOG.fatal('SYSTEM_FAILURE', {
     subsystem: 'physics',
     crashDump,
-    crashDumpSummary: CrashDumpGenerator.generateSummary(crashDump)
+    crashDumpSummary: CrashDumpGenerator.generateSummary(crashDump),
 });
 ```
 
 **Crash Dump Contents**:
+
 - Error details and stack trace
 - Recent logs (last 50 entries)
 - Complete game state from DebugContext
@@ -1656,6 +1760,7 @@ console.log(report);
 ```
 
 **Detection Capabilities**:
+
 - **Repeating errors**: Same code 3+ times
 - **Error cascades**: 5+ errors within 1 second
 - **Error rate calculation**: Errors per second
@@ -1669,6 +1774,7 @@ console.log(report);
 Both PhysicsManager and PlayerController circuit breakers now generate crash dumps:
 
 **Before** (Pre-Phase 5):
+
 ```javascript
 if (this.errorCount > 10) {
     console.warn('[PhysicsManager] Too many errors, physics disabled');
@@ -1677,22 +1783,22 @@ if (this.errorCount > 10) {
 ```
 
 **After** (Phase 5):
+
 ```javascript
 if (this.errorCount > 10) {
-    const crashDump = CrashDumpGenerator.generate(
-        new Error('Physics circuit breaker triggered'),
-        {
-            subsystem: 'physics',
-            errorCount: this.errorCount,
-            recentErrors: LOG.getByCode('PHYSICS_UPDATE_ERROR', 10),
-            physicsState: { /* full state */ }
-        }
-    );
+    const crashDump = CrashDumpGenerator.generate(new Error('Physics circuit breaker triggered'), {
+        subsystem: 'physics',
+        errorCount: this.errorCount,
+        recentErrors: LOG.getByCode('PHYSICS_UPDATE_ERROR', 10),
+        physicsState: {
+            /* full state */
+        },
+    });
 
     LOG.fatal('PHYSICS_CIRCUIT_BREAKER', {
         subsystem: 'physics',
         crashDump,
-        crashDumpSummary: CrashDumpGenerator.generateSummary(crashDump)
+        crashDumpSummary: CrashDumpGenerator.generateSummary(crashDump),
     });
 
     this.isActive = false;
@@ -1704,15 +1810,16 @@ if (this.errorCount > 10) {
 
 ### 11.5 Performance Metrics
 
-| Metric | Target | Actual | Status |
-|--------|--------|--------|--------|
-| Frame overhead | <0.5ms | 0.0003ms | ✅ 1666x better |
-| Buffer operations | <0.1ms | 0.0003ms | ✅ Excellent |
-| Context caching | 70% | 85% | ✅ Better than target |
-| Memory usage | <5MB | ~2MB | ✅ Within budget |
-| GC pressure | Minimal | Zero | ✅ No GC spikes |
+| Metric            | Target  | Actual   | Status                |
+| ----------------- | ------- | -------- | --------------------- |
+| Frame overhead    | <0.5ms  | 0.0003ms | ✅ 1666x better       |
+| Buffer operations | <0.1ms  | 0.0003ms | ✅ Excellent          |
+| Context caching   | 70%     | 85%      | ✅ Better than target |
+| Memory usage      | <5MB    | ~2MB     | ✅ Within budget      |
+| GC pressure       | Minimal | Zero     | ✅ No GC spikes       |
 
 **Benchmarks** (from production testing):
+
 - Log write: 0.0003ms average
 - Context capture: 0.0004ms (with caching)
 - Buffer query: 0.001ms for 50 entries
@@ -1734,8 +1841,7 @@ const allLogs = LOG.getAll();
 fs.writeFileSync('logs.json', JSON.stringify(allLogs, null, 2));
 
 // Check specific subsystem
-const physicsIssues = LOG.getBySubsystem('physics', 100)
-    .filter(log => log.level === 'error');
+const physicsIssues = LOG.getBySubsystem('physics', 100).filter((log) => log.level === 'error');
 
 // Automated diagnosis
 if (patterns.severity.level === 'critical') {
@@ -1745,6 +1851,7 @@ if (patterns.severity.level === 'critical') {
 ```
 
 **Future (Phase 7)**: Enhanced DebugAPI with:
+
 - Natural language queries
 - Pattern matching
 - Automated fix suggestions
@@ -1753,6 +1860,7 @@ if (patterns.severity.level === 'critical') {
 ### 11.7 Best Practices
 
 **DO**:
+
 - ✅ Use structured logging with error codes
 - ✅ Include `subsystem` field always
 - ✅ Provide `hint` field for errors
@@ -1761,6 +1869,7 @@ if (patterns.severity.level === 'critical') {
 - ✅ Let DebugContext inject context automatically
 
 **DON'T**:
+
 - ❌ Use console.log() in new code
 - ❌ Log sensitive data (passwords, tokens)
 - ❌ Log in tight loops without sampling
@@ -1769,21 +1878,23 @@ if (patterns.severity.level === 'critical') {
 - ❌ Use generic error codes
 
 **Example (Good)**:
+
 ```javascript
 LOG.error('LEVEL_LOAD_PLATFORM_ERROR', {
     subsystem: 'level',
     error,
-    message: `Failed to create platform ${i+1}/${total}`,
+    message: `Failed to create platform ${i + 1}/${total}`,
     state: {
         platformIndex: i,
         totalPlatforms: total,
-        config: platformConfig
+        config: platformConfig,
     },
-    hint: 'Check platform configuration. Verify sprite assets exist.'
+    hint: 'Check platform configuration. Verify sprite assets exist.',
 });
 ```
 
 **Example (Bad)**:
+
 ```javascript
 console.error('Error:', error); // ❌ No structure, no context, no subsystem
 ```
@@ -1806,7 +1917,7 @@ const results = api.query({
     subsystem: 'physics',
     level: 'error',
     timeRange: { last: 60000 },
-    includeContext: true
+    includeContext: true,
 });
 
 // Subsystem analysis
@@ -1820,7 +1931,7 @@ console.log('Overall health:', summary.overallHealth);
 // Export for analysis
 const exportData = api.exportForAnalysis({
     includePatterns: true,
-    includeGameState: true
+    includeGameState: true,
 });
 ```
 
@@ -1844,9 +1955,9 @@ const errors = new QueryBuilder(LOG)
 
 // Convenience methods
 const recentErrors = new QueryBuilder(LOG)
-    .criticalOnly()  // errors + fatals
+    .criticalOnly() // errors + fatals
     .inLastSeconds(30)
-    .count();  // Get count only
+    .count(); // Get count only
 ```
 
 #### LogAnalyzer (`src/observability/api/LogAnalyzer.js`)
@@ -1891,7 +2002,7 @@ const logs = LOG.buffer.getAll();
 const json = formatter.toJSON(logs, {
     includeStats: true,
     includeAnalysis: true,
-    patterns: errorPatternDetector.analyzeRecent(60000)
+    patterns: errorPatternDetector.analyzeRecent(60000),
 });
 
 // Markdown report
@@ -1927,7 +2038,8 @@ const categories = suggestions.getCategories();
 ```
 
 **Knowledge Base Includes**:
-- Common error codes (PHYSICS_*, PLAYER_*, INPUT_*, etc.)
+
+- Common error codes (PHYSICS*\*, PLAYER*_, INPUT\__, etc.)
 - Severity ratings (low, medium, high, critical)
 - Step-by-step fix suggestions
 - Related error codes
@@ -1936,17 +2048,20 @@ const categories = suggestions.getCategories();
 ### 11.9 Documentation References
 
 **Primary Documentation**:
+
 - [OBSERVABILITY_IMPLEMENTATION.md](../../OBSERVABILITY_IMPLEMENTATION.md) - Master implementation plan
 - [STATUS_OBSERVABILITY.json](../../STATUS_OBSERVABILITY.json) - Real-time status tracking
 - [OBSERVABILITY_WORKFLOW.md](../../OBSERVABILITY_WORKFLOW.md) - Agent workflow guide
 - [architecture/Observability.md](../architecture/Observability.md) - Architecture deep dive
 
 **Phase Documentation**:
+
 - [PHASE5_ERROR_INTEGRATION_PLAN.md](../../PHASE5_ERROR_INTEGRATION_PLAN.md) - Error integration details
 - [DEBUGCONTEXT_INTEGRATION_PLAN.md](../../DEBUGCONTEXT_INTEGRATION_PLAN.md) - Context integration details
 - [OBSERVABILITY_EVALUATION.md](../../OBSERVABILITY_EVALUATION.md) - Phase 3 evaluation
 
 **Code Locations**:
+
 - `src/observability/core/` - Core logging infrastructure
 - `src/observability/context/` - DebugContext and StateProvider
 - `src/observability/providers/` - State providers (Player, Physics, Input)
@@ -1966,15 +2081,17 @@ WynIsBuff2's error handling system is **resilient and validated**. The multi-lay
 5. ✅ **Real-world validation** through Rapier migration (October 2025)
 
 **Key Takeaways for Developers:**
+
 - ✅ **Observability system active**: Structured logging with automatic context injection
 - ✅ **Circuit breakers enhanced**: Now generate comprehensive crash dumps
 - ✅ **Error pattern detection**: Automatic analysis every 5 seconds
 - ✅ **95% migration complete**: 278/293 statements using structured logging
 - ✅ **Agent-ready**: Query API enables automated debugging
 - ✅ **Production-ready**: Phases 0-5 complete, performance excellent
-- ⚠️ **Use LOG.* not console.***: New code must use structured logging
+- ⚠️ **Use LOG._ not console._**: New code must use structured logging
 
 **October 2025 - Major Updates:**
+
 1. **Rapier Migration**: Circuit breakers successfully contained 4 critical API incompatibilities
 2. **Observability Integration**: Phases 0-5 complete - structured logging, context injection, crash dumps
 3. **Performance**: <0.0003ms overhead per operation (1666x better than target)

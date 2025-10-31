@@ -20,12 +20,12 @@ This template has been updated for:
 
 ## Available Commands
 
-| Command | Description |
-|---------|-------------|
-| `npm install` | Install project dependencies |
-| `npm run dev` | Launch a development web server |
-| `npm run build` | Create a production build in the `dist` folder |
-| `npm run dev-nolog` | Launch a development web server without sending anonymous data (see "About log.js" below) |
+| Command               | Description                                                                                              |
+| --------------------- | -------------------------------------------------------------------------------------------------------- |
+| `npm install`         | Install project dependencies                                                                             |
+| `npm run dev`         | Launch a development web server                                                                          |
+| `npm run build`       | Create a production build in the `dist` folder                                                           |
+| `npm run dev-nolog`   | Launch a development web server without sending anonymous data (see "About log.js" below)                |
 | `npm run build-nolog` | Create a production build in the `dist` folder without sending anonymous data (see "About log.js" below) |
 
 ## Writing Code
@@ -72,10 +72,8 @@ Then initialize Rapier and configure the physics world in the `create` method:
 ```js
 import RAPIER from '@dimforge/rapier2d-compat';
 
-export class Game extends Phaser.Scene
-{
-    async create ()
-    {
+export class Game extends Phaser.Scene {
+    async create() {
         // Initialization: Initialize Rapier with await RAPIER.init().
         // Then, create a new Rapier world with gravity set to 9.81:
         await RAPIER.init();
@@ -117,72 +115,67 @@ We'll now update the two objects during the update loop.
 `update` is a special Phaser Scene method that is called automatically every frame by Phaser. During it, we will step the physics simulation:
 
 ```js
-    update ()
-    {
-        // Check if the Rapier world is initialized or not
-        if (!this.rapierWorld)
-        {
-            return;
-        }
-
-        // Step the physics simulation.
-        this.rapierWorld.step();
+update();
+{
+    // Check if the Rapier world is initialized or not
+    if (!this.rapierWorld) {
+        return;
     }
+
+    // Step the physics simulation.
+    this.rapierWorld.step();
+}
 ```
 
 After the World step, we can integrate the body position back to the Phaser Game Object. If you have a reference to the Rigid Body and Game Object, it can be done like this:
 
 ```js
-    update ()
-    {
-        // Check if the Rapier world is initialized or not
-        if (!this.rapierWorld)
-        {
-            return;
-        }
-
-        // Step the physics simulation.
-        this.rapierWorld.step();
-
-        //  Assuming 'rigidBody' is a Rapier Rigid Body:
-
-        const position = this.rigidBody.translation();
-        const rotation = this.rigidBody.rotation();
-
-        //  Assuming 'player' is a Phaser Sprite, Image, or similar Game Object:
-
-        this.player.setPosition(position.x, position.y);
-        this.player.setRotation(rotation);
+update();
+{
+    // Check if the Rapier world is initialized or not
+    if (!this.rapierWorld) {
+        return;
     }
+
+    // Step the physics simulation.
+    this.rapierWorld.step();
+
+    //  Assuming 'rigidBody' is a Rapier Rigid Body:
+
+    const position = this.rigidBody.translation();
+    const rotation = this.rigidBody.rotation();
+
+    //  Assuming 'player' is a Phaser Sprite, Image, or similar Game Object:
+
+    this.player.setPosition(position.x, position.y);
+    this.player.setRotation(rotation);
+}
 ```
 
 Alternatively, you can use the Rigid Body User Data and sync all of the bodies with Game Objects in a single loop:
 
 ```js
-    update ()
-    {
-        // Check if the Rapier world is initialized or not
-        if (!this.rapierWorld)
-        {
-            return;
-        }
-
-        // Step the physics simulation.
-        this.rapierWorld.step();
-
-        this.rapierWorld.bodies.forEach((rigidBody) => {
-   
-            const gameObject = rigidBody.userData;
-
-            if (gameObject)
-            {
-                const position = rigidBody.translation();
-                const rotation = rigidBody.rotation();
-                gameObject.setPosition(position.x, position.y);
-                gameObject.setRotation(angle);
-            }
-        });
+update();
+{
+    // Check if the Rapier world is initialized or not
+    if (!this.rapierWorld) {
+        return;
     }
+
+    // Step the physics simulation.
+    this.rapierWorld.step();
+
+    this.rapierWorld.bodies.forEach((rigidBody) => {
+        const gameObject = rigidBody.userData;
+
+        if (gameObject) {
+            const position = rigidBody.translation();
+            const rotation = rigidBody.rotation();
+            gameObject.setPosition(position.x, position.y);
+            gameObject.setRotation(angle);
+        }
+    });
+}
 ```
 
 This works by extracting the Game Object from the User Data and, if it exists, setting the translations upon it.
@@ -194,10 +187,8 @@ Below is a complete code example showing all of these steps:
 ```js
 import RAPIER from '@dimforge/rapier2d-compat';
 
-export class Game extends Phaser.Scene
-{
-    async create ()
-    {
+export class Game extends Phaser.Scene {
+    async create() {
         // Initialization: Initialize Rapier with await RAPIER.init(). Then, create a new Rapier world with gravity set to 9.81.
         await RAPIER.init();
 
@@ -208,7 +199,7 @@ export class Game extends Phaser.Scene
 
         // Create a Rapier dynamic rigid body and set its initial position.
         const rigidBodyDesc = RAPIER.RigidBodyDesc.dynamic();
-            
+
         rigidBodyDesc.setTranslation(logo.x, logo.y);
 
         // Store the Phaser game object in the rigid body's user data to sync its position and rotation.
@@ -218,26 +209,26 @@ export class Game extends Phaser.Scene
         const rigidBody = this.rapierWorld.createRigidBody(rigidBodyDesc);
 
         // Create a collider descriptor with a cuboid shape and set its restitution to 0.7.
-        const colliderDesc = RAPIER.ColliderDesc.cuboid(logo.displayWidth / 2, logo.displayHeight / 2);
+        const colliderDesc = RAPIER.ColliderDesc.cuboid(
+            logo.displayWidth / 2,
+            logo.displayHeight / 2
+        );
         colliderDesc.setRestitution(0.7);
 
         // Create the collider in the Rapier world, attaching it to the rigid body.
-        this.rapierWorld.createCollider(colliderDesc, rigidBody);   
+        this.rapierWorld.createCollider(colliderDesc, rigidBody);
     }
 
-    update ()
-    {
+    update() {
         // Check if the Rapier world is initialized.
-        if (this.rapierWorld !== undefined)
-        {
+        if (this.rapierWorld !== undefined) {
             // Step the physics simulation.
             this.rapierWorld.step();
 
             // Update the Phaser game objects based on the physics simulation.
             this.rapierWorld.bodies.forEach((rigidBody) => {
                 const gameObject = rigidBody.userData;
-                if (gameObject !== undefined)
-                {
+                if (gameObject !== undefined) {
                     const position = rigidBody.translation();
                     const angle = rigidBody.rotation();
                     gameObject.x = position.x;
@@ -261,13 +252,13 @@ Vite, used for bundling in this template, supports loading assets via JavaScript
 This template provides support for both embedding assets and also loading them from a static folder. To embed an asset, you can import it at the top of the JavaScript file you are using it in:
 
 ```js
-import logoImg from './assets/logo.png'
+import logoImg from './assets/logo.png';
 ```
 
 To load static files such as audio files, videos, etc place them into the `public/assets` folder. Then you can use this path in the Loader calls within Phaser:
 
 ```js
-preload ()
+preload();
 {
     //  This is an example of an imported bundled image.
     //  Remember to import it at the top of this file
@@ -285,7 +276,7 @@ When you issue the `npm run build` command, all static assets are automatically 
 
 After you run the `npm run build` command, your code will be built into a single bundle and saved to the `dist` folder, along with any other assets your project imported, or stored in the public assets folder.
 
-In order to deploy your game, you will need to upload *all* of the contents of the `dist` folder to a public facing web server.
+In order to deploy your game, you will need to upload _all_ of the contents of the `dist` folder to a public facing web server.
 
 ## Customizing the Template
 

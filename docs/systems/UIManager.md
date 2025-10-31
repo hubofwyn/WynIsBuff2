@@ -1,6 +1,7 @@
 # UI Manager
 
 ## Table of Contents
+
 - [Overview](#overview)
 - [Features](#features)
 - [Implementation Details](#implementation-details)
@@ -53,25 +54,29 @@ The UI Manager listens for specific events to update UI elements:
 this.uiManager = new UIManager(this, this.eventSystem);
 
 // Create text
-const jumpCounter = this.uiManager.createText(
-    'jumpCounter',
-    512, 150,
-    'Jumps Used: 0 / 3',
-    {
-        fontFamily: 'Arial Black',
-        fontSize: 20,
-        color: '#ffffff',
-        stroke: '#000000',
-        strokeThickness: 4,
-        align: 'center'
-    },
-    true // responsive
-).setOrigin(0.5);
+const jumpCounter = this.uiManager
+    .createText(
+        'jumpCounter',
+        512,
+        150,
+        'Jumps Used: 0 / 3',
+        {
+            fontFamily: 'Arial Black',
+            fontSize: 20,
+            color: '#ffffff',
+            stroke: '#000000',
+            strokeThickness: 4,
+            align: 'center',
+        },
+        true // responsive
+    )
+    .setOrigin(0.5);
 
 // Create button
 const menuButton = this.uiManager.createButton(
     'menuButton',
-    50, 50,
+    50,
+    50,
     'button_texture',
     () => this.scene.start('MainMenu'),
     true // responsive
@@ -110,14 +115,14 @@ The UI Manager integrates with the Event System to update UI elements based on g
 this.eventSystem.emit(EventNames.UI_UPDATE, {
     type: 'text',
     key: 'scoreText',
-    value: `Score: ${score}`
+    value: `Score: ${score}`,
 });
 
 // Emit visibility update
 this.eventSystem.emit(EventNames.UI_UPDATE, {
     type: 'visibility',
     key: 'gameOverText',
-    visible: true
+    visible: true,
 });
 ```
 

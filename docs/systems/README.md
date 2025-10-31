@@ -4,50 +4,60 @@ Documentation for WynIsBuff2's core game systems and their implementations.
 
 ## Contents
 
-| Document | Purpose |
-|----------|---------|
-| [EventSystem.md](./EventSystem.md) | Event system architecture and patterns |
-| [EventSystemImplementationSteps.md](./EventSystemImplementationSteps.md) | Event system implementation guide |
-| [ModularPlayerController.md](./ModularPlayerController.md) | Player controller design and structure |
-| [MovementSystem.md](./MovementSystem.md) | Movement mechanics and implementation |
-| [ModularLevelArchitecture.md](./ModularLevelArchitecture.md) | Level system architecture and design |
-| [ModularLevelSystemImplementation.md](./ModularLevelSystemImplementation.md) | Level system implementation details |
-| [UIManager.md](./UIManager.md) | UI management system |
-| [INPUT_MOVEMENT_AUDIT.md](./INPUT_MOVEMENT_AUDIT.md) | Input and movement system technical audit |
-| [ERROR_HANDLING_LOGGING.md](./ERROR_HANDLING_LOGGING.md) | Error handling and logging architecture (LIVING DOCUMENT) |
+| Document                                                                     | Purpose                                                   |
+| ---------------------------------------------------------------------------- | --------------------------------------------------------- |
+| [EventSystem.md](./EventSystem.md)                                           | Event system architecture and patterns                    |
+| [EventSystemImplementationSteps.md](./EventSystemImplementationSteps.md)     | Event system implementation guide                         |
+| [ModularPlayerController.md](./ModularPlayerController.md)                   | Player controller design and structure                    |
+| [MovementSystem.md](./MovementSystem.md)                                     | Movement mechanics and implementation                     |
+| [ModularLevelArchitecture.md](./ModularLevelArchitecture.md)                 | Level system architecture and design                      |
+| [ModularLevelSystemImplementation.md](./ModularLevelSystemImplementation.md) | Level system implementation details                       |
+| [UIManager.md](./UIManager.md)                                               | UI management system                                      |
+| [INPUT_MOVEMENT_AUDIT.md](./INPUT_MOVEMENT_AUDIT.md)                         | Input and movement system technical audit                 |
+| [ERROR_HANDLING_LOGGING.md](./ERROR_HANDLING_LOGGING.md)                     | Error handling and logging architecture (LIVING DOCUMENT) |
 
 ## System Overview
 
 ### Event System
+
 Centralized event bus enabling decoupled communication between game systems using namespaced events (`namespace:action` format).
 
 ### Player Controller
+
 Modular controller managing player input, movement, jumping, collision detection, and visual effects. Organized into specialized sub-controllers.
 
 ### Movement System
+
 Enhanced movement mechanics with responsive controls, gravity, velocity, and physics integration through PhysicsManager.
 
 ### Level System
+
 Modular level loading and management with support for dynamic level transitions, collectibles, and platform configurations.
 
 ### UI System
+
 Centralized UI management for menus, HUD, overlays, and in-game interfaces using Phaser's scene system.
 
 ### Error Handling & Logging
+
 Multi-layered error handling architecture with circuit breakers, fallback mechanisms, and comprehensive logging. Systems prioritize graceful degradation over complete failure.
 
 ## Key Patterns
 
 ### Manager Pattern
+
 Systems extend `BaseManager` for consistent initialization and singleton behavior.
 
 ### Event-Driven Architecture
+
 Systems communicate via EventBus rather than direct references.
 
 ### Separation of Concerns
+
 Each system handles a specific domain with minimal coupling to other systems.
 
 ### Circuit Breaker Pattern
+
 Critical systems (PhysicsManager, PlayerController) employ circuit breakers that disable functionality after repeated errors to prevent cascading failures and infinite error loops.
 
 ## Related Documentation

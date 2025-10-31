@@ -45,16 +45,16 @@ Total score = Σ(weight × score). Max = 30.
 
 ## 4  Evaluation Workflow
 
-1. **Setup**  Identify *baseline* file(s) and *candidate* file(s) from invocation args.
+1. **Setup**  Identify _baseline_ file(s) and _candidate_ file(s) from invocation args.
 2. **Static Analysis**
+    - Run linters/formatters in **check‑only** mode.
+    - Produce diff stats (`git diff --stat` or `colordiff`).
 
-   * Run linters/formatters in **check‑only** mode.
-   * Produce diff stats (`git diff --stat` or `colordiff`).
 3. **Dynamic Tests**  Execute existing unit/integration tests; collect coverage.
 4. **Rubric Scoring**  Assign 0‑5 for each dimension; justify each score in ≤ 3 sentences.
 5. **Priority Findings**  List top N (≤ 5) issues in order of severity.
 6. **Recommendations**  Suggest remediations, linking to baseline docs/sections.
-7. **Verdict**  Pass if total ≥ 24 / 30 *and* no critical architecture violations.
+7. **Verdict**  Pass if total ≥ 24 / 30 _and_ no critical architecture violations.
 
 ---
 
@@ -65,25 +65,25 @@ Total score = Σ(weight × score). Max = 30.
 candidate: <relative/path>
 baseline: <relative/path>
 score:
-  functional: <0-5>
-  structural: <0-5>
-  quality: <0-5>
-  style: <0-5>
-  docs: <0-5>
-  performance: <0-5>
-  total: <0-30>
+    functional: <0-5>
+    structural: <0-5>
+    quality: <0-5>
+    style: <0-5>
+    docs: <0-5>
+    performance: <0-5>
+    total: <0-30>
 verdict: <PASS|FAIL>
 issues:
-  - id: ISS-001
-    dim: functional
-    severity: critical|major|minor
-    summary: "<one-line>"
-    details: |
-      <multi-line explanation>
-  # …
+    - id: ISS-001
+      dim: functional
+      severity: critical|major|minor
+      summary: '<one-line>'
+      details: |
+          <multi-line explanation>
+    # …
 recommendations:
-  - "<actionable fix>"
-  # …
+    - '<actionable fix>'
+    # …
 ```
 
 > Do **not** add or remove top‑level YAML keys.
@@ -92,10 +92,10 @@ recommendations:
 
 ## 6  Constraints & Etiquette
 
-* **No silent fixes** — only **grade**; do not modify code unless asked.
-* **Deterministic output** — identical inputs must yield identical report structure.
-* **Explain assumptions** — if a baseline section is ambiguous, note it before deduction.
-* Be terse; avoid prose dump outside designated fields.
+- **No silent fixes** — only **grade**; do not modify code unless asked.
+- **Deterministic output** — identical inputs must yield identical report structure.
+- **Explain assumptions** — if a baseline section is ambiguous, note it before deduction.
+- Be terse; avoid prose dump outside designated fields.
 
 ---
 

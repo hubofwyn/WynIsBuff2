@@ -5,6 +5,7 @@ This file provides project-specific instructions for AI agents working on WynIsB
 ## Project Overview
 
 WynIsBuff2 is a Phaser 3 platformer game with:
+
 - Feature-based modular architecture
 - Event-driven communication system
 - Rapier physics integration
@@ -14,6 +15,7 @@ WynIsBuff2 is a Phaser 3 platformer game with:
 ## Critical Development Rules
 
 ### Import Patterns (STRICT)
+
 ```javascript
 // ✅ CORRECT - Use barrel exports and constants
 import { PlayerController } from '@features/player';
@@ -28,10 +30,11 @@ this.load.image('logo', 'images/ui/logo.png'); // NO!
 ```
 
 ### Architecture Conventions
+
 1. All managers extend BaseManager for singleton pattern
 2. Events follow namespace:action format (e.g., `player:jump`)
 3. No magic strings - use generated constants from Assets.js
-4. Feature modules have barrel exports at @features/*
+4. Feature modules have barrel exports at @features/\*
 5. Tests use CommonJS format (.cjs files)
 
 ## Build & Test Commands
@@ -41,7 +44,7 @@ this.load.image('logo', 'images/ui/logo.png'); // NO!
 npm run dev              # Start dev server with hot reload
 npm run build            # Production build
 
-# Asset Management  
+# Asset Management
 npm run generate-assets  # Regenerate Assets.js from manifest.json
 npm run validate-assets  # Check asset integrity
 
@@ -56,14 +59,16 @@ npm run typecheck        # TypeScript checking (if configured)
 ## Agent Workflow
 
 ### For Feature Development:
+
 1. Check existing patterns in similar modules
-2. Follow barrel export structure (@features/*)
+2. Follow barrel export structure (@features/\*)
 3. Add events to EventNames.js
 4. Update manifest.json for new assets
 5. Run `npm run generate-assets`
 6. Test with `npm test`
 
 ### For Bug Fixes:
+
 1. Reproduce the issue first
 2. Check event flow and manager states
 3. Verify asset constants are used correctly
@@ -71,6 +76,7 @@ npm run typecheck        # TypeScript checking (if configured)
 5. Run tests to ensure no regression
 
 ### For Performance Optimization:
+
 1. Profile with Chrome DevTools
 2. Check PhysicsManager for Rapier optimizations
 3. Review event listener cleanup
@@ -88,12 +94,14 @@ npm run typecheck        # TypeScript checking (if configured)
 ## Project-Specific Context
 
 ### Tech Stack:
+
 - Phaser 3.90.x (game framework)
 - Rapier 0.19.x (physics via PhysicsManager)
 - Howler 2.2.4 (audio via AudioManager)
 - Vite 7.1.x (build tool)
 
 ### Key Directories:
+
 - `src/constants/` - Generated and manual constants
 - `src/core/` - Infrastructure and managers
 - `src/features/` - Barrel exports for imports
@@ -102,12 +110,15 @@ npm run typecheck        # TypeScript checking (if configured)
 - `assets/` - Game assets with manifest.json
 
 ### Agent Orchestration:
+
 The project includes intelligent agent routing via AgentOrchestrator:
+
 - architecture-guardian: Ensures pattern compliance
 - game-physics-expert: Phaser/Rapier optimization
 - game-design-innovator: Creative gameplay features
 
 ### Testing Approach:
+
 - Unit tests for managers and controllers
 - Integration tests for event flow
 - Manual testing for gameplay feel

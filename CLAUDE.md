@@ -16,6 +16,7 @@ npm run build           # Production build
 **Core Pattern**: Feature-based architecture with event-driven communication and generated constants.
 
 **Five Principles:**
+
 1. **Barrel Exports** - Import from `@features/*`, never from `../modules/*`
 2. **Generated Constants** - Use `ImageAssets.*`, `AudioAssets.*`, `SceneKeys.*`, `EventNames.*`
 3. **Singleton Managers** - Extend `BaseManager` with `init()` and `setInitialized()`
@@ -87,22 +88,23 @@ import { LOG } from '@observability';
 LOG.info('PLAYER_SPAWN', {
     subsystem: 'player',
     message: 'Player spawned successfully',
-    position: { x: 100, y: 200 }
+    position: { x: 100, y: 200 },
 });
 
 LOG.error('PHYSICS_UPDATE_ERROR', {
     subsystem: 'physics',
     error,
     message: 'Failed to update physics world',
-    hint: 'Check if physics world is initialized'
+    hint: 'Check if physics world is initialized',
 });
 
 // ❌ WRONG - Console logging
-console.log('Player spawned');  // Never do this
-console.error('Error:', error);  // Never do this
+console.log('Player spawned'); // Never do this
+console.error('Error:', error); // Never do this
 ```
 
 **Log Levels:**
+
 - `LOG.dev()` - Development/verbose (1% sampled)
 - `LOG.info()` - Important state changes
 - `LOG.warn()` - Unexpected but handled situations
@@ -110,15 +112,16 @@ console.error('Error:', error);  // Never do this
 - `LOG.fatal()` - Critical failures, triggers crash dumps
 
 **Querying Logs (Browser Console):**
+
 ```javascript
 // Get system health
-window.debugAPI.getSummary()
+window.debugAPI.getSummary();
 
 // Recent errors
-window.debugAPI.getRecentLogs(60000)
+window.debugAPI.getRecentLogs(60000);
 
 // Analyze subsystem
-window.debugAPI.analyzeSubsystem('physics')
+window.debugAPI.analyzeSubsystem('physics');
 ```
 
 **Documentation:** See [docs/guides/DEBUGGING.md](docs/guides/DEBUGGING.md) for complete guide.
@@ -150,13 +153,13 @@ window.debugAPI.analyzeSubsystem('physics')
 
 1. Place in `assets/` subdirectory
 2. Add to `/assets/manifest.json`:
-   ```json
-   {
-     "type": "image",
-     "key": "my-asset",
-     "path": "images/my-asset.png"
-   }
-   ```
+    ```json
+    {
+        "type": "image",
+        "key": "my-asset",
+        "path": "images/my-asset.png"
+    }
+    ```
 3. Run `npm run generate-assets`
 4. Use: `ImageAssets.MY_ASSET`
 
@@ -169,12 +172,12 @@ window.debugAPI.analyzeSubsystem('physics')
 
 ## Technology Stack
 
-| Technology | Version | Purpose |
-|------------|---------|---------|
-| Phaser 3 | 3.90.x | Game framework |
-| Rapier (compat) | 0.19.x | 2D physics (via PhysicsManager) |
-| Howler | 2.2.4 | Audio (via AudioManager) |
-| Vite | 7.1.x | Build tool |
+| Technology      | Version | Purpose                         |
+| --------------- | ------- | ------------------------------- |
+| Phaser 3        | 3.90.x  | Game framework                  |
+| Rapier (compat) | 0.19.x  | 2D physics (via PhysicsManager) |
+| Howler          | 2.2.4   | Audio (via AudioManager)        |
+| Vite            | 7.1.x   | Build tool                      |
 
 ## Testing
 
@@ -185,6 +188,7 @@ npm test  # Runs all tests/ files
 ```
 
 **Focus Areas:**
+
 - Singleton behavior
 - Event dispatch
 - Asset loading
@@ -195,11 +199,13 @@ npm test  # Runs all tests/ files
 WynIsBuff2 uses specialized agents for different tasks. See [AGENTS.md](AGENTS.md) for details.
 
 **Available Agents:**
+
 - `architecture-guardian` - Enforces patterns and conventions
 - `game-physics-expert` - Phaser/Rapier physics specialist
 - `game-design-innovator` - Game mechanics and design
 
 **Agent Routing:** Automatic based on task keywords. For explicit routing:
+
 ```
 "Use game-physics-expert to optimize collision detection"
 ```
@@ -213,8 +219,8 @@ import { GoldenSeedTester, DeterministicRNG } from '@features/core';
 
 // Record deterministic run
 if (this.game.config.goldenSeedTest) {
-  this.tester = GoldenSeedTester.getInstance();
-  this.tester.startRecording({ seed: 1138, maxFrames: 600 });
+    this.tester = GoldenSeedTester.getInstance();
+    this.tester.startRecording({ seed: 1138, maxFrames: 600 });
 }
 
 // Use deterministic RNG

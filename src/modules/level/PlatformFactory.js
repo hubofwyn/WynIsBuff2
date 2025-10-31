@@ -1,4 +1,5 @@
 import RAPIER from '@dimforge/rapier2d-compat';
+
 import { EventNames } from '../../constants/EventNames';
 import { PhysicsConfig } from '../../constants/PhysicsConfig.js';
 import { pixelsToMeters } from '../../constants/PhysicsConstants.js';
@@ -18,17 +19,17 @@ export class PlatformFactory {
         this.scene = scene;
         this.world = world;
         this.eventSystem = eventSystem;
-        
+
         // Store created platforms for later reference
         this.platforms = [];
-        
+
         // Mapping to track physics bodies to sprites
         this.bodyToSprite = new Map();
-        
+
         // Debug mode
         this.debugMode = false;
     }
-    
+
     /**
      * Set debug mode
      * @param {boolean} enabled - Whether debug mode is enabled
@@ -36,7 +37,7 @@ export class PlatformFactory {
     setDebugMode(enabled) {
         this.debugMode = enabled;
     }
-    
+
     /**
      * Log a message if debug mode is enabled
      * @param {string} message - The message to log
@@ -45,11 +46,11 @@ export class PlatformFactory {
         if (this.debugMode) {
             LOG.dev('PLATFORMFACTORY_DEBUG', {
                 subsystem: 'level',
-                message
+                message,
             });
         }
     }
-    
+
     /**
      * Create platforms at specified positions
      * @param {Array} platformConfigs - Array of platform configurations
@@ -58,75 +59,75 @@ export class PlatformFactory {
     createPlatforms(platformConfigs = []) {
         try {
             this.log(`Creating ${platformConfigs.length} platforms...`);
-            
+
             // Use default platforms if none provided
             if (platformConfigs.length === 0) {
                 platformConfigs = [
-                    { x: 200, y: 500, width: 200, height: 20, color: 0x00AA00 },  // Green platform
-                    { x: 600, y: 400, width: 200, height: 20, color: 0xAA00AA },  // Purple platform
-                    { x: 400, y: 300, width: 200, height: 20, color: 0xAAAA00 }   // Yellow platform
+                    { x: 200, y: 500, width: 200, height: 20, color: 0x00aa00 }, // Green platform
+                    { x: 600, y: 400, width: 200, height: 20, color: 0xaa00aa }, // Purple platform
+                    { x: 400, y: 300, width: 200, height: 20, color: 0xaaaa00 }, // Yellow platform
                 ];
             }
-            
+
             // Remove existing platforms
             this.removePlatforms();
-            
+
             // Create each platform
             platformConfigs.forEach((platform, index) => {
                 try {
-                    this.log(`Creating platform ${index+1}`);
-                    
+                    this.log(`Creating platform ${index + 1}`);
+
                     // Create a visual representation (in pixels)
                     const platformSprite = this.scene.add.rectangle(
-                        platform.x, platform.y,
-                        platform.width, platform.height,
+                        platform.x,
+                        platform.y,
+                        platform.width,
+                        platform.height,
                         platform.color
                     );
-                    
+
                     // Create a fixed rigid body with proper scaling (pixels to meters)
-                    const platformBodyDesc = RAPIER.RigidBodyDesc.fixed()
-                        .setTranslation(
-                            pixelsToMeters(platform.x), 
-                            pixelsToMeters(platform.y)
-                        );
-                    
+                    const platformBodyDesc = RAPIER.RigidBodyDesc.fixed().setTranslation(
+                        pixelsToMeters(platform.x),
+                        pixelsToMeters(platform.y)
+                    );
+
                     const platformBody = this.world.createRigidBody(platformBodyDesc);
-                    
+
                     // Store the association between body and sprite
                     this.bodyToSprite.set(platformBody.handle, platformSprite);
-                    
+
                     // Create a collider with proper scaling and physics properties
-                    const platformColliderDesc = RAPIER.ColliderDesc
-                        .cuboid(
-                            pixelsToMeters(platform.width / 2), 
-                            pixelsToMeters(platform.height / 2)
-                        )
+                    const platformColliderDesc = RAPIER.ColliderDesc.cuboid(
+                        pixelsToMeters(platform.width / 2),
+                        pixelsToMeters(platform.height / 2)
+                    )
                         .setFriction(PhysicsConfig.ground.friction)
                         .setRestitution(PhysicsConfig.ground.restitution)
                         .setDensity(PhysicsConfig.ground.density);
-                        
+
                     const platformCollider = this.world.createCollider(
-                        platformColliderDesc, 
+                        platformColliderDesc,
                         platformBody
                     );
-                    
+
                     // Store platform info
                     this.platforms.push({
                         body: platformBody,
                         sprite: platformSprite,
                         collider: platformCollider,
-                        config: platform
+                        config: platform,
                     });
-                    
-                    this.log(`Platform ${index+1} created successfully`);
-                    
+
+                    this.log(`Platform ${index + 1} created successfully`);
+
                     // Emit event for each platform
                     if (this.eventSystem) {
                         this.eventSystem.emit(EventNames.custom('level', 'platformCreated'), {
                             index,
                             position: { x: platform.x, y: platform.y },
                             dimensions: { width: platform.width, height: platform.height },
-                            color: platform.color
+                            color: platform.color,
                         });
                     }
                 } catch (error) {
@@ -136,11 +137,11 @@ export class PlatformFactory {
                         message: 'Error creating platform',
                         platformIndex: index + 1,
                         platformConfig: config,
-                        hint: 'Check platform configuration and physics world initialization'
+                        hint: 'Check platform configuration and physics world initialization',
                     });
                 }
             });
-            
+
             return this.platforms;
         } catch (error) {
             LOG.error('PLATFORMFACTORY_CREATE_BATCH_ERROR', {
@@ -148,12 +149,12 @@ export class PlatformFactory {
                 error,
                 message: 'Error creating platforms batch',
                 platformCount: platformConfigs?.length || 0,
-                hint: 'Check level configuration and physics world state'
+                hint: 'Check level configuration and physics world state',
             });
             return [];
         }
     }
-    
+
     /**
      * Remove all platforms
      */
@@ -161,31 +162,31 @@ export class PlatformFactory {
         if (this.platforms.length === 0) {
             return;
         }
-        
+
         this.log(`Removing ${this.platforms.length} platforms`);
-        
+
         // Remove each platform
-        this.platforms.forEach(platform => {
+        this.platforms.forEach((platform) => {
             // Remove physics body
             if (platform.body) {
                 this.world.removeRigidBody(platform.body);
             }
-            
+
             // Remove sprite
             if (platform.sprite) {
                 platform.sprite.destroy();
             }
-            
+
             // Clear body-sprite mapping
             if (platform.body) {
                 this.bodyToSprite.delete(platform.body.handle);
             }
         });
-        
+
         // Clear platforms array
         this.platforms = [];
     }
-    
+
     /**
      * Get all platforms
      * @returns {Array} Array of platform objects
@@ -193,7 +194,7 @@ export class PlatformFactory {
     getPlatforms() {
         return this.platforms;
     }
-    
+
     /**
      * Get the body-to-sprite mapping
      * @returns {Map} Map of body handles to sprites

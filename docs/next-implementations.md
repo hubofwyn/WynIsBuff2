@@ -5,8 +5,8 @@
 | **Engine / Framework**          | ✓ Phaser 3.88.0 + Rapier 0.14.0, built with Vite 5.3.1                                                                                                                                                                              |
 | **Plug‑ins / middleware**       | Build‑time: `vite-plugin-pwa`, `vite-plugin-compression`, `vite-plugin-inspect` • Runtime: phaser3‑rex‑plugins (UI + virtual joystick), phaser‑pathfinding (A\*), **Howler.js** (central AudioManager), **XState** (state machines) |
 | **Primary Platforms**           | Desktop Chrome / Firefox / Edge (latest)                                                                                                                                                                                            |
-| **Mobile browser support**      | ✅ Yes – tested on iOS 16+ & Android 12+, with virtual buttons & touch menus                                                                                                                                                         |
-| **PWA goals**                   | ✅ Full installable offline experience (see PWA section)                                                                                                                                                                             |
+| **Mobile browser support**      | ✅ Yes – tested on iOS 16+ & Android 12+, with virtual buttons & touch menus                                                                                                                                                        |
+| **PWA goals**                   | ✅ Full installable offline experience (see PWA section)                                                                                                                                                                            |
 | **Typical player bandwidth**    | ≥ 20 Mbps (no hard cap)                                                                                                                                                                                                             |
 | **Performance / bundle budget** | Core JS/CSS ≤ 3 MB gzipped (≈ 8–9 MB raw) • First render < 2 s desktop / < 4 s mid‑phone • Runtime 60 FPS desktop / 30 FPS mobile • Cached assets < 35 MB                                                                           |
 
@@ -25,7 +25,7 @@
 | **Pickup SFX**        | `pickup.ogg`               | 0.25 s          | No   | Sparkle ding              |
 | **UI Click / Hover**  | `click.ogg`, `hover.ogg`   | 0.12 s / 0.14 s | No   | Dry tick / soft plink     |
 
-*All derived audio (MP3/OGG) are stored under `assets/sounds/`. Original WAV sources (48 kHz, 24-bit) may be kept in `assets/audio_src/` (tracked via Git LFS).*
+_All derived audio (MP3/OGG) are stored under `assets/sounds/`. Original WAV sources (48 kHz, 24-bit) may be kept in `assets/audio_src/` (tracked via Git LFS)._
 
 ### 2.2 Technical Preferences
 
@@ -118,5 +118,3 @@
 | Mobile Safari autoplay | **Yes – require first user interaction before starting audio**                    |
 | Licensing constraints  | **No – all music/SFX are original or CC‑0**                                       |
 | Localization plans     | **Ship English at launch; architecture externalizes strings for future ES/FR/JP** |
-
-

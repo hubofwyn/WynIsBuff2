@@ -1,6 +1,6 @@
 /**
  * Barrel export for Idle/Clone system features
- * 
+ *
  * Provides access to the clone forging and management system
  */
 

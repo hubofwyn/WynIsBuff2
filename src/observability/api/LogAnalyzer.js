@@ -27,7 +27,7 @@ export class LogAnalyzer {
                 byLevel: {},
                 bySubsystem: {},
                 byCode: {},
-                timeRange: null
+                timeRange: null,
             };
         }
 
@@ -37,7 +37,7 @@ export class LogAnalyzer {
             info: 0,
             warn: 0,
             error: 0,
-            fatal: 0
+            fatal: 0,
         };
 
         // Count by subsystem
@@ -50,7 +50,7 @@ export class LogAnalyzer {
         let minTime = Infinity;
         let maxTime = -Infinity;
 
-        logs.forEach(log => {
+        logs.forEach((log) => {
             // Level
             if (byLevel[log.level] !== undefined) {
                 byLevel[log.level]++;
@@ -90,11 +90,14 @@ export class LogAnalyzer {
             byCode,
             topSubsystems,
             topCodes,
-            timeRange: minTime !== Infinity ? {
-                start: new Date(minTime).toISOString(),
-                end: new Date(maxTime).toISOString(),
-                duration: maxTime - minTime
-            } : null
+            timeRange:
+                minTime !== Infinity
+                    ? {
+                          start: new Date(minTime).toISOString(),
+                          end: new Date(maxTime).toISOString(),
+                          duration: maxTime - minTime,
+                      }
+                    : null,
         };
     }
 
@@ -109,7 +112,7 @@ export class LogAnalyzer {
         }
 
         const relationships = [];
-        const errors = logs.filter(log => log.level === 'error' || log.level === 'fatal');
+        const errors = logs.filter((log) => log.level === 'error' || log.level === 'fatal');
 
         // Look for errors that happen in sequence within same subsystem
         for (let i = 0; i < errors.length - 1; i++) {
@@ -126,14 +129,14 @@ export class LogAnalyzer {
                     cause: {
                         code: current.code,
                         subsystem: current.subsystem,
-                        timestamp: current.timestamp
+                        timestamp: current.timestamp,
                     },
                     effect: {
                         code: next.code,
                         subsystem: next.subsystem,
-                        timestamp: next.timestamp
+                        timestamp: next.timestamp,
                     },
-                    timeDiff
+                    timeDiff,
                 });
             }
         }
@@ -153,7 +156,7 @@ export class LogAnalyzer {
         const cutoff = now - timeWindow;
 
         // Filter to subsystem and time window
-        const subsystemLogs = logs.filter(log => {
+        const subsystemLogs = logs.filter((log) => {
             if (log.subsystem !== subsystem) return false;
             const logTime = new Date(log.timestamp).getTime();
             return logTime >= cutoff;
@@ -168,18 +171,20 @@ export class LogAnalyzer {
                 warnCount: 0,
                 totalLogs: 0,
                 errorRate: 0,
-                trend: 'stable'
+                trend: 'stable',
             };
         }
 
-        const errorCount = subsystemLogs.filter(log => log.level === 'error' || log.level === 'fatal').length;
-        const warnCount = subsystemLogs.filter(log => log.level === 'warn').length;
+        const errorCount = subsystemLogs.filter(
+            (log) => log.level === 'error' || log.level === 'fatal'
+        ).length;
+        const warnCount = subsystemLogs.filter((log) => log.level === 'warn').length;
         const totalLogs = subsystemLogs.length;
 
         // Calculate health score (0-100)
         const errorRate = errorCount / totalLogs;
         const warnRate = warnCount / totalLogs;
-        const health = Math.max(0, 100 - (errorRate * 100) - (warnRate * 25));
+        const health = Math.max(0, 100 - errorRate * 100 - warnRate * 25);
 
         // Determine status
         let status;
@@ -193,8 +198,12 @@ export class LogAnalyzer {
         const firstHalf = subsystemLogs.slice(0, midpoint);
         const secondHalf = subsystemLogs.slice(midpoint);
 
-        const firstHalfErrors = firstHalf.filter(log => log.level === 'error' || log.level === 'fatal').length;
-        const secondHalfErrors = secondHalf.filter(log => log.level === 'error' || log.level === 'fatal').length;
+        const firstHalfErrors = firstHalf.filter(
+            (log) => log.level === 'error' || log.level === 'fatal'
+        ).length;
+        const secondHalfErrors = secondHalf.filter(
+            (log) => log.level === 'error' || log.level === 'fatal'
+        ).length;
 
         let trend;
         if (secondHalfErrors < firstHalfErrors) trend = 'improving';
@@ -210,7 +219,7 @@ export class LogAnalyzer {
             totalLogs,
             errorRate: (errorRate * 100).toFixed(2) + '%',
             trend,
-            timeWindow
+            timeWindow,
         };
     }
 
@@ -224,27 +233,29 @@ export class LogAnalyzer {
         if (!logs || logs.length === 0) {
             return {
                 buckets: [],
-                trend: 'unknown'
+                trend: 'unknown',
             };
         }
 
         // Create time buckets
-        const minTime = Math.min(...logs.map(log => new Date(log.timestamp).getTime()));
-        const maxTime = Math.max(...logs.map(log => new Date(log.timestamp).getTime()));
+        const minTime = Math.min(...logs.map((log) => new Date(log.timestamp).getTime()));
+        const maxTime = Math.max(...logs.map((log) => new Date(log.timestamp).getTime()));
         const numBuckets = Math.ceil((maxTime - minTime) / bucketSize);
 
         const buckets = [];
         for (let i = 0; i < numBuckets; i++) {
-            const bucketStart = minTime + (i * bucketSize);
+            const bucketStart = minTime + i * bucketSize;
             const bucketEnd = bucketStart + bucketSize;
 
-            const bucketLogs = logs.filter(log => {
+            const bucketLogs = logs.filter((log) => {
                 const logTime = new Date(log.timestamp).getTime();
                 return logTime >= bucketStart && logTime < bucketEnd;
             });
 
-            const errors = bucketLogs.filter(log => log.level === 'error' || log.level === 'fatal').length;
-            const warns = bucketLogs.filter(log => log.level === 'warn').length;
+            const errors = bucketLogs.filter(
+                (log) => log.level === 'error' || log.level === 'fatal'
+            ).length;
+            const warns = bucketLogs.filter((log) => log.level === 'warn').length;
 
             buckets.push({
                 start: new Date(bucketStart).toISOString(),
@@ -252,7 +263,10 @@ export class LogAnalyzer {
                 total: bucketLogs.length,
                 errors,
                 warns,
-                errorRate: bucketLogs.length > 0 ? (errors / bucketLogs.length * 100).toFixed(2) + '%' : '0%'
+                errorRate:
+                    bucketLogs.length > 0
+                        ? ((errors / bucketLogs.length) * 100).toFixed(2) + '%'
+                        : '0%',
             });
         }
 
@@ -272,7 +286,7 @@ export class LogAnalyzer {
         return {
             buckets,
             bucketSize,
-            trend
+            trend,
         };
     }
 
@@ -290,7 +304,7 @@ export class LogAnalyzer {
                 priority: 'high',
                 category: 'errors',
                 message: `High error count detected (${analysis.stats.errorCount}). Investigate recent errors.`,
-                action: 'Review error logs and patterns'
+                action: 'Review error logs and patterns',
             });
         }
 
@@ -302,7 +316,7 @@ export class LogAnalyzer {
                         priority: health.status === 'critical' ? 'high' : 'medium',
                         category: 'subsystem',
                         message: `Subsystem '${subsystem}' is ${health.status} (health: ${health.health})`,
-                        action: `Investigate ${subsystem} errors and warnings`
+                        action: `Investigate ${subsystem} errors and warnings`,
                     });
                 }
             });
@@ -314,7 +328,7 @@ export class LogAnalyzer {
                 priority: 'medium',
                 category: 'trend',
                 message: 'Error rate is increasing over time',
-                action: 'Monitor system closely and identify root cause'
+                action: 'Monitor system closely and identify root cause',
             });
         }
 
@@ -325,7 +339,7 @@ export class LogAnalyzer {
                     priority: 'high',
                     category: 'pattern',
                     message: `${analysis.patterns.repeating.length} repeating error patterns detected`,
-                    action: 'Fix repeating errors to prevent error loops'
+                    action: 'Fix repeating errors to prevent error loops',
                 });
             }
 
@@ -334,7 +348,7 @@ export class LogAnalyzer {
                     priority: 'high',
                     category: 'pattern',
                     message: `${analysis.patterns.cascades.length} error cascades detected`,
-                    action: 'Fix root cause of cascading errors'
+                    action: 'Fix root cause of cascading errors',
                 });
             }
         }
@@ -352,29 +366,29 @@ export class LogAnalyzer {
      * @returns {Object} Frequency distribution
      */
     getErrorFrequency(logs) {
-        const errors = logs.filter(log => log.level === 'error' || log.level === 'fatal');
+        const errors = logs.filter((log) => log.level === 'error' || log.level === 'fatal');
 
         if (errors.length === 0) {
             return {
                 total: 0,
                 perMinute: 0,
                 perSecond: 0,
-                distribution: []
+                distribution: [],
             };
         }
 
         // Calculate time span
-        const times = errors.map(log => new Date(log.timestamp).getTime());
+        const times = errors.map((log) => new Date(log.timestamp).getTime());
         const minTime = Math.min(...times);
         const maxTime = Math.max(...times);
         const duration = maxTime - minTime;
 
-        const perSecond = duration > 0 ? (errors.length / (duration / 1000)) : 0;
+        const perSecond = duration > 0 ? errors.length / (duration / 1000) : 0;
         const perMinute = perSecond * 60;
 
         // Group by code
         const distribution = {};
-        errors.forEach(log => {
+        errors.forEach((log) => {
             distribution[log.code] = (distribution[log.code] || 0) + 1;
         });
 
@@ -383,7 +397,7 @@ export class LogAnalyzer {
             .map(([code, count]) => ({
                 code,
                 count,
-                percentage: ((count / errors.length) * 100).toFixed(2) + '%'
+                percentage: ((count / errors.length) * 100).toFixed(2) + '%',
             }));
 
         return {
@@ -391,7 +405,7 @@ export class LogAnalyzer {
             perMinute: perMinute.toFixed(2),
             perSecond: perSecond.toFixed(3),
             distribution: sortedDistribution,
-            timeSpan: duration
+            timeSpan: duration,
         };
     }
 }

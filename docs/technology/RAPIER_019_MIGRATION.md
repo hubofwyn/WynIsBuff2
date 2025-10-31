@@ -11,9 +11,9 @@ This document is the authoritative guide for Rapier 0.19+ API changes and their 
 - [Overview](#overview)
 - [Version Information](#version-information)
 - [Breaking API Changes](#breaking-api-changes)
-  - [1. EventQueue Requirement](#1-eventqueue-requirement)
-  - [2. World Body Iteration](#2-world-body-iteration)
-  - [3. Ground Detection](#3-ground-detection)
+    - [1. EventQueue Requirement](#1-eventqueue-requirement)
+    - [2. World Body Iteration](#2-world-body-iteration)
+    - [3. Ground Detection](#3-ground-detection)
 - [Migration Patterns](#migration-patterns)
 - [Implementation in WynIsBuff2](#implementation-in-wynisbuff2)
 - [Common Pitfalls](#common-pitfalls)
@@ -37,14 +37,15 @@ Rapier 0.19+ introduced significant breaking changes to the JavaScript API. This
 
 ## Version Information
 
-| Component | Version | Status |
-|-----------|---------|--------|
-| **Rapier Package** | @dimforge/rapier2d-compat | Current |
-| **Target Version** | 0.19+ | Migrated ✅ |
-| **Previous Version** | 0.14.0 | Deprecated ❌ |
-| **Phaser** | 3.90.0 | Compatible ✅ |
+| Component            | Version                   | Status        |
+| -------------------- | ------------------------- | ------------- |
+| **Rapier Package**   | @dimforge/rapier2d-compat | Current       |
+| **Target Version**   | 0.19+                     | Migrated ✅   |
+| **Previous Version** | 0.14.0                    | Deprecated ❌ |
+| **Phaser**           | 3.90.0                    | Compatible ✅ |
 
 **Official Resources**:
+
 - [Rapier Documentation](https://rapier.rs/docs/)
 - [Rapier JavaScript API](https://rapier.rs/javascript2d/index.html)
 - [Migration Announcements](https://github.com/dimforge/rapier/releases)
@@ -58,6 +59,7 @@ Rapier 0.19+ introduced significant breaking changes to the JavaScript API. This
 **The Change**: `world.step()` now requires an EventQueue parameter for collision event processing.
 
 #### Before (0.14.0)
+
 ```javascript
 // Configure integration parameters
 const integrationParameters = {
@@ -71,6 +73,7 @@ this.world.step(integrationParameters);
 ```
 
 #### After (0.19+)
+
 ```javascript
 // Integration parameters now set on world object
 this.world.integrationParameters.dt = fixedTimeStep;
@@ -84,11 +87,13 @@ this.world.step(this.eventQueue);
 ```
 
 #### Why This Matters
+
 - **Error**: `Error: expected instance of z` - cryptic error from minified Rapier code
 - **Cause**: Passing wrong parameter type to `step()`
 - **Impact**: Physics simulation crashes immediately
 
 #### Implementation Location
+
 - **File**: `src/core/PhysicsManager.js`
 - **Init**: Lines 55-57 (EventQueue creation)
 - **Configuration**: Lines 226-229 (integration parameters)
@@ -102,6 +107,7 @@ this.world.step(this.eventQueue);
 **The Change**: `world.bodies` collection removed; use `world.forEachRigidBody()` iterator instead.
 
 #### Before (0.14.0)
+
 ```javascript
 // Iterate over bodies collection
 this.world.bodies.forEach((rigidBody) => {
@@ -115,9 +121,10 @@ this.world.bodies.forEach((rigidBody) => {
 ```
 
 #### After (0.19+)
+
 ```javascript
 // Use iterator method
-this.world.forEachRigidBody(body => {
+this.world.forEachRigidBody((body) => {
     const sprite = this.bodyToSprite.get(body.handle);
     if (sprite) {
         const position = body.translation();
@@ -128,11 +135,13 @@ this.world.forEachRigidBody(body => {
 ```
 
 #### Why This Matters
+
 - **Error**: `TypeError: this.world.bodies.forEach is not a function`
 - **Cause**: `world.bodies` doesn't exist in 0.19+
 - **Impact**: Sprite synchronization fails; physics bodies move but sprites don't
 
 #### Implementation Location
+
 - **File**: `src/core/PhysicsManager.js`
 - **Method**: `updateGameObjects()` at line 329
 
@@ -143,6 +152,7 @@ this.world.forEachRigidBody(body => {
 **The Change**: `characterController.isGrounded()` and `numGroundedColliders` removed entirely.
 
 #### Before (0.14.0)
+
 ```javascript
 // Simple boolean method
 updateGroundState() {
@@ -156,6 +166,7 @@ updateGroundState() {
 ```
 
 #### After (0.19+)
+
 ```javascript
 /**
  * Physics-based ground detection algorithm
@@ -185,23 +196,34 @@ updateGroundState(desiredMovement, correctedMovement) {
 ```
 
 #### Why This Matters
+
 - **Error**: `TypeError: this.characterController.isGrounded is not a function`
 - **Then**: `TypeError: Cannot read properties of undefined (reading 'numGroundedColliders')`
 - **Cause**: Both APIs completely removed from Rapier 0.19+
 - **Impact**: Jumping completely broken; player can't detect landing
 
 #### The Discovery Process
+
 1. **First attempt**: Changed `isGrounded()` to `numGroundedColliders` property
 2. **Result**: `undefined` (not even 0!)
 3. **Introspection**: Checked `Object.keys(characterController)`:
-   ```javascript
-   ['params', 'bodies', 'colliders', 'queries', 'raw',
-    'rawCharacterCollision', '_applyImpulsesToDynamicBodies', '_characterMass']
-   ```
+    ```javascript
+    [
+        'params',
+        'bodies',
+        'colliders',
+        'queries',
+        'raw',
+        'rawCharacterCollision',
+        '_applyImpulsesToDynamicBodies',
+        '_characterMass',
+    ];
+    ```
 4. **Realization**: Ground detection API doesn't exist!
 5. **Solution**: Implemented physics-based detection algorithm
 
 #### Implementation Location
+
 - **File**: `src/modules/player/PlayerController.js`
 - **Method**: `updateGroundState()` at lines 347-381
 - **Integration**: Called at line 237 AFTER `computeColliderMovement()`
@@ -295,10 +317,7 @@ updateGameObjects() {
 const desiredMovement = new RAPIER.Vector2(dx, dy);
 
 // Compute collision-corrected movement
-this.characterController.computeColliderMovement(
-    this.collider,
-    desiredMovement
-);
+this.characterController.computeColliderMovement(this.collider, desiredMovement);
 const correctedMovement = this.characterController.computedMovement();
 
 // Update ground state by comparing movements
@@ -306,10 +325,13 @@ this.updateGroundState(desiredMovement, correctedMovement);
 
 // Apply corrected movement
 const position = this.body.translation();
-this.body.setTranslation({
-    x: position.x + correctedMovement.x,
-    y: position.y + correctedMovement.y
-}, true);
+this.body.setTranslation(
+    {
+        x: position.x + correctedMovement.x,
+        y: position.y + correctedMovement.y,
+    },
+    true
+);
 ```
 
 ---
@@ -350,7 +372,7 @@ class PhysicsManager extends BaseManager {
     }
 
     updateGameObjects() {
-        this.world.forEachRigidBody(body => {
+        this.world.forEachRigidBody((body) => {
             const sprite = this.bodyToSprite.get(body.handle);
             if (sprite) {
                 const pos = body.translation();
@@ -376,10 +398,7 @@ class PlayerController {
         const desiredMovement = this.calculateMovementFromInput(inputState, dt);
 
         // Compute collision-corrected movement
-        this.characterController.computeColliderMovement(
-            this.collider,
-            desiredMovement
-        );
+        this.characterController.computeColliderMovement(this.collider, desiredMovement);
         const correctedMovement = this.characterController.computedMovement();
 
         // Update ground state (physics-based detection)
@@ -387,17 +406,19 @@ class PlayerController {
 
         // Apply movement
         const position = this.body.translation();
-        this.body.setTranslation({
-            x: position.x + correctedMovement.x,
-            y: position.y + correctedMovement.y
-        }, true);
+        this.body.setTranslation(
+            {
+                x: position.x + correctedMovement.x,
+                y: position.y + correctedMovement.y,
+            },
+            true
+        );
     }
 
     updateGroundState(desired, corrected) {
         const THRESHOLD = 0.01;
         const isFalling = this.velocity.y > 0;
-        const blocked = isFalling &&
-            Math.abs(corrected.y) < Math.abs(desired.y) - THRESHOLD;
+        const blocked = isFalling && Math.abs(corrected.y) < Math.abs(desired.y) - THRESHOLD;
         const atRest = Math.abs(this.velocity.y) < THRESHOLD;
 
         this.isGrounded = blocked || atRest;
@@ -419,7 +440,7 @@ class PlayerController {
 
 ```javascript
 // ❌ WRONG (0.14 pattern)
-this.world.step({ dt: 1/60 });
+this.world.step({ dt: 1 / 60 });
 
 // ✅ CORRECT (0.19+ pattern)
 this.eventQueue = new RAPIER.EventQueue(true);
@@ -436,10 +457,14 @@ this.world.step(this.eventQueue);
 
 ```javascript
 // ❌ WRONG (0.14 pattern)
-this.world.bodies.forEach(body => { /* ... */ });
+this.world.bodies.forEach((body) => {
+    /* ... */
+});
 
 // ✅ CORRECT (0.19+ pattern)
-this.world.forEachRigidBody(body => { /* ... */ });
+this.world.forEachRigidBody((body) => {
+    /* ... */
+});
 ```
 
 ### Pitfall 3: Assuming Ground Detection Exists
@@ -505,7 +530,7 @@ console.log('[PhysicsManager] Event queue created:', !!this.eventQueue);
 
 // Verify body iteration
 let bodyCount = 0;
-this.world.forEachRigidBody(body => bodyCount++);
+this.world.forEachRigidBody((body) => bodyCount++);
 console.log('[PhysicsManager] Bodies synced:', bodyCount);
 
 // Verify ground detection
@@ -513,7 +538,7 @@ console.log('[PlayerController] Ground Detection:', {
     isGrounded: this.isGrounded,
     desiredY: desiredMovement.y,
     correctedY: correctedMovement.y,
-    velocityY: this.velocity.y
+    velocityY: this.velocity.y,
 });
 ```
 
@@ -556,6 +581,7 @@ Expected performance after migration:
 **Next Review**: When Rapier releases next major version
 
 **Maintainers**: This is a living document. Update when:
+
 - New Rapier breaking changes discovered
 - Additional migration patterns identified
 - Performance optimizations found
@@ -564,6 +590,7 @@ Expected performance after migration:
 ---
 
 **Related Documentation**:
+
 - Previous: [RapierPhysics.md](./RapierPhysics.md) - General Rapier integration
 - Next: [ERROR_HANDLING_LOGGING.md](../systems/ERROR_HANDLING_LOGGING.md) - Error handling
 - See Also: [ARCHITECTURE.md](../ARCHITECTURE.md) - System architecture

@@ -1,10 +1,11 @@
 import { BaseManager, EventBus, EconomyManager } from '@features/core';
+
 import { EventNames } from '../../constants/EventNames.js';
 import { LOG } from '../../observability/core/LogSystem.js';
 
 /**
  * BossRewardSystem - Manages rewards for defeating bosses
- * 
+ *
  * Rewards include:
  * - Movement tech unlocks
  * - Bulk DNA traits
@@ -12,308 +13,317 @@ import { LOG } from '../../observability/core/LogSystem.js';
  * - Resource bonuses
  */
 export class BossRewardSystem extends BaseManager {
-  constructor() {
-    super();
-    if (this.isInitialized()) return;
-    this.init();
-  }
+    constructor() {
+        super();
+        if (this.isInitialized()) return;
+        this.init();
+    }
 
-  init() {
-    // Debug flag
-    this.debug = process.env.NODE_ENV !== 'production';
-    
-    // Boss reward configurations
-    this.bossRewards = new Map([
-      ['the-clumper', {
-        id: 'the-clumper',
-        name: 'The Clumper',
-        tier: 1,
-        rewards: {
-          firstClear: {
-            movementTech: 'tripleJump',
-            essence: 10,      // Maps to buffDNA concept
-            timeCrystals: 5,  // Maps to gritShards concept  
-            energy: 1000,     // Maps to coins concept
-            cloneMutation: 'protein_synthesis'
-          },
-          repeat: {
-            essence: 3,
-            timeCrystals: 1,
-            energy: 500
-          }
-        }
-      }],
-      ['the-pulsar', {
-        id: 'the-pulsar',
-        name: 'The Pulsar',
-        tier: 2,
-        rewards: {
-          firstClear: {
-            movementTech: 'wallDash',
-            essence: 20,
-            timeCrystals: 10,
-            energy: 2500,
-            cloneMutation: 'rhythm_sync'
-          },
-          repeat: {
-            essence: 5,
-            timeCrystals: 2,
-            energy: 1000
-          }
-        }
-      }],
-      ['the-bulk', {
-        id: 'the-bulk',
-        name: 'The Bulk',
-        tier: 3,
-        rewards: {
-          firstClear: {
-            movementTech: 'momentumVault',
-            essence: 50,
-            timeCrystals: 25,
-            energy: 10000,
-            cloneMutation: 'mass_production'
-          },
-          repeat: {
-            essence: 10,
-            timeCrystals: 5,
-            energy: 2500
-          }
-        }
-      }]
-    ]);
-    
-    // Track defeated bosses (for first clear vs repeat)
-    this.defeatedBosses = new Set();
-    
-    // Event listeners
-    this.setupEventListeners();
-    
-    this.setInitialized();
-  }
+    init() {
+        // Debug flag
+        this.debug = process.env.NODE_ENV !== 'production';
 
-  setupEventListeners() {
-    const eventBus = EventBus.getInstance();
-    
-    // Listen for boss defeats
-    eventBus.on(EventNames.BOSS_DEFEATED, this.handleBossDefeated.bind(this));
-  }
+        // Boss reward configurations
+        this.bossRewards = new Map([
+            [
+                'the-clumper',
+                {
+                    id: 'the-clumper',
+                    name: 'The Clumper',
+                    tier: 1,
+                    rewards: {
+                        firstClear: {
+                            movementTech: 'tripleJump',
+                            essence: 10, // Maps to buffDNA concept
+                            timeCrystals: 5, // Maps to gritShards concept
+                            energy: 1000, // Maps to coins concept
+                            cloneMutation: 'protein_synthesis',
+                        },
+                        repeat: {
+                            essence: 3,
+                            timeCrystals: 1,
+                            energy: 500,
+                        },
+                    },
+                },
+            ],
+            [
+                'the-pulsar',
+                {
+                    id: 'the-pulsar',
+                    name: 'The Pulsar',
+                    tier: 2,
+                    rewards: {
+                        firstClear: {
+                            movementTech: 'wallDash',
+                            essence: 20,
+                            timeCrystals: 10,
+                            energy: 2500,
+                            cloneMutation: 'rhythm_sync',
+                        },
+                        repeat: {
+                            essence: 5,
+                            timeCrystals: 2,
+                            energy: 1000,
+                        },
+                    },
+                },
+            ],
+            [
+                'the-bulk',
+                {
+                    id: 'the-bulk',
+                    name: 'The Bulk',
+                    tier: 3,
+                    rewards: {
+                        firstClear: {
+                            movementTech: 'momentumVault',
+                            essence: 50,
+                            timeCrystals: 25,
+                            energy: 10000,
+                            cloneMutation: 'mass_production',
+                        },
+                        repeat: {
+                            essence: 10,
+                            timeCrystals: 5,
+                            energy: 2500,
+                        },
+                    },
+                },
+            ],
+        ]);
 
-  /**
-   * Handle boss defeat event
-   * @param {Object} data - Boss defeat data
-   */
-  handleBossDefeated(data) {
-    const { bossId, runScore, timeElapsed, hitsTaken } = data;
-    
-    const bossConfig = this.bossRewards.get(bossId);
-    if (!bossConfig) {
-      if (this.debug) {
-        LOG.warn('BOSSREWARDSYSTEM_UNKNOWN_BOSS', {
-          subsystem: 'boss',
-          message: 'Unknown boss encountered',
-          bossId,
-          hint: 'Check boss ID configuration in BossRewardSystem.bossRewards map'
+        // Track defeated bosses (for first clear vs repeat)
+        this.defeatedBosses = new Set();
+
+        // Event listeners
+        this.setupEventListeners();
+
+        this.setInitialized();
+    }
+
+    setupEventListeners() {
+        const eventBus = EventBus.getInstance();
+
+        // Listen for boss defeats
+        eventBus.on(EventNames.BOSS_DEFEATED, this.handleBossDefeated.bind(this));
+    }
+
+    /**
+     * Handle boss defeat event
+     * @param {Object} data - Boss defeat data
+     */
+    handleBossDefeated(data) {
+        const { bossId, runScore, timeElapsed, hitsTaken } = data;
+
+        const bossConfig = this.bossRewards.get(bossId);
+        if (!bossConfig) {
+            if (this.debug) {
+                LOG.warn('BOSSREWARDSYSTEM_UNKNOWN_BOSS', {
+                    subsystem: 'boss',
+                    message: 'Unknown boss encountered',
+                    bossId,
+                    hint: 'Check boss ID configuration in BossRewardSystem.bossRewards map',
+                });
+            }
+            return;
+        }
+
+        // Determine if first clear or repeat
+        const isFirstClear = !this.defeatedBosses.has(bossId);
+        const rewards = isFirstClear ? bossConfig.rewards.firstClear : bossConfig.rewards.repeat;
+
+        // Calculate reward multipliers based on performance
+        const multipliers = this.calculateMultipliers(runScore, timeElapsed, hitsTaken);
+
+        // Grant rewards
+        const grantedRewards = this.grantRewards(rewards, multipliers, isFirstClear);
+
+        // Mark boss as defeated
+        if (isFirstClear) {
+            this.defeatedBosses.add(bossId);
+
+            // Emit first clear event
+            EventBus.getInstance().emit(EventNames.BOSS_FIRST_CLEAR, {
+                bossId,
+                bossName: bossConfig.name,
+                tier: bossConfig.tier,
+                rewards: grantedRewards,
+            });
+        }
+
+        // Emit reward claimed event
+        EventBus.getInstance().emit(EventNames.BOSS_REWARD_CLAIMED, {
+            bossId,
+            bossName: bossConfig.name,
+            isFirstClear,
+            rewards: grantedRewards,
+            multipliers,
         });
-      }
-      return;
-    }
-    
-    // Determine if first clear or repeat
-    const isFirstClear = !this.defeatedBosses.has(bossId);
-    const rewards = isFirstClear ? bossConfig.rewards.firstClear : bossConfig.rewards.repeat;
-    
-    // Calculate reward multipliers based on performance
-    const multipliers = this.calculateMultipliers(runScore, timeElapsed, hitsTaken);
-    
-    // Grant rewards
-    const grantedRewards = this.grantRewards(rewards, multipliers, isFirstClear);
-    
-    // Mark boss as defeated
-    if (isFirstClear) {
-      this.defeatedBosses.add(bossId);
-      
-      // Emit first clear event
-      EventBus.getInstance().emit(EventNames.BOSS_FIRST_CLEAR, {
-        bossId,
-        bossName: bossConfig.name,
-        tier: bossConfig.tier,
-        rewards: grantedRewards
-      });
-    }
-    
-    // Emit reward claimed event
-    EventBus.getInstance().emit(EventNames.BOSS_REWARD_CLAIMED, {
-      bossId,
-      bossName: bossConfig.name,
-      isFirstClear,
-      rewards: grantedRewards,
-      multipliers
-    });
-    
-    if (this.debug) {
-      LOG.dev('BOSSREWARDSYSTEM_REWARDS_GRANTED', {
-        subsystem: 'boss',
-        message: 'Boss defeated and rewards granted',
-        bossId,
-        bossName: bossConfig.name,
-        isFirstClear,
-        clearType: isFirstClear ? 'first clear' : 'repeat',
-        rewardsGranted: grantedRewards
-      });
-    }
-  }
 
-  /**
-   * Calculate reward multipliers based on performance
-   * @param {Object} runScore - Performance score (S,C,H,R,B)
-   * @param {number} timeElapsed - Time to defeat boss (ms)
-   * @param {number} hitsTaken - Number of hits taken
-   * @returns {Object} Multipliers for different reward types
-   */
-  calculateMultipliers(runScore = {}, timeElapsed = 0, hitsTaken = 0) {
-    const multipliers = {
-      energy: 1.0,
-      essence: 1.0,
-      timeCrystals: 1.0
-    };
-    
-    // Speed bonus (under 2 minutes = up to 50% bonus)
-    if (timeElapsed > 0 && timeElapsed < 120000) {
-      const speedBonus = Math.max(0, 1.5 - (timeElapsed / 120000));
-      multipliers.energy *= speedBonus;
+        if (this.debug) {
+            LOG.dev('BOSSREWARDSYSTEM_REWARDS_GRANTED', {
+                subsystem: 'boss',
+                message: 'Boss defeated and rewards granted',
+                bossId,
+                bossName: bossConfig.name,
+                isFirstClear,
+                clearType: isFirstClear ? 'first clear' : 'repeat',
+                rewardsGranted: grantedRewards,
+            });
+        }
     }
-    
-    // No-hit bonus (100% bonus for perfect run)
-    if (hitsTaken === 0) {
-      multipliers.essence *= 2.0;
-      multipliers.timeCrystals *= 1.5;
-    } else if (hitsTaken <= 3) {
-      // Small bonus for low hits
-      multipliers.essence *= 1.25;
-    }
-    
-    // Combo bonus from runScore
-    if (runScore.C) {
-      const comboBonus = Math.min(2.0, 1.0 + (runScore.C / 100));
-      multipliers.energy *= comboBonus;
-    }
-    
-    // Style bonus from S and B scores
-    if (runScore.S && runScore.B) {
-      const styleBonus = 1.0 + ((runScore.S + runScore.B) / 200);
-      multipliers.essence *= styleBonus;
-    }
-    
-    return multipliers;
-  }
 
-  /**
-   * Grant rewards to the player
-   * @param {Object} rewards - Base reward configuration
-   * @param {Object} multipliers - Performance multipliers
-   * @param {boolean} isFirstClear - First clear or repeat
-   * @returns {Object} Granted rewards with final amounts
-   */
-  grantRewards(rewards, multipliers, isFirstClear) {
-    const economyManager = EconomyManager.getInstance();
-    const eventBus = EventBus.getInstance();
-    const grantedRewards = {};
-    
-    // Grant resources with multipliers
-    if (rewards.energy) {
-      const amount = Math.floor(rewards.energy * multipliers.energy);
-      economyManager.addResource('energy', amount);
-      grantedRewards.energy = amount;
-    }
-    
-    if (rewards.essence) {
-      const amount = Math.floor(rewards.essence * multipliers.essence);
-      economyManager.addResource('essence', amount);
-      grantedRewards.essence = amount;
-    }
-    
-    if (rewards.timeCrystals) {
-      const amount = Math.floor(rewards.timeCrystals * multipliers.timeCrystals);
-      economyManager.addResource('timeCrystals', amount);
-      grantedRewards.timeCrystals = amount;
-    }
-    
-    // Grant movement tech (first clear only, no multiplier)
-    if (isFirstClear && rewards.movementTech) {
-      eventBus.emit(EventNames.MOVEMENT_UNLOCKED, {
-        tech: rewards.movementTech
-      });
-      grantedRewards.movementTech = rewards.movementTech;
-    }
-    
-    // Grant clone mutation (first clear only, no multiplier)
-    if (isFirstClear && rewards.cloneMutation) {
-      eventBus.emit(EventNames.CLONE_MUTATION, {
-        mutation: rewards.cloneMutation,
-        source: 'boss_reward'
-      });
-      grantedRewards.cloneMutation = rewards.cloneMutation;
-    }
-    
-    return grantedRewards;
-  }
+    /**
+     * Calculate reward multipliers based on performance
+     * @param {Object} runScore - Performance score (S,C,H,R,B)
+     * @param {number} timeElapsed - Time to defeat boss (ms)
+     * @param {number} hitsTaken - Number of hits taken
+     * @returns {Object} Multipliers for different reward types
+     */
+    calculateMultipliers(runScore = {}, timeElapsed = 0, hitsTaken = 0) {
+        const multipliers = {
+            energy: 1.0,
+            essence: 1.0,
+            timeCrystals: 1.0,
+        };
 
-  /**
-   * Get reward preview for a boss
-   * @param {string} bossId - Boss identifier
-   * @param {boolean} firstClear - Preview first clear or repeat rewards
-   * @returns {Object} Reward configuration
-   */
-  getRewardPreview(bossId, firstClear = true) {
-    const bossConfig = this.bossRewards.get(bossId);
-    if (!bossConfig) return null;
-    
-    return {
-      boss: {
-        id: bossConfig.id,
-        name: bossConfig.name,
-        tier: bossConfig.tier
-      },
-      rewards: firstClear ? bossConfig.rewards.firstClear : bossConfig.rewards.repeat,
-      isFirstClear: firstClear && !this.defeatedBosses.has(bossId)
-    };
-  }
+        // Speed bonus (under 2 minutes = up to 50% bonus)
+        if (timeElapsed > 0 && timeElapsed < 120000) {
+            const speedBonus = Math.max(0, 1.5 - timeElapsed / 120000);
+            multipliers.energy *= speedBonus;
+        }
 
-  /**
-   * Check if boss has been defeated before
-   * @param {string} bossId - Boss identifier
-   * @returns {boolean} Has been defeated
-   */
-  hasBeenDefeated(bossId) {
-    return this.defeatedBosses.has(bossId);
-  }
+        // No-hit bonus (100% bonus for perfect run)
+        if (hitsTaken === 0) {
+            multipliers.essence *= 2.0;
+            multipliers.timeCrystals *= 1.5;
+        } else if (hitsTaken <= 3) {
+            // Small bonus for low hits
+            multipliers.essence *= 1.25;
+        }
 
-  /**
-   * Get all defeated bosses
-   * @returns {Array} List of defeated boss IDs
-   */
-  getDefeatedBosses() {
-    return Array.from(this.defeatedBosses);
-  }
+        // Combo bonus from runScore
+        if (runScore.C) {
+            const comboBonus = Math.min(2.0, 1.0 + runScore.C / 100);
+            multipliers.energy *= comboBonus;
+        }
 
-  /**
-   * Serialize state for saving
-   * @returns {Object} Serialized state
-   */
-  serialize() {
-    return {
-      defeatedBosses: Array.from(this.defeatedBosses)
-    };
-  }
+        // Style bonus from S and B scores
+        if (runScore.S && runScore.B) {
+            const styleBonus = 1.0 + (runScore.S + runScore.B) / 200;
+            multipliers.essence *= styleBonus;
+        }
 
-  /**
-   * Deserialize state from save
-   * @param {Object} state - Saved state
-   */
-  deserialize(state) {
-    if (state.defeatedBosses) {
-      this.defeatedBosses = new Set(state.defeatedBosses);
+        return multipliers;
     }
-  }
+
+    /**
+     * Grant rewards to the player
+     * @param {Object} rewards - Base reward configuration
+     * @param {Object} multipliers - Performance multipliers
+     * @param {boolean} isFirstClear - First clear or repeat
+     * @returns {Object} Granted rewards with final amounts
+     */
+    grantRewards(rewards, multipliers, isFirstClear) {
+        const economyManager = EconomyManager.getInstance();
+        const eventBus = EventBus.getInstance();
+        const grantedRewards = {};
+
+        // Grant resources with multipliers
+        if (rewards.energy) {
+            const amount = Math.floor(rewards.energy * multipliers.energy);
+            economyManager.addResource('energy', amount);
+            grantedRewards.energy = amount;
+        }
+
+        if (rewards.essence) {
+            const amount = Math.floor(rewards.essence * multipliers.essence);
+            economyManager.addResource('essence', amount);
+            grantedRewards.essence = amount;
+        }
+
+        if (rewards.timeCrystals) {
+            const amount = Math.floor(rewards.timeCrystals * multipliers.timeCrystals);
+            economyManager.addResource('timeCrystals', amount);
+            grantedRewards.timeCrystals = amount;
+        }
+
+        // Grant movement tech (first clear only, no multiplier)
+        if (isFirstClear && rewards.movementTech) {
+            eventBus.emit(EventNames.MOVEMENT_UNLOCKED, {
+                tech: rewards.movementTech,
+            });
+            grantedRewards.movementTech = rewards.movementTech;
+        }
+
+        // Grant clone mutation (first clear only, no multiplier)
+        if (isFirstClear && rewards.cloneMutation) {
+            eventBus.emit(EventNames.CLONE_MUTATION, {
+                mutation: rewards.cloneMutation,
+                source: 'boss_reward',
+            });
+            grantedRewards.cloneMutation = rewards.cloneMutation;
+        }
+
+        return grantedRewards;
+    }
+
+    /**
+     * Get reward preview for a boss
+     * @param {string} bossId - Boss identifier
+     * @param {boolean} firstClear - Preview first clear or repeat rewards
+     * @returns {Object} Reward configuration
+     */
+    getRewardPreview(bossId, firstClear = true) {
+        const bossConfig = this.bossRewards.get(bossId);
+        if (!bossConfig) return null;
+
+        return {
+            boss: {
+                id: bossConfig.id,
+                name: bossConfig.name,
+                tier: bossConfig.tier,
+            },
+            rewards: firstClear ? bossConfig.rewards.firstClear : bossConfig.rewards.repeat,
+            isFirstClear: firstClear && !this.defeatedBosses.has(bossId),
+        };
+    }
+
+    /**
+     * Check if boss has been defeated before
+     * @param {string} bossId - Boss identifier
+     * @returns {boolean} Has been defeated
+     */
+    hasBeenDefeated(bossId) {
+        return this.defeatedBosses.has(bossId);
+    }
+
+    /**
+     * Get all defeated bosses
+     * @returns {Array} List of defeated boss IDs
+     */
+    getDefeatedBosses() {
+        return Array.from(this.defeatedBosses);
+    }
+
+    /**
+     * Serialize state for saving
+     * @returns {Object} Serialized state
+     */
+    serialize() {
+        return {
+            defeatedBosses: Array.from(this.defeatedBosses),
+        };
+    }
+
+    /**
+     * Deserialize state from save
+     * @param {Object} state - Saved state
+     */
+    deserialize(state) {
+        if (state.defeatedBosses) {
+            this.defeatedBosses = new Set(state.defeatedBosses);
+        }
+    }
 }

@@ -1,180 +1,180 @@
 {
-  "project": {
-    "name": "WynIsBuff2",
-    "version": "2.0.0",
-    "status": "ACTIVE_DEVELOPMENT",
-    "phase": "LATE_ALPHA",
-    "health_score": 85,
-    "completion_percentage": 75,
-    "last_updated": "2025-01-27T00:00:00Z"
-  },
-  "metrics": {
-    "code_quality": {
-      "architecture_score": 95,
-      "consistency_score": 90,
-      "documentation_score": 85,
-      "test_coverage": 40,
-      "technical_debt_ratio": 0.15
+    "project": {
+        "name": "WynIsBuff2",
+        "version": "2.0.0",
+        "status": "ACTIVE_DEVELOPMENT",
+        "phase": "LATE_ALPHA",
+        "health_score": 85,
+        "completion_percentage": 75,
+        "last_updated": "2025-01-27T00:00:00Z"
     },
-    "project_stats": {
-      "total_files": 71,
-      "lines_of_code": 15401,
-      "test_files": 5,
-      "documentation_files": 12,
-      "asset_files": 50
+    "metrics": {
+        "code_quality": {
+            "architecture_score": 95,
+            "consistency_score": 90,
+            "documentation_score": 85,
+            "test_coverage": 40,
+            "technical_debt_ratio": 0.15
+        },
+        "project_stats": {
+            "total_files": 71,
+            "lines_of_code": 15401,
+            "test_files": 5,
+            "documentation_files": 12,
+            "asset_files": 50
+        },
+        "dependencies": {
+            "total": 12,
+            "outdated": 2,
+            "security_vulnerabilities": 0,
+            "license_issues": 0
+        },
+        "performance": {
+            "build_time_seconds": 3,
+            "bundle_size_mb": 2.5,
+            "target_fps": 60,
+            "memory_usage_mb": 2
+        }
     },
-    "dependencies": {
-      "total": 12,
-      "outdated": 2,
-      "security_vulnerabilities": 0,
-      "license_issues": 0
+    "features": {
+        "completed": [
+            "BaseManager singleton pattern",
+            "Event-driven architecture (188 events)",
+            "GameStateManager with persistence",
+            "PlayerController with Rapier physics",
+            "Asset pipeline automation",
+            "Agent orchestration system",
+            "CloneManager idle mechanics",
+            "Birthday minigame",
+            "Character selection system",
+            "Audio management with Howler"
+        ],
+        "in_progress": [
+            "Boss system integration",
+            "Factory scene visualization",
+            "Hub scene navigation",
+            "Performance DNA extraction",
+            "Clone breeding mechanics"
+        ],
+        "planned": [
+            "Multiplayer clone sharing",
+            "Achievement system",
+            "Leaderboards",
+            "More level content",
+            "Mobile optimization"
+        ]
     },
-    "performance": {
-      "build_time_seconds": 3,
-      "bundle_size_mb": 2.5,
-      "target_fps": 60,
-      "memory_usage_mb": 2
+    "technical_debt": {
+        "high_priority": [
+            {
+                "issue": "Run→Results→Clone pipeline integration",
+                "effort_hours": 8,
+                "impact": "CRITICAL",
+                "module": "Core game loop"
+            },
+            {
+                "issue": "Boss battle reward system",
+                "effort_hours": 4,
+                "impact": "HIGH",
+                "module": "PulsarController"
+            }
+        ],
+        "medium_priority": [
+            {
+                "issue": "Enhanced controller verification",
+                "effort_hours": 3,
+                "impact": "MEDIUM",
+                "module": "PlayerController"
+            },
+            {
+                "issue": "Resource economy balancing",
+                "effort_hours": 6,
+                "impact": "MEDIUM",
+                "module": "CloneManager"
+            }
+        ],
+        "low_priority": [
+            {
+                "issue": "File extension consistency",
+                "effort_hours": 1,
+                "impact": "LOW",
+                "module": "Build config"
+            }
+        ]
+    },
+    "risks": {
+        "technical": [
+            {
+                "risk": "Performance with all systems active",
+                "probability": "MEDIUM",
+                "impact": "HIGH",
+                "mitigation": "Performance profiling scheduled"
+            },
+            {
+                "risk": "Complex system integration",
+                "probability": "HIGH",
+                "impact": "MEDIUM",
+                "mitigation": "Agent orchestration system helps enforce patterns"
+            }
+        ],
+        "schedule": [
+            {
+                "risk": "Feature creep delaying release",
+                "probability": "MEDIUM",
+                "impact": "MEDIUM",
+                "mitigation": "Focus on integration over new features"
+            }
+        ]
+    },
+    "roadmap": {
+        "current_sprint": {
+            "name": "Level Enhancement Sprint",
+            "goals": [
+                "Complete core game loop integration",
+                "Polish scene transitions",
+                "Implement boss rewards"
+            ],
+            "duration_days": 14,
+            "confidence": 0.85
+        },
+        "milestones": [
+            {
+                "name": "Beta Release",
+                "target_date": "2025-02-15",
+                "completion": 75,
+                "blockers": ["Core loop integration", "Performance optimization"]
+            },
+            {
+                "name": "Public Launch",
+                "target_date": "2025-03-01",
+                "completion": 0,
+                "blockers": ["Content creation", "Playtesting", "Marketing"]
+            }
+        ]
+    },
+    "team": {
+        "developers": 1,
+        "mode": "SOLO_DEV",
+        "ai_assistance": {
+            "tools": ["Claude Code", "Agent Orchestration"],
+            "impact": "HIGH"
+        }
+    },
+    "recommendations": {
+        "immediate": [
+            "Complete Run→Results→Clone integration",
+            "Test performance with all systems",
+            "Verify save/load functionality"
+        ],
+        "short_term": [
+            "Polish boss battle mechanics",
+            "Balance resource generation",
+            "Create more level content"
+        ],
+        "long_term": [
+            "Implement multiplayer features",
+            "Add achievement system",
+            "Mobile platform optimization"
+        ]
     }
-  },
-  "features": {
-    "completed": [
-      "BaseManager singleton pattern",
-      "Event-driven architecture (188 events)",
-      "GameStateManager with persistence",
-      "PlayerController with Rapier physics",
-      "Asset pipeline automation",
-      "Agent orchestration system",
-      "CloneManager idle mechanics",
-      "Birthday minigame",
-      "Character selection system",
-      "Audio management with Howler"
-    ],
-    "in_progress": [
-      "Boss system integration",
-      "Factory scene visualization",
-      "Hub scene navigation",
-      "Performance DNA extraction",
-      "Clone breeding mechanics"
-    ],
-    "planned": [
-      "Multiplayer clone sharing",
-      "Achievement system",
-      "Leaderboards",
-      "More level content",
-      "Mobile optimization"
-    ]
-  },
-  "technical_debt": {
-    "high_priority": [
-      {
-        "issue": "Run→Results→Clone pipeline integration",
-        "effort_hours": 8,
-        "impact": "CRITICAL",
-        "module": "Core game loop"
-      },
-      {
-        "issue": "Boss battle reward system",
-        "effort_hours": 4,
-        "impact": "HIGH",
-        "module": "PulsarController"
-      }
-    ],
-    "medium_priority": [
-      {
-        "issue": "Enhanced controller verification",
-        "effort_hours": 3,
-        "impact": "MEDIUM",
-        "module": "PlayerController"
-      },
-      {
-        "issue": "Resource economy balancing",
-        "effort_hours": 6,
-        "impact": "MEDIUM",
-        "module": "CloneManager"
-      }
-    ],
-    "low_priority": [
-      {
-        "issue": "File extension consistency",
-        "effort_hours": 1,
-        "impact": "LOW",
-        "module": "Build config"
-      }
-    ]
-  },
-  "risks": {
-    "technical": [
-      {
-        "risk": "Performance with all systems active",
-        "probability": "MEDIUM",
-        "impact": "HIGH",
-        "mitigation": "Performance profiling scheduled"
-      },
-      {
-        "risk": "Complex system integration",
-        "probability": "HIGH",
-        "impact": "MEDIUM",
-        "mitigation": "Agent orchestration system helps enforce patterns"
-      }
-    ],
-    "schedule": [
-      {
-        "risk": "Feature creep delaying release",
-        "probability": "MEDIUM",
-        "impact": "MEDIUM",
-        "mitigation": "Focus on integration over new features"
-      }
-    ]
-  },
-  "roadmap": {
-    "current_sprint": {
-      "name": "Level Enhancement Sprint",
-      "goals": [
-        "Complete core game loop integration",
-        "Polish scene transitions",
-        "Implement boss rewards"
-      ],
-      "duration_days": 14,
-      "confidence": 0.85
-    },
-    "milestones": [
-      {
-        "name": "Beta Release",
-        "target_date": "2025-02-15",
-        "completion": 75,
-        "blockers": ["Core loop integration", "Performance optimization"]
-      },
-      {
-        "name": "Public Launch",
-        "target_date": "2025-03-01",
-        "completion": 0,
-        "blockers": ["Content creation", "Playtesting", "Marketing"]
-      }
-    ]
-  },
-  "team": {
-    "developers": 1,
-    "mode": "SOLO_DEV",
-    "ai_assistance": {
-      "tools": ["Claude Code", "Agent Orchestration"],
-      "impact": "HIGH"
-    }
-  },
-  "recommendations": {
-    "immediate": [
-      "Complete Run→Results→Clone integration",
-      "Test performance with all systems",
-      "Verify save/load functionality"
-    ],
-    "short_term": [
-      "Polish boss battle mechanics",
-      "Balance resource generation",
-      "Create more level content"
-    ],
-    "long_term": [
-      "Implement multiplayer features",
-      "Add achievement system",
-      "Mobile platform optimization"
-    ]
-  }
 }

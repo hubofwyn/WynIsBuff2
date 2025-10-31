@@ -8,4 +8,3 @@ export { PlatformFactory } from '../../modules/level/PlatformFactory.js';
 export { MovingPlatformController } from '../../modules/level/MovingPlatformController.js';
 export { LevelTransitionController } from '../../modules/level/LevelTransitionController.js';
 export { LevelCompletionManager } from '../../modules/level/LevelCompletionManager.js';
-

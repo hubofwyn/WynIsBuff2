@@ -1,18 +1,19 @@
 # Vite Build Tool Documentation
 
 ## Table of Contents
+
 - [Overview](#overview)
 - [Version Information](#version-information)
 - [Core Concepts](#core-concepts)
-  - [Development Server](#development-server)
-  - [Build Process](#build-process)
-  - [Configuration](#configuration)
-  - [Plugins](#plugins)
+    - [Development Server](#development-server)
+    - [Build Process](#build-process)
+    - [Configuration](#configuration)
+    - [Plugins](#plugins)
 - [Implementation in WynIsBuff2](#implementation-in-wynisbuff2)
-  - [Development Configuration](#development-configuration)
-  - [Production Configuration](#production-configuration)
-  - [NPM Scripts](#npm-scripts)
-  - [Asset Handling](#asset-handling)
+    - [Development Configuration](#development-configuration)
+    - [Production Configuration](#production-configuration)
+    - [NPM Scripts](#npm-scripts)
+    - [Asset Handling](#asset-handling)
 - [Best Practices](#best-practices)
 - [Common Issues and Solutions](#common-issues-and-solutions)
 - [Resources](#resources)
@@ -33,6 +34,7 @@ Vite (French for "quick", pronounced `/vit/`) is a modern frontend build tool th
 ### Development Server
 
 Vite's development server provides:
+
 - Extremely fast startup times
 - Hot Module Replacement (HMR)
 - True on-demand compilation
@@ -46,6 +48,7 @@ npm run dev
 ### Build Process
 
 Vite uses Rollup for production builds, providing:
+
 - Code splitting
 - Tree shaking
 - Minification
@@ -64,14 +67,14 @@ Vite is configured through a `vite.config.js` (or `.ts`, `.mjs`, etc.) file:
 import { defineConfig } from 'vite';
 
 export default defineConfig({
-  // Configuration options
-  base: './',
-  build: {
-    // Build options
-  },
-  server: {
-    // Server options
-  }
+    // Configuration options
+    base: './',
+    build: {
+        // Build options
+    },
+    server: {
+        // Server options
+    },
 });
 ```
 
@@ -84,9 +87,7 @@ import { defineConfig } from 'vite';
 import somePlugin from 'vite-plugin-some-plugin';
 
 export default defineConfig({
-  plugins: [
-    somePlugin()
-  ]
+    plugins: [somePlugin()],
 });
 ```
 
@@ -107,18 +108,19 @@ export default defineConfig({
         rollupOptions: {
             output: {
                 manualChunks: {
-                    phaser: ['phaser']
-                }
-            }
+                    phaser: ['phaser'],
+                },
+            },
         },
     },
     server: {
-        port: 8080
-    }
+        port: 8080,
+    },
 });
 ```
 
 Key features:
+
 - Sets the base path to './'
 - Configures Rollup to separate Phaser into its own chunk
 - Sets the development server port to 8080
@@ -132,7 +134,7 @@ import { defineConfig } from 'vite';
 
 const phasermsg = () => {
     // Custom plugin implementation
-}   
+};
 
 export default defineConfig({
     base: './',
@@ -141,31 +143,30 @@ export default defineConfig({
         rollupOptions: {
             output: {
                 manualChunks: {
-                    phaser: ['phaser']
-                }
-            }
+                    phaser: ['phaser'],
+                },
+            },
         },
         minify: 'terser',
         terserOptions: {
             compress: {
-                passes: 2
+                passes: 2,
             },
             mangle: true,
             format: {
-                comments: false
-            }
-        }
+                comments: false,
+            },
+        },
     },
     server: {
-        port: 8080
+        port: 8080,
     },
-    plugins: [
-        phasermsg()
-    ]
+    plugins: [phasermsg()],
 });
 ```
 
 Key features:
+
 - Sets the base path to './'
 - Configures Rollup to separate Phaser into its own chunk
 - Enables minification with Terser
@@ -213,47 +214,47 @@ this.load.image('background', 'assets/bg.png');
 ## Best Practices
 
 1. **Optimize Dependencies**:
-   - Use `manualChunks` to separate large dependencies like Phaser
-   - Consider using `import()` for code splitting
+    - Use `manualChunks` to separate large dependencies like Phaser
+    - Consider using `import()` for code splitting
 
 2. **Asset Management**:
-   - Use the `public` folder for assets that need to be referenced by absolute URL
-   - Import assets directly in JavaScript when they need to be processed by Vite
+    - Use the `public` folder for assets that need to be referenced by absolute URL
+    - Import assets directly in JavaScript when they need to be processed by Vite
 
 3. **Environment Variables**:
-   - Use `.env` files for environment-specific configuration
-   - Access variables with `import.meta.env`
+    - Use `.env` files for environment-specific configuration
+    - Access variables with `import.meta.env`
 
 4. **Performance Optimization**:
-   - Enable minification for production builds
-   - Configure appropriate compression settings
-   - Use browser caching through proper cache headers
+    - Enable minification for production builds
+    - Configure appropriate compression settings
+    - Use browser caching through proper cache headers
 
 5. **Plugin Usage**:
-   - Only use plugins when necessary
-   - Consider the performance impact of each plugin
+    - Only use plugins when necessary
+    - Consider the performance impact of each plugin
 
 ## Common Issues and Solutions
 
 1. **Assets Not Found in Production**:
-   - Ensure base path is correctly set
-   - Check that assets are in the correct location
-   - Verify that import paths are correct
+    - Ensure base path is correctly set
+    - Check that assets are in the correct location
+    - Verify that import paths are correct
 
 2. **Slow Build Times**:
-   - Optimize dependencies with `manualChunks`
-   - Consider using build caching
-   - Review and remove unnecessary plugins
+    - Optimize dependencies with `manualChunks`
+    - Consider using build caching
+    - Review and remove unnecessary plugins
 
 3. **HMR Not Working**:
-   - Check that the code is compatible with HMR
-   - Ensure the development server is running
-   - Verify that the browser supports ES modules
+    - Check that the code is compatible with HMR
+    - Ensure the development server is running
+    - Verify that the browser supports ES modules
 
 4. **Build Output Size Too Large**:
-   - Enable code splitting
-   - Configure tree shaking
-   - Use production mode to enable optimizations
+    - Enable code splitting
+    - Configure tree shaking
+    - Use production mode to enable optimizations
 
 ## Resources
 

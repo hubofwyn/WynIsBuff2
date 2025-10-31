@@ -1,6 +1,7 @@
 # Asset Management Strategy
 
 ## Table of Contents
+
 - [Overview](#overview)
 - [Asset Organization](#asset-organization)
 - [Asset Loading Strategy](#asset-loading-strategy)
@@ -14,6 +15,7 @@
 Effective asset management is crucial for game performance, maintainability, and development workflow. This document outlines the asset management strategy for WynIsBuff2, covering organization, loading, and optimization of game assets.
 
 ### Goals
+
 - Organize assets in a logical, maintainable structure
 - Optimize asset loading for performance
 - Provide a consistent interface for accessing assets
@@ -85,52 +87,68 @@ export const AssetManifest = {
     images: {
         characters: {
             player: [
-                { key: 'player-idle', path: 'images/characters/player/idle.png', type: 'spritesheet', frameConfig: { frameWidth: 32, frameHeight: 32 } },
-                { key: 'player-run', path: 'images/characters/player/run.png', type: 'spritesheet', frameConfig: { frameWidth: 32, frameHeight: 32 } },
-                { key: 'player-jump', path: 'images/characters/player/jump.png', type: 'spritesheet', frameConfig: { frameWidth: 32, frameHeight: 32 } }
+                {
+                    key: 'player-idle',
+                    path: 'images/characters/player/idle.png',
+                    type: 'spritesheet',
+                    frameConfig: { frameWidth: 32, frameHeight: 32 },
+                },
+                {
+                    key: 'player-run',
+                    path: 'images/characters/player/run.png',
+                    type: 'spritesheet',
+                    frameConfig: { frameWidth: 32, frameHeight: 32 },
+                },
+                {
+                    key: 'player-jump',
+                    path: 'images/characters/player/jump.png',
+                    type: 'spritesheet',
+                    frameConfig: { frameWidth: 32, frameHeight: 32 },
+                },
             ],
             enemies: {
                 skeleton: [
-                    { key: 'skeleton-idle', path: 'images/characters/enemies/skeleton/idle.png', type: 'spritesheet', frameConfig: { frameWidth: 32, frameHeight: 32 } }
+                    {
+                        key: 'skeleton-idle',
+                        path: 'images/characters/enemies/skeleton/idle.png',
+                        type: 'spritesheet',
+                        frameConfig: { frameWidth: 32, frameHeight: 32 },
+                    },
                     // More skeleton assets...
-                ]
+                ],
                 // More enemy types...
-            }
+            },
         },
         tilesets: [
-            { key: 'dungeon-tileset', path: 'images/tilesets/dungeon_tileset.png', type: 'image' }
+            { key: 'dungeon-tileset', path: 'images/tilesets/dungeon_tileset.png', type: 'image' },
         ],
         ui: {
             buttons: [
                 { key: 'button-play', path: 'images/ui/buttons/play.png', type: 'image' },
-                { key: 'button-settings', path: 'images/ui/buttons/settings.png', type: 'image' }
+                { key: 'button-settings', path: 'images/ui/buttons/settings.png', type: 'image' },
             ],
             // More UI assets...
-        }
+        },
         // More image categories...
     },
     audio: {
         music: [
             { key: 'music-menu', path: 'audio/music/menu.mp3', type: 'audio' },
-            { key: 'music-gameplay', path: 'audio/music/gameplay.mp3', type: 'audio' }
+            { key: 'music-gameplay', path: 'audio/music/gameplay.mp3', type: 'audio' },
         ],
         sfx: {
             player: [
                 { key: 'sfx-player-jump', path: 'audio/sfx/player/jump.mp3', type: 'audio' },
-                { key: 'sfx-player-land', path: 'audio/sfx/player/land.mp3', type: 'audio' }
+                { key: 'sfx-player-land', path: 'audio/sfx/player/land.mp3', type: 'audio' },
             ],
             // More SFX categories...
-        }
+        },
     },
-    fonts: [
-        { key: 'font-main', path: 'fonts/web/main.ttf', type: 'font' }
-    ],
+    fonts: [{ key: 'font-main', path: 'fonts/web/main.ttf', type: 'font' }],
     data: {
-        levels: [
-            { key: 'level-1', path: 'data/levels/level1.json', type: 'json' }
-        ]
+        levels: [{ key: 'level-1', path: 'data/levels/level1.json', type: 'json' }],
         // More data categories...
-    }
+    },
 };
 
 // Group assets by scene for easier loading
@@ -138,7 +156,7 @@ export const SceneAssets = {
     Boot: [
         // Minimal assets needed for boot scene
         { key: 'logo', path: 'images/ui/logo.png', type: 'image' },
-        { key: 'loading-bar', path: 'images/ui/loading-bar.png', type: 'image' }
+        { key: 'loading-bar', path: 'images/ui/loading-bar.png', type: 'image' },
     ],
     Preloader: [
         // Assets needed for preloader scene
@@ -147,7 +165,7 @@ export const SceneAssets = {
         // Assets needed for main menu
         'button-play',
         'button-settings',
-        'music-menu'
+        'music-menu',
     ],
     Game: [
         // Core gameplay assets
@@ -157,8 +175,8 @@ export const SceneAssets = {
         'dungeon-tileset',
         'music-gameplay',
         'sfx-player-jump',
-        'sfx-player-land'
-    ]
+        'sfx-player-land',
+    ],
     // More scenes...
 };
 ```
@@ -177,18 +195,18 @@ Implement a progressive loading strategy to minimize initial load times:
 ### Loading Sequence
 
 1. **Boot Scene**:
-   - Load minimal assets needed for loading screen
-   - Display loading screen
+    - Load minimal assets needed for loading screen
+    - Display loading screen
 
 2. **Preloader Scene**:
-   - Load common assets used across multiple scenes
-   - Load main menu assets
-   - Show loading progress
+    - Load common assets used across multiple scenes
+    - Load main menu assets
+    - Show loading progress
 
 3. **Scene Transitions**:
-   - Preload next scene's assets during transition
-   - Show transition animation to mask loading time
-   - Unload previous scene's unique assets when safe
+    - Preload next scene's assets during transition
+    - Show transition animation to mask loading time
+    - Unload previous scene's unique assets when safe
 
 ### Loading Indicators
 
@@ -212,7 +230,7 @@ export class AssetManager {
         this.progressCallbacks = [];
         this.completeCallbacks = [];
     }
-    
+
     /**
      * Preload assets based on keys from the manifest
      * @param {Array} assetKeys - Array of asset keys to load
@@ -223,23 +241,23 @@ export class AssetManager {
         if (progressCallback) {
             this.progressCallbacks.push(progressCallback);
         }
-        
+
         if (completeCallback) {
             this.completeCallbacks.push(completeCallback);
         }
-        
+
         // Find assets in manifest by key
         const assetsToLoad = this.getAssetsFromKeys(assetKeys);
-        
+
         // Add to loading queue
         this.loadingQueue.push(...assetsToLoad);
-        
+
         // Start loading if not already in progress
         if (!this.isLoading) {
             this.startLoading();
         }
     }
-    
+
     /**
      * Get assets from the manifest by keys
      * @param {Array} keys - Array of asset keys
@@ -247,20 +265,20 @@ export class AssetManager {
      */
     getAssetsFromKeys(keys) {
         const assets = [];
-        
+
         // Flatten the manifest to find assets by key
         const flattenedManifest = this.flattenManifest(AssetManifest);
-        
-        keys.forEach(key => {
-            const asset = flattenedManifest.find(a => a.key === key);
+
+        keys.forEach((key) => {
+            const asset = flattenedManifest.find((a) => a.key === key);
             if (asset && !this.loadedAssets.has(asset.key)) {
                 assets.push(asset);
             }
         });
-        
+
         return assets;
     }
-    
+
     /**
      * Flatten the nested manifest into a single array
      * @param {Object} obj - The manifest object or portion of it
@@ -269,20 +287,20 @@ export class AssetManager {
      */
     flattenManifest(obj, result = []) {
         if (Array.isArray(obj)) {
-            obj.forEach(item => {
+            obj.forEach((item) => {
                 if (item.key && item.path && item.type) {
                     result.push(item);
                 }
             });
         } else if (typeof obj === 'object') {
-            Object.values(obj).forEach(value => {
+            Object.values(obj).forEach((value) => {
                 this.flattenManifest(value, result);
             });
         }
-        
+
         return result;
     }
-    
+
     /**
      * Start the loading process
      */
@@ -291,22 +309,22 @@ export class AssetManager {
             this.completeLoading();
             return;
         }
-        
+
         this.isLoading = true;
-        
+
         // Set up loading events
         this.scene.load.on('progress', this.updateProgress, this);
         this.scene.load.on('complete', this.completeLoading, this);
-        
+
         // Process each asset in the queue
-        this.loadingQueue.forEach(asset => {
+        this.loadingQueue.forEach((asset) => {
             this.loadAsset(asset);
         });
-        
+
         // Start the load
         this.scene.load.start();
     }
-    
+
     /**
      * Load a single asset based on its type
      * @param {Object} asset - The asset to load
@@ -316,68 +334,68 @@ export class AssetManager {
             case 'image':
                 this.scene.load.image(asset.key, asset.path);
                 break;
-                
+
             case 'spritesheet':
                 this.scene.load.spritesheet(asset.key, asset.path, asset.frameConfig);
                 break;
-                
+
             case 'audio':
                 this.scene.load.audio(asset.key, asset.path);
                 break;
-                
+
             case 'json':
                 this.scene.load.json(asset.key, asset.path);
                 break;
-                
+
             case 'font':
                 // For web fonts, we might need a different approach
                 // This is a simplified example
                 this.scene.load.bitmapFont(asset.key, asset.path);
                 break;
-                
+
             default:
                 console.warn(`Unknown asset type: ${asset.type} for ${asset.key}`);
         }
     }
-    
+
     /**
      * Update loading progress
      * @param {number} progress - Progress value (0-1)
      */
     updateProgress(progress) {
-        this.progressCallbacks.forEach(callback => {
+        this.progressCallbacks.forEach((callback) => {
             callback(progress);
         });
     }
-    
+
     /**
      * Complete the loading process
      */
     completeLoading() {
         this.isLoading = false;
-        
+
         // Mark all queued assets as loaded
-        this.loadingQueue.forEach(asset => {
+        this.loadingQueue.forEach((asset) => {
             this.loadedAssets.set(asset.key, asset);
         });
-        
+
         // Clear the queue
         this.loadingQueue = [];
-        
+
         // Remove event listeners
         this.scene.load.off('progress', this.updateProgress, this);
         this.scene.load.off('complete', this.completeLoading, this);
-        
+
         // Call complete callbacks
-        this.completeCallbacks.forEach(callback => {
+        this.completeCallbacks.forEach((callback) => {
             callback();
         });
-        
+
         // Clear callbacks
         this.progressCallbacks = [];
         this.completeCallbacks = [];
     }
-    
+
     /**
      * Get a loaded asset
      * @param {string} key - The asset key
@@ -386,7 +404,7 @@ export class AssetManager {
     getAsset(key) {
         return this.loadedAssets.get(key);
     }
-    
+
     /**
      * Check if an asset is loaded
      * @param {string} key - The asset key
@@ -395,42 +413,42 @@ export class AssetManager {
     isAssetLoaded(key) {
         return this.loadedAssets.has(key);
     }
-    
+
     /**
      * Unload assets that are no longer needed
      * @param {Array} keys - Array of asset keys to unload
      */
     unloadAssets(keys) {
-        keys.forEach(key => {
+        keys.forEach((key) => {
             if (this.loadedAssets.has(key)) {
                 // Remove from Phaser cache based on type
                 const asset = this.loadedAssets.get(key);
-                
+
                 switch (asset.type) {
                     case 'image':
                     case 'spritesheet':
                         this.scene.textures.remove(key);
                         break;
-                        
+
                     case 'audio':
                         this.scene.sound.remove(key);
                         break;
-                        
+
                     case 'json':
                         this.scene.cache.json.remove(key);
                         break;
-                        
+
                     case 'font':
                         this.scene.cache.bitmapFont.remove(key);
                         break;
                 }
-                
+
                 // Remove from loaded assets
                 this.loadedAssets.delete(key);
             }
         });
     }
-    
+
     /**
      * Create an animation from a spritesheet
      * @param {string} key - The animation key
@@ -440,7 +458,7 @@ export class AssetManager {
         if (!this.scene.anims.exists(key)) {
             this.scene.anims.create({
                 key,
-                ...config
+                ...config,
             });
         }
     }
@@ -519,7 +537,7 @@ Combine multiple sound effects into a single audio sprite:
 ```javascript
 this.scene.load.audioSprite('sfx', 'audio/sfx/sfx.json', [
     'audio/sfx/sfx.ogg',
-    'audio/sfx/sfx.mp3'
+    'audio/sfx/sfx.mp3',
 ]);
 ```
 
@@ -531,7 +549,7 @@ Load assets only when needed:
 // Load level-specific assets when entering a level
 enterLevel(levelId) {
     const levelAssets = this.getLevelAssets(levelId);
-    this.assetManager.preload(levelAssets, 
+    this.assetManager.preload(levelAssets,
         progress => this.updateLevelLoadProgress(progress),
         () => this.startLevel(levelId)
     );

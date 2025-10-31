@@ -11,6 +11,7 @@
 This document provides a comprehensive technical audit of WynIsBuff2's **modern snapshot-based input architecture**, tracing the complete data flow from physical keyboard input to on-screen physics-based motion. The system integrates **Phaser 3.90** (input/rendering), **Rapier 2D 0.19.2** (physics), and a clean **InputState snapshot pattern**.
 
 **Current Architecture**: The system now uses an **InputState snapshot pattern** where InputManager creates immutable, frame-based input snapshots that PlayerController consumes as pure data. This architecture is:
+
 - ✅ **Testable** (mock InputState for unit tests)
 - ✅ **Deterministic** (single source of truth per frame)
 - ✅ **Multi-input ready** (keyboard, gamepad, touch)
@@ -95,13 +96,13 @@ sequenceDiagram
 
 ### Architectural Patterns
 
-| Pattern | Usage | Purpose |
-|---------|-------|---------|
-| **InputState Snapshot** | `InputManager.getSnapshot()` | Immutable frame-based input data |
-| **Pure Functions** | `calculateMovementFromInput(input, dt)` | Testable, deterministic movement |
-| **Fixed Timestep** | Accumulator in `PhysicsManager` | Deterministic 60Hz physics |
-| **Kinematic Character Controller** | Rapier's `CharacterController` | Manual position control with collision |
-| **Units Separation** | Pixels for rendering, Meters for physics | Prevent physics explosions |
+| Pattern                            | Usage                                    | Purpose                                |
+| ---------------------------------- | ---------------------------------------- | -------------------------------------- |
+| **InputState Snapshot**            | `InputManager.getSnapshot()`             | Immutable frame-based input data       |
+| **Pure Functions**                 | `calculateMovementFromInput(input, dt)`  | Testable, deterministic movement       |
+| **Fixed Timestep**                 | Accumulator in `PhysicsManager`          | Deterministic 60Hz physics             |
+| **Kinematic Character Controller** | Rapier's `CharacterController`           | Manual position control with collision |
+| **Units Separation**               | Pixels for rendering, Meters for physics | Prevent physics explosions             |
 
 ---
 
@@ -115,11 +116,11 @@ sequenceDiagram
 
 #### Key Methods
 
-| Method | Lines | Purpose |
-|--------|-------|---------|
-| `constructor()` | 14-21 | Initialize singleton instance |
-| `init(scene, eventSystem)` | 28-83 | Set up keyboard listeners and event bindings |
-| `destroy()` | 88-100 | Clean up listeners on scene shutdown |
+| Method                     | Lines  | Purpose                                      |
+| -------------------------- | ------ | -------------------------------------------- |
+| `constructor()`            | 14-21  | Initialize singleton instance                |
+| `init(scene, eventSystem)` | 28-83  | Set up keyboard listeners and event bindings |
+| `destroy()`                | 88-100 | Clean up listeners on scene shutdown         |
 
 #### 2.2 Keyboard Input Registration
 
@@ -133,16 +134,14 @@ const keyboard = scene.input.keyboard;
 this.keys.cursors = keyboard.createCursorKeys();
 
 // Individual WASD + Space keys
-['W', 'A', 'S', 'D', 'SPACE'].forEach(keyName => {
-    this.keys[keyName] = keyboard.addKey(
-        Phaser.Input.Keyboard.KeyCodes[keyName]
-    );
+['W', 'A', 'S', 'D', 'SPACE'].forEach((keyName) => {
+    this.keys[keyName] = keyboard.addKey(Phaser.Input.Keyboard.KeyCodes[keyName]);
 });
 
 // Additional keys
-this.keys.C = keyboard.addKey('C');      // Duck
-this.keys.R = keyboard.addKey('R');      // Reset
-this.keys.ESC = keyboard.addKey('ESC');  // Pause
+this.keys.C = keyboard.addKey('C'); // Duck
+this.keys.R = keyboard.addKey('R'); // Reset
+this.keys.ESC = keyboard.addKey('ESC'); // Pause
 ```
 
 **Result**: Creates Phaser `Key` objects stored in `this.keys` for polling.
@@ -162,7 +161,7 @@ const actionMap = {
     left: EventNames.MOVE_LEFT,
     right: EventNames.MOVE_RIGHT,
     pause: EventNames.PAUSE,
-    resetLevel: EventNames.LEVEL_RESET
+    resetLevel: EventNames.LEVEL_RESET,
 };
 
 // Bind each configured key to its action
@@ -178,6 +177,7 @@ Object.entries(actionMap).forEach(([action, eventName]) => {
 **Configuration Source**: `GameStateManager.settings.keybindings`
 
 **Default Keybindings** (from GameStateManager):
+
 ```javascript
 keybindings: {
     jump: 'SPACE',
@@ -194,37 +194,21 @@ keybindings: {
 
 ```javascript
 // Direct key event → EventBus emission
-this.keys.cursors.left.on('down', () =>
-    this.eventSystem.emit(EventNames.MOVE_LEFT)
-);
+this.keys.cursors.left.on('down', () => this.eventSystem.emit(EventNames.MOVE_LEFT));
 
-this.keys.cursors.right.on('down', () =>
-    this.eventSystem.emit(EventNames.MOVE_RIGHT)
-);
+this.keys.cursors.right.on('down', () => this.eventSystem.emit(EventNames.MOVE_RIGHT));
 
-this.keys.cursors.up.on('down', () =>
-    this.eventSystem.emit(EventNames.MOVE_UP)
-);
+this.keys.cursors.up.on('down', () => this.eventSystem.emit(EventNames.MOVE_UP));
 
-this.keys.cursors.down.on('down', () =>
-    this.eventSystem.emit(EventNames.MOVE_DOWN)
-);
+this.keys.cursors.down.on('down', () => this.eventSystem.emit(EventNames.MOVE_DOWN));
 
-this.keys.SPACE.on('down', () =>
-    this.eventSystem.emit(EventNames.JUMP)
-);
+this.keys.SPACE.on('down', () => this.eventSystem.emit(EventNames.JUMP));
 
-this.keys.C.on('down', () =>
-    this.eventSystem.emit(EventNames.DUCK)
-);
+this.keys.C.on('down', () => this.eventSystem.emit(EventNames.DUCK));
 
-this.keys.R.on('down', () =>
-    this.eventSystem.emit(EventNames.LEVEL_RESET)
-);
+this.keys.R.on('down', () => this.eventSystem.emit(EventNames.LEVEL_RESET));
 
-this.keys.ESC.on('down', () =>
-    this.eventSystem.emit(EventNames.PAUSE)
-);
+this.keys.ESC.on('down', () => this.eventSystem.emit(EventNames.PAUSE));
 ```
 
 **⚠️ CRITICAL ISSUE**: Event-driven input only fires on key DOWN. Movement requires continuous polling of `isDown` state.
@@ -255,9 +239,10 @@ JUMP: 'input:jump',
 
 ```javascript
 // Lines 11-16: EventEmitter selection
-const EventEmitterClass = typeof Phaser !== 'undefined' && Phaser.Events
-    ? Phaser.Events.EventEmitter  // Use Phaser in browser
-    : MiniEmitter;                // Fallback for Node.js tests
+const EventEmitterClass =
+    typeof Phaser !== 'undefined' && Phaser.Events
+        ? Phaser.Events.EventEmitter // Use Phaser in browser
+        : MiniEmitter; // Fallback for Node.js tests
 
 // Line 72: Export singleton
 export const EventBus = new EventEmitterClass();
@@ -265,12 +250,12 @@ export const EventBus = new EventEmitterClass();
 
 #### Key Methods
 
-| Method | Lines | Signature | Purpose |
-|--------|-------|-----------|---------|
-| `on()` | 28-33 | `on(event, callback, context)` | Register event listener |
-| `emit()` | 53-65 | `emit(event, ...args)` | Dispatch event with error handling |
-| `off()` | 35-42 | `off(event, callback, context)` | Remove event listener |
-| `once()` | 44-51 | `once(event, callback, context)` | Listen for single occurrence |
+| Method   | Lines | Signature                        | Purpose                            |
+| -------- | ----- | -------------------------------- | ---------------------------------- |
+| `on()`   | 28-33 | `on(event, callback, context)`   | Register event listener            |
+| `emit()` | 53-65 | `emit(event, ...args)`           | Dispatch event with error handling |
+| `off()`  | 35-42 | `off(event, callback, context)`  | Remove event listener              |
+| `once()` | 44-51 | `once(event, callback, context)` | Listen for single occurrence       |
 
 #### Error Handling
 
@@ -683,6 +668,7 @@ async init(scene, eventSystem, gravityX = 0.0, gravityY = 9.81) {
 ```
 
 **Gravity Configuration** (from PhysicsConfig.js):
+
 ```javascript
 gravityX: 0.0,
 gravityY: 20.0,  // 20 m/s² downward (higher than realistic 9.81 for snappier feel)
@@ -802,6 +788,7 @@ update(delta) {
 ```
 
 **Fixed Timestep Benefits**:
+
 - **Deterministic**: Same inputs always produce same outputs
 - **Stable**: Physics never "explodes" from large deltas
 - **Smooth**: Interpolation provides buttery 60+ FPS rendering
@@ -814,12 +801,12 @@ update(delta) {
 // Lines 247-253 in PlayerController.update()
 
 // Get current physics position
-const currentPosition = this.body.translation();  // RAPIER.Vector2 in meters
+const currentPosition = this.body.translation(); // RAPIER.Vector2 in meters
 
 // Apply calculated movement
 this.body.setNextKinematicTranslation({
     x: currentPosition.x + correctedMovement.x,
-    y: currentPosition.y + correctedMovement.y
+    y: currentPosition.y + correctedMovement.y,
 });
 ```
 
@@ -853,6 +840,7 @@ updateSpritePosition() {
 ```
 
 **Coordinate Conversion** (PhysicsConstants.js):
+
 ```javascript
 const PIXELS_PER_METER = 100;
 
@@ -999,56 +987,56 @@ Frame N (16.67ms at 60 FPS):
 export const PhysicsConfig = {
     // World settings
     gravityX: 0.0,
-    gravityY: 20.0,              // m/s² (Earth is 9.81)
-    timeStep: 1/60,              // 16.67ms fixed step
+    gravityY: 20.0, // m/s² (Earth is 9.81)
+    timeStep: 1 / 60, // 16.67ms fixed step
 
     // Solver iterations
     maxVelIterations: 4,
     maxPosIterations: 2,
-    erp: 0.8,                    // Error reduction parameter
+    erp: 0.8, // Error reduction parameter
 
     // Player physics body
     player: {
-        radius: pixelsToMeters(8),           // 0.08m capsule radius
-        height: pixelsToMeters(32),          // 0.32m total height
-        mass: 70.0,                          // kg (unused for kinematic)
+        radius: pixelsToMeters(8), // 0.08m capsule radius
+        height: pixelsToMeters(32), // 0.32m total height
+        mass: 70.0, // kg (unused for kinematic)
         friction: 0.5,
-        restitution: 0.0,                    // No bounce
+        restitution: 0.0, // No bounce
         density: 1.0,
-        offset: 0.01,                        // Collision skin
+        offset: 0.01, // Collision skin
 
         // Character controller features
         enableAutostep: true,
-        autostepMaxHeight: pixelsToMeters(16),   // Can climb 16px ledges
+        autostepMaxHeight: pixelsToMeters(16), // Can climb 16px ledges
         autostepMinWidth: pixelsToMeters(8),
         enableSnapToGround: true,
-        snapToGroundDistance: pixelsToMeters(8)  // Stick to slopes
+        snapToGroundDistance: pixelsToMeters(8), // Stick to slopes
     },
 
     // Movement parameters
     movement: {
-        walkSpeed: pixelsToMeters(250),      // 2.5 m/s
-        runSpeed: pixelsToMeters(400),       // 4.0 m/s
-        jumpVelocity: pixelsToMeters(480),   // 4.8 m/s upward
+        walkSpeed: pixelsToMeters(250), // 2.5 m/s
+        runSpeed: pixelsToMeters(400), // 4.0 m/s
+        jumpVelocity: pixelsToMeters(480), // 4.8 m/s upward
 
-        groundAcceleration: 15.0,            // m/s²
-        airAcceleration: 8.0,                // m/s²
-        deceleration: 20.0,                  // m/s²
-        airControlFactor: 0.8,               // 80% air control
+        groundAcceleration: 15.0, // m/s²
+        airAcceleration: 8.0, // m/s²
+        deceleration: 20.0, // m/s²
+        airControlFactor: 0.8, // 80% air control
 
-        maxFallSpeed: pixelsToMeters(600),   // 6 m/s terminal velocity
-        fastFallMultiplier: 1.4              // 40% faster when down pressed
+        maxFallSpeed: pixelsToMeters(600), // 6 m/s terminal velocity
+        fastFallMultiplier: 1.4, // 40% faster when down pressed
     },
 
     // Game feel enhancements
     gameFeel: {
-        coyoteTime: 0.15,                    // 150ms grace period
-        jumpBufferTime: 0.1,                 // 100ms pre-jump buffer
-        variableJumpMinHeight: 0.3,          // 30% of full jump
+        coyoteTime: 0.15, // 150ms grace period
+        jumpBufferTime: 0.1, // 100ms pre-jump buffer
+        variableJumpMinHeight: 0.3, // 30% of full jump
 
-        landingRecoveryTime: 0.08,           // 80ms post-land penalty
-        landingSpeedMultiplier: 0.9          // 90% speed during recovery
-    }
+        landingRecoveryTime: 0.08, // 80ms post-land penalty
+        landingSpeedMultiplier: 0.9, // 90% speed during recovery
+    },
 };
 ```
 
@@ -1072,6 +1060,7 @@ export function metersToPixels(meters) {
 ```
 
 **Example Conversions**:
+
 - Player width: 32 pixels = 0.32 meters
 - Walk speed: 250 pixels/s = 2.5 m/s
 - Jump force: 480 pixels/s = 4.8 m/s
@@ -1089,31 +1078,37 @@ export function metersToPixels(meters) {
 **Hypotheses**:
 
 #### Hypothesis 1: Input Not Reaching PlayerController
+
 - **Check**: Are Key objects properly initialized in `setupControls()`?
 - **Debug**: Add `console.log(this.cursors.left.isDown)` in `calculateMovement()`
 - **Expected**: Should print `true` when Left Arrow held
 
 #### Hypothesis 2: Movement Calculation Returns Zero
+
 - **Check**: Does `calculateMovement()` return non-zero movement?
 - **Debug**: Add `console.log('Movement:', movement.x, movement.y)` at Line 420
 - **Expected**: Should see negative x values when moving left
 
 #### Hypothesis 3: Physics Body Not Created
+
 - **Check**: Is `this.body` null in `update()`?
 - **Debug**: Add `console.log('Body:', this.body)` at start of `update()`
 - **Expected**: Should be a valid `RigidBody` object, not `null`
 
 #### Hypothesis 4: Character Controller Not Initialized
+
 - **Check**: Is `this.characterController` null?
 - **Debug**: Add validation in `create()` after line 128
 - **Expected**: Should be a valid `CharacterController` object
 
 #### Hypothesis 5: Collision Correction Zeroing Movement
+
 - **Check**: Does `computeColliderMovement()` return (0, 0)?
 - **Debug**: Log both `desiredMovement` and `correctedMovement`
 - **Expected**: If stuck in geometry, corrected movement may be zero
 
 #### Hypothesis 6: Sprite Not Syncing
+
 - **Check**: Does physics position update but sprite doesn't move?
 - **Debug**: Log `body.translation()` and sprite position separately
 - **Expected**: If physics works but rendering doesn't, sprite.setPosition() may be failing
@@ -1123,6 +1118,7 @@ export function metersToPixels(meters) {
 **Issue**: InputManager emits `MOVE_LEFT`, `MOVE_RIGHT`, etc., but PlayerController doesn't listen.
 
 **Evidence**:
+
 - `InputManager.init()` Lines 47-76: Emits events on key down
 - `PlayerController`: No event listeners registered
 - `calculateMovement()` Line 332: Directly polls `cursors.left.isDown`
@@ -1130,6 +1126,7 @@ export function metersToPixels(meters) {
 **Impact**: Event-driven input is **non-functional**. System relies entirely on polling.
 
 **Recommendation**: Either:
+
 1. **Option A**: Remove event emissions from InputManager (cleanup)
 2. **Option B**: Refactor PlayerController to use event listeners instead of polling
 
@@ -1138,16 +1135,19 @@ export function metersToPixels(meters) {
 **Current Implementation**: Polling (checking `isDown` every frame)
 
 **Advantages of Polling**:
+
 - ✅ Simple to understand
 - ✅ Reliable for continuous movement
 - ✅ No missed events
 
 **Advantages of Event-Driven**:
+
 - ✅ Decoupled architecture
 - ✅ Better for discrete actions (jump, pause)
 - ✅ Can be remapped without changing controller code
 
 **Hybrid Approach** (Recommended):
+
 - **Events** for discrete actions: Jump, Duck, Pause
 - **Polling** for continuous actions: Movement (left/right)
 
@@ -1156,18 +1156,21 @@ export function metersToPixels(meters) {
 **Multiple Safeguards**:
 
 1. **PlayerController** (Line 207):
+
 ```javascript
-dt = Math.min(dt, 0.05);  // Cap at 50ms
+dt = Math.min(dt, 0.05); // Cap at 50ms
 ```
 
 2. **PhysicsManager** (Line 209):
+
 ```javascript
-const cappedDelta = Math.min(deltaSeconds, 1/20);  // Cap at 50ms
+const cappedDelta = Math.min(deltaSeconds, 1 / 20); // Cap at 50ms
 ```
 
 3. **Fallback** (Line 202):
+
 ```javascript
-let dt = deltaTime ? deltaTime / 1000 : 1/60;
+let dt = deltaTime ? deltaTime / 1000 : 1 / 60;
 ```
 
 **Why This Matters**: Prevents "spiral of death" where lag causes huge deltas, which cause more lag.
@@ -1176,13 +1179,14 @@ let dt = deltaTime ? deltaTime / 1000 : 1/60;
 
 **Common Mistakes**:
 
-| Mistake | Consequence | Solution |
-|---------|-------------|----------|
-| Passing pixels to Rapier | Extreme forces, physics explosion | Always convert with `pixelsToMeters()` |
-| Passing meters to sprite | Tiny invisible sprite | Always convert with `metersToPixels()` |
-| Mixing coordinate systems | Unpredictable behavior | Strict separation: meters for physics, pixels for rendering |
+| Mistake                   | Consequence                       | Solution                                                    |
+| ------------------------- | --------------------------------- | ----------------------------------------------------------- |
+| Passing pixels to Rapier  | Extreme forces, physics explosion | Always convert with `pixelsToMeters()`                      |
+| Passing meters to sprite  | Tiny invisible sprite             | Always convert with `metersToPixels()`                      |
+| Mixing coordinate systems | Unpredictable behavior            | Strict separation: meters for physics, pixels for rendering |
 
 **Rule of Thumb**:
+
 - **Anything Rapier touches**: Meters
 - **Anything Phaser touches**: Pixels
 - **At the boundary**: Convert
@@ -1193,36 +1197,36 @@ let dt = deltaTime ? deltaTime / 1000 : 1/60;
 
 ### 9.1 Core System Files
 
-| File | Primary Responsibility | Key Classes/Functions | Lines |
-|------|------------------------|----------------------|-------|
-| `src/core/InputManager.js` | Capture keyboard input, emit events | `InputManager.init()` | 28-83 |
-| `src/core/EventBus.js` | Event dispatch system | `EventBus.emit()`, `on()` | 11-72 |
-| `src/core/EventSystem.js` | EventBus wrapper with debug | `EventSystem.emit()` | 21-26 |
-| `src/core/PhysicsManager.js` | Rapier world management | `update()`, `init()` | 43-278 |
-| `src/modules/player/PlayerController.js` | Player movement logic | `update()`, `calculateMovement()` | 192-421 |
-| `src/scenes/Game.js` | Scene orchestration | `create()`, `update()` | 46-573 |
+| File                                     | Primary Responsibility              | Key Classes/Functions             | Lines   |
+| ---------------------------------------- | ----------------------------------- | --------------------------------- | ------- |
+| `src/core/InputManager.js`               | Capture keyboard input, emit events | `InputManager.init()`             | 28-83   |
+| `src/core/EventBus.js`                   | Event dispatch system               | `EventBus.emit()`, `on()`         | 11-72   |
+| `src/core/EventSystem.js`                | EventBus wrapper with debug         | `EventSystem.emit()`              | 21-26   |
+| `src/core/PhysicsManager.js`             | Rapier world management             | `update()`, `init()`              | 43-278  |
+| `src/modules/player/PlayerController.js` | Player movement logic               | `update()`, `calculateMovement()` | 192-421 |
+| `src/scenes/Game.js`                     | Scene orchestration                 | `create()`, `update()`            | 46-573  |
 
 ### 9.2 Configuration Files
 
-| File | Purpose | Critical Constants |
-|------|---------|-------------------|
-| `src/constants/PhysicsConfig.js` | Physics parameters | `movement`, `gameFeel`, `player` |
-| `src/constants/PhysicsConstants.js` | Unit conversion | `PIXELS_PER_METER`, conversion functions |
-| `src/constants/EventNames.js` | Event name constants | `MOVE_LEFT`, `MOVE_RIGHT`, `JUMP` |
+| File                                | Purpose              | Critical Constants                       |
+| ----------------------------------- | -------------------- | ---------------------------------------- |
+| `src/constants/PhysicsConfig.js`    | Physics parameters   | `movement`, `gameFeel`, `player`         |
+| `src/constants/PhysicsConstants.js` | Unit conversion      | `PIXELS_PER_METER`, conversion functions |
+| `src/constants/EventNames.js`       | Event name constants | `MOVE_LEFT`, `MOVE_RIGHT`, `JUMP`        |
 
 ### 9.3 Key Method Reference
 
-| Method | File | Lines | Purpose |
-|--------|------|-------|---------|
-| `InputManager.init()` | InputManager.js | 28-83 | Register keyboard listeners |
-| `EventBus.emit()` | EventBus.js | 53-65 | Broadcast events |
-| `PlayerController.update()` | PlayerController.js | 192-283 | Main player update loop |
-| `PlayerController.calculateMovement()` | PlayerController.js | 328-421 | Convert input → velocity → movement |
-| `PlayerController.handleJumpInput()` | PlayerController.js | 426-463 | Process jump with buffering/coyote time |
-| `PlayerController.updateGroundState()` | PlayerController.js | 306-321 | Check ground contact |
-| `PhysicsManager.update()` | PhysicsManager.js | 187-278 | Fixed timestep physics stepping |
-| `body.setNextKinematicTranslation()` | PlayerController.js | 247-253 | Apply movement to physics body |
-| `updateSpritePosition()` | PlayerController.js | 467-481 | Sync rendering to physics |
+| Method                                 | File                | Lines   | Purpose                                 |
+| -------------------------------------- | ------------------- | ------- | --------------------------------------- |
+| `InputManager.init()`                  | InputManager.js     | 28-83   | Register keyboard listeners             |
+| `EventBus.emit()`                      | EventBus.js         | 53-65   | Broadcast events                        |
+| `PlayerController.update()`            | PlayerController.js | 192-283 | Main player update loop                 |
+| `PlayerController.calculateMovement()` | PlayerController.js | 328-421 | Convert input → velocity → movement     |
+| `PlayerController.handleJumpInput()`   | PlayerController.js | 426-463 | Process jump with buffering/coyote time |
+| `PlayerController.updateGroundState()` | PlayerController.js | 306-321 | Check ground contact                    |
+| `PhysicsManager.update()`              | PhysicsManager.js   | 187-278 | Fixed timestep physics stepping         |
+| `body.setNextKinematicTranslation()`   | PlayerController.js | 247-253 | Apply movement to physics body          |
+| `updateSpritePosition()`               | PlayerController.js | 467-481 | Sync rendering to physics               |
 
 ---
 
@@ -1231,65 +1235,72 @@ let dt = deltaTime ? deltaTime / 1000 : 1/60;
 ### Quick Diagnostic Steps
 
 1. **Verify Input Registration**:
+
 ```javascript
 // Add to PlayerController.setupControls() after Line 186
 console.log('[DEBUG] Controls setup:', {
     cursors: !!this.cursors,
     wasd: !!this.wasd,
-    space: !!this.spaceKey
+    space: !!this.spaceKey,
 });
 ```
 
 2. **Verify Input Polling**:
+
 ```javascript
 // Add to PlayerController.calculateMovement() after Line 339
 console.log('[DEBUG] Input:', {
     left: this.cursors.left.isDown,
     right: this.cursors.right.isDown,
-    horizontalInput
+    horizontalInput,
 });
 ```
 
 3. **Verify Movement Calculation**:
+
 ```javascript
 // Add to PlayerController.calculateMovement() after Line 420
 console.log('[DEBUG] Movement:', {
     velocity: { x: this.velocity.x, y: this.velocity.y },
-    movement: { x: movement.x, y: movement.y }
+    movement: { x: movement.x, y: movement.y },
 });
 ```
 
 4. **Verify Physics Body**:
+
 ```javascript
 // Add to PlayerController.update() after Line 214
 console.log('[DEBUG] Physics:', {
     body: !!this.body,
     controller: !!this.characterController,
-    position: this.body?.translation()
+    position: this.body?.translation(),
 });
 ```
 
 5. **Verify Collision Correction**:
+
 ```javascript
 // Add after Line 235 in PlayerController.update()
 console.log('[DEBUG] Collision:', {
     desired: desiredMovement,
-    corrected: correctedMovement
+    corrected: correctedMovement,
 });
 ```
 
 6. **Verify Sprite Sync**:
+
 ```javascript
 // Add to PlayerController.updateSpritePosition() after Line 481
 console.log('[DEBUG] Sprite:', {
     physicsPos: this.body.translation(),
-    spritePos: { x: this.sprite.x, y: this.sprite.y }
+    spritePos: { x: this.sprite.x, y: this.sprite.y },
 });
 ```
 
 ### Expected Console Output (Working System)
 
 When moving left, you should see:
+
 ```
 [DEBUG] Input: { left: true, right: false, horizontalInput: -1 }
 [DEBUG] Movement: { velocity: { x: -2.5, y: 0 }, movement: { x: -0.0417, y: 0 } }
@@ -1306,6 +1317,7 @@ When moving left, you should see:
 **Issue**: PlayerController may not be created or added to update loop.
 
 **Check in Game.js**:
+
 ```javascript
 // Lines 129-136: Ensure this executes
 this.playerController = new PlayerController(
@@ -1328,6 +1340,7 @@ if (this.playerController) {
 **Issue**: InputManager may not be initialized before PlayerController.
 
 **Check in Game.js create() order**:
+
 ```javascript
 // MUST come in this order:
 1. EventSystem init (Line 55)
@@ -1339,13 +1352,14 @@ if (this.playerController) {
 ### Fix 3: Add Explicit Physics Body Validation
 
 **Add to PlayerController.create()**:
+
 ```javascript
 // After Line 128
 if (!this.body || !this.characterController || !this.collider) {
     console.error('[PlayerController] Physics components not created!', {
         body: !!this.body,
         controller: !!this.characterController,
-        collider: !!this.collider
+        collider: !!this.collider,
     });
     return false;
 }
@@ -1358,6 +1372,7 @@ return true;
 **Issue**: `this.scene` may be undefined when accessing `this.scene.input.keyboard`.
 
 **Add to PlayerController.setupControls()**:
+
 ```javascript
 // Line 139
 if (!this.scene || !this.scene.input) {
@@ -1370,9 +1385,9 @@ if (!this.scene || !this.scene.input) {
 
 ## Document Revision History
 
-| Version | Date | Author | Changes |
-|---------|------|--------|---------|
-| 1.0 | 2025-10-28 | Claude Code | Initial comprehensive audit |
+| Version | Date       | Author      | Changes                     |
+| ------- | ---------- | ----------- | --------------------------- |
+| 1.0     | 2025-10-28 | Claude Code | Initial comprehensive audit |
 
 ---
 

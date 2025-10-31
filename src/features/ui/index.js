@@ -1,6 +1,6 @@
 /**
  * UI Feature Module
- * 
+ *
  * Central barrel export for all UI-related systems and components.
  * Handles feedback, notifications, progress indicators, and visual polish.
  */
