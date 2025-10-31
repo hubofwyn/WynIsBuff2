@@ -122,18 +122,21 @@ class AudioGenerator:
         try:
             # Call ElevenLabs Sound Generation API
             print(f"   🌐 Calling ElevenLabs API...")
-            audio_bytes = self.client.text_to_sound_effects.convert(
+            audio_generator = self.client.text_to_sound_effects.convert(
                 text=prompt,
                 duration_seconds=duration,
                 prompt_influence=prompt_influence
             )
 
-            # Save raw MP3
+            # Save raw MP3 - modern SDK returns iterator/generator
             raw_mp3_path = output_path.replace(".ogg", "_raw.mp3")
             Path(raw_mp3_path).parent.mkdir(parents=True, exist_ok=True)
 
+            # Consume generator and write chunks to file
             with open(raw_mp3_path, "wb") as f:
-                f.write(audio_bytes)
+                for chunk in audio_generator:
+                    if chunk:
+                        f.write(chunk)
 
             print(f"   ✅ Generated raw audio: {raw_mp3_path}")
 
@@ -201,16 +204,19 @@ class AudioGenerator:
 
             # Step 2: Compose music
             print(f"   🌐 Composing music...")
-            audio_bytes = self.client.music.compose(
+            audio_generator = self.client.music.compose(
                 composition_plan=composition_plan
             )
 
-            # Save raw MP3
+            # Save raw MP3 - modern SDK returns iterator/generator
             raw_mp3_path = output_path.replace(".ogg", "_raw.mp3")
             Path(raw_mp3_path).parent.mkdir(parents=True, exist_ok=True)
 
+            # Consume generator and write chunks to file
             with open(raw_mp3_path, "wb") as f:
-                f.write(audio_bytes)
+                for chunk in audio_generator:
+                    if chunk:
+                        f.write(chunk)
 
             print(f"   ✅ Generated raw audio: {raw_mp3_path}")
 

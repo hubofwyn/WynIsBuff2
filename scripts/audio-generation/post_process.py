@@ -11,7 +11,6 @@ Handles conversion and normalization of generated audio assets:
 import os
 import subprocess
 from pathlib import Path
-from pydub import AudioSegment
 import pyloudnorm as pyln
 import soundfile as sf
 import numpy as np
@@ -23,10 +22,10 @@ def convert_to_ogg(
     bitrate_kbps: int = 192
 ) -> bool:
     """
-    Convert audio file to OGG Vorbis format.
+    Convert audio file to OGG Vorbis format using FFmpeg.
 
     Args:
-        input_path: Path to input audio file (any format supported by pydub)
+        input_path: Path to input audio file (any format supported by FFmpeg)
         output_path: Path for output OGG file
         bitrate_kbps: Target bitrate in kbps (default 192)
 
@@ -34,15 +33,28 @@ def convert_to_ogg(
         True if successful, False otherwise
     """
     try:
-        audio = AudioSegment.from_file(input_path)
-        audio.export(
-            output_path,
-            format="ogg",
-            codec="libvorbis",
-            bitrate=f"{bitrate_kbps}k"
+        # Use FFmpeg directly for conversion
+        cmd = [
+            'ffmpeg',
+            '-i', input_path,
+            '-c:a', 'libvorbis',
+            '-b:a', f'{bitrate_kbps}k',
+            '-y',  # Overwrite output file
+            output_path
+        ]
+
+        result = subprocess.run(
+            cmd,
+            capture_output=True,
+            text=True,
+            check=True
         )
+
         print(f"   ✅ Converted to OGG: {output_path}")
         return True
+    except subprocess.CalledProcessError as e:
+        print(f"   ❌ Conversion failed: {e.stderr}")
+        return False
     except Exception as e:
         print(f"   ❌ Conversion failed: {e}")
         return False
@@ -50,7 +62,7 @@ def convert_to_ogg(
 
 def normalize_sfx_peak(file_path: str, target_dbfs: float = -3.0) -> bool:
     """
-    Apply peak normalization to SFX file.
+    Apply peak normalization to SFX file using FFmpeg.
 
     Peak normalization adjusts the audio so the loudest peak reaches the target level.
     Suitable for SFX where dynamic range preservation is important.
@@ -63,24 +75,39 @@ def normalize_sfx_peak(file_path: str, target_dbfs: float = -3.0) -> bool:
         True if successful, False otherwise
     """
     try:
-        audio = AudioSegment.from_file(file_path)
+        # Create temporary output file
+        temp_file = str(Path(file_path).with_suffix('.tmp.ogg'))
 
-        # Calculate current peak and required adjustment
-        current_peak_db = audio.max_dBFS
-        adjustment_db = target_dbfs - current_peak_db
+        # Use FFmpeg loudnorm filter for peak normalization
+        # Convert target dBFS to linear scale for FFmpeg volume filter
+        # FFmpeg uses a different scale, so we use -3dB as a multiplier
+        cmd = [
+            'ffmpeg',
+            '-i', file_path,
+            '-af', f'volume={target_dbfs}dB',
+            '-c:a', 'libvorbis',
+            '-y',
+            temp_file
+        ]
 
-        # Apply gain adjustment
-        normalized = audio.apply_gain(adjustment_db)
-
-        # Export back to same file
-        normalized.export(
-            file_path,
-            format="ogg",
-            codec="libvorbis"
+        result = subprocess.run(
+            cmd,
+            capture_output=True,
+            text=True,
+            check=True
         )
 
-        print(f"   ✅ Peak normalized: {current_peak_db:.1f} dBFS → {target_dbfs:.1f} dBFS")
+        # Replace original with normalized version
+        os.replace(temp_file, file_path)
+
+        print(f"   ✅ Peak normalized to {target_dbfs:.1f} dBFS")
         return True
+    except subprocess.CalledProcessError as e:
+        print(f"   ❌ Peak normalization failed: {e.stderr}")
+        # Clean up temp file if it exists
+        if os.path.exists(temp_file):
+            os.remove(temp_file)
+        return False
     except Exception as e:
         print(f"   ❌ Peak normalization failed: {e}")
         return False
