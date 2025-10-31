@@ -81,53 +81,36 @@ function generateAssetsConstants() {
             output += `  ${constName}: '${key}',\n`;
         }
 
-        // SFX variants
+        // SFX variants - Process all categories dynamically
         const sfx = manifest.assets.audio.sfx;
+        const topLevelCategories = ['land', 'pickup', 'jump', 'special'];
         output += `\n  // Sound Effects\n`;
 
-        // Handle land SFX
-        sfx.land.forEach((sound, index) => {
-            const constName = sound.key
-                .replace(/([A-Z])/g, '_$1')
-                .toUpperCase()
-                .replace(/^_/, '');
-            output += `  ${constName}: '${sound.key}',\n`;
+        // Process top-level SFX categories (land, pickup, jump, special, etc.)
+        topLevelCategories.forEach((category) => {
+            if (sfx[category] && Array.isArray(sfx[category])) {
+                sfx[category].forEach((sound, index) => {
+                    const constName = sound.key
+                        .replace(/([A-Z])/g, '_$1')
+                        .toUpperCase()
+                        .replace(/^_/, '');
+                    output += `  ${constName}: '${sound.key}',\n`;
+                });
+            }
         });
 
-        // Handle pickup SFX
-        sfx.pickup.forEach((sound, index) => {
-            const constName = sound.key
-                .replace(/([A-Z])/g, '_$1')
-                .toUpperCase()
-                .replace(/^_/, '');
-            output += `  ${constName}: '${sound.key}',\n`;
-        });
-
-        // Handle UI SFX
-        sfx.ui.click.forEach((sound, index) => {
-            const constName = sound.key
-                .replace(/([A-Z])/g, '_$1')
-                .toUpperCase()
-                .replace(/^_/, '');
-            output += `  ${constName}: '${sound.key}',\n`;
-        });
-
-        sfx.ui.hover.forEach((sound, index) => {
-            const constName = sound.key
-                .replace(/([A-Z])/g, '_$1')
-                .toUpperCase()
-                .replace(/^_/, '');
-            output += `  ${constName}: '${sound.key}',\n`;
-        });
-
-        // Handle special SFX if present
-        if (sfx.special) {
-            sfx.special.forEach((sound, index) => {
-                const constName = sound.key
-                    .replace(/([A-Z])/g, '_$1')
-                    .toUpperCase()
-                    .replace(/^_/, '');
-                output += `  ${constName}: '${sound.key}',\n`;
+        // Process nested UI SFX
+        if (sfx.ui) {
+            Object.keys(sfx.ui).forEach((uiCategory) => {
+                if (Array.isArray(sfx.ui[uiCategory])) {
+                    sfx.ui[uiCategory].forEach((sound, index) => {
+                        const constName = sound.key
+                            .replace(/([A-Z])/g, '_$1')
+                            .toUpperCase()
+                            .replace(/^_/, '');
+                        output += `  ${constName}: '${sound.key}',\n`;
+                    });
+                }
             });
         }
 
@@ -145,47 +128,32 @@ function generateAssetsConstants() {
             output += `  ${constName}: '${asset.path}',\n`;
         }
 
-        // SFX paths
-        sfx.land.forEach((sound, index) => {
-            const constName = sound.key
-                .replace(/([A-Z])/g, '_$1')
-                .toUpperCase()
-                .replace(/^_/, '');
-            output += `  ${constName}: '${sound.path}',\n`;
+        // SFX paths - Process all categories dynamically
+        // Process top-level SFX categories (land, pickup, jump, special, etc.)
+        topLevelCategories.forEach((category) => {
+            if (sfx[category] && Array.isArray(sfx[category])) {
+                sfx[category].forEach((sound, index) => {
+                    const constName = sound.key
+                        .replace(/([A-Z])/g, '_$1')
+                        .toUpperCase()
+                        .replace(/^_/, '');
+                    output += `  ${constName}: '${sound.path}',\n`;
+                });
+            }
         });
 
-        sfx.pickup.forEach((sound, index) => {
-            const constName = sound.key
-                .replace(/([A-Z])/g, '_$1')
-                .toUpperCase()
-                .replace(/^_/, '');
-            output += `  ${constName}: '${sound.path}',\n`;
-        });
-
-        sfx.ui.click.forEach((sound, index) => {
-            const constName = sound.key
-                .replace(/([A-Z])/g, '_$1')
-                .toUpperCase()
-                .replace(/^_/, '');
-            output += `  ${constName}: '${sound.path}',\n`;
-        });
-
-        sfx.ui.hover.forEach((sound, index) => {
-            const constName = sound.key
-                .replace(/([A-Z])/g, '_$1')
-                .toUpperCase()
-                .replace(/^_/, '');
-            output += `  ${constName}: '${sound.path}',\n`;
-        });
-
-        // Handle special SFX paths if present
-        if (sfx.special) {
-            sfx.special.forEach((sound, index) => {
-                const constName = sound.key
-                    .replace(/([A-Z])/g, '_$1')
-                    .toUpperCase()
-                    .replace(/^_/, '');
-                output += `  ${constName}: '${sound.path}',\n`;
+        // Process nested UI SFX paths
+        if (sfx.ui) {
+            Object.keys(sfx.ui).forEach((uiCategory) => {
+                if (Array.isArray(sfx.ui[uiCategory])) {
+                    sfx.ui[uiCategory].forEach((sound, index) => {
+                        const constName = sound.key
+                            .replace(/([A-Z])/g, '_$1')
+                            .toUpperCase()
+                            .replace(/^_/, '');
+                        output += `  ${constName}: '${sound.path}',\n`;
+                    });
+                }
             });
         }
 
@@ -302,14 +270,21 @@ export function validateAssets() {
         console.log(`📊 Generated ${Object.keys(manifest.assets.images).length} image assets`);
         console.log(`🎵 Generated ${Object.keys(manifest.assets.audio.music).length} music assets`);
 
-        // Count SFX
+        // Count SFX dynamically
         let sfxCount = 0;
-        sfxCount += manifest.assets.audio.sfx.land.length;
-        sfxCount += manifest.assets.audio.sfx.pickup.length;
-        sfxCount += manifest.assets.audio.sfx.ui.click.length;
-        sfxCount += manifest.assets.audio.sfx.ui.hover.length;
-        if (manifest.assets.audio.sfx.special) {
-            sfxCount += manifest.assets.audio.sfx.special.length;
+        topLevelCategories.forEach((category) => {
+            if (manifest.assets.audio.sfx[category] && Array.isArray(manifest.assets.audio.sfx[category])) {
+                sfxCount += manifest.assets.audio.sfx[category].length;
+            }
+        });
+
+        // Count UI SFX
+        if (manifest.assets.audio.sfx.ui) {
+            Object.keys(manifest.assets.audio.sfx.ui).forEach((uiCategory) => {
+                if (Array.isArray(manifest.assets.audio.sfx.ui[uiCategory])) {
+                    sfxCount += manifest.assets.audio.sfx.ui[uiCategory].length;
+                }
+            });
         }
 
         console.log(`🔊 Generated ${sfxCount} sound effect assets`);

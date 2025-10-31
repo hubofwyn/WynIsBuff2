@@ -6,6 +6,24 @@ import { LOG } from '../observability/core/LogSystem.js';
 
 import { BaseManager } from './BaseManager.js';
 
+/**
+ * Extract audio format from file path for Howler.js format property
+ * @param {string} path - Audio file path
+ * @returns {string[]} Array of format strings (e.g., ['mp3'], ['ogg'], ['wav'])
+ */
+function getAudioFormat(path) {
+    const extension = path.split('.').pop().toLowerCase();
+    const formatMap = {
+        mp3: ['mp3'],
+        ogg: ['ogg'],
+        oga: ['ogg'],
+        wav: ['wav'],
+        m4a: ['m4a'],
+        webm: ['webm'],
+    };
+    return formatMap[extension] || [extension];
+}
+
 // Background music sources
 const bgmList = {
     [AudioAssets.PROTEIN_PIXEL_ANTHEM]: AudioPaths.PROTEIN_PIXEL_ANTHEM,
@@ -117,6 +135,7 @@ export class AudioManager extends BaseManager {
             });
             this.music[key] = new Howl({
                 src: [`assets/${src}`],
+                format: getAudioFormat(src),
                 html5: true,
                 loop: true,
                 volume: this.settings.musicVolume,
@@ -166,8 +185,17 @@ export class AudioManager extends BaseManager {
                 (src) =>
                     new Howl({
                         src: [`assets/${src}`],
+                        format: getAudioFormat(src),
                         volume: this.settings.sfxVolume,
                         preload: true,
+                        onload: () =>
+                            LOG.dev('AUDIO_SFX_LOADED', {
+                                subsystem: 'audio',
+                                message: 'SFX loaded successfully',
+                                sfxKey: key,
+                                src,
+                                format: getAudioFormat(src),
+                            }),
                         onloaderror: (id, err) =>
                             LOG.warn('AUDIO_SFX_LOAD_ERROR', {
                                 subsystem: 'audio',
@@ -175,10 +203,41 @@ export class AudioManager extends BaseManager {
                                 message: 'Failed to load SFX',
                                 sfxKey: key,
                                 src,
+                                format: getAudioFormat(src),
                                 hint: 'Check if SFX file exists at assets/' + src,
                             }),
                     })
             );
+        });
+
+        // Log comprehensive audio system initialization summary
+        const musicCount = Object.keys(this.music).length;
+        const sfxCategoryCount = Object.keys(this.sfx).length;
+        const totalSfxCount = Object.values(this.sfx).reduce((sum, arr) => sum + arr.length, 0);
+
+        const formatBreakdown = {};
+        Object.values(sfxList).flat().forEach((src) => {
+            const format = getAudioFormat(src)[0];
+            formatBreakdown[format] = (formatBreakdown[format] || 0) + 1;
+        });
+
+        Object.values(bgmList).forEach((src) => {
+            const format = getAudioFormat(src)[0];
+            formatBreakdown[format] = (formatBreakdown[format] || 0) + 1;
+        });
+
+        LOG.info('AUDIO_SYSTEM_INITIALIZED', {
+            subsystem: 'audio',
+            message: 'Audio system fully initialized with format detection',
+            stats: {
+                musicTracks: musicCount,
+                sfxCategories: sfxCategoryCount,
+                totalSfxVariants: totalSfxCount,
+                totalAssets: musicCount + totalSfxCount,
+                formatBreakdown,
+            },
+            categories: Object.keys(this.sfx),
+            hint: 'All audio files loaded with explicit format property for browser compatibility',
         });
     }
 
