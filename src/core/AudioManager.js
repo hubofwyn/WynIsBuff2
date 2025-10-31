@@ -95,6 +95,23 @@ export class AudioManager extends BaseManager {
             musicVolume: 0.7,
             sfxVolume: 0.9,
         };
+
+        // Configure HTML5 Audio pool size for music streaming
+        // Architecture: Music uses html5: true (streaming), SFX use Web Audio API (pooling)
+        // Default pool size is 10, we set to 15 for safety margin
+        Howler.html5PoolSize = 15;
+
+        LOG.dev('AUDIO_POOL_CONFIGURED', {
+            subsystem: 'audio',
+            message: 'HTML5 Audio pool configured',
+            poolSize: Howler.html5PoolSize,
+            architecture: {
+                music: 'HTML5 Audio (html5: true) - for streaming large files',
+                sfx: 'Web Audio API (default) - for pooling small sounds',
+            },
+            hint: 'Only music tracks should use html5: true. SFX use Web Audio API for better performance.',
+        });
+
         // Set master volume
         Howler.volume(this.settings.masterVolume);
         this._initSounds();
@@ -126,17 +143,22 @@ export class AudioManager extends BaseManager {
      */
     _initSounds() {
         // Setup background music
+        // ARCHITECTURE: Music uses html5: true for streaming large files
+        // This prevents loading entire file into memory, using HTML5 Audio elements instead
+        // Trade-off: Uses HTML5 Audio pool (limited to 15 elements) but better for large files
         Object.entries(bgmList).forEach(([key, src]) => {
             LOG.dev('AUDIO_LOADING_MUSIC', {
                 subsystem: 'audio',
-                message: 'Loading music track',
+                message: 'Loading music track with HTML5 Audio streaming',
                 track: key,
                 src,
+                useHtml5: true,
+                reason: 'Streaming mode for large music files',
             });
             this.music[key] = new Howl({
                 src: [`assets/${src}`],
                 format: getAudioFormat(src),
-                html5: true,
+                html5: true, // Use HTML5 Audio for streaming (large files)
                 loop: true,
                 volume: this.settings.musicVolume,
                 preload: true,
@@ -180,21 +202,27 @@ export class AudioManager extends BaseManager {
             });
         });
         // Setup sound effects
+        // ARCHITECTURE: SFX use Web Audio API (default, html5: false)
+        // Web Audio API provides better pooling and performance for small sounds
+        // Trade-off: Loads entire file into memory, but SFX are small (<1MB each)
         Object.entries(sfxList).forEach(([key, list]) => {
             this.sfx[key] = list.map(
                 (src) =>
                     new Howl({
                         src: [`assets/${src}`],
                         format: getAudioFormat(src),
+                        // html5: false (default) - Use Web Audio API for better SFX pooling
                         volume: this.settings.sfxVolume,
                         preload: true,
                         onload: () =>
                             LOG.dev('AUDIO_SFX_LOADED', {
                                 subsystem: 'audio',
-                                message: 'SFX loaded successfully',
+                                message: 'SFX loaded successfully with Web Audio API',
                                 sfxKey: key,
                                 src,
                                 format: getAudioFormat(src),
+                                useHtml5: false,
+                                reason: 'Web Audio API for pooling and performance',
                             }),
                         onloaderror: (id, err) =>
                             LOG.warn('AUDIO_SFX_LOAD_ERROR', {
@@ -228,7 +256,7 @@ export class AudioManager extends BaseManager {
 
         LOG.info('AUDIO_SYSTEM_INITIALIZED', {
             subsystem: 'audio',
-            message: 'Audio system fully initialized with format detection',
+            message: 'Audio system fully initialized with format detection and pool management',
             stats: {
                 musicTracks: musicCount,
                 sfxCategories: sfxCategoryCount,
@@ -236,8 +264,20 @@ export class AudioManager extends BaseManager {
                 totalAssets: musicCount + totalSfxCount,
                 formatBreakdown,
             },
+            architecture: {
+                html5PoolSize: Howler.html5PoolSize,
+                musicUsesHtml5: true,
+                musicTracksUsingPool: musicCount,
+                poolUtilization: `${musicCount}/${Howler.html5PoolSize} (${Math.round((musicCount / Howler.html5PoolSize) * 100)}%)`,
+                sfxUsesWebAudio: true,
+                sfxVariantsUsingWebAudio: totalSfxCount,
+            },
             categories: Object.keys(this.sfx),
-            hint: 'All audio files loaded with explicit format property for browser compatibility',
+            hint: 'Music uses HTML5 Audio pool (streaming), SFX use Web Audio API (pooling)',
+            validation: {
+                poolSafetyMargin: Howler.html5PoolSize - musicCount,
+                poolHealthy: musicCount < Howler.html5PoolSize,
+            },
         });
     }
 
