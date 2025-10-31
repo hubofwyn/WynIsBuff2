@@ -35,6 +35,25 @@ const sfxList = {
         AudioPaths.SFX_HOVER4,
     ],
     fart: [AudioPaths.SFX_FART],
+    // Jump sounds - Bug #4 Fix
+    jump: [
+        AudioPaths.SFX_JUMP1_01,
+        AudioPaths.SFX_JUMP1_02,
+        AudioPaths.SFX_JUMP1_03,
+        AudioPaths.SFX_JUMP1_04,
+    ],
+    jump2: [
+        AudioPaths.SFX_JUMP2_01,
+        AudioPaths.SFX_JUMP2_02,
+        AudioPaths.SFX_JUMP2_03,
+        AudioPaths.SFX_JUMP2_04,
+    ],
+    jump3: [
+        AudioPaths.SFX_JUMP3_01,
+        AudioPaths.SFX_JUMP3_02,
+        AudioPaths.SFX_JUMP3_03,
+        AudioPaths.SFX_JUMP3_04,
+    ],
 };
 
 /**

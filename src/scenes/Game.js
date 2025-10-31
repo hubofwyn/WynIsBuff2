@@ -556,16 +556,26 @@ export class Game extends Scene {
             AudioManager.getInstance().playSFX('land');
         });
 
-        // Listen for player jump events
+        // Listen for player jump events - Bug #4 Fix
         this.eventSystem.on(EventNames.PLAYER_JUMP, (data) => {
+            const jumpNumber = data.jumpNumber || 1;
             LOG.dev('GAME_PLAYER_JUMP', {
                 subsystem: 'scene',
                 scene: SceneKeys.GAME,
                 message: 'Player jumped, effect managers handling feedback',
+                jumpNumber,
                 data,
             });
-            // Play jump sound effect
-            AudioManager.getInstance().playSFX('jump');
+
+            // Play jump sound effect based on jump number
+            // Jump 1 (basic), Jump 2 (enhanced), Jump 3 (MEGA BUFF)
+            if (jumpNumber === 1) {
+                AudioManager.getInstance().playSFX('jump');
+            } else if (jumpNumber === 2) {
+                AudioManager.getInstance().playSFX('jump2');
+            } else if (jumpNumber === 3) {
+                AudioManager.getInstance().playSFX('jump3');
+            }
         });
 
         // Listen for collectible collected events
