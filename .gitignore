@@ -72,3 +72,24 @@ doc-analysis-docs/
 doc-analysis-slim/
 *.db
 knowledge_graph.json
+
+# ───────────────────────────────────────────
+# Audio Generation (ElevenLabs)
+# ───────────────────────────────────────────
+# Python virtual environment
+scripts/audio-generation/audio-generation-venv/
+scripts/audio-generation/venv/
+scripts/audio-generation/.venv/
+
+# Python cache
+scripts/audio-generation/__pycache__/
+scripts/audio-generation/*.pyc
+scripts/audio-generation/*.pyo
+
+# Generated audio files (raw MP3s - keep processed OGG in assets/)
+scripts/audio-generation/*_raw.mp3
+assets/audio/**/*_raw.mp3
+
+# Generation logs and results
+scripts/audio-generation/generation_results_*.json
+scripts/audio-generation/*.log

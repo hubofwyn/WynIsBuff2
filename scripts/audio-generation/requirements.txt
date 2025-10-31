@@ -1,0 +1,20 @@
+# ElevenLabs Audio Generation Dependencies
+# Install with: pip install -r requirements.txt
+
+# ElevenLabs SDK for audio generation
+elevenlabs>=1.0.0
+
+# Audio processing
+pydub>=0.25.1              # Audio conversion and manipulation
+pyloudnorm>=0.1.1          # LUFS loudness normalization
+soundfile>=0.12.1          # Audio file I/O
+numpy>=1.24.0              # Numerical operations for audio processing
+
+# API and utilities
+requests>=2.31.0           # HTTP requests for API calls
+python-dotenv>=1.0.0       # Environment variable management
+
+# Note: FFmpeg is also required for audio processing but must be installed separately:
+#   macOS: brew install ffmpeg
+#   Ubuntu: sudo apt-get install ffmpeg
+#   Windows: Download from https://ffmpeg.org/download.html
