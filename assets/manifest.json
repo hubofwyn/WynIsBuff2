@@ -440,6 +440,80 @@
             "path": "sounds/land-effects/land4.mp3",
             "description": "Special fart sound effect (currently using land4 as placeholder)"
           }
+        ],
+        "jump": [
+          {
+            "key": "sfxJump1_01",
+            "type": "audio",
+            "path": "audio/sfx/player/sfx_player_jump1_01.ogg",
+            "description": "Jump 1 Variant A - Clean, punchy basic jump"
+          },
+          {
+            "key": "sfxJump1_02",
+            "type": "audio",
+            "path": "audio/sfx/player/sfx_player_jump1_02.ogg",
+            "description": "Jump 1 Variant B - Warmer tone variant"
+          },
+          {
+            "key": "sfxJump1_03",
+            "type": "audio",
+            "path": "audio/sfx/player/sfx_player_jump1_03.ogg",
+            "description": "Jump 1 Variant C - Higher pitch variant"
+          },
+          {
+            "key": "sfxJump1_04",
+            "type": "audio",
+            "path": "audio/sfx/player/sfx_player_jump1_04.ogg",
+            "description": "Jump 1 Variant D - Lower pitch variant"
+          },
+          {
+            "key": "sfxJump2_01",
+            "type": "audio",
+            "path": "audio/sfx/player/sfx_player_jump2_01.ogg",
+            "description": "Jump 2 Variant A - Enhanced double jump with magical sparkle energy"
+          },
+          {
+            "key": "sfxJump2_02",
+            "type": "audio",
+            "path": "audio/sfx/player/sfx_player_jump2_02.ogg",
+            "description": "Jump 2 Variant B - Brighter sparkle harmonics"
+          },
+          {
+            "key": "sfxJump2_03",
+            "type": "audio",
+            "path": "audio/sfx/player/sfx_player_jump2_03.ogg",
+            "description": "Jump 2 Variant C - Warmer magical energy with bell-like quality"
+          },
+          {
+            "key": "sfxJump2_04",
+            "type": "audio",
+            "path": "audio/sfx/player/sfx_player_jump2_04.ogg",
+            "description": "Jump 2 Variant D - Crystalline magical energy"
+          },
+          {
+            "key": "sfxJump3_01",
+            "type": "audio",
+            "path": "audio/sfx/player/sfx_player_jump3_01.ogg",
+            "description": "Jump 3 - MEGA BUFF Variant A - EPIC explosive triple jump"
+          },
+          {
+            "key": "sfxJump3_02",
+            "type": "audio",
+            "path": "audio/sfx/player/sfx_player_jump3_02.ogg",
+            "description": "Jump 3 - MEGA BUFF Variant B - More explosive emphasis"
+          },
+          {
+            "key": "sfxJump3_03",
+            "type": "audio",
+            "path": "audio/sfx/player/sfx_player_jump3_03.ogg",
+            "description": "Jump 3 - MEGA BUFF Variant C - Energy beam focus"
+          },
+          {
+            "key": "sfxJump3_04",
+            "type": "audio",
+            "path": "audio/sfx/player/sfx_player_jump3_04.ogg",
+            "description": "Jump 3 - MEGA BUFF Variant D - Maximum bass power"
+          }
         ]
       }
     }
