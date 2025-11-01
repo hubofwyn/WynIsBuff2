@@ -534,8 +534,42 @@ class CostTracker {
 - `ASSET_GENERATION_MIGRATION_PLAN.md` - Migration from get-more-buff
 - `docs/bun-migration.md` - Bun runtime migration
 
+## 🚀 Updated Migration Strategy (2025-11-01)
+
+### Modern Spec-Driven Architecture
+
+**New Plan**: [AssetGenerationMigration2025.md](AssetGenerationMigration2025.md)
+
+Building on the discovery of the DALL-E system in `get-more-buff` branch, we've designed a **spec-driven hybrid architecture** incorporating 2025 best practices:
+
+**Key Innovations**:
+- ✅ **Spec-as-Code**: YAML specifications for reproducible asset generation
+- ✅ **Orchestration Layer**: Route requests to optimal generation engines
+- ✅ **Multi-Modal**: Images (DALL-E) + Audio (ElevenLabs, Bark)
+- ✅ **Observability-First**: Structured logging with cost/quality tracking
+- ✅ **Architectural Integration**: Fits into layered A-Spec architecture
+
+**Implementation Ready**:
+- 📋 Complete specification schema: `architecture/asset-spec.schema.json`
+- 📝 Example specs: `architecture/examples/asset-specs/`
+- 📖 Migration guide: `docs/architecture/AssetGenerationMigration2025.md`
+- 🏗️ 4-phase implementation plan (4 weeks)
+
+**Technology Stack**:
+- **Image**: DALL-E 3 (primary), Stable Diffusion 3.5, Adobe Firefly
+- **Audio**: ElevenLabs (primary), Bark, MusicGen
+- **Orchestration**: Node.js/Bun with provider routing
+- **Processing**: Sharp (images), custom audio processing
+- **Observability**: LOG system + SQLite cost tracking
+
+See [AssetGenerationMigration2025.md](AssetGenerationMigration2025.md) for complete details.
+
+---
+
 ## Conclusion
 
-WynIsBuff2's architecture is sophisticated and well-prepared for AI asset generation. The orphaned `get-more-buff` branch contains valuable DALL-E integration that should be migrated and enhanced with audio generation capabilities. The architecture supports this expansion with minimal disruption through clear layer boundaries and comprehensive observability.
+WynIsBuff2's architecture is sophisticated and well-prepared for AI asset generation. The orphaned `get-more-buff` branch contains valuable DALL-E integration that has been analyzed and incorporated into a modern, spec-driven migration plan.
 
-**Next Step**: Execute Phase 1 of the migration plan to bring AI asset generation into the main architecture.
+The new migration plan provides a brilliant implementation path that incorporates 2025 best practices (spec-driven architecture, orchestration layer, multi-modal support) while seamlessly integrating with WynIsBuff2's existing observability, manifest system, and layered architecture.
+
+**Next Step**: Review the migration plan and begin Phase 1 implementation to bring modern AI asset generation into the main architecture.

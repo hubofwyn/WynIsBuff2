@@ -1,0 +1,90 @@
+# Example Template Specification: Jump SFX
+# Demonstrates template-based generation with parameters
+
+version: "1.0"
+template: jump-sfx
+
+parameters:
+  - name: jump_type
+    type: enum
+    values: [dust-cloud, energy-burst, mega-explosion]
+    description: "Type of jump sound effect"
+
+  - name: variant
+    type: string
+    description: "Descriptive variation (e.g., 'light', 'heavy', 'crisp')"
+
+  - name: variant_letter
+    type: string
+    description: "Variant letter for file naming (A, B, C, D)"
+    values: [A, B, C, D]
+
+generation:
+  type: audio
+  provider: elevenlabs
+  fallback: bark
+
+prompt:
+  base: |
+    Platformer game jump sound effect, {{jump_type}} style,
+    {{variant}} variation, 0.3-0.5 seconds duration,
+    suitable for player feedback in 2D platformer
+
+  templates:
+    dust-cloud: |
+      soft landing whoosh, dust cloud impact, light and airy,
+      gentle swoosh with subtle impact, appropriate for first jump
+
+    energy-burst: |
+      electric energy burst, powerful whoosh, crisp attack,
+      crackling energy with sharp onset, appropriate for double jump
+
+    mega-explosion: |
+      mega explosion boom, bass-heavy, dramatic cinematic impact,
+      deep rumbling with powerful low-end, appropriate for triple jump
+
+  parameters:
+    duration_seconds: 0.4
+    prompt_influence: 0.8
+
+post_processing:
+  - action: normalize
+    peak: -1.0              # Normalize to -1.0 dBFS
+
+  - action: trim_silence
+    threshold: -40          # Trim silence below -40 dB
+
+  - action: validate
+    checks:
+      - duration_range: [0.2, 0.6]
+      - format: mp3
+      - bitrate: 192k
+      - no_clipping
+
+  - action: convert
+    formats: [mp3]
+
+integration:
+  manifest_section: audio.sfx.jump
+  naming_pattern: "sfxJump{{type_number}}{{variant_letter}}.mp3"
+  description_pattern: "Jump SFX - {{jump_type}} {{variant}}"
+
+observability:
+  track_cost: true
+  track_quality: true
+  log_level: info
+
+# Usage Examples:
+# ----------------
+# npm run asset:generate -- \
+#   --template jump-sfx \
+#   --jump_type dust-cloud \
+#   --variant light \
+#   --variant_letter A
+#
+# This generates: sfxJump1A.mp3 (Type 1 = dust-cloud, Variant A)
+#
+# To generate all 12 jump SFX:
+# npm run asset:batch -- \
+#   --template jump-sfx \
+#   --combinations jump-sfx-batch.json
