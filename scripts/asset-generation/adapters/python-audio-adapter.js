@@ -9,6 +9,7 @@ import { writeFileSync, readFileSync, existsSync } from 'fs';
 import { resolve, dirname } from 'path';
 import { tmpdir } from 'os';
 import { randomBytes } from 'crypto';
+import { LOG } from '../../../src/observability/index.js';
 
 export class PythonAudioAdapter {
   constructor(options = {}) {
@@ -72,9 +73,13 @@ export class PythonAudioAdapter {
     const startTime = Date.now();
 
     try {
-      console.log(`🎵 Generating audio: ${spec.id}`);
-      console.log(`   Provider: ${spec.generation.provider}`);
-      console.log(`   Type: ${spec.generation.type}`);
+      LOG.info('AUDIO_ADAPTER_START', {
+        subsystem: 'python-audio-adapter',
+        message: 'Starting audio generation via Python adapter',
+        specId: spec.id,
+        provider: spec.generation.provider,
+        type: spec.generation.type
+      });
 
       // Convert spec to Python format
       const assetDef = this.specToAssetDefinition(spec);
@@ -82,9 +87,20 @@ export class PythonAudioAdapter {
       // Create temporary assets.json file
       const tempAssetsFile = this.createTempAssetsJson([assetDef]);
 
-      console.log(`   Temp assets file: ${tempAssetsFile}`);
+      LOG.dev('AUDIO_ADAPTER_TEMP_FILE', {
+        subsystem: 'python-audio-adapter',
+        message: 'Created temporary assets file',
+        tempFile: tempAssetsFile
+      });
 
       if (this.dryRun || options.dryRun) {
+        LOG.info('AUDIO_ADAPTER_DRY_RUN', {
+          subsystem: 'python-audio-adapter',
+          message: 'Dry run mode - skipping actual generation',
+          command: `python generate_assets.py --asset ${assetDef.id}`,
+          assetDef
+        });
+
         console.log('   🏜️  DRY RUN - Would execute:');
         console.log(`   python generate_assets.py --asset ${assetDef.id}`);
         console.log(`   Asset definition:`, JSON.stringify(assetDef, null, 2));
@@ -103,7 +119,13 @@ export class PythonAudioAdapter {
 
       const duration = Date.now() - startTime;
 
-      console.log(`   ✅ Generation complete (${duration}ms)`);
+      LOG.info('AUDIO_ADAPTER_SUCCESS', {
+        subsystem: 'python-audio-adapter',
+        message: 'Audio generation completed successfully',
+        specId: spec.id,
+        duration,
+        cost: result.cost
+      });
 
       return {
         success: true,
@@ -114,7 +136,14 @@ export class PythonAudioAdapter {
       };
 
     } catch (error) {
-      console.error(`   ❌ Generation failed: ${error.message}`);
+      LOG.error('AUDIO_ADAPTER_ERROR', {
+        subsystem: 'python-audio-adapter',
+        error,
+        message: 'Audio generation failed',
+        specId: spec.id,
+        duration: Date.now() - startTime,
+        hint: 'Check Python environment and ElevenLabs API credentials'
+      });
 
       return {
         success: false,
@@ -164,6 +193,13 @@ export class PythonAudioAdapter {
         '--assets-file', assetsFile
       ];
 
+      LOG.info('PYTHON_CALL', {
+        subsystem: 'python-audio-adapter',
+        message: 'Calling Python generation script',
+        command: `${this.pythonCmd} ${args.join(' ')}`,
+        assetId
+      });
+
       console.log(`   📞 Calling: ${this.pythonCmd} ${args.join(' ')}`);
 
       const proc = spawn(this.pythonCmd, args, {
@@ -186,16 +222,37 @@ export class PythonAudioAdapter {
 
       proc.on('close', (code) => {
         if (code === 0) {
+          LOG.info('PYTHON_SUCCESS', {
+            subsystem: 'python-audio-adapter',
+            message: 'Python script completed successfully',
+            assetId,
+            cost: this.extractCostFromOutput(stdout)
+          });
           resolve({
             output: stdout,
             cost: this.extractCostFromOutput(stdout)
           });
         } else {
+          LOG.error('PYTHON_EXIT_ERROR', {
+            subsystem: 'python-audio-adapter',
+            message: 'Python script exited with error code',
+            assetId,
+            exitCode: code,
+            stderr,
+            hint: 'Check Python dependencies and ElevenLabs API credentials'
+          });
           reject(new Error(`Python script exited with code ${code}\n${stderr}`));
         }
       });
 
       proc.on('error', (error) => {
+        LOG.error('PYTHON_SPAWN_ERROR', {
+          subsystem: 'python-audio-adapter',
+          error,
+          message: 'Failed to spawn Python process',
+          pythonCmd: this.pythonCmd,
+          hint: 'Ensure Python 3 is installed and accessible in PATH'
+        });
         reject(new Error(`Failed to spawn Python process: ${error.message}`));
       });
     });
@@ -232,12 +289,23 @@ export class PythonAudioAdapter {
    */
   async checkAvailability() {
     try {
+      LOG.dev('CHECKING_PYTHON_AVAILABILITY', {
+        subsystem: 'python-audio-adapter',
+        message: 'Checking Python environment availability'
+      });
+
       // Check if Python is available
       const pythonCheck = await this.runCommand(this.pythonCmd, ['--version']);
 
       // Check if audio generation script exists
       const scriptPath = resolve(this.audioGenPath, 'generate_assets.py');
       if (!existsSync(scriptPath)) {
+        LOG.warn('PYTHON_SCRIPT_MISSING', {
+          subsystem: 'python-audio-adapter',
+          message: 'Python generation script not found',
+          scriptPath,
+          hint: 'Ensure scripts/audio-generation/generate_assets.py exists'
+        });
         return false;
       }
 
@@ -245,11 +313,28 @@ export class PythonAudioAdapter {
       const venvPath = resolve(this.audioGenPath, 'audio-generation-venv');
       // Don't require venv, just log if missing
       if (!existsSync(venvPath)) {
+        LOG.warn('PYTHON_VENV_MISSING', {
+          subsystem: 'python-audio-adapter',
+          message: 'Virtual environment not found - using system Python',
+          venvPath
+        });
         console.warn('⚠️  Audio generation virtual environment not found');
       }
 
+      LOG.info('PYTHON_AVAILABLE', {
+        subsystem: 'python-audio-adapter',
+        message: 'Python environment available',
+        pythonVersion: pythonCheck.trim()
+      });
+
       return true;
     } catch (error) {
+      LOG.error('PYTHON_CHECK_FAILED', {
+        subsystem: 'python-audio-adapter',
+        error,
+        message: 'Python availability check failed',
+        hint: 'Ensure Python 3 is installed'
+      });
       return false;
     }
   }

@@ -7,6 +7,7 @@
 import { resolve } from 'path';
 import { SpecLoader } from '../utils/spec-loader.js';
 import { PythonAudioAdapter } from '../adapters/python-audio-adapter.js';
+import { LOG } from '../../../src/observability/index.js';
 
 class AssetOrchestrator {
   constructor(options = {}) {
@@ -32,21 +33,38 @@ class AssetOrchestrator {
    * @returns {Promise<Object>} Generation result
    */
   async generate(specPath) {
-    console.log('\n🎨 Asset Generation Orchestrator');
-    console.log('================================\n');
+    LOG.info('ORCHESTRATOR_START', {
+      subsystem: 'asset-orchestrator',
+      message: 'Asset Generation Orchestrator started'
+    });
 
     const startTime = Date.now();
 
     try {
       // Load and validate spec
-      console.log('📋 Loading specification...');
+      LOG.info('SPEC_LOADING', {
+        subsystem: 'asset-orchestrator',
+        message: 'Loading specification',
+        specPath
+      });
+
       const spec = this.specLoader.load(specPath);
-      console.log(`   ✅ Loaded: ${spec.id || spec.template}`);
-      console.log(`   Type: ${spec.generation.type}`);
-      console.log(`   Provider: ${spec.generation.provider}`);
+
+      LOG.info('SPEC_LOADED', {
+        subsystem: 'asset-orchestrator',
+        message: 'Specification loaded successfully',
+        spec: {
+          id: spec.id || spec.template,
+          type: spec.generation.type,
+          provider: spec.generation.provider
+        }
+      });
 
       if (this.dryRun) {
-        console.log('\n🏜️  DRY RUN MODE - No actual generation will occur\n');
+        LOG.info('DRY_RUN_MODE', {
+          subsystem: 'asset-orchestrator',
+          message: 'DRY RUN MODE - No actual generation will occur'
+        });
       }
 
       // Route to appropriate generator
@@ -63,10 +81,20 @@ class AssetOrchestrator {
 
       if (result.success) {
         this.stats.succeeded++;
-        console.log('\n✅ Asset generation completed successfully');
+        LOG.info('GENERATION_SUCCESS', {
+          subsystem: 'asset-orchestrator',
+          message: 'Asset generation completed successfully',
+          specId: spec.id || spec.template,
+          duration: Date.now() - startTime
+        });
       } else {
         this.stats.failed++;
-        console.log('\n❌ Asset generation failed');
+        LOG.error('GENERATION_FAILED', {
+          subsystem: 'asset-orchestrator',
+          message: 'Asset generation failed',
+          specId: spec.id || spec.template,
+          error: result.error
+        });
       }
 
       // Print summary
@@ -77,10 +105,20 @@ class AssetOrchestrator {
 
     } catch (error) {
       this.stats.failed++;
-      console.error('\n❌ Error:', error.message);
+      LOG.error('GENERATION_ERROR', {
+        subsystem: 'asset-orchestrator',
+        error,
+        message: error.message,
+        specPath,
+        hint: 'Check spec file format and generation system availability'
+      });
 
       if (this.verbose) {
-        console.error(error.stack);
+        LOG.dev('GENERATION_ERROR_STACK', {
+          subsystem: 'asset-orchestrator',
+          message: 'Verbose error stack trace',
+          stack: error.stack
+        });
       }
 
       const duration = Date.now() - startTime;
@@ -96,12 +134,20 @@ class AssetOrchestrator {
    * @returns {Promise<Object>} Generation result
    */
   async generateAudio(spec) {
-    console.log('\n🎵 Audio Generation');
-    console.log('─────────────────');
+    LOG.info('AUDIO_GENERATION_START', {
+      subsystem: 'asset-orchestrator',
+      message: 'Starting audio generation',
+      specId: spec.id || spec.template
+    });
 
     // Check Python environment
     const available = await this.audioAdapter.checkAvailability();
     if (!available) {
+      LOG.error('AUDIO_ENV_UNAVAILABLE', {
+        subsystem: 'asset-orchestrator',
+        message: 'Python audio generation environment not available',
+        hint: 'Ensure Python 3 and audio-generation dependencies are installed'
+      });
       throw new Error('Python audio generation environment not available');
     }
 
@@ -117,12 +163,18 @@ class AssetOrchestrator {
    * @returns {Promise<Object>} Generation result
    */
   async generateImage(spec) {
-    console.log('\n🖼️  Image Generation');
-    console.log('─────────────────');
+    LOG.info('IMAGE_GENERATION_START', {
+      subsystem: 'asset-orchestrator',
+      message: 'Starting image generation',
+      specId: spec.id || spec.template
+    });
 
     // TODO: Implement DALL-E generation
-    console.log('⚠️  Image generation not yet implemented');
-    console.log('   This will be added in Phase 2');
+    LOG.warn('IMAGE_NOT_IMPLEMENTED', {
+      subsystem: 'asset-orchestrator',
+      message: 'Image generation not yet implemented - Phase 2 pending',
+      hint: 'This feature will be added when DALL-E migration is complete'
+    });
 
     if (this.dryRun) {
       return {
@@ -141,6 +193,18 @@ class AssetOrchestrator {
    * @param {Object} result - Generation result
    */
   printSummary(duration, result) {
+    // Log for observability
+    LOG.info('GENERATION_SUMMARY', {
+      subsystem: 'asset-orchestrator',
+      message: 'Generation summary',
+      duration,
+      success: result.success,
+      dryRun: result.dryRun || false,
+      cost: result.cost || result.estimatedCost || 0,
+      stats: { ...this.stats }
+    });
+
+    // User-facing output (keep console for CLI UX)
     console.log('\n📊 Summary');
     console.log('==========');
     console.log(`Duration: ${duration}ms`);
@@ -242,6 +306,11 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   }
 
   if (!options.specPath) {
+    LOG.error('CLI_NO_SPEC', {
+      subsystem: 'asset-orchestrator',
+      message: 'No spec file provided to CLI',
+      hint: 'Provide a spec file path as argument'
+    });
     console.error('❌ Error: No spec file provided\n');
     printHelp();
     process.exit(1);
@@ -257,6 +326,12 @@ if (import.meta.url === `file://${process.argv[1]}`) {
       process.exit(0);
     })
     .catch((error) => {
+      LOG.fatal('CLI_FATAL_ERROR', {
+        subsystem: 'asset-orchestrator',
+        error,
+        message: 'Fatal error in CLI execution',
+        specPath: options.specPath
+      });
       console.error('\n💥 Fatal error:', error.message);
       process.exit(1);
     });

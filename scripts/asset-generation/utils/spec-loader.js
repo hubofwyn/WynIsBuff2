@@ -7,6 +7,7 @@
 import { readFileSync } from 'fs';
 import { parse as parseYAML } from 'yaml';
 import { resolve } from 'path';
+import { LOG } from '../../../src/observability/index.js';
 
 export class SpecLoader {
   constructor(schemaPath = null) {
@@ -17,7 +18,18 @@ export class SpecLoader {
     try {
       const schemaContent = readFileSync(this.schemaPath, 'utf-8');
       this.schema = JSON.parse(schemaContent);
+      LOG.dev('SPEC_SCHEMA_LOADED', {
+        subsystem: 'spec-loader',
+        message: 'Asset spec schema loaded',
+        schemaPath: this.schemaPath
+      });
     } catch (error) {
+      LOG.warn('SPEC_SCHEMA_MISSING', {
+        subsystem: 'spec-loader',
+        message: 'Schema not found, validation will be skipped',
+        schemaPath: this.schemaPath,
+        error: error.message
+      });
       console.warn('⚠️  Schema not found, skipping validation:', error.message);
     }
   }
@@ -29,6 +41,12 @@ export class SpecLoader {
    */
   load(specPath) {
     try {
+      LOG.dev('SPEC_LOADING', {
+        subsystem: 'spec-loader',
+        message: 'Loading specification file',
+        specPath
+      });
+
       const absolutePath = resolve(specPath);
       const content = readFileSync(absolutePath, 'utf-8');
       const spec = parseYAML(content);
@@ -40,8 +58,23 @@ export class SpecLoader {
       spec._specType = spec.template ? 'template' : 'asset';
       spec._sourcePath = absolutePath;
 
+      LOG.info('SPEC_LOADED', {
+        subsystem: 'spec-loader',
+        message: 'Specification loaded successfully',
+        specType: spec._specType,
+        id: spec.id || spec.template,
+        generationType: spec.generation?.type
+      });
+
       return spec;
     } catch (error) {
+      LOG.error('SPEC_LOAD_ERROR', {
+        subsystem: 'spec-loader',
+        error,
+        message: 'Failed to load specification',
+        specPath,
+        hint: 'Check YAML syntax and file permissions'
+      });
       throw new Error(`Failed to load spec from ${specPath}: ${error.message}`);
     }
   }
@@ -52,30 +85,46 @@ export class SpecLoader {
    * @param {string} specPath - Path for error messages
    */
   validateBasicStructure(spec, specPath) {
+    const logValidationError = (field, message) => {
+      LOG.error('SPEC_VALIDATION_ERROR', {
+        subsystem: 'spec-loader',
+        message: `Validation error: ${message}`,
+        specPath,
+        field,
+        hint: 'Check spec file format against schema'
+      });
+    };
+
     // Check required fields
     if (!spec.version) {
+      logValidationError('version', 'Missing required field');
       throw new Error(`${specPath}: Missing required field 'version'`);
     }
 
     if (!spec.generation) {
+      logValidationError('generation', 'Missing required field');
       throw new Error(`${specPath}: Missing required field 'generation'`);
     }
 
     if (!spec.generation.type) {
+      logValidationError('generation.type', 'Missing required field');
       throw new Error(`${specPath}: Missing required field 'generation.type'`);
     }
 
     if (!spec.generation.provider) {
+      logValidationError('generation.provider', 'Missing required field');
       throw new Error(`${specPath}: Missing required field 'generation.provider'`);
     }
 
     if (!spec.prompt) {
+      logValidationError('prompt', 'Missing required field');
       throw new Error(`${specPath}: Missing required field 'prompt'`);
     }
 
     // Validate type
     const validTypes = ['image', 'audio'];
     if (!validTypes.includes(spec.generation.type)) {
+      logValidationError('generation.type', `Invalid type: ${spec.generation.type}`);
       throw new Error(`${specPath}: Invalid generation.type '${spec.generation.type}'. Must be one of: ${validTypes.join(', ')}`);
     }
 
@@ -85,18 +134,27 @@ export class SpecLoader {
       'elevenlabs', 'bark', 'musicgen'
     ];
     if (!validProviders.includes(spec.generation.provider)) {
+      logValidationError('generation.provider', `Invalid provider: ${spec.generation.provider}`);
       throw new Error(`${specPath}: Invalid provider '${spec.generation.provider}'. Must be one of: ${validProviders.join(', ')}`);
     }
 
     // For asset specs (not templates), require id
     if (!spec.template && !spec.id) {
+      logValidationError('id', 'Asset specs must have an id field');
       throw new Error(`${specPath}: Asset specs must have an 'id' field`);
     }
 
     // For template specs, require template name
     if (spec.template && !spec.parameters) {
+      logValidationError('parameters', 'Template specs must have parameters field');
       throw new Error(`${specPath}: Template specs must have 'parameters' field`);
     }
+
+    LOG.dev('SPEC_VALIDATION_SUCCESS', {
+      subsystem: 'spec-loader',
+      message: 'Spec validation passed',
+      specPath
+    });
   }
 
   /**
