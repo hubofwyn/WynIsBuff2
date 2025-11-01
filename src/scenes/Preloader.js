@@ -358,7 +358,7 @@ export class Preloader extends Scene {
         });
     }
 
-    update(time, delta) {
+    update(_time, _delta) {
         // Placeholder update method for Preloader scene
     }
 

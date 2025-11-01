@@ -59,7 +59,11 @@ function validateAssets() {
                     errors.push(`❌ Missing image: ${key} - ${asset.path}`);
                     hasErrors = true;
                 }
-            } else if (asset.type === 'multiResolution' && asset.variants && typeof asset.variants === 'object') {
+            } else if (
+                asset.type === 'multiResolution' &&
+                asset.variants &&
+                typeof asset.variants === 'object'
+            ) {
                 // Multi-resolution entries: validate all listed variants (png/webp)
                 Object.entries(asset.variants).forEach(([variantKey, variantVal]) => {
                     if (variantVal && typeof variantVal === 'object') {
@@ -69,7 +73,9 @@ function validateAssets() {
                                 const full = path.join(ASSETS_PATH, p);
                                 referencedPaths.add(p);
                                 if (!fs.existsSync(full)) {
-                                    errors.push(`❌ Missing image variant: ${key}[${variantKey}].${fmt} - ${p}`);
+                                    errors.push(
+                                        `❌ Missing image variant: ${key}[${variantKey}].${fmt} - ${p}`
+                                    );
                                     hasErrors = true;
                                 }
                             }
@@ -78,7 +84,9 @@ function validateAssets() {
                 });
             } else {
                 // Unknown shape; warn but don't fail validation
-                warnings.push(`⚠️  Unrecognized image asset shape for '${key}', skipping direct path check`);
+                warnings.push(
+                    `⚠️  Unrecognized image asset shape for '${key}', skipping direct path check`
+                );
                 hasWarnings = true;
             }
 

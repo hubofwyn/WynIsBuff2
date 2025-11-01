@@ -23,6 +23,7 @@ export default [
                 __dirname: 'readonly',
                 __filename: 'readonly',
                 global: 'readonly',
+                require: 'readonly',
                 // Browser globals
                 window: 'readonly',
                 document: 'readonly',
@@ -31,6 +32,7 @@ export default [
                 sessionStorage: 'readonly',
                 URL: 'readonly',
                 URLSearchParams: 'readonly',
+                performance: 'readonly',
                 // Timers
                 setTimeout: 'readonly',
                 clearTimeout: 'readonly',
@@ -51,12 +53,14 @@ export default [
         rules: {
             'no-console': 'warn',
             'no-unused-vars': [
-                'error',
+                'warn',
                 {
                     argsIgnorePattern: '^_',
                     caughtErrorsIgnorePattern: '^_',
+                    varsIgnorePattern: '^_',
                 },
             ],
+            'no-case-declarations': 'warn',
             'import/extensions': ['warn', 'ignorePackages'],
             'import/no-unresolved': [
                 'warn',

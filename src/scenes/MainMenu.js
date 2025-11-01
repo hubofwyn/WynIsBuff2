@@ -1,7 +1,7 @@
 import { Scene } from 'phaser';
 import { GameStateManager, AudioManager } from '@features/core';
 
-import { UIConfig } from '../constants/UIConfig';
+import { UIConfig } from '../constants/UIConfig.js';
 import { SceneKeys } from '../constants/SceneKeys.js';
 import { ImageAssets, AudioAssets } from '../constants/Assets.js';
 
@@ -28,7 +28,7 @@ export class MainMenu extends Scene {
         this.cameras.main.fadeIn(UIConfig.animations.fadeInDuration);
 
         // Enhanced main title
-        const mainTitle = this.add
+        const _mainTitle = this.add
             .text(width / 2, 180, 'WYN IS BUFF 2', {
                 fontFamily: 'Impact, Arial Black, sans-serif',
                 fontSize: '64px',
@@ -40,7 +40,7 @@ export class MainMenu extends Scene {
             .setOrigin(0.5);
 
         // Skill to automation subtitle
-        const subtitle = this.add
+        const _subtitle = this.add
             .text(width / 2, 230, 'SKILL TO AUTOMATION', {
                 fontFamily: 'Arial, sans-serif',
                 fontSize: '20px',
@@ -81,7 +81,7 @@ export class MainMenu extends Scene {
         this.createResetButton();
     }
 
-    update(time, delta) {
+    update(_time, _delta) {
         // Placeholder update method for MainMenu scene
     }
 

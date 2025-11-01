@@ -11,7 +11,7 @@ import {
 } from '@features/core';
 import { LevelManager } from '@features/level';
 
-import { EventNames } from '../constants/EventNames';
+import { EventNames } from '../constants/EventNames.js';
 import { SceneKeys } from '../constants/SceneKeys.js';
 import { AudioAssets, ImageAssets } from '../constants/Assets.js';
 import { PhysicsConfig } from '../constants/PhysicsConfig.js';
@@ -455,7 +455,7 @@ export class Game extends Scene {
         this.uiManager.addToGroup('gameUI', 'collectiblesCounter');
 
         // Create level complete UI
-        const levelCompleteText = this.uiManager
+        const _levelCompleteText = this.uiManager
             .createText(
                 'levelCompleteText',
                 512,
@@ -671,7 +671,7 @@ export class Game extends Scene {
         });
 
         // Listen for collision events
-        this.eventSystem.on(EventNames.COLLISION_START, (data) => {
+        this.eventSystem.on(EventNames.COLLISION_START, (_data) => {
             // Handled by the level manager
         });
 

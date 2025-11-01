@@ -1,5 +1,5 @@
-import { EventNames } from '../../constants/EventNames';
-import { SceneKeys } from '../../constants/SceneKeys';
+import { EventNames } from '../../constants/EventNames.js';
+import { SceneKeys } from '../../constants/SceneKeys.js';
 import { LOG } from '../../observability/core/LogSystem.js';
 
 /**
@@ -403,7 +403,7 @@ export class JumpController {
         if (!body || !sprite) return;
 
         const currentVel = body.linvel();
-        const previousVel = this._lastVelocityY;
+        // const previousVel = this._lastVelocityY;
 
         // Only track jump state if we're in the air and have used jumps
         if (!this.isOnGround && this._currentJumpNumber > 0) {

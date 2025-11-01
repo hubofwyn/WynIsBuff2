@@ -1,7 +1,4 @@
-import Phaser from 'phaser';
 import RAPIER from '@dimforge/rapier2d-compat';
-
-import { EventNames } from '../../constants/EventNames';
 
 /**
  * EnemyController handles a single enemy's creation and behavior.
@@ -63,7 +60,7 @@ export class EnemyController {
      * @param {number} time
      * @param {number} delta
      */
-    update(time, delta) {
+    update(_time, _delta) {
         if (!this.body) return;
         // Patrol logic: move horizontally and reverse at range limits
         const pos = this.body.translation();

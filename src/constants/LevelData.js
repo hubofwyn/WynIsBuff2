@@ -139,14 +139,7 @@ export const LevelData = {
         environment: {
             theme: 'wyn-is-buff',
         },
-        // Boss enemy - jumping boss at the top of the level
-        boss: {
-            x: 900, // X position near the end platforms
-            y: 350, // Y position - higher up, at "top" of level
-            key: 'axelface', // Sprite key for the boss
-            type: 'jumping', // Boss behavior type
-            active: true, // Boss is active in this level
-        },
+        // (Removed duplicate boss definition; see boss config above)
 
         // Regular enemies (none for level 1 - boss is the main challenge)
         enemies: [],

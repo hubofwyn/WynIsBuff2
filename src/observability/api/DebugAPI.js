@@ -372,7 +372,7 @@ export class DebugAPI {
         if (includeGameState && this.debugContext) {
             try {
                 exportData.gameState = this.debugContext.captureState();
-            } catch (error) {
+            } catch (_error) {
                 exportData.gameState = { error: 'Failed to capture state' };
             }
         }
@@ -391,7 +391,7 @@ export class DebugAPI {
      * @param {string} errorCode - Error code
      * @returns {Array} Suggestions
      */
-    getSuggestions(errorCode) {
+    getSuggestions(_errorCode) {
         // Suggestions will be populated by ErrorSuggestions module
         // For now, return generic message
         return [

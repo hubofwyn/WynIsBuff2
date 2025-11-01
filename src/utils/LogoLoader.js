@@ -130,8 +130,8 @@ export class LogoLoader {
         const variant = LogoLoader.VARIANTS[resolution];
 
         // Determine format (WebP if supported, PNG otherwise)
-        const webpSupported = forceFormat === 'webp' ||
-                             (forceFormat !== 'png' && LogoLoader.supportsWebP(game));
+        const webpSupported =
+            forceFormat === 'webp' || (forceFormat !== 'png' && LogoLoader.supportsWebP(game));
         const format = webpSupported ? 'webp' : 'png';
         const filename = variant[format];
 

@@ -1,7 +1,7 @@
 import Phaser, { Scene } from 'phaser';
 import { AudioManager, GameStateManager } from '@features/core';
 
-import { UIConfig } from '../constants/UIConfig';
+import { UIConfig } from '../constants/UIConfig.js';
 import { SceneKeys } from '../constants/SceneKeys.js';
 
 /**
@@ -383,7 +383,7 @@ export class SettingsScene extends Scene {
         });
         // Gamepad navigation
         this.input.gamepad.once('connected', (pad) => {
-            pad.on('down', (button, value) => {
+            pad.on('down', (button, _value) => {
                 const idx = button.index;
                 const X360 = Phaser.Input.Gamepad.Configs.XBOX_360;
                 if (idx === X360.DPAD_UP) {
@@ -411,7 +411,7 @@ export class SettingsScene extends Scene {
      * @param {number} time
      * @param {number} delta
      */
-    update(time, delta) {
+    update(_time, _delta) {
         // Placeholder update
     }
 }

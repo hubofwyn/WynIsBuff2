@@ -273,7 +273,10 @@ export function validateAssets() {
         // Count SFX dynamically
         let sfxCount = 0;
         topLevelCategories.forEach((category) => {
-            if (manifest.assets.audio.sfx[category] && Array.isArray(manifest.assets.audio.sfx[category])) {
+            if (
+                manifest.assets.audio.sfx[category] &&
+                Array.isArray(manifest.assets.audio.sfx[category])
+            ) {
                 sfxCount += manifest.assets.audio.sfx[category].length;
             }
         });

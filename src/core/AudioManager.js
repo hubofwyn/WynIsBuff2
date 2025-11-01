@@ -244,10 +244,12 @@ export class AudioManager extends BaseManager {
         const totalSfxCount = Object.values(this.sfx).reduce((sum, arr) => sum + arr.length, 0);
 
         const formatBreakdown = {};
-        Object.values(sfxList).flat().forEach((src) => {
-            const format = getAudioFormat(src)[0];
-            formatBreakdown[format] = (formatBreakdown[format] || 0) + 1;
-        });
+        Object.values(sfxList)
+            .flat()
+            .forEach((src) => {
+                const format = getAudioFormat(src)[0];
+                formatBreakdown[format] = (formatBreakdown[format] || 0) + 1;
+            });
 
         Object.values(bgmList).forEach((src) => {
             const format = getAudioFormat(src)[0];

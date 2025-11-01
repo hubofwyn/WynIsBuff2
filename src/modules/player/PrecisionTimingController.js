@@ -1,4 +1,3 @@
-import { EventNames } from '../../constants/EventNames.js';
 import { LOG } from '../../observability/core/LogSystem.js';
 
 /**
@@ -70,7 +69,7 @@ export class PrecisionTimingController {
      * @param {object} input - Current input state
      * @param {object} gameState - Current game state (position, velocity, etc.)
      */
-    update(input, gameState) {
+    update(input, _gameState) {
         const currentTime = performance.now();
 
         // Track input events
@@ -107,7 +106,7 @@ export class PrecisionTimingController {
     /**
      * Track input events with precise timestamps (simplified version)
      */
-    trackInputEvents(input, timestamp) {
+    trackInputEvents(input, _timestamp) {
         // Simplified input tracking without complex pattern analysis
         if (input.spaceKey && input.spaceKey.isDown) {
             this.timingMetrics.totalInputs++;
@@ -125,7 +124,7 @@ export class PrecisionTimingController {
     /**
      * Update input predictions (simplified)
      */
-    updateInputPredictions(currentTime) {
+    updateInputPredictions(_currentTime) {
         // Simple prediction system placeholder
         this.inputPrediction.confidence = Math.min(this.timingMetrics.totalInputs / 50, 1.0);
     }
@@ -158,7 +157,7 @@ export class PrecisionTimingController {
     /**
      * Record a timing event for a specific action
      */
-    recordActionTiming(action, actualTiming, optimalTiming = null) {
+    recordActionTiming(action, actualTiming, _optimalTiming = null) {
         if (!this.actionPerformance[action]) {
             this.actionPerformance[action] = {
                 attempts: 0,

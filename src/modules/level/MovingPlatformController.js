@@ -1,6 +1,6 @@
 import RAPIER from '@dimforge/rapier2d-compat';
 
-import { EventNames } from '../../constants/EventNames';
+import { EventNames } from '../../constants/EventNames.js';
 import { LOG } from '../../observability/core/LogSystem.js';
 
 /**
@@ -136,7 +136,7 @@ export class MovingPlatformController {
                         error,
                         message: 'Error creating moving platform',
                         platformIndex: index + 1,
-                        platformConfig: config,
+                        platformConfig: platform,
                         hint: 'Check platform configuration and physics world initialization',
                     });
                 }

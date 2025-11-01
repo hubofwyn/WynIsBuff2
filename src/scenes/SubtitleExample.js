@@ -1,7 +1,6 @@
 import { Scene } from 'phaser';
 import { AudioManager, UIManager, GameStateManager } from '@features/core';
 
-import { SceneKeys } from '../constants/SceneKeys.js';
 import { EventNames } from '../constants/EventNames.js';
 
 /**

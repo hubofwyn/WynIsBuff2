@@ -2,8 +2,6 @@ import { Scene } from 'phaser';
 import { AudioManager } from '@features/core';
 
 import { SceneKeys } from '../constants/SceneKeys.js';
-import { EventNames } from '../constants/EventNames.js';
-import { UIConfig } from '../constants/UIConfig.js';
 import { AudioAssets } from '../constants/Assets.js';
 import { LOG } from '../observability/core/LogSystem.js';
 
@@ -81,7 +79,7 @@ export class BirthdayMinigame extends Scene {
         this.cameras.main.fadeIn(300);
 
         // Initialize audio manager if needed
-        const audioManager = AudioManager.getInstance();
+        const _audioManager = AudioManager.getInstance();
         LOG.dev('BIRTHDAYMINIGAME_AUDIO_INITIALIZED', {
             subsystem: 'scene',
             scene: SceneKeys.BIRTHDAY_MINIGAME,
@@ -843,10 +841,11 @@ export class BirthdayMinigame extends Scene {
         const x = 1100;
 
         const obstacleContainer = this.add.container(x, y);
-        let speed;
+        let _speed;
 
         switch (type) {
-            case 0: // Poop emoji obstacle!
+            case 0: {
+                // Poop emoji obstacle!
                 const poopEmoji = this.add
                     .text(0, 0, '💩', {
                         fontSize: '36px',
@@ -869,7 +868,7 @@ export class BirthdayMinigame extends Scene {
 
                 obstacleContainer.add([poopEmoji, stink1, stink2]);
                 obstacleContainer.isPoop = true; // Tag poop obstacles
-                speed = this.baseObstacleSpeed * this.speedMultiplier;
+                _speed = this.baseObstacleSpeed * this.speedMultiplier;
 
                 // Animate stink lines
                 this.tweens.add({
@@ -881,8 +880,10 @@ export class BirthdayMinigame extends Scene {
                     repeat: -1,
                 });
                 break;
+            }
 
-            case 1: // Traffic cone
+            case 1: {
+                // Traffic cone
                 const coneEmoji = this.add
                     .text(0, 0, '🚧', {
                         fontSize: '32px',
@@ -890,11 +891,13 @@ export class BirthdayMinigame extends Scene {
                     .setOrigin(0.5);
 
                 obstacleContainer.add(coneEmoji);
-                speed = this.baseObstacleSpeed * 1.3 * this.speedMultiplier;
+                _speed = this.baseObstacleSpeed * 1.3 * this.speedMultiplier;
                 obstacleContainer.wobble = true;
                 break;
+            }
 
-            case 2: // Flying bird/drone
+            case 2: {
+                // Flying bird/drone
                 const birdEmoji = this.add
                     .text(0, 0, '🦆', {
                         fontSize: '32px',
@@ -911,9 +914,10 @@ export class BirthdayMinigame extends Scene {
                 });
 
                 obstacleContainer.add(birdEmoji);
-                speed = this.baseObstacleSpeed * 0.8 * this.speedMultiplier;
+                _speed = this.baseObstacleSpeed * 0.8 * this.speedMultiplier;
                 obstacleContainer.isDrone = true;
                 break;
+            }
         }
 
         // Add to scrolling objects for movement
@@ -1445,7 +1449,7 @@ export class BirthdayMinigame extends Scene {
         });
     }
 
-    makeDelivery(quality) {
+    makeDelivery(_quality) {
         // Only count if actually carrying a parcel
         if (!this.isCarrying) return;
 
@@ -1796,7 +1800,7 @@ export class BirthdayMinigame extends Scene {
         this.saveToLeaderboard();
 
         // Birthday celebration - enhanced for Wyn's 9th!
-        const surpriseBg = this.add
+        const _surpriseBg = this.add
             .rectangle(512, 384, 1024, 768, 0x000000, 0.9)
             .setScrollFactor(0);
 
@@ -1977,7 +1981,7 @@ export class BirthdayMinigame extends Scene {
         const gameOverBg = this.add.rectangle(512, 384, 700, 600, 0x000000, 0.9).setScrollFactor(0);
         gameOverBg.setStrokeStyle(4, 0xff0000);
 
-        const gameOverText = this.add
+        const _gameOverText = this.add
             .text(512, 150, 'DELIVERY FAILED!', {
                 fontSize: '48px',
                 color: '#FF0000',
@@ -1988,7 +1992,7 @@ export class BirthdayMinigame extends Scene {
             .setOrigin(0.5)
             .setScrollFactor(0);
 
-        const finalScore = this.add
+        const _finalScore = this.add
             .text(512, 220, `Deliveries: ${this.deliveries}/9`, {
                 fontSize: '32px',
                 color: '#FFFFFF',
@@ -1997,7 +2001,7 @@ export class BirthdayMinigame extends Scene {
             .setOrigin(0.5)
             .setScrollFactor(0);
 
-        const finalPoints = this.add
+        const _finalPoints = this.add
             .text(512, 260, `Total Points: ${this.totalPoints}`, {
                 fontSize: '28px',
                 color: '#FFD700',
@@ -2088,7 +2092,7 @@ export class BirthdayMinigame extends Scene {
     }
 
     showLeaderboard(startY) {
-        const leaderboardTitle = this.add
+        const _leaderboardTitle = this.add
             .text(512, startY, 'LEADERBOARD', {
                 fontSize: '24px',
                 color: '#FFD700',

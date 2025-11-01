@@ -1,7 +1,7 @@
 import { BaseManager } from '../../core/BaseManager.js';
 
 import { BoundedBuffer } from './BoundedBuffer.js';
-import { LogLevel, LogLevelPriority, DefaultSamplingRates, shouldLog } from './LogLevel.js';
+import { LogLevel, DefaultSamplingRates, shouldLog } from './LogLevel.js';
 
 /**
  * LogSystem V2 - Agent-ready structured logging system
@@ -154,6 +154,7 @@ export class LogSystem extends BaseManager {
         // Performance tracking
         const duration = performance.now() - startTime;
         if (duration > 1.0) {
+            // eslint-disable-next-line no-console
             console.warn(`[LogSystem] Slow log operation: ${duration.toFixed(2)}ms`);
         }
     }
@@ -171,6 +172,7 @@ export class LogSystem extends BaseManager {
         delete data.message;
         delete data.timestamp;
 
+        /* eslint-disable no-console */
         switch (level) {
             case LogLevel.FATAL:
             case LogLevel.ERROR:
@@ -188,6 +190,7 @@ export class LogSystem extends BaseManager {
             default:
                 console.log(prefix, message, data);
         }
+        /* eslint-enable no-console */
     }
 
     /**
@@ -325,6 +328,7 @@ export class LogSystem extends BaseManager {
      */
     static wrapConsole() {
         const LOG = LogSystem.getInstance();
+        /* eslint-disable no-console */
         const originalConsole = {
             log: console.log,
             warn: console.warn,
@@ -351,6 +355,7 @@ export class LogSystem extends BaseManager {
             LOG.info('CONSOLE_INFO', { message: args[0], args: args.slice(1) });
             originalConsole.info(...args);
         };
+        /* eslint-enable no-console */
 
         return originalConsole;
     }

@@ -94,17 +94,19 @@ export class CloneManager extends BaseManager {
      */
     async forgeClone(template, options = {}) {
         const {
-            allowMutations = true,
+            allowMutations: _allowMutations = true,
             instantForge = false,
-            parentIds = [],
-            generation = 0,
+            parentIds: _parentIds = [],
+            generation: _generation = 0,
         } = options;
 
         // Emit forge start event
         EventBus.emit(EventNames.CLONE_FORGE_START, { template, options });
 
         // Calculate forge time based on generation and stats
-        const forgeTime = instantForge ? 0 : this.calculateForgeTime(template, generation);
+        const forgeTime = instantForge
+            ? 0
+            : this.calculateForgeTime(template, options.generation ?? 0);
 
         if (forgeTime > 0) {
             // Add to forge queue
@@ -509,7 +511,7 @@ export class CloneManager extends BaseManager {
      * Apply retroactive buff to all existing clones
      */
     applyRetroactiveBuff(buffType, magnitude) {
-        for (const [id, clone] of this.clones) {
+        for (const [, clone] of this.clones) {
             // Apply buff based on type
             switch (buffType) {
                 case 'speed':
@@ -840,7 +842,7 @@ export class CloneManager extends BaseManager {
     /**
      * Check for potential synergies when a new clone is forged
      */
-    checkPotentialSynergies(newClone) {
+    checkPotentialSynergies(_newClone) {
         // This is called when forging to preview potential synergies
         // Actual synergies are activated when clones are deployed
     }

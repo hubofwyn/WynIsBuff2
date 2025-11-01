@@ -217,7 +217,7 @@ export class BossController extends BaseController {
         });
     }
 
-    update(time, delta) {
+    update(_time, _delta) {
         if (!this.isActive || !this.body) return;
 
         // Update sprite position to match physics body

@@ -1,7 +1,7 @@
 import { Scene } from 'phaser';
 import { GameStateManager, AudioManager } from '@features/core';
 
-import { UIConfig } from '../constants/UIConfig';
+import { UIConfig } from '../constants/UIConfig.js';
 import { SceneKeys } from '../constants/SceneKeys.js';
 
 export class GameOver extends Scene {
@@ -381,7 +381,7 @@ export class GameOver extends Scene {
         });
     }
 
-    update(time, delta) {
+    update(_time, _delta) {
         // Placeholder update method for GameOver scene
     }
 }

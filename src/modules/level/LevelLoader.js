@@ -1,7 +1,7 @@
 import { EnemyController } from '@features/enemy';
 
-import { EventNames } from '../../constants/EventNames';
-import { getLevelById } from '../../constants/LevelData';
+import { EventNames } from '../../constants/EventNames.js';
+import { getLevelById } from '../../constants/LevelData.js';
 // Enemy controller for spawning buff-themed enemies
 import { LOG } from '../../observability/core/LogSystem.js';
 
@@ -361,7 +361,7 @@ export class LevelLoader {
         decorations.forEach((deco) => {
             try {
                 switch (deco.type) {
-                    case 'text':
+                    case 'text': {
                         const textStyle = {
                             fontFamily: 'Arial Black',
                             fontSize: deco.style.fontSize || '20px',
@@ -369,26 +369,29 @@ export class LevelLoader {
                             stroke: '#000000',
                             strokeThickness: 3,
                         };
-                        const text = this.scene.add
+                        this.scene.add
                             .text(deco.x, deco.y, deco.text, textStyle)
                             .setOrigin(0.5)
                             .setDepth(10);
                         break;
+                    }
 
-                    case 'emoji':
-                        const emoji = this.scene.add
+                    case 'emoji': {
+                        this.scene.add
                             .text(deco.x, deco.y, deco.emoji, {
                                 fontSize: `${32 * (deco.scale || 1)}px`,
                             })
                             .setOrigin(0.5)
                             .setDepth(10);
                         break;
+                    }
 
-                    case 'rect':
-                        const rect = this.scene.add
+                    case 'rect': {
+                        this.scene.add
                             .rectangle(deco.x, deco.y, deco.width, deco.height, deco.color)
                             .setDepth(5);
                         break;
+                    }
                 }
             } catch (error) {
                 LOG.error('LEVELLOADER_DECORATION_ERROR', {

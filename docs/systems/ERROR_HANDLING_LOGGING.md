@@ -2039,7 +2039,7 @@ const categories = suggestions.getCategories();
 
 **Knowledge Base Includes**:
 
-- Common error codes (PHYSICS*\*, PLAYER*_, INPUT\__, etc.)
+- Common error codes (PHYSICS*\*, PLAYER*\_, INPUT\_\_, etc.)
 - Severity ratings (low, medium, high, critical)
 - Step-by-step fix suggestions
 - Related error codes

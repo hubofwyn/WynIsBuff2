@@ -170,7 +170,9 @@ export class FactoryScene extends Scene {
         );
 
         // Decay bar
-        const decayBarBg = this.add.rectangle(x + 350, y, 200, 20, 0x7f8c8d, 0.3).setOrigin(0, 0.5);
+        const _decayBarBg = this.add
+            .rectangle(x + 350, y, 200, 20, 0x7f8c8d, 0.3)
+            .setOrigin(0, 0.5);
         const decayBarFill = this.add
             .rectangle(
                 x + 350,

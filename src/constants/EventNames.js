@@ -118,7 +118,6 @@ export const EventNames = {
     ECHO_PLAYBACK_COMPLETE: 'echo:playbackComplete',
 
     // Performance tracking events
-    PERFORMANCE_METRIC_RECORDED: 'performance:metricRecorded',
     RUN_STATISTICS_COMPLETE: 'performance:runComplete',
 
     // Idle/Automation System Events (Additional)
@@ -143,8 +142,6 @@ export const EventNames = {
     // Additional Boss system events
     BOSS_SPAWNED: 'boss:spawned',
     BOSS_PHASE_CHANGE: 'boss:phaseChange',
-    BOSS_FIRST_CLEAR: 'boss:firstClear',
-    BOSS_REWARD_CLAIMED: 'boss:rewardClaimed',
     BOSS_TIMER_UPDATE: 'boss:timerUpdate',
     BOSS_HEALTH_UPDATE: 'boss:healthUpdate',
 

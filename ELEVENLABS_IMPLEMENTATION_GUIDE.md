@@ -66,9 +66,9 @@ This guide provides step-by-step instructions for implementing the automated aud
 3. **API Call**: Generate audio via ElevenLabs (SFX or Music API)
 4. **Download**: Save raw MP3 to temporary directory
 5. **Post-Process**:
-   - Convert MP3 → OGG Vorbis
-   - Normalize (peak for SFX, LUFS for music)
-   - Trim silence
+    - Convert MP3 → OGG Vorbis
+    - Normalize (peak for SFX, LUFS for music)
+    - Trim silence
 6. **Output**: Save to `assets/audio/` with proper naming
 7. **Manifest Update**: Update `manifest.json` for game engine
 
@@ -115,20 +115,24 @@ pip install -r requirements.txt
 ### 3. Install FFmpeg
 
 **macOS**:
+
 ```bash
 brew install ffmpeg
 ```
 
 **Linux (Ubuntu/Debian)**:
+
 ```bash
 sudo apt update && sudo apt install ffmpeg
 ```
 
 **Windows**:
+
 - Download from [ffmpeg.org](https://ffmpeg.org/download.html)
 - Add to PATH
 
 **Verify installation**:
+
 ```bash
 ffmpeg -version
 ```
@@ -141,9 +145,9 @@ ffmpeg -version
 2. Sign up/Login
 3. Navigate to **Profile** → **API Keys**
 4. Create **Project-Specific Key**:
-   - Name: `WynIsBuff2-Audio-Gen`
-   - Set hard limit: **$50** (safety backstop)
-   - Permissions: Enable "Sound Effects" and "Music" endpoints
+    - Name: `WynIsBuff2-Audio-Gen`
+    - Set hard limit: **$50** (safety backstop)
+    - Permissions: Enable "Sound Effects" and "Music" endpoints
 5. Copy the API key
 
 #### b) Secure API Key Storage
@@ -156,6 +160,7 @@ touch .env
 ```
 
 Add to `.env`:
+
 ```
 ELEVENLABS_API_KEY="sk_your_actual_api_key_here"
 ```
@@ -226,180 +231,180 @@ Create `scripts/audio-generation/assets.json`:
 
 ```json
 {
-  "project": "WynIsBuff2",
-  "version": "1.0",
-  "budget": {
-    "daily_limit_usd": 20,
-    "monthly_limit_usd": 50,
-    "safety_margin_credits": 5000
-  },
-  "technical_standards": {
-    "format": "ogg",
-    "sample_rate": 44100,
-    "bit_depth": 16,
-    "sfx_bitrate_kbps": 192,
-    "music_bitrate_kbps": 256,
-    "sfx_peak_normalization_dbfs": -3.0,
-    "music_loudness_normalization_lufs": -16.0
-  },
-  "assets": [
-    {
-      "id": "sfx_player_jump1_01",
-      "phase": 1,
-      "type": "sfx",
-      "category": "player",
-      "name": "Jump 1 - Variant A",
-      "prompt": "A short, punchy platform game jump sound. Soft fabric whoosh with a quick puff of air, like a character pushing off the ground. Clean, not harsh. Mid-range frequencies, slightly muffled, organic feel. 0.3 seconds maximum. No echo or reverb.",
-      "duration_seconds": 0.3,
-      "prompt_influence": 0.35,
-      "loop": false,
-      "output_path": "assets/audio/sfx/player/sfx_player_jump1_01.ogg",
-      "manifest_key": "sfxJump1A"
+    "project": "WynIsBuff2",
+    "version": "1.0",
+    "budget": {
+        "daily_limit_usd": 20,
+        "monthly_limit_usd": 50,
+        "safety_margin_credits": 5000
     },
-    {
-      "id": "sfx_player_jump1_02",
-      "phase": 1,
-      "type": "sfx",
-      "category": "player",
-      "name": "Jump 1 - Variant B",
-      "prompt": "A short, punchy platform game jump sound. Soft fabric whoosh with a quick puff of air, like a character pushing off the ground. Clean, not harsh. Mid-range frequencies, slightly muffled, organic feel. 0.3 seconds maximum. Slightly sharper attack. No echo or reverb.",
-      "duration_seconds": 0.3,
-      "prompt_influence": 0.35,
-      "loop": false,
-      "output_path": "assets/audio/sfx/player/sfx_player_jump1_02.ogg",
-      "manifest_key": "sfxJump1B"
+    "technical_standards": {
+        "format": "ogg",
+        "sample_rate": 44100,
+        "bit_depth": 16,
+        "sfx_bitrate_kbps": 192,
+        "music_bitrate_kbps": 256,
+        "sfx_peak_normalization_dbfs": -3.0,
+        "music_loudness_normalization_lufs": -16.0
     },
-    {
-      "id": "sfx_player_jump1_03",
-      "phase": 1,
-      "type": "sfx",
-      "category": "player",
-      "name": "Jump 1 - Variant C",
-      "prompt": "A short, punchy platform game jump sound. Soft fabric whoosh with a quick puff of air, like a character pushing off the ground. Clean, not harsh. Mid-range frequencies, with more high-frequency air. Slightly muffled, organic feel. 0.3 seconds maximum. No echo or reverb.",
-      "duration_seconds": 0.3,
-      "prompt_influence": 0.35,
-      "loop": false,
-      "output_path": "assets/audio/sfx/player/sfx_player_jump1_03.ogg",
-      "manifest_key": "sfxJump1C"
-    },
-    {
-      "id": "sfx_player_jump1_04",
-      "phase": 1,
-      "type": "sfx",
-      "category": "player",
-      "name": "Jump 1 - Variant D",
-      "prompt": "A short, punchy platform game jump sound. Soft fabric whoosh with a quick puff of air, like a character pushing off the ground. Clean, not harsh. Mid-range frequencies, a bit deeper. Slightly muffled, organic feel. 0.3 seconds maximum. No echo or reverb.",
-      "duration_seconds": 0.3,
-      "prompt_influence": 0.35,
-      "loop": false,
-      "output_path": "assets/audio/sfx/player/sfx_player_jump1_04.ogg",
-      "manifest_key": "sfxJump1D"
-    },
-    {
-      "id": "sfx_player_jump2_01",
-      "phase": 1,
-      "type": "sfx",
-      "category": "player",
-      "name": "Jump 2 - Variant A",
-      "prompt": "A medium-energy platform game double jump sound. Enhanced whoosh with magical sparkle, like activating a special ability mid-air. Include subtle energy charge-up (tiny reverse whoosh), then explosive release. Brighter and more energetic than a regular jump. High-frequency shimmer. 0.4 seconds. Light airy tail.",
-      "duration_seconds": 0.4,
-      "prompt_influence": 0.4,
-      "loop": false,
-      "output_path": "assets/audio/sfx/player/sfx_player_jump2_01.ogg",
-      "manifest_key": "sfxJump2A"
-    },
-    {
-      "id": "sfx_player_jump2_02",
-      "phase": 1,
-      "type": "sfx",
-      "category": "player",
-      "name": "Jump 2 - Variant B",
-      "prompt": "A medium-energy platform game double jump sound. Enhanced whoosh with magical sparkle, like activating a special ability mid-air. Include subtle energy charge-up (tiny reverse whoosh), then explosive release. Brighter and more energetic than a regular jump. High-frequency shimmer. 0.4 seconds. Light airy tail. Slightly more sparkle.",
-      "duration_seconds": 0.4,
-      "prompt_influence": 0.4,
-      "loop": false,
-      "output_path": "assets/audio/sfx/player/sfx_player_jump2_02.ogg",
-      "manifest_key": "sfxJump2B"
-    },
-    {
-      "id": "sfx_player_jump2_03",
-      "phase": 1,
-      "type": "sfx",
-      "category": "player",
-      "name": "Jump 2 - Variant C",
-      "prompt": "A medium-energy platform game double jump sound. Enhanced whoosh with magical sparkle, like activating a special ability mid-air. Include subtle energy charge-up (tiny reverse whoosh), then explosive release. Brighter and more energetic than a regular jump. High-frequency shimmer. 0.4 seconds. Longer airy tail.",
-      "duration_seconds": 0.4,
-      "prompt_influence": 0.4,
-      "loop": false,
-      "output_path": "assets/audio/sfx/player/sfx_player_jump2_03.ogg",
-      "manifest_key": "sfxJump2C"
-    },
-    {
-      "id": "sfx_player_jump2_04",
-      "phase": 1,
-      "type": "sfx",
-      "category": "player",
-      "name": "Jump 2 - Variant D",
-      "prompt": "A medium-energy platform game double jump sound. Enhanced whoosh with magical sparkle, like activating a special ability mid-air. Include subtle energy charge-up (tiny reverse whoosh), then explosive release. Brighter and more energetic than a regular jump. High-frequency shimmer. 0.4 seconds. Light airy tail. Higher pitch.",
-      "duration_seconds": 0.4,
-      "prompt_influence": 0.4,
-      "loop": false,
-      "output_path": "assets/audio/sfx/player/sfx_player_jump2_04.ogg",
-      "manifest_key": "sfxJump2D"
-    },
-    {
-      "id": "sfx_player_jump3_01",
-      "phase": 1,
-      "type": "sfx",
-      "category": "player",
-      "name": "Jump 3 - MEGA BUFF - Variant A",
-      "prompt": "An EPIC, explosive triple jump sound for a platform game - the ultimate movement ability. MASSIVE energy burst with cinematic impact. Combine: rocket boost ignition, super smash explosion, energy beam charge-up. Full frequency spectrum - deep sub-bass rumble, punchy midrange impact, brilliant high-frequency sparkles. Include ascending pitch sweep for power-up feel. Dramatic long tail with reverb. 0.7 seconds. Hero moment. BUFF.",
-      "duration_seconds": 0.7,
-      "prompt_influence": 0.4,
-      "loop": false,
-      "output_path": "assets/audio/sfx/player/sfx_player_jump3_01.ogg",
-      "manifest_key": "sfxJump3A"
-    },
-    {
-      "id": "sfx_player_jump3_02",
-      "phase": 1,
-      "type": "sfx",
-      "category": "player",
-      "name": "Jump 3 - MEGA BUFF - Variant B",
-      "prompt": "An EPIC, explosive triple jump sound for a platform game - the ultimate movement ability. MASSIVE energy burst with cinematic impact. Combine: rocket boost ignition, super smash explosion, energy beam charge-up. Full frequency spectrum - deep sub-bass rumble, punchy midrange impact, brilliant high-frequency sparkles. Include ascending pitch sweep for power-up feel. Dramatic long tail with reverb. 0.7 seconds. Hero moment. BUFF. More explosive impact.",
-      "duration_seconds": 0.7,
-      "prompt_influence": 0.4,
-      "loop": false,
-      "output_path": "assets/audio/sfx/player/sfx_player_jump3_02.ogg",
-      "manifest_key": "sfxJump3B"
-    },
-    {
-      "id": "sfx_player_jump3_03",
-      "phase": 1,
-      "type": "sfx",
-      "category": "player",
-      "name": "Jump 3 - MEGA BUFF - Variant C",
-      "prompt": "An EPIC, explosive triple jump sound for a platform game - the ultimate movement ability. MASSIVE energy burst with cinematic impact. Combine: rocket boost ignition, super smash explosion, energy beam charge-up. Full frequency spectrum - deep sub-bass rumble, punchy midrange impact, brilliant high-frequency sparkles. Include ascending pitch sweep for power-up feel. Dramatic long tail with reverb. 0.7 seconds. Hero moment. BUFF. Longer reverb tail.",
-      "duration_seconds": 0.7,
-      "prompt_influence": 0.4,
-      "loop": false,
-      "output_path": "assets/audio/sfx/player/sfx_player_jump3_03.ogg",
-      "manifest_key": "sfxJump3C"
-    },
-    {
-      "id": "sfx_player_jump3_04",
-      "phase": 1,
-      "type": "sfx",
-      "category": "player",
-      "name": "Jump 3 - MEGA BUFF - Variant D",
-      "prompt": "An EPIC, explosive triple jump sound for a platform game - the ultimate movement ability. MASSIVE energy burst with cinematic impact. Combine: rocket boost ignition, super smash explosion, energy beam charge-up. Full frequency spectrum - deep sub-bass rumble, punchy midrange impact, brilliant high-frequency sparkles. Include ascending pitch sweep for power-up feel. Dramatic long tail with reverb. 0.7 seconds. Hero moment. BUFF. More sparkles.",
-      "duration_seconds": 0.7,
-      "prompt_influence": 0.4,
-      "loop": false,
-      "output_path": "assets/audio/sfx/player/sfx_player_jump3_04.ogg",
-      "manifest_key": "sfxJump3D"
-    }
-  ]
+    "assets": [
+        {
+            "id": "sfx_player_jump1_01",
+            "phase": 1,
+            "type": "sfx",
+            "category": "player",
+            "name": "Jump 1 - Variant A",
+            "prompt": "A short, punchy platform game jump sound. Soft fabric whoosh with a quick puff of air, like a character pushing off the ground. Clean, not harsh. Mid-range frequencies, slightly muffled, organic feel. 0.3 seconds maximum. No echo or reverb.",
+            "duration_seconds": 0.3,
+            "prompt_influence": 0.35,
+            "loop": false,
+            "output_path": "assets/audio/sfx/player/sfx_player_jump1_01.ogg",
+            "manifest_key": "sfxJump1A"
+        },
+        {
+            "id": "sfx_player_jump1_02",
+            "phase": 1,
+            "type": "sfx",
+            "category": "player",
+            "name": "Jump 1 - Variant B",
+            "prompt": "A short, punchy platform game jump sound. Soft fabric whoosh with a quick puff of air, like a character pushing off the ground. Clean, not harsh. Mid-range frequencies, slightly muffled, organic feel. 0.3 seconds maximum. Slightly sharper attack. No echo or reverb.",
+            "duration_seconds": 0.3,
+            "prompt_influence": 0.35,
+            "loop": false,
+            "output_path": "assets/audio/sfx/player/sfx_player_jump1_02.ogg",
+            "manifest_key": "sfxJump1B"
+        },
+        {
+            "id": "sfx_player_jump1_03",
+            "phase": 1,
+            "type": "sfx",
+            "category": "player",
+            "name": "Jump 1 - Variant C",
+            "prompt": "A short, punchy platform game jump sound. Soft fabric whoosh with a quick puff of air, like a character pushing off the ground. Clean, not harsh. Mid-range frequencies, with more high-frequency air. Slightly muffled, organic feel. 0.3 seconds maximum. No echo or reverb.",
+            "duration_seconds": 0.3,
+            "prompt_influence": 0.35,
+            "loop": false,
+            "output_path": "assets/audio/sfx/player/sfx_player_jump1_03.ogg",
+            "manifest_key": "sfxJump1C"
+        },
+        {
+            "id": "sfx_player_jump1_04",
+            "phase": 1,
+            "type": "sfx",
+            "category": "player",
+            "name": "Jump 1 - Variant D",
+            "prompt": "A short, punchy platform game jump sound. Soft fabric whoosh with a quick puff of air, like a character pushing off the ground. Clean, not harsh. Mid-range frequencies, a bit deeper. Slightly muffled, organic feel. 0.3 seconds maximum. No echo or reverb.",
+            "duration_seconds": 0.3,
+            "prompt_influence": 0.35,
+            "loop": false,
+            "output_path": "assets/audio/sfx/player/sfx_player_jump1_04.ogg",
+            "manifest_key": "sfxJump1D"
+        },
+        {
+            "id": "sfx_player_jump2_01",
+            "phase": 1,
+            "type": "sfx",
+            "category": "player",
+            "name": "Jump 2 - Variant A",
+            "prompt": "A medium-energy platform game double jump sound. Enhanced whoosh with magical sparkle, like activating a special ability mid-air. Include subtle energy charge-up (tiny reverse whoosh), then explosive release. Brighter and more energetic than a regular jump. High-frequency shimmer. 0.4 seconds. Light airy tail.",
+            "duration_seconds": 0.4,
+            "prompt_influence": 0.4,
+            "loop": false,
+            "output_path": "assets/audio/sfx/player/sfx_player_jump2_01.ogg",
+            "manifest_key": "sfxJump2A"
+        },
+        {
+            "id": "sfx_player_jump2_02",
+            "phase": 1,
+            "type": "sfx",
+            "category": "player",
+            "name": "Jump 2 - Variant B",
+            "prompt": "A medium-energy platform game double jump sound. Enhanced whoosh with magical sparkle, like activating a special ability mid-air. Include subtle energy charge-up (tiny reverse whoosh), then explosive release. Brighter and more energetic than a regular jump. High-frequency shimmer. 0.4 seconds. Light airy tail. Slightly more sparkle.",
+            "duration_seconds": 0.4,
+            "prompt_influence": 0.4,
+            "loop": false,
+            "output_path": "assets/audio/sfx/player/sfx_player_jump2_02.ogg",
+            "manifest_key": "sfxJump2B"
+        },
+        {
+            "id": "sfx_player_jump2_03",
+            "phase": 1,
+            "type": "sfx",
+            "category": "player",
+            "name": "Jump 2 - Variant C",
+            "prompt": "A medium-energy platform game double jump sound. Enhanced whoosh with magical sparkle, like activating a special ability mid-air. Include subtle energy charge-up (tiny reverse whoosh), then explosive release. Brighter and more energetic than a regular jump. High-frequency shimmer. 0.4 seconds. Longer airy tail.",
+            "duration_seconds": 0.4,
+            "prompt_influence": 0.4,
+            "loop": false,
+            "output_path": "assets/audio/sfx/player/sfx_player_jump2_03.ogg",
+            "manifest_key": "sfxJump2C"
+        },
+        {
+            "id": "sfx_player_jump2_04",
+            "phase": 1,
+            "type": "sfx",
+            "category": "player",
+            "name": "Jump 2 - Variant D",
+            "prompt": "A medium-energy platform game double jump sound. Enhanced whoosh with magical sparkle, like activating a special ability mid-air. Include subtle energy charge-up (tiny reverse whoosh), then explosive release. Brighter and more energetic than a regular jump. High-frequency shimmer. 0.4 seconds. Light airy tail. Higher pitch.",
+            "duration_seconds": 0.4,
+            "prompt_influence": 0.4,
+            "loop": false,
+            "output_path": "assets/audio/sfx/player/sfx_player_jump2_04.ogg",
+            "manifest_key": "sfxJump2D"
+        },
+        {
+            "id": "sfx_player_jump3_01",
+            "phase": 1,
+            "type": "sfx",
+            "category": "player",
+            "name": "Jump 3 - MEGA BUFF - Variant A",
+            "prompt": "An EPIC, explosive triple jump sound for a platform game - the ultimate movement ability. MASSIVE energy burst with cinematic impact. Combine: rocket boost ignition, super smash explosion, energy beam charge-up. Full frequency spectrum - deep sub-bass rumble, punchy midrange impact, brilliant high-frequency sparkles. Include ascending pitch sweep for power-up feel. Dramatic long tail with reverb. 0.7 seconds. Hero moment. BUFF.",
+            "duration_seconds": 0.7,
+            "prompt_influence": 0.4,
+            "loop": false,
+            "output_path": "assets/audio/sfx/player/sfx_player_jump3_01.ogg",
+            "manifest_key": "sfxJump3A"
+        },
+        {
+            "id": "sfx_player_jump3_02",
+            "phase": 1,
+            "type": "sfx",
+            "category": "player",
+            "name": "Jump 3 - MEGA BUFF - Variant B",
+            "prompt": "An EPIC, explosive triple jump sound for a platform game - the ultimate movement ability. MASSIVE energy burst with cinematic impact. Combine: rocket boost ignition, super smash explosion, energy beam charge-up. Full frequency spectrum - deep sub-bass rumble, punchy midrange impact, brilliant high-frequency sparkles. Include ascending pitch sweep for power-up feel. Dramatic long tail with reverb. 0.7 seconds. Hero moment. BUFF. More explosive impact.",
+            "duration_seconds": 0.7,
+            "prompt_influence": 0.4,
+            "loop": false,
+            "output_path": "assets/audio/sfx/player/sfx_player_jump3_02.ogg",
+            "manifest_key": "sfxJump3B"
+        },
+        {
+            "id": "sfx_player_jump3_03",
+            "phase": 1,
+            "type": "sfx",
+            "category": "player",
+            "name": "Jump 3 - MEGA BUFF - Variant C",
+            "prompt": "An EPIC, explosive triple jump sound for a platform game - the ultimate movement ability. MASSIVE energy burst with cinematic impact. Combine: rocket boost ignition, super smash explosion, energy beam charge-up. Full frequency spectrum - deep sub-bass rumble, punchy midrange impact, brilliant high-frequency sparkles. Include ascending pitch sweep for power-up feel. Dramatic long tail with reverb. 0.7 seconds. Hero moment. BUFF. Longer reverb tail.",
+            "duration_seconds": 0.7,
+            "prompt_influence": 0.4,
+            "loop": false,
+            "output_path": "assets/audio/sfx/player/sfx_player_jump3_03.ogg",
+            "manifest_key": "sfxJump3C"
+        },
+        {
+            "id": "sfx_player_jump3_04",
+            "phase": 1,
+            "type": "sfx",
+            "category": "player",
+            "name": "Jump 3 - MEGA BUFF - Variant D",
+            "prompt": "An EPIC, explosive triple jump sound for a platform game - the ultimate movement ability. MASSIVE energy burst with cinematic impact. Combine: rocket boost ignition, super smash explosion, energy beam charge-up. Full frequency spectrum - deep sub-bass rumble, punchy midrange impact, brilliant high-frequency sparkles. Include ascending pitch sweep for power-up feel. Dramatic long tail with reverb. 0.7 seconds. Hero moment. BUFF. More sparkles.",
+            "duration_seconds": 0.7,
+            "prompt_influence": 0.4,
+            "loop": false,
+            "output_path": "assets/audio/sfx/player/sfx_player_jump3_04.ogg",
+            "manifest_key": "sfxJump3D"
+        }
+    ]
 }
 ```
 
@@ -937,6 +942,7 @@ python generate_assets.py --phase 1
 ```
 
 **Expected Output**:
+
 ```
 ======================================================================
 WynIsBuff2 Audio Generator - Starting Generation
@@ -983,6 +989,7 @@ ls -lh ../../assets/audio/sfx/player/
 ```
 
 Should see:
+
 ```
 sfx_player_jump1_01.ogg
 sfx_player_jump1_02.ogg
@@ -1013,6 +1020,7 @@ python generate_assets.py --asset sfx_player_jump3_01
 ### 1. Audio Quality Check
 
 Listen to generated files and verify:
+
 - [ ] Correct duration (Jump 1: ~0.3s, Jump 2: ~0.4s, Jump 3: ~0.7s)
 - [ ] No clipping or distortion
 - [ ] Clean start/end (no pops or clicks)
@@ -1032,6 +1040,7 @@ mediainfo assets/audio/sfx/player/sfx_player_jump1_01.ogg
 ```
 
 Verify:
+
 - Format: Ogg Vorbis
 - Sample rate: 44.1 kHz
 - Bit depth: 16-bit (from source)
@@ -1055,6 +1064,7 @@ Update `manifest.json` to reference new audio files:
 ```
 
 Then run:
+
 ```bash
 npm run generate-assets
 ```
@@ -1068,12 +1078,14 @@ Test in-game by running dev server and performing jumps.
 ### Budget Breakdown (Phase 1)
 
 **12 Jump Sounds**:
+
 - Jump 1 (4 variants): 4 × 0.3s = 1.2s × 200 credits/s = 240 credits
 - Jump 2 (4 variants): 4 × 0.4s = 1.6s × 200 credits/s = 320 credits
 - Jump 3 (4 variants): 4 × 0.7s = 2.8s × 200 credits/s = 560 credits
 - **Total**: ~1,120 credits
 
 **Cost Estimate**:
+
 - ElevenLabs Creator plan: 100,000 credits/month
 - Phase 1 uses: ~1.1% of monthly credits
 - Estimated USD: ~$0.50-1.00
@@ -1089,6 +1101,7 @@ python -c "from budget_guard import BudgetGuard; import os; from dotenv import l
 ### Hard Limits
 
 Remember the **project-specific API key** has a hard limit of $50. If approaching:
+
 1. Stop generation
 2. Review results
 3. Adjust budget in `assets.json`
@@ -1115,6 +1128,7 @@ After Phase 1 success:
 **Error**: `ELEVENLABS_API_KEY not found`
 
 **Solution**:
+
 ```bash
 # Verify .env exists
 ls -la scripts/audio-generation/.env
@@ -1131,6 +1145,7 @@ ELEVENLABS_API_KEY="sk_..."
 **Error**: `FileNotFoundError: ffmpeg`
 
 **Solution**:
+
 ```bash
 # Verify FFmpeg installed
 ffmpeg -version
@@ -1144,6 +1159,7 @@ brew install ffmpeg  # macOS
 **Error**: `Budget check FAILED`
 
 **Solution**:
+
 - Check remaining credits via ElevenLabs dashboard
 - Adjust `safety_margin_credits` in `assets.json`
 - Consider upgrading plan or creating new project key
@@ -1153,6 +1169,7 @@ brew install ffmpeg  # macOS
 **Symptoms**: Sounds don't match specification
 
 **Solution**:
+
 - Adjust `prompt_influence` (higher = more faithful to prompt)
 - Refine prompts with more detail
 - Regenerate with different variants
@@ -1177,6 +1194,7 @@ brew install ffmpeg  # macOS
 ---
 
 **Next Actions**:
+
 1. Set up Python environment
 2. Install dependencies
 3. Configure .env with API key

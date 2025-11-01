@@ -76,7 +76,6 @@ export class PerformanceAnalyzer extends BaseManager {
             possibleCombo = 100,
             pickups = { coin: 0, grit: 0, relics: [] },
             bosses = {},
-            routeLength = 1000,
             parTime = 120,
         } = runData;
 
@@ -175,7 +174,7 @@ export class PerformanceAnalyzer extends BaseManager {
         if (!bosses || typeof bosses !== 'object') return 0;
 
         let bonus = 0;
-        for (const [bossId, defeated] of Object.entries(bosses)) {
+        for (const [_bossId, defeated] of Object.entries(bosses)) {
             if (defeated) {
                 // Each boss gives 0.2 bonus (5 bosses = 1.0 total possible)
                 bonus += 0.2;

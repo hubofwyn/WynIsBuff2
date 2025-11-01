@@ -1,6 +1,4 @@
-import RAPIER from '@dimforge/rapier2d-compat';
-
-import { EventNames } from '../../constants/EventNames';
+import { EventNames } from '../../constants/EventNames.js';
 import { LOG } from '../../observability/core/LogSystem.js';
 
 /**
@@ -365,7 +363,7 @@ export class EnhancedJumpController {
     /**
      * Update jump phase based on velocity
      */
-    updateJumpPhase(velocityY, now) {
+    updateJumpPhase(velocityY, _now) {
         const previousPhase = this.jumpState.phase;
 
         if (this.jumpState.phase === 'rising' && velocityY >= -50) {

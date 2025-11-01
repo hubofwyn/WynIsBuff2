@@ -1,9 +1,8 @@
 import { Scene } from 'phaser';
 import { AudioManager } from '@features/core';
 
-import { UIConfig } from '../constants/UIConfig';
 import { SceneKeys } from '../constants/SceneKeys.js';
-import { ImageAssets, AudioAssets } from '../constants/Assets.js';
+import { AudioAssets } from '../constants/Assets.js';
 
 /**
  * WelcomeScene: shows the game title and prompts player to start.
@@ -148,7 +147,7 @@ export class WelcomeScene extends Scene {
         this.cameras.main.fadeIn(1000, 0, 0, 0);
     }
 
-    update(time, delta) {
+    update(_time, _delta) {
         // no-op
     }
 }

@@ -1,6 +1,6 @@
 import RAPIER from '@dimforge/rapier2d-compat';
 
-import { EventNames } from '../../constants/EventNames';
+import { EventNames } from '../../constants/EventNames.js';
 import { LOG } from '../../observability/core/LogSystem.js';
 
 /**
@@ -170,7 +170,7 @@ export class LevelCompletionManager {
      * @param {Object} playerBody - The player's physics body
      * @returns {boolean} Whether the level should be completed
      */
-    checkLevelCompletion(playerPosition, playerBody) {
+    checkLevelCompletion(playerPosition, _playerBody) {
         // If no completion trigger, can't complete
         if (!this.completionTrigger) {
             return false;

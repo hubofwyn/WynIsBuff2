@@ -1,12 +1,12 @@
 import RAPIER from '@dimforge/rapier2d-compat';
 
-import { EventNames } from '../constants/EventNames';
-import { PhysicsConfig } from '../constants/PhysicsConfig';
+import { EventNames } from '../constants/EventNames.js';
+import { PhysicsConfig } from '../constants/PhysicsConfig.js';
 import { metersToPixels } from '../constants/PhysicsConstants.js';
 import { LOG } from '../observability/core/LogSystem.js';
 import { CrashDumpGenerator } from '../observability/utils/CrashDumpGenerator.js';
 
-import { BaseManager } from './BaseManager';
+import { BaseManager } from './BaseManager.js';
 
 /**
  * PhysicsManager class handles the Rapier physics world and synchronization

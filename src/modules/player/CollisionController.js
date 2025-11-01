@@ -1,4 +1,4 @@
-import { EventNames } from '../../constants/EventNames';
+// EventNames not used here
 import { LOG } from '../../observability/core/LogSystem.js';
 
 /**
@@ -72,7 +72,7 @@ export class CollisionController {
 
             // Player dimensions
             const playerHeight = this.collisionParams.playerHeight;
-            const playerWidth = this.collisionParams.playerWidth;
+            // const playerWidth = this.collisionParams.playerWidth;
             const playerFeet = playerPos.y + playerHeight / 2 - this.collisionParams.feetOffset;
 
             // Check platform collisions
@@ -183,10 +183,7 @@ export class CollisionController {
         if (!body) return null;
 
         const start = body.translation();
-        const end = {
-            x: start.x + direction.x * distance,
-            y: start.y + direction.y * distance,
-        };
+        // const end = { x: start.x + direction.x * distance, y: start.y + direction.y * distance };
 
         // Simple ray casting implementation
         // In a real implementation, you would use Rapier's ray casting API
@@ -214,7 +211,6 @@ export class CollisionController {
 
                 // Ensure tNear is less than tFar
                 const t1 = Math.min(tNear, tFar);
-                const t2 = Math.max(tNear, tFar);
 
                 // Check vertical intersection
                 const y = start.y + direction.y * t1;
@@ -234,7 +230,6 @@ export class CollisionController {
 
                 // Ensure tNear is less than tFar
                 const t1 = Math.min(tNear, tFar);
-                const t2 = Math.max(tNear, tFar);
 
                 // Check horizontal intersection
                 const x = start.x + direction.x * t1;

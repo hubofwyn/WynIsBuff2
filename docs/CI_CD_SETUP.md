@@ -38,10 +38,10 @@ Runs on every push to `main` and on pull requests.
 
 ```yaml
 on:
-  push:
-    branches: [main]
-  pull_request:
-    branches: [main]
+    push:
+        branches: [main]
+    pull_request:
+        branches: [main]
 ```
 
 ### 2. Deploy Workflow (`.github/workflows/deploy.yml`)
@@ -179,12 +179,12 @@ git commit -m "message" --no-verify
 
 ```json
 {
-  "semi": true,
-  "trailingComma": "es5",
-  "singleQuote": true,
-  "printWidth": 120,
-  "tabWidth": 4,
-  "useTabs": false
+    "semi": true,
+    "trailingComma": "es5",
+    "singleQuote": true,
+    "printWidth": 120,
+    "tabWidth": 4,
+    "useTabs": false
 }
 ```
 
@@ -196,17 +196,17 @@ git commit -m "message" --no-verify
 
 ## npm Scripts
 
-| Script            | Description                      |
-| ----------------- | -------------------------------- |
-| `npm run lint`    | Run ESLint on codebase           |
-| `npm run lint:fix`| Auto-fix ESLint issues           |
-| `npm run format`  | Format code with Prettier        |
-| `npm run format:check` | Check formatting (no changes) |
-| `npm test`        | Run test suite                   |
-| `npm run build`   | Production build (with logs)     |
-| `npm run build-nolog` | Production build (no logs)   |
-| `npm run dev`     | Development server (with logs)   |
-| `npm run dev-nolog` | Development server (no logs) |
+| Script                 | Description                    |
+| ---------------------- | ------------------------------ |
+| `npm run lint`         | Run ESLint on codebase         |
+| `npm run lint:fix`     | Auto-fix ESLint issues         |
+| `npm run format`       | Format code with Prettier      |
+| `npm run format:check` | Check formatting (no changes)  |
+| `npm test`             | Run test suite                 |
+| `npm run build`        | Production build (with logs)   |
+| `npm run build-nolog`  | Production build (no logs)     |
+| `npm run dev`          | Development server (with logs) |
+| `npm run dev-nolog`    | Development server (no logs)   |
 
 ---
 
@@ -216,20 +216,20 @@ git commit -m "message" --no-verify
 
 1. **Stage your changes**:
 
-   ```bash
-   git add .
-   ```
+    ```bash
+    git add .
+    ```
 
 2. **Commit** (hooks run automatically):
 
-   ```bash
-   git commit -m "feat: add new feature"
-   ```
+    ```bash
+    git commit -m "feat: add new feature"
+    ```
 
 3. If hooks fail:
-   - Fix reported issues
-   - Re-stage files: `git add .`
-   - Try commit again
+    - Fix reported issues
+    - Re-stage files: `git add .`
+    - Try commit again
 
 ### Manually Run Checks
 
@@ -245,25 +245,25 @@ npm test            # Run tests
 
 1. **Create feature branch**:
 
-   ```bash
-   git checkout -b feature/my-feature
-   ```
+    ```bash
+    git checkout -b feature/my-feature
+    ```
 
 2. **Make changes, commit with quality checks**
 
 3. **Push to GitHub**:
 
-   ```bash
-   git push origin feature/my-feature
-   ```
+    ```bash
+    git push origin feature/my-feature
+    ```
 
 4. **Create Pull Request** on GitHub
 
 5. **CI runs automatically**:
-   - Tests must pass
-   - Lint checks must pass
-   - Build must succeed
-   - Security audit must pass
+    - Tests must pass
+    - Lint checks must pass
+    - Build must succeed
+    - Security audit must pass
 
 6. **Merge when CI is green** ✅
 
@@ -280,13 +280,13 @@ npm test            # Run tests
 ```javascript
 // ❌ Error
 function handleEvent(event, data) {
-  console.log(event);
-  // data not used
+    console.log(event);
+    // data not used
 }
 
 // ✅ Fixed
 function handleEvent(event, _data) {
-  console.log(event);
+    console.log(event);
 }
 ```
 

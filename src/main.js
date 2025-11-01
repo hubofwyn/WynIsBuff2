@@ -1,18 +1,18 @@
-import { Boot } from './scenes/Boot';
-import { Game } from './scenes/Game';
-import { GameOver } from './scenes/GameOver';
-import { PauseScene } from './scenes/PauseScene';
-import { SettingsScene } from './scenes/SettingsScene';
-import { MainMenu } from './scenes/MainMenu';
-import { Preloader } from './scenes/Preloader';
-import { CharacterSelect } from './scenes/CharacterSelect';
-import { WelcomeScene } from './scenes/WelcomeScene';
-import { BirthdayMinigame } from './scenes/BirthdayMinigame';
-import { TestScene } from './scenes/TestScene';
-import { RunScene } from './scenes/RunScene';
-import { ResultsScene } from './scenes/ResultsScene';
-import { HubScene } from './scenes/HubScene';
-import { FactoryScene } from './scenes/FactoryScene';
+import { Boot } from './scenes/Boot.js';
+import { Game } from './scenes/Game.js';
+import { GameOver } from './scenes/GameOver.js';
+import { PauseScene } from './scenes/PauseScene.js';
+import { SettingsScene } from './scenes/SettingsScene.js';
+import { MainMenu } from './scenes/MainMenu.js';
+import { Preloader } from './scenes/Preloader.js';
+import { CharacterSelect } from './scenes/CharacterSelect.js';
+import { WelcomeScene } from './scenes/WelcomeScene.js';
+import { BirthdayMinigame } from './scenes/BirthdayMinigame.js';
+import { TestScene } from './scenes/TestScene.js';
+import { RunScene } from './scenes/RunScene.js';
+import { ResultsScene } from './scenes/ResultsScene.js';
+import { HubScene } from './scenes/HubScene.js';
+import { FactoryScene } from './scenes/FactoryScene.js';
 import { LOG } from './observability/core/LogSystem.js';
 
 //  Find out more information about the Game Config at:

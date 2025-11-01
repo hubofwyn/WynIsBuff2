@@ -1,4 +1,4 @@
-import { PIXELS_PER_METER, pixelsToMeters } from './PhysicsConstants.js';
+import { pixelsToMeters } from './PhysicsConstants.js';
 
 /**
  * PhysicsConfig: Modern 2D platformer physics settings based on expert guide
