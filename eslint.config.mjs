@@ -15,24 +15,24 @@ export default [
         languageOptions: {
             ecmaVersion: 2022,
             sourceType: 'module',
-                globals: {
-                    // Node.js globals
-                    console: 'readonly',
-                    process: 'readonly',
-                    Buffer: 'readonly',
-                    __dirname: 'readonly',
-                    __filename: 'readonly',
-                    global: 'readonly',
-                    require: 'readonly',
-                    // Browser globals
-                    window: 'readonly',
-                    document: 'readonly',
-                    navigator: 'readonly',
-                    localStorage: 'readonly',
-                    sessionStorage: 'readonly',
-                    URL: 'readonly',
-                    URLSearchParams: 'readonly',
-                    performance: 'readonly',
+            globals: {
+                // Node.js globals
+                console: 'readonly',
+                process: 'readonly',
+                Buffer: 'readonly',
+                __dirname: 'readonly',
+                __filename: 'readonly',
+                global: 'readonly',
+                require: 'readonly',
+                // Browser globals
+                window: 'readonly',
+                document: 'readonly',
+                navigator: 'readonly',
+                localStorage: 'readonly',
+                sessionStorage: 'readonly',
+                URL: 'readonly',
+                URLSearchParams: 'readonly',
+                performance: 'readonly',
                 // Timers
                 setTimeout: 'readonly',
                 clearTimeout: 'readonly',

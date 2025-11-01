@@ -1,6 +1,4 @@
-
 A Technical Framework for Programmatic Audio Asset Generation in Game Development Using the ElevenLabs API
-
 
 Foundational Framework for Asset Automation
 
@@ -73,7 +71,6 @@ e.g., eleven_text_to_sound_v2
 eleven_text_to_sound_v2
 Specifies the generation model. The default is typically the latest and most capable version available.11
 
-
 Case Study: Translating the "Jump 3" Prompt
 
 The expert-level prompt for "Jump 3" provides a perfect example of how to translate artistic and technical requirements into an effective API call.
@@ -82,29 +79,27 @@ This prompt is already optimized for the AI. The corresponding Python SDK call w
 
 Python
 
-
 import os
 from elevenlabs.client import ElevenLabs
 
 client = ElevenLabs(api_key=os.getenv("ELEVENLABS_API_KEY"))
 
 jump3_prompt = (
-    "An EPIC, explosive triple jump sound for a platform game - the ultimate movement ability. "
-    "MASSIVE energy burst with cinematic impact. Combine: rocket boost ignition, super smash "
-    "explosion, energy beam charge-up. Full frequency spectrum - deep sub-bass rumble, punchy "
-    "midrange impact, brilliant high-frequency sparkles. Include ascending pitch sweep for "
-    "power-up feel. Dramatic long tail with reverb. 0.7 seconds. Hero moment. BUFF."
+"An EPIC, explosive triple jump sound for a platform game - the ultimate movement ability. "
+"MASSIVE energy burst with cinematic impact. Combine: rocket boost ignition, super smash "
+"explosion, energy beam charge-up. Full frequency spectrum - deep sub-bass rumble, punchy "
+"midrange impact, brilliant high-frequency sparkles. Include ascending pitch sweep for "
+"power-up feel. Dramatic long tail with reverb. 0.7 seconds. Hero moment. BUFF."
 )
 
 audio_bytes = client.text_to_sound_effects.convert(
-    text=jump3_prompt,
-    duration_seconds=0.7,
-    prompt_influence=0.4
+text=jump3_prompt,
+duration_seconds=0.7,
+prompt_influence=0.4
 )
 
 with open("sfx_player_jump3_raw.mp3", "wb") as f:
-    f.write(audio_bytes)
-
+f.write(audio_bytes)
 
 This code snippet directly implements the specification by setting the duration_seconds to the required 0.7s and using a moderate prompt_influence to allow for some creative interpretation by the model.3
 
@@ -186,7 +181,6 @@ array of strings
 sections object
 An array of strings containing lyrics for vocal tracks. Leave empty for instrumentals.
 
-
 Translating Artistic Vision into Prompts and Plans
 
 The process of converting abstract creative goals into concrete API inputs is a blend of art and science.
@@ -196,22 +190,21 @@ Initial Prompt for /v1/music/plan: "Organic electronic track for a bioluminescen
 Refined composition_plan (Partial):
 JSON
 {
-  "positive_global_styles":,
-  "sections": [
-    {
-      "section_name": "Intro",
-      "duration_ms": 15000,
-      "positive_local_styles": ["plucky synth arpeggios", "ambient pads", "sounds of bubbling liquids"],
-      "negative_local_styles": ["drums", "bassline"]
-    },
-    {
-      "section_name": "Main Loop",
-      "duration_ms": 60000,
-      "positive_local_styles": ["steady electronic beat", "deep sub-bass", "evolving arpeggios", "digital chimes"]
-    }
-  ]
+"positive_global_styles":,
+"sections": [
+{
+"section_name": "Intro",
+"duration_ms": 15000,
+"positive_local_styles": ["plucky synth arpeggios", "ambient pads", "sounds of bubbling liquids"],
+"negative_local_styles": ["drums", "bassline"]
+},
+{
+"section_name": "Main Loop",
+"duration_ms": 60000,
+"positive_local_styles": ["steady electronic beat", "deep sub-bass", "evolving arpeggios", "digital chimes"]
 }
-
+]
+}
 
 This structured approach ensures that the final generated music aligns precisely with the detailed requirements laid out in the audio design specification.
 
@@ -230,24 +223,21 @@ A Python function within the master script will manage this conversion, dynamica
 
 Python
 
-
 from pydub import AudioSegment
 
 def convert_to_ogg(input_path, output_path, bitrate_kbps):
-    """Converts an audio file to OGG Vorbis format."""
-    try:
-        audio = AudioSegment.from_file(input_path)
-        audio.export(
-            output_path,
-            format="ogg",
-            codec="libvorbis",
-            bitrate=f"{bitrate_kbps}k"
-        )
-        print(f"Successfully converted {input_path} to {output_path}")
-    except Exception as e:
-        print(f"Error converting {input_path}: {e}")
-
-
+"""Converts an audio file to OGG Vorbis format."""
+try:
+audio = AudioSegment.from_file(input_path)
+audio.export(
+output_path,
+format="ogg",
+codec="libvorbis",
+bitrate=f"{bitrate_kbps}k"
+)
+print(f"Successfully converted {input_path} to {output_path}")
+except Exception as e:
+print(f"Error converting {input_path}: {e}")
 
 Precision Audio Normalization
 
@@ -260,7 +250,7 @@ Pipeline Integration
 
 These post-processing steps will be integrated directly into the generate_assets.py script. The workflow for each asset will be:
 Generate the audio via the ElevenLabs API.
-Save the raw MP3 to a temporary _raw_output directory.
+Save the raw MP3 to a temporary \_raw_output directory.
 Pass the raw file path to a master post_process_audio function.
 This function will call the convert_to_ogg function.
 It will then call the appropriate normalization function (normalize_music_lufs or normalize_sfx_peak) on the newly created OGG file.
@@ -282,16 +272,15 @@ To encapsulate this logic in a clean and reusable way, a BudgetGuard Python clas
 
 Python
 
-
 import os
 import requests
 
 class BudgetGuard:
-    def __init__(self, api_key, safety_margin_credits=5000):
-        self.api_key = api_key
-        self.safety_margin = safety_margin_credits
-        self.user_info_url = "https://api.elevenlabs.io/v1/user"
-        self.headers = {"xi-api-key": self.api_key}
+def **init**(self, api_key, safety_margin_credits=5000):
+self.api_key = api_key
+self.safety_margin = safety_margin_credits
+self.user_info_url = "https://api.elevenlabs.io/v1/user"
+self.headers = {"xi-api-key": self.api_key}
 
     def get_remaining_credits(self):
         """Fetches remaining credits from the ElevenLabs API."""
@@ -318,14 +307,13 @@ class BudgetGuard:
         """Checks if a generation is within budget."""
         estimated_cost = self.estimate_cost(duration_seconds)
         remaining_credits = self.get_remaining_credits()
-        
+
         if (remaining_credits - estimated_cost) > self.safety_margin:
             print(f"Budget check PASSED. Remaining credits: {remaining_credits}. Estimated cost: {estimated_cost}.")
             return True
         else:
             print(f"Budget check FAILED. Remaining credits: {remaining_credits}. Estimated cost: {estimated_cost}. Halting generation.")
             return False
-
 
 Note: The estimate_cost function uses a heuristic. The actual credit cost for SFX and Music is complex and may not be documented as a simple formula.29 This conservative estimation provides a practical safety measure.
 
@@ -342,9 +330,6 @@ The Master Asset Manifest (assets.json)
 The entire generation process will be driven by a master manifest file, assets.json. This file will be the single source of truth for all audio assets. Each entry in the JSON array will contain all the metadata needed for generation and processing.
 
 JSON
-
-
-
 
 The Unified generate_assets.py Script
 
@@ -391,4 +376,3 @@ Get User Info - ElevenLabs, accessed October 30, 2025, https://elevenlabs-sdk.mi
 Get user subscription | ElevenLabs Documentation, accessed October 30, 2025, https://elevenlabs.io/docs/api-reference/user/subscription/get
 ElevenLabs pricing: A complete breakdown for 2025 - eesel AI, accessed October 30, 2025, https://www.eesel.ai/blog/elevenlabs-pricing
 What are credits? - ElevenLabs, accessed October 30, 2025, https://help.elevenlabs.io/hc/en-us/articles/27562020846481-What-are-credits
-

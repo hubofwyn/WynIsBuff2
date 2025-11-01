@@ -5,6 +5,7 @@ Automated audio asset generation using ElevenLabs API for WynIsBuff2 platformer 
 ## Overview
 
 This system generates high-quality game audio assets (SFX and music) using ElevenLabs AI with:
+
 - **Budget Control**: Automatic credit tracking and safety margins
 - **Post-Processing**: MP3 → OGG conversion, peak/LUFS normalization
 - **Manifest-Driven**: Single source of truth in `assets.json`
@@ -123,15 +124,15 @@ The manifest defines all audio assets with:
 
 ```json
 {
-  "id": "sfx_player_jump1_01",
-  "phase": 1,
-  "type": "sfx",
-  "name": "Jump 1 Variant A",
-  "prompt": "A short, punchy platform game jump sound...",
-  "duration_seconds": 0.3,
-  "prompt_influence": 0.35,
-  "output_path": "assets/audio/sfx/player/sfx_player_jump1_01.ogg",
-  "manifest_key": "sfxJump1A"
+    "id": "sfx_player_jump1_01",
+    "phase": 1,
+    "type": "sfx",
+    "name": "Jump 1 Variant A",
+    "prompt": "A short, punchy platform game jump sound...",
+    "duration_seconds": 0.3,
+    "prompt_influence": 0.35,
+    "output_path": "assets/audio/sfx/player/sfx_player_jump1_01.ogg",
+    "manifest_key": "sfxJump1A"
 }
 ```
 
@@ -154,7 +155,7 @@ The manifest defines all audio assets with:
 ### Cost Estimates
 
 | Asset Type | Duration | Estimated Cost |
-|------------|----------|----------------|
+| ---------- | -------- | -------------- |
 | SFX        | 0.3s     | ~100 credits   |
 | SFX        | 0.7s     | ~190 credits   |
 | Music      | 30s      | ~9,000 credits |
@@ -169,6 +170,7 @@ python budget_guard.py
 ```
 
 Output:
+
 ```
 ✅ Current credits: 142,350
    User tier: starter
@@ -184,55 +186,62 @@ Output:
 All generated audio goes through:
 
 1. **MP3 → OGG Vorbis Conversion**
-   - SFX: 192 kbps
-   - Music: 256 kbps
+    - SFX: 192 kbps
+    - Music: 256 kbps
 
 2. **Normalization**
-   - **SFX**: Peak normalization to -3 dBFS
-   - **Music**: Loudness normalization to -16 LUFS
+    - **SFX**: Peak normalization to -3 dBFS
+    - **Music**: Loudness normalization to -16 LUFS
 
 3. **Output**
-   - Processed files saved to `assets/audio/`
-   - Raw MP3s kept temporarily (can be cleaned up)
+    - Processed files saved to `assets/audio/`
+    - Raw MP3s kept temporarily (can be cleaned up)
 
 ## Development Phases
 
 ### Phase 1: Bug #4 Fix (CURRENT)
+
 **Priority**: Critical
 **Assets**: 12 jump sounds (4 variants × 3 jump types)
 **Cost**: ~1,120 credits ($0.50-1.00)
 **Timeline**: 1 day
 
 Generate with:
+
 ```bash
 python generate_assets.py --phase 1
 ```
 
 ### Phase 2: Core Gameplay SFX
+
 **Priority**: High
 **Assets**: Collectibles, combat, movement
 **Cost**: ~3,500 credits ($1.50-2.50)
 **Timeline**: 2-3 days
 
 ### Phase 3: Enemy & Boss SFX
+
 **Priority**: Medium
 **Assets**: Enemy sounds, boss battle SFX
 **Cost**: ~4,000 credits ($2.00-3.00)
 **Timeline**: 2-3 days
 
 ### Phase 4: UI & Menu SFX
+
 **Priority**: Medium
 **Assets**: Menu navigation, UI interactions
 **Cost**: ~2,000 credits ($1.00-1.50)
 **Timeline**: 1-2 days
 
 ### Phase 5: Music Foundation
+
 **Priority**: Low
 **Assets**: Main menu, first level theme
 **Cost**: ~30,000 credits ($15.00-20.00)
 **Timeline**: 1 week
 
 ### Phase 6: Complete Music Library
+
 **Priority**: Low
 **Assets**: All biome themes, boss battles
 **Cost**: ~100,000+ credits ($50.00-75.00)
@@ -241,14 +250,18 @@ python generate_assets.py --phase 1
 ## Troubleshooting
 
 ### "ELEVENLABS_API_KEY not found"
+
 **Solution**: Create `.env` file with your API key:
+
 ```bash
 cp .env.example .env
 # Edit .env and add: ELEVENLABS_API_KEY=sk_your_key_here
 ```
 
 ### "FFmpeg not found"
+
 **Solution**: Install FFmpeg for your platform:
+
 ```bash
 # macOS
 brew install ffmpeg
@@ -261,20 +274,26 @@ sudo apt-get install ffmpeg
 ```
 
 ### "Insufficient credits"
+
 **Solution**:
+
 1. Check balance: `python budget_guard.py`
 2. Top up at https://elevenlabs.io/pricing
 3. Reduce safety margin: `--safety-margin 1000`
 
 ### Generation Fails for Specific Asset
+
 **Solution**:
+
 1. Check logs for error message
 2. Test prompt with smaller duration
 3. Verify output path is writable
 4. Try regenerating: `python generate_assets.py --asset <id>`
 
 ### Virtual Environment Issues
+
 **Solution**: Recreate environment:
+
 ```bash
 deactivate
 rm -rf audio-generation-venv
@@ -288,20 +307,23 @@ pip install -r requirements.txt
 After generation:
 
 1. **Update Main Manifest**: Add generated assets to `/assets/manifest.json`:
+
 ```json
 {
-  "type": "audio",
-  "key": "sfx-jump-1",
-  "path": "audio/sfx/player/sfx_player_jump1_01.ogg"
+    "type": "audio",
+    "key": "sfx-jump-1",
+    "path": "audio/sfx/player/sfx_player_jump1_01.ogg"
 }
 ```
 
 2. **Regenerate Constants**:
+
 ```bash
 npm run generate-assets
 ```
 
 3. **Use in Code**:
+
 ```javascript
 import { AudioAssets } from '../constants/Assets.js';
 
@@ -320,6 +342,7 @@ cat generation_results_20241030_143022.json
 ```
 
 Example output:
+
 ```json
 {
   "timestamp": "2024-10-30T14:30:22",

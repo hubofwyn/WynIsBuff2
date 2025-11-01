@@ -244,7 +244,8 @@ export class AgentOrchestrator extends BaseManager {
 
     checkDocumentation(code) {
         const hasClassComment = /\/\*\*[\s\S]*?\*\/\s*(?:export\s+)?class/.test(code);
-        const _publicMethods = code.match(/^\s{4}(?!constructor|init|_)[a-z][a-zA-Z0-9]*\(/gm) || [];
+        const _publicMethods =
+            code.match(/^\s{4}(?!constructor|init|_)[a-z][a-zA-Z0-9]*\(/gm) || [];
         const _documentedMethods = code.match(/\/\*\*[\s\S]*?\*\/\s*\n\s{4}[a-z]/g) || [];
 
         if (!hasClassComment && code.includes('export class')) {

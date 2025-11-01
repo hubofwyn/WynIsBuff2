@@ -9,17 +9,17 @@
 
 ## 🎯 Progress Tracker
 
-| Bug #  | Name                               | Status      | Started | Completed | Notes                                                    |
-| ------ | ---------------------------------- | ----------- | ------- | --------- | -------------------------------------------------------- |
-| **#2** | CollectibleManager Variable Error  | ✅ Fixed    | 15:45   | 15:46     | 1-line fix - config→collectible                          |
-| **#1** | ParticleManager API Change         | ✅ Fixed    | 15:46   | 15:48     | Rewrote createEmitter for Phaser 3.90 API                |
-| **#3** | Duplicate Boss Config              | ✅ Fixed    | 15:48   | 15:50     | Removed duplicate, kept pulsating boss                   |
-| **#4** | Missing Jump SFX                   | ✅ **FIXED**| 19:30   | 20:00     | **ElevenLabs generated 12 jump sounds (1,960 credits)**  |
-| **#5** | CollectibleManager Property Access | ✅ Fixed    | 16:19   | 16:20     | Bug #2 revealed this! config.type → type                 |
-| **#6** | ParticleManager Frame Config       | ✅ Fixed    | 16:31   | 16:32     | Single image texture doesn't support frame names         |
-| **#7** | Event Data Structure Mismatch      | ✅ Fixed    | 16:35   | 16:37     | PlayerController → ParticleManager event incompatibility |
-| **#8** | Particle Emitter Method Calls      | ✅ Fixed    | 16:40   | 16:41     | Old Phaser API methods (setSpeed, setScale, etc.)        |
-| **#9** | Particle Texture Size              | ✅ Fixed    | 16:43   | 16:54     | 1x1px texture scaled to 0.1-0.3px = invisible            |
+| Bug #  | Name                               | Status       | Started | Completed | Notes                                                    |
+| ------ | ---------------------------------- | ------------ | ------- | --------- | -------------------------------------------------------- |
+| **#2** | CollectibleManager Variable Error  | ✅ Fixed     | 15:45   | 15:46     | 1-line fix - config→collectible                          |
+| **#1** | ParticleManager API Change         | ✅ Fixed     | 15:46   | 15:48     | Rewrote createEmitter for Phaser 3.90 API                |
+| **#3** | Duplicate Boss Config              | ✅ Fixed     | 15:48   | 15:50     | Removed duplicate, kept pulsating boss                   |
+| **#4** | Missing Jump SFX                   | ✅ **FIXED** | 19:30   | 20:00     | **ElevenLabs generated 12 jump sounds (1,960 credits)**  |
+| **#5** | CollectibleManager Property Access | ✅ Fixed     | 16:19   | 16:20     | Bug #2 revealed this! config.type → type                 |
+| **#6** | ParticleManager Frame Config       | ✅ Fixed     | 16:31   | 16:32     | Single image texture doesn't support frame names         |
+| **#7** | Event Data Structure Mismatch      | ✅ Fixed     | 16:35   | 16:37     | PlayerController → ParticleManager event incompatibility |
+| **#8** | Particle Emitter Method Calls      | ✅ Fixed     | 16:40   | 16:41     | Old Phaser API methods (setSpeed, setScale, etc.)        |
+| **#9** | Particle Texture Size              | ✅ Fixed     | 16:43   | 16:54     | 1x1px texture scaled to 0.1-0.3px = invisible            |
 
 **Legend**: ⏳ Pending | 🔄 In Progress | ✅ Fixed | ⚠️ Blocked | 📝 Decision Needed
 
@@ -711,6 +711,7 @@ Created complete Python-based audio generation system in `scripts/audio-generati
 - **.env**: ElevenLabs API key configuration
 
 **Technology Stack**:
+
 - ElevenLabs Sound Generation API (2025 SDK v2.x with iterator/generator pattern)
 - FFmpeg (audio conversion MP3 → OGG Vorbis)
 - Python 3.13 compatible (no deprecated audioop dependency)
@@ -720,18 +721,21 @@ Created complete Python-based audio generation system in `scripts/audio-generati
 **12 Jump Sound Variants** (Phase 1):
 
 **Jump 1 - Basic Jump** (4 variants):
+
 - `sfx_player_jump1_01.ogg` - Clean, punchy basic jump (9.5 KB, 0.48s)
 - `sfx_player_jump1_02.ogg` - Warmer tone variant (8.7 KB, 0.48s)
 - `sfx_player_jump1_03.ogg` - Higher pitch variant (8.9 KB, 0.48s)
 - `sfx_player_jump1_04.ogg` - Lower pitch variant (9.2 KB, 0.48s)
 
 **Jump 2 - Enhanced Double Jump** (4 variants):
+
 - `sfx_player_jump2_01.ogg` - Magical sparkle energy (9.1 KB, 0.48s)
 - `sfx_player_jump2_02.ogg` - Brighter sparkle harmonics (9.5 KB, 0.48s)
 - `sfx_player_jump2_03.ogg` - Warmer magical energy (9.2 KB, 0.48s)
 - `sfx_player_jump2_04.ogg` - Crystalline magical energy (9.9 KB, 0.48s)
 
 **Jump 3 - MEGA BUFF Epic Jump** (4 variants):
+
 - `sfx_player_jump3_01.ogg` - EPIC explosive burst (10.0 KB, 0.68s)
 - `sfx_player_jump3_02.ogg` - More explosive emphasis (12.0 KB, 0.68s)
 - `sfx_player_jump3_03.ogg` - Energy beam focus (11.0 KB, 0.68s)
@@ -740,6 +744,7 @@ Created complete Python-based audio generation system in `scripts/audio-generati
 **Total**: 148 KB of professionally generated game audio
 
 **Audio Specifications**:
+
 - Format: OGG Vorbis (libvorbis codec)
 - Bitrate: 192 kbps (SFX standard)
 - Sample Rate: 44.1 kHz
@@ -749,18 +754,21 @@ Created complete Python-based audio generation system in `scripts/audio-generati
 #### 3. Cost Tracking
 
 **ElevenLabs Credit Usage**:
+
 - Account: Creator Tier (300,000 credits available)
 - Phase 1 Cost: **1,960 credits** (~$1 USD)
 - Cost per sound: ~163 credits average
 - Remaining balance: 298,040 credits
 
 **Budget Control Features**:
+
 - Safety margin: 5,000 credit buffer
 - Pre-generation credit checks
 - Real-time cost estimation
 - Generation results JSON logging
 
 **Cost Breakdown**:
+
 ```
 Jump 1 variants (4 × 0.5s): ~400 credits
 Jump 2 variants (4 × 0.5s): ~400 credits
@@ -774,6 +782,7 @@ Total: 1,960 credits
 **Sound Generation Prompts** (ElevenLabs Sound Effects API):
 
 Jump 1 Example:
+
 ```
 A short, punchy platform game jump sound with a clean bouncy feel.
 Light cartoon spring effect with slight whoosh. Bright, crisp attack
@@ -782,6 +791,7 @@ punch. Satisfying and responsive.
 ```
 
 Jump 3 Example:
+
 ```
 EPIC explosive triple jump for platform game. MASSIVE cinematic impact
 burst. Combine rocket boost, super smash explosion, energy charge-up.
@@ -791,6 +801,7 @@ Dramatic reverb tail. Hero moment. BUFF.
 ```
 
 **Post-Processing Pipeline**:
+
 1. ElevenLabs API generates raw MP3
 2. FFmpeg converts MP3 → OGG Vorbis (192 kbps)
 3. FFmpeg applies peak normalization (-3 dBFS)
@@ -800,41 +811,43 @@ Dramatic reverb tail. Hero moment. BUFF.
 #### 5. Integration Path
 
 **Pending Integration Steps**:
+
 1. Add 12 OGG files to main `assets/manifest.json`
 2. Run `npm run generate-assets` to regenerate `Assets.js` constants
 3. Update `AudioManager.js` sfxList with jump variants:
-   ```javascript
-   jump: [
-     AudioAssets.SFX_JUMP1_01, AudioAssets.SFX_JUMP1_02,
-     AudioAssets.SFX_JUMP1_03, AudioAssets.SFX_JUMP1_04,
-   ],
-   jump2: [
-     AudioAssets.SFX_JUMP2_01, AudioAssets.SFX_JUMP2_02,
-     AudioAssets.SFX_JUMP2_03, AudioAssets.SFX_JUMP2_04,
-   ],
-   jump3: [
-     AudioAssets.SFX_JUMP3_01, AudioAssets.SFX_JUMP3_02,
-     AudioAssets.SFX_JUMP3_03, AudioAssets.SFX_JUMP3_04,
-   ]
-   ```
+    ```javascript
+    jump: [
+      AudioAssets.SFX_JUMP1_01, AudioAssets.SFX_JUMP1_02,
+      AudioAssets.SFX_JUMP1_03, AudioAssets.SFX_JUMP1_04,
+    ],
+    jump2: [
+      AudioAssets.SFX_JUMP2_01, AudioAssets.SFX_JUMP2_02,
+      AudioAssets.SFX_JUMP2_03, AudioAssets.SFX_JUMP2_04,
+    ],
+    jump3: [
+      AudioAssets.SFX_JUMP3_01, AudioAssets.SFX_JUMP3_02,
+      AudioAssets.SFX_JUMP3_03, AudioAssets.SFX_JUMP3_04,
+    ]
+    ```
 4. Add PLAYER_JUMP event listener in Game.js:
-   ```javascript
-   this.eventSystem.on(EventNames.PLAYER_JUMP, (data) => {
-     const jumpNumber = data.jumpNumber || 1;
-     if (jumpNumber === 1) {
-       AudioManager.getInstance().playSFX('jump');
-     } else if (jumpNumber === 2) {
-       AudioManager.getInstance().playSFX('jump2');
-     } else if (jumpNumber === 3) {
-       AudioManager.getInstance().playSFX('jump3');
-     }
-   });
-   ```
+    ```javascript
+    this.eventSystem.on(EventNames.PLAYER_JUMP, (data) => {
+        const jumpNumber = data.jumpNumber || 1;
+        if (jumpNumber === 1) {
+            AudioManager.getInstance().playSFX('jump');
+        } else if (jumpNumber === 2) {
+            AudioManager.getInstance().playSFX('jump2');
+        } else if (jumpNumber === 3) {
+            AudioManager.getInstance().playSFX('jump3');
+        }
+    });
+    ```
 5. Test all 3 jump levels with random variant selection
 
 #### 6. Git Commits
 
 **Framework Setup** (Commit 1):
+
 ```
 feat: add ElevenLabs audio generation framework
 
@@ -851,6 +864,7 @@ Bug #4 Fix - Professional audio generation system
 ```
 
 **Asset Generation** (Commit 2):
+
 ```
 feat: generate 12 professional jump sounds via ElevenLabs
 
