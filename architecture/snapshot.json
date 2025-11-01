@@ -1,0 +1,232 @@
+{
+  "version": "1.0.0",
+  "timestamp": "2025-11-01T17:36:26.830Z",
+  "stats": {
+    "totalFiles": 102,
+    "totalDirs": 30,
+    "layerCounts": {
+      "scenes": 16,
+      "types": 1,
+      "core": 15,
+      "constants": 8,
+      "public-api": 9,
+      "utils": 1,
+      "observability": 21,
+      "other": 1,
+      "game-systems": 18,
+      "enemy-agent": 3,
+      "player-agent": 9
+    },
+    "violationCount": 43
+  },
+  "layers": {
+    "scenes": {
+      "fileCount": 16,
+      "examples": [
+        "scenes/RunScene.js",
+        "scenes/Boot.js",
+        "scenes/Game.js"
+      ]
+    },
+    "types": {
+      "fileCount": 1,
+      "examples": [
+        "types/InputState.js"
+      ]
+    },
+    "core": {
+      "fileCount": 15,
+      "examples": [
+        "core/AgentOrchestrator.js",
+        "core/InputManager.js",
+        "core/CloneManager.js"
+      ]
+    },
+    "constants": {
+      "fileCount": 8,
+      "examples": [
+        "constants/EventNames.js",
+        "constants/PhysicsConstants.js",
+        "constants/SceneKeys.js"
+      ]
+    },
+    "public-api": {
+      "fileCount": 9,
+      "examples": [
+        "features/ui/index.js",
+        "features/idle/index.js",
+        "features/core/index.js"
+      ]
+    },
+    "utils": {
+      "fileCount": 1,
+      "examples": [
+        "utils/LogoLoader.js"
+      ]
+    },
+    "observability": {
+      "fileCount": 21,
+      "examples": [
+        "observability/context/index.js",
+        "observability/context/StateProvider.js",
+        "observability/context/DebugContext.js"
+      ]
+    },
+    "other": {
+      "fileCount": 1,
+      "examples": [
+        "main.js"
+      ]
+    },
+    "game-systems": {
+      "fileCount": 18,
+      "examples": [
+        "modules/ui/FeedbackSystem.js",
+        "modules/idle/TimeEchoRecorder.js",
+        "modules/idle/DNAExtractor.js"
+      ]
+    },
+    "enemy-agent": {
+      "fileCount": 3,
+      "examples": [
+        "modules/enemy/BossController.js",
+        "modules/enemy/PulsatingBoss.js",
+        "modules/enemy/EnemyController.js"
+      ]
+    },
+    "player-agent": {
+      "fileCount": 9,
+      "examples": [
+        "modules/player/PrecisionTimingController.js",
+        "modules/player/PlayerController.js",
+        "modules/player/EnhancedJumpController.js"
+      ]
+    }
+  },
+  "violations": [
+    {
+      "file": "scenes/ResultsScene.js",
+      "layer": "scenes",
+      "import": "Math.random()",
+      "rule": "Use DeterministicRNG instead of Math.random()"
+    },
+    {
+      "file": "scenes/ResultsScene.js",
+      "layer": "scenes",
+      "import": "Math.random()",
+      "rule": "Use DeterministicRNG instead of Math.random()"
+    },
+    {
+      "file": "scenes/ResultsScene.js",
+      "layer": "scenes",
+      "import": "Math.random()",
+      "rule": "Use DeterministicRNG instead of Math.random()"
+    },
+    {
+      "file": "scenes/ResultsScene.js",
+      "layer": "scenes",
+      "import": "Math.random()",
+      "rule": "Use DeterministicRNG instead of Math.random()"
+    },
+    {
+      "file": "scenes/ResultsScene.js",
+      "layer": "scenes",
+      "import": "Math.random()",
+      "rule": "Use DeterministicRNG instead of Math.random()"
+    },
+    {
+      "file": "scenes/ResultsScene.js",
+      "layer": "scenes",
+      "import": "Math.random()",
+      "rule": "Use DeterministicRNG instead of Math.random()"
+    },
+    {
+      "file": "scenes/ResultsScene.js",
+      "layer": "scenes",
+      "import": "Math.random()",
+      "rule": "Use DeterministicRNG instead of Math.random()"
+    },
+    {
+      "file": "scenes/HubScene.js",
+      "layer": "scenes",
+      "import": "Math.random()",
+      "rule": "Use DeterministicRNG instead of Math.random()"
+    },
+    {
+      "file": "scenes/HubScene.js",
+      "layer": "scenes",
+      "import": "Math.random()",
+      "rule": "Use DeterministicRNG instead of Math.random()"
+    },
+    {
+      "file": "scenes/HubScene.js",
+      "layer": "scenes",
+      "import": "Math.random()",
+      "rule": "Use DeterministicRNG instead of Math.random()"
+    },
+    {
+      "file": "scenes/HubScene.js",
+      "layer": "scenes",
+      "import": "Math.random()",
+      "rule": "Use DeterministicRNG instead of Math.random()"
+    },
+    {
+      "file": "scenes/HubScene.js",
+      "layer": "scenes",
+      "import": "Math.random()",
+      "rule": "Use DeterministicRNG instead of Math.random()"
+    },
+    {
+      "file": "scenes/HubScene.js",
+      "layer": "scenes",
+      "import": "Math.random()",
+      "rule": "Use DeterministicRNG instead of Math.random()"
+    },
+    {
+      "file": "scenes/HubScene.js",
+      "layer": "scenes",
+      "import": "Math.random()",
+      "rule": "Use DeterministicRNG instead of Math.random()"
+    },
+    {
+      "file": "modules/idle/TimeEchoRecorder.js",
+      "layer": "game-systems",
+      "import": "Math.random()",
+      "rule": "Use DeterministicRNG instead of Math.random()"
+    },
+    {
+      "file": "modules/idle/TimeEchoRecorder.js",
+      "layer": "game-systems",
+      "import": "Math.random()",
+      "rule": "Use DeterministicRNG instead of Math.random()"
+    },
+    {
+      "file": "modules/boss/PulsarController.js",
+      "layer": "game-systems",
+      "import": "@dimforge/rapier2d-compat",
+      "rule": "Gameplay code should use manager facades, not vendors directly"
+    },
+    {
+      "file": "modules/enemy/BossController.js",
+      "layer": "enemy-agent",
+      "import": "Math.random()",
+      "rule": "Use DeterministicRNG instead of Math.random()"
+    },
+    {
+      "file": "modules/enemy/BossController.js",
+      "layer": "enemy-agent",
+      "import": "Math.random()",
+      "rule": "Use DeterministicRNG instead of Math.random()"
+    },
+    {
+      "file": "modules/enemy/BossController.js",
+      "layer": "enemy-agent",
+      "import": "Math.random()",
+      "rule": "Use DeterministicRNG instead of Math.random()"
+    }
+  ],
+  "summary": {
+    "healthScore": 7,
+    "recommendation": "Needs attention. Review and fix violations."
+  }
+}

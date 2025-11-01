@@ -1,0 +1,98 @@
+{
+  "version": "1.0.0",
+  "meta": {
+    "vite": "7.1.12",
+    "phaser": "3.90.0",
+    "rapier": "0.19.2",
+    "runtime": "bun",
+    "esm": true,
+    "target": "baseline-widely-available"
+  },
+  "layers": {
+    "core": {
+      "pattern": "src/core/**",
+      "canImport": ["core", "observability", "constants"],
+      "vendors": ["@dimforge/rapier2d-compat", "howler"],
+      "description": "Infrastructure managers and core services (singletons)"
+    },
+    "scenes": {
+      "pattern": "src/scenes/**",
+      "canImport": ["public-api", "constants", "observability"],
+      "vendors": ["phaser"],
+      "description": "Phaser scenes handling presentation and lifecycle"
+    },
+    "gameplay-agents": {
+      "pattern": "src/modules/{player,enemy}/**",
+      "canImport": ["core", "constants", "observability"],
+      "vendors": [],
+      "description": "Agent behaviors for player and enemy entities"
+    },
+    "gameplay-systems": {
+      "pattern": "src/modules/{level,effects,idle,boss,analytics,ui}/**",
+      "canImport": ["core", "gameplay-agents", "constants", "observability"],
+      "vendors": [],
+      "description": "Game systems managing levels, effects, and mechanics"
+    },
+    "public-api": {
+      "pattern": "src/features/**",
+      "canImport": ["core", "gameplay-agents", "gameplay-systems", "constants"],
+      "vendors": [],
+      "description": "Barrel exports providing clean public API"
+    },
+    "constants": {
+      "pattern": "src/constants/**",
+      "canImport": [],
+      "vendors": [],
+      "description": "Generated and manual constants (no dependencies)"
+    },
+    "observability": {
+      "pattern": "src/observability/**",
+      "canImport": ["observability"],
+      "vendors": [],
+      "description": "Cross-cutting logging and monitoring infrastructure"
+    }
+  },
+  "boundaries": {
+    "enforcement": "warn",
+    "exceptions": [
+      {
+        "from": "scenes",
+        "to": "src/core/PhysicsManager.js",
+        "reason": "Game scene needs direct physics world access for initialization",
+        "temporary": true,
+        "ticketId": "ARCH-001"
+      }
+    ]
+  },
+  "determinism": {
+    "enabled": true,
+    "physics": {
+      "timestep": "1/120",
+      "maxSteps": 4,
+      "deterministicBuild": false
+    },
+    "rng": {
+      "service": "DeterministicRNG",
+      "enforceMathRandom": true,
+      "defaultSeed": 1138
+    },
+    "replay": {
+      "enabled": false,
+      "format": "jsonl",
+      "checkpointInterval": 600
+    }
+  },
+  "performance": {
+    "bundler": "rollup",
+    "target": "baseline-widely-available",
+    "minify": true,
+    "sourcemaps": true,
+    "treeshake": true
+  },
+  "quality": {
+    "maxBuildTime": 60000,
+    "maxBundleSize": 5242880,
+    "requiredCoverage": 80,
+    "maxComplexity": 10
+  }
+}
