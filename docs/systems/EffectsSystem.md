@@ -127,6 +127,106 @@ this.eventSystem.emit(EventNames.EMIT_PARTICLES, {
 - Performance budget: Prefer a shared small texture for general FX; use atlases for stylized FX later
 - Determinism (when needed): Avoid RNG in tests; for gameplay, keep randomness small and controlled
 
+## Phaser 3.90 Migration Notes
+
+### API Changes from Pre-3.60
+
+**Breaking Change**: Particle API was simplified in Phaser 3.60+:
+
+**Old API** (pre-3.60):
+
+```javascript
+// Created ParticleEmitterManager
+const manager = this.add.particles('texture');
+const emitter = manager.createEmitter(config); // Manager method
+emitter.setSpeed({ min: 50, max: 100 }); // Dynamic config
+emitter.setScale({ start: 0.1, end: 0 });
+```
+
+**New API** (3.60+, used in WynIsBuff2):
+
+```javascript
+// Creates ParticleEmitter directly
+const emitter = this.scene.add.particles(
+    x,
+    y, // Position
+    'particleWhite', // Texture key
+    {
+        lifespan: 1000,
+        speed: { min: 50, max: 100 }, // Config at creation
+        scale: { start: 0.1, end: 0 },
+        emitting: false, // Changed from 'on: false'
+    }
+);
+
+// Emit particles
+emitter.explode(10, x, y); // Quantity, position
+```
+
+**Key Differences**:
+
+1. No more `ParticleEmitterManager` layer - direct `ParticleEmitter` creation
+2. Configuration is set at creation time (immutable)
+3. No dynamic setter methods (`setSpeed`, `setScale`, `setGravityY`)
+4. Property name change: `on` → `emitting`
+5. Must use `explode(quantity, x, y)` for positioned bursts
+
+### Single Image vs Atlas
+
+**Critical**: When using single image textures (not atlases):
+
+- **DO NOT** specify `frame` parameter
+- Frame names only work with texture atlases
+- Single image texture + frame parameter = silent failure (particles invisible)
+
+**Correct** (single image):
+
+```javascript
+this.scene.add.particles(x, y, 'particleWhite', {
+    // Note: NO 'frame' property
+    lifespan: 1000,
+    ...
+});
+```
+
+**Wrong** (causes invisible particles):
+
+```javascript
+this.scene.add.particles(x, y, 'particleWhite', {
+    frame: 'white',  // ❌ Silent failure - particles won't render
+    lifespan: 1000,
+    ...
+});
+```
+
+### Testing Requirements
+
+**Critical Lesson**: Health score 100 ≠ visual correctness
+
+The observability system tracks errors and health scores, but **cannot detect visual rendering issues**:
+
+✅ **Observability Detects**:
+
+- JavaScript errors
+- Missing event data
+- API method failures
+- Performance issues
+
+❌ **Observability Cannot Detect**:
+
+- Invisible particles (wrong texture size)
+- Incorrect colors/scales
+- Missing visual effects
+- Silent API failures
+
+**Required Testing Approach**:
+
+1. **Code Testing**: Use observability (`window.debugAPI.getSummary()`)
+2. **Visual Testing**: Actually play the game and verify effects appear
+3. **Asset Validation**: Check texture dimensions match scale expectations (see ASSET_MANAGEMENT.md)
+
+**Example**: Bug #9 had health score 100 (all code working) but particles were invisible due to 1×1px texture scaled to 0.15px.
+
 ## Roadmap (Incremental)
 
 - Central FX registry: Normalize configs under a single `effects` map with keys (e.g., `fx.jump.1`, `fx.land.default`)

@@ -1,0 +1,345 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "https://wynisbuff2.com/schemas/a-spec.schema.json",
+    "title": "WynIsBuff2 Architecture Specification Schema",
+    "description": "Schema for validating the architecture specification of WynIsBuff2",
+    "type": "object",
+    "required": [
+        "version",
+        "meta",
+        "layers",
+        "boundaries",
+        "determinism",
+        "performance",
+        "assetGeneration"
+    ],
+    "additionalProperties": false,
+    "properties": {
+        "version": {
+            "type": "string",
+            "pattern": "^\\d+\\.\\d+\\.\\d+$",
+            "description": "Semantic version of this A-Spec document"
+        },
+        "meta": {
+            "type": "object",
+            "description": "Metadata about the technology stack",
+            "required": ["vite", "phaser", "rapier", "runtime", "esm"],
+            "additionalProperties": false,
+            "properties": {
+                "vite": {
+                    "type": "string",
+                    "pattern": "^\\d+\\.\\d+\\.\\d+$",
+                    "description": "Vite version"
+                },
+                "phaser": {
+                    "type": "string",
+                    "pattern": "^\\d+\\.\\d+\\.\\d+$",
+                    "description": "Phaser version"
+                },
+                "rapier": {
+                    "type": "string",
+                    "pattern": "^\\d+\\.\\d+\\.\\d+$",
+                    "description": "Rapier2d-compat version"
+                },
+                "runtime": {
+                    "type": "string",
+                    "enum": ["bun", "node", "deno"],
+                    "description": "JavaScript runtime"
+                },
+                "esm": {
+                    "type": "boolean",
+                    "description": "Whether the project uses ES modules"
+                },
+                "target": {
+                    "type": "string",
+                    "description": "Browser target for builds"
+                }
+            }
+        },
+        "layers": {
+            "type": "object",
+            "description": "Layer definitions with import rules",
+            "required": ["core", "scenes", "gameplay-agents", "gameplay-systems", "public-api"],
+            "additionalProperties": {
+                "type": "object",
+                "required": ["pattern", "canImport"],
+                "properties": {
+                    "pattern": {
+                        "type": "string",
+                        "description": "File path pattern for this layer"
+                    },
+                    "canImport": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "description": "List of layers this layer can import from"
+                    },
+                    "vendors": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "description": "List of vendor packages this layer can directly import"
+                    },
+                    "description": {
+                        "type": "string",
+                        "description": "Human-readable description of this layer's purpose"
+                    }
+                }
+            }
+        },
+        "boundaries": {
+            "type": "object",
+            "description": "Boundary enforcement configuration",
+            "required": ["enforcement", "exceptions"],
+            "additionalProperties": false,
+            "properties": {
+                "enforcement": {
+                    "type": "string",
+                    "enum": ["error", "warn", "off"],
+                    "description": "ESLint enforcement level for boundary violations"
+                },
+                "exceptions": {
+                    "type": "array",
+                    "description": "Documented exceptions to boundary rules",
+                    "items": {
+                        "type": "object",
+                        "required": ["from", "to", "reason"],
+                        "additionalProperties": false,
+                        "properties": {
+                            "from": {
+                                "type": "string",
+                                "description": "Source layer"
+                            },
+                            "to": {
+                                "type": "string",
+                                "description": "Target layer or module"
+                            },
+                            "reason": {
+                                "type": "string",
+                                "description": "Justification for the exception"
+                            },
+                            "temporary": {
+                                "type": "boolean",
+                                "default": false,
+                                "description": "Whether this exception is temporary"
+                            },
+                            "ticketId": {
+                                "type": "string",
+                                "description": "Issue/ticket tracking the removal of this exception"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "determinism": {
+            "type": "object",
+            "description": "Deterministic execution configuration",
+            "required": ["enabled", "physics", "rng"],
+            "additionalProperties": false,
+            "properties": {
+                "enabled": {
+                    "type": "boolean",
+                    "description": "Whether deterministic mode is enabled"
+                },
+                "physics": {
+                    "type": "object",
+                    "required": ["timestep", "maxSteps"],
+                    "additionalProperties": false,
+                    "properties": {
+                        "timestep": {
+                            "type": "string",
+                            "pattern": "^1/\\d+$",
+                            "description": "Fixed timestep for physics (e.g., '1/120')"
+                        },
+                        "maxSteps": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 20,
+                            "description": "Maximum physics steps per frame"
+                        },
+                        "deterministicBuild": {
+                            "type": "boolean",
+                            "description": "Whether to use Rapier's deterministic build"
+                        }
+                    }
+                },
+                "rng": {
+                    "type": "object",
+                    "required": ["service", "enforceMathRandom"],
+                    "additionalProperties": false,
+                    "properties": {
+                        "service": {
+                            "type": "string",
+                            "description": "RNG service class name"
+                        },
+                        "enforceMathRandom": {
+                            "type": "boolean",
+                            "description": "Whether to enforce no Math.random() usage"
+                        },
+                        "defaultSeed": {
+                            "type": "integer",
+                            "description": "Default seed for deterministic RNG"
+                        }
+                    }
+                },
+                "replay": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                        "enabled": {
+                            "type": "boolean",
+                            "description": "Whether replay system is enabled"
+                        },
+                        "format": {
+                            "type": "string",
+                            "enum": ["jsonl", "json", "binary"],
+                            "description": "Replay file format"
+                        },
+                        "checkpointInterval": {
+                            "type": "integer",
+                            "minimum": 60,
+                            "description": "Frames between checkpoints"
+                        }
+                    }
+                }
+            }
+        },
+        "performance": {
+            "type": "object",
+            "description": "Performance and optimization settings",
+            "required": ["bundler", "target"],
+            "additionalProperties": false,
+            "properties": {
+                "bundler": {
+                    "type": "string",
+                    "enum": ["rollup", "rolldown", "esbuild"],
+                    "description": "Build bundler to use"
+                },
+                "target": {
+                    "type": "string",
+                    "description": "Browser compatibility target"
+                },
+                "minify": {
+                    "type": "boolean",
+                    "description": "Whether to minify production builds"
+                },
+                "sourcemaps": {
+                    "type": "boolean",
+                    "description": "Whether to generate sourcemaps"
+                },
+                "treeshake": {
+                    "type": "boolean",
+                    "description": "Whether to enable tree shaking"
+                }
+            }
+        },
+        "assetGeneration": {
+            "type": "object",
+            "description": "AI-powered asset generation configuration",
+            "required": ["enabled", "providers", "pipeline"],
+            "additionalProperties": false,
+            "properties": {
+                "enabled": {
+                    "type": "boolean",
+                    "description": "Whether asset generation is enabled"
+                },
+                "providers": {
+                    "type": "object",
+                    "description": "Asset generation provider configuration",
+                    "additionalProperties": false,
+                    "properties": {
+                        "image": {
+                            "type": "object",
+                            "properties": {
+                                "primary": { "type": "string" },
+                                "fallback": { "type": "string" },
+                                "monthlyBudget": { "type": "number" },
+                                "costPerAsset": { "type": "number" }
+                            }
+                        },
+                        "audio": {
+                            "type": "object",
+                            "properties": {
+                                "primary": { "type": "string" },
+                                "fallback": { "type": "string" },
+                                "monthlyBudget": { "type": "number" },
+                                "costPerAsset": { "type": "number" }
+                            }
+                        }
+                    }
+                },
+                "pipeline": {
+                    "type": "object",
+                    "description": "Asset generation pipeline configuration",
+                    "additionalProperties": false,
+                    "properties": {
+                        "stages": {
+                            "type": "array",
+                            "items": { "type": "string" }
+                        },
+                        "validation": {
+                            "type": "object",
+                            "properties": {
+                                "automatic": { "type": "boolean" },
+                                "manualReview": { "type": "boolean" }
+                            }
+                        },
+                        "integration": {
+                            "type": "object",
+                            "properties": {
+                                "manifest": { "type": "string" },
+                                "constants": { "type": "string" },
+                                "staging": { "type": "string" }
+                            }
+                        }
+                    }
+                },
+                "quality": {
+                    "type": "object",
+                    "description": "Asset quality requirements",
+                    "additionalProperties": false,
+                    "properties": {
+                        "minImageSize": { "type": "integer" },
+                        "maxImageSize": { "type": "integer" },
+                        "supportedFormats": {
+                            "type": "array",
+                            "items": { "type": "string" }
+                        },
+                        "audioFormats": {
+                            "type": "array",
+                            "items": { "type": "string" }
+                        }
+                    }
+                }
+            }
+        },
+        "quality": {
+            "type": "object",
+            "description": "Quality gates and metrics",
+            "additionalProperties": false,
+            "properties": {
+                "maxBuildTime": {
+                    "type": "integer",
+                    "description": "Maximum acceptable build time in milliseconds"
+                },
+                "maxBundleSize": {
+                    "type": "integer",
+                    "description": "Maximum bundle size in bytes"
+                },
+                "requiredCoverage": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 100,
+                    "description": "Required test coverage percentage"
+                },
+                "maxComplexity": {
+                    "type": "integer",
+                    "description": "Maximum cyclomatic complexity"
+                }
+            }
+        }
+    }
+}

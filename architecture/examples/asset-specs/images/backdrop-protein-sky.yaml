@@ -1,0 +1,64 @@
+# Example Asset Specification: Protein Plant Sky Backdrop
+# Migrated from origin/get-more-buff:asset-generation/shots.json
+
+version: "1.0"
+id: backdrop-protein-sky
+
+metadata:
+  created: 2025-11-01
+  author: migrated-from-get-more-buff
+  category: backdrops
+  tags: [biome, protein-plant, parallax, sky-layer]
+
+generation:
+  type: image
+  provider: dalle-3
+  fallback: firefly
+
+prompt:
+  base: >
+    Luminous greenhouse sky with glowing bioluminescent spores drifting upward,
+    subtle green/blue gradient, hazy light beams, flat stylized 2D art,
+    strong readable silhouette, high-contrast palette, no photorealism,
+    solid background, no transparency, parallax-ready composition, 1024x1024
+
+  style: |
+    - Flat stylized 2D art
+    - Strong readable silhouette
+    - High-contrast palette
+    - No photorealism
+    - Solid background (no alpha channel)
+    - Parallax-ready composition
+    - Biome: Protein Plant (industrial greenhouse)
+    - Layer: Sky (background layer)
+
+  negative: "transparency, alpha channel, photorealistic, 3D, shadows, complex details"
+
+  parameters:
+    size: 1024x1024
+    quality: high          # High quality for backdrops
+    n_variations: 4        # Generate 4 variations for selection
+
+post_processing:
+  - action: validate
+    checks:
+      - no_alpha           # Backdrops must NOT have transparency
+      - dimensions_match
+      - is_power_of_two
+      - file_size_under_2mb
+
+  - action: convert
+    formats: [png, webp]
+
+integration:
+  manifest_key: backdropProteinSky
+  manifest_path: images/backdrops/protein-plant/sky.png
+  manifest_type: image
+  manifest_section: images
+  description: "Protein Plant biome sky layer (parallax background)"
+
+observability:
+  track_cost: true
+  track_quality: true
+  track_performance: true
+  log_level: info

@@ -1,0 +1,52 @@
+# Test Image Specification: Sky Backdrop
+# Simple test spec for orchestrator validation
+
+version: "1.0"
+id: test-sky-backdrop-01
+
+metadata:
+  created: 2025-11-01
+  author: orchestrator-test
+  category: backgrounds
+  name: "Test Sky Backdrop"
+  gameContext: "2D platformer"
+  tags: [background, sky, clouds, pixel-art, test]
+
+generation:
+  type: image
+  provider: dalle-3
+  fallback: manual
+
+prompt:
+  base: >
+    A vibrant pixel art sky backdrop for a 2D platformer game. Features
+    fluffy white clouds against a gradient sky transitioning from deep blue
+    at the top to lighter cyan at the horizon. Retro 16-bit aesthetic with
+    clean pixel-perfect edges. Seamless tileable pattern for parallax scrolling.
+
+  style: "Retro 16-bit pixel art, clean and crisp, vibrant colors"
+
+  details: >
+    Clouds should have soft rounded shapes but maintain pixel-perfect edges.
+    Sky gradient should be smooth but maintain retro aesthetic. Include subtle
+    details like distant birds or stars for depth.
+
+  negative: >
+    No photorealistic elements, no blur, no modern gradients, no 3D effects,
+    no noise or artifacts
+
+  parameters:
+    size: "1024x1024"
+    quality: "standard"
+    style: "vivid"
+    n: 1
+
+integration:
+  manifest_key: testSkyBackdrop01
+  output_path: assets/images/backgrounds/test_sky_backdrop_01.png
+  description: "Test sky backdrop for orchestrator validation"
+
+observability:
+  track_cost: true
+  track_quality: true
+  log_level: info

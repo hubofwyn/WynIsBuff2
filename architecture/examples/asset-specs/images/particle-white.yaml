@@ -1,0 +1,62 @@
+# Example Asset Specification: White Particle
+# Demonstrates simple image generation with DALL-E 3
+
+version: "1.0"
+id: particle-white
+
+metadata:
+  created: 2025-11-01
+  author: asset-generation
+  category: particles
+  tags: [effect, impact, visual-feedback, core]
+
+generation:
+  type: image
+  provider: dalle-3
+  fallback: stable-diffusion
+
+prompt:
+  base: >
+    32x32 soft white gradient circle particle for game effects,
+    centered, transparent background, high contrast edges,
+    suitable for bloom effects and additive blending
+
+  style: |
+    - Flat stylized 2D art
+    - Clean radial gradient falloff
+    - No photorealism
+    - Crisp edges for scaling
+    - Pure white center fading to transparent
+
+  negative: "complex shapes, hard edges, patterns, textures, noise"
+
+  parameters:
+    size: 1024x1024        # Generate high-res, downscale in post
+    quality: standard      # Standard quality sufficient for particles
+    n_variations: 1        # Single variation
+
+post_processing:
+  - action: resize
+    dimensions: 32x32
+    method: lanczos
+
+  - action: validate
+    checks:
+      - has_alpha
+      - dimensions_match
+      - file_size_reasonable
+
+  - action: convert
+    formats: [png, webp]
+
+integration:
+  manifest_key: particleWhite
+  manifest_path: images/particles/white.png
+  manifest_type: image
+  manifest_section: images
+  description: "White particle for visual effects"
+
+observability:
+  track_cost: true
+  track_quality: true
+  log_level: info
