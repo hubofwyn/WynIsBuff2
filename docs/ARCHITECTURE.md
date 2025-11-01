@@ -325,6 +325,19 @@ See [ASSET_MANAGEMENT.md](../ASSET_MANAGEMENT.md) for complete workflow and guid
 - **Constant-Time Lookup** - Generated constants for fast access
 - **Path Optimization** - Relative paths and asset bundling
 
+## 🚀 Architectural Improvements
+
+**Status**: Planning phase in progress on branch `refactor/architectural-improvements`
+
+WynIsBuff2 is implementing enhanced architectural validation and build optimization. See [Architectural Improvement Plan](./architecture/ArchitecturalImprovementPlan.md) for:
+
+- **Layer boundary enforcement** with ESLint plugin
+- **Build performance optimization** with Rolldown bundler (4-16x faster)
+- **Enhanced deterministic testing** with replay system
+- **Machine-readable architecture specification** (A-Spec JSON)
+
+This work leverages our current stack (Vite 7.1.12, Rapier 0.19.2, ESLint 9.14.0) without disrupting the existing file structure.
+
 ## 🔧 Extension Points
 
 ### Adding New Features
@@ -336,6 +349,7 @@ See [ASSET_MANAGEMENT.md](../ASSET_MANAGEMENT.md) for complete workflow and guid
 5. **Add Assets** - Update `manifest.json` and regenerate
 6. **Write Tests** - Follow existing test patterns
 7. **Update Documentation** - This file and CONTRIBUTING.md
+8. **Respect Layer Boundaries** - See [Architectural Improvement Plan](./architecture/ArchitecturalImprovementPlan.md) for layer rules
 
 ### Creating New Managers
 

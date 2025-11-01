@@ -4,12 +4,13 @@ System architecture and design decisions for WynIsBuff2.
 
 ## Contents
 
-| Document                                                   | Purpose                                         |
-| ---------------------------------------------------------- | ----------------------------------------------- |
-| [ArchitecturalAssessment.md](./ArchitecturalAssessment.md) | Architecture evaluation and recommendations     |
-| [ArchitecturalOverview.md](./ArchitecturalOverview.md)     | Complete architectural vision and system design |
-| [ModularArchitecture.md](./ModularArchitecture.md)         | Modular design patterns and implementation      |
-| [MVPArchitectureSummary.md](./MVPArchitectureSummary.md)   | MVP architecture summary and decisions          |
+| Document                                                                   | Purpose                                         |
+| -------------------------------------------------------------------------- | ----------------------------------------------- |
+| [ArchitecturalImprovementPlan.md](./ArchitecturalImprovementPlan.md) ⭐ | **Active**: Vite 7/Rapier 0.19 enhancement plan |
+| [ArchitecturalAssessment.md](./ArchitecturalAssessment.md)                 | Architecture evaluation and recommendations     |
+| [ArchitecturalOverview.md](./ArchitecturalOverview.md)                     | Complete architectural vision and system design |
+| [ModularArchitecture.md](./ModularArchitecture.md)                         | Modular design patterns and implementation      |
+| [MVPArchitectureSummary.md](./MVPArchitectureSummary.md)                   | MVP architecture summary and decisions          |
 
 ## Overview
 
