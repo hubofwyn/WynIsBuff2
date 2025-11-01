@@ -9,37 +9,165 @@
 
 ## Executive Summary
 
-**Goal**: Migrate the complete DALL-E system from `origin/get-more-buff` branch into a modern **spec-driven, multi-modal asset generation architecture** that integrates seamlessly with WynIsBuff2's observability, manifest system, and layered architecture.
+**Goal**: Unify existing asset generation systems (DALL-E from `origin/get-more-buff` + ElevenLabs audio from `scripts/audio-generation/`) into a modern **spec-driven, multi-modal asset generation architecture** that integrates seamlessly with WynIsBuff2's observability, manifest system, and layered architecture.
+
+**Current State Discovery**:
+- ✅ **Image Generation**: Complete DALL-E system exists in `origin/get-more-buff` branch (needs migration)
+- ✅ **Audio Generation**: Complete ElevenLabs system exists in `scripts/audio-generation/` (production-ready!)
+- ❌ **Unified Architecture**: Systems are separate, need orchestration layer
 
 **Philosophy**: Build a brilliant implementation that won't need rollbacks by incorporating 2025 best practices from the start.
 
 **Key Innovations**:
 - ✅ **Spec-as-Code**: YAML specifications for reproducible asset generation
 - ✅ **Orchestration Layer**: Route requests to optimal generation engines
-- ✅ **Multi-Modal**: Images (DALL-E) + Audio (ElevenLabs, Bark)
+- ✅ **Multi-Modal**: Images (DALL-E) + Audio (ElevenLabs) with unified interface
 - ✅ **Observability-First**: Structured logging with cost/quality tracking
 - ✅ **Architectural Integration**: Fits into layered A-Spec architecture
+- ✅ **Hybrid Runtime**: Node.js/Bun for images, Python for audio (pragmatic approach)
 
 ---
 
 ## Table of Contents
 
-1. [System Architecture](#1-system-architecture)
-2. [Directory Structure](#2-directory-structure)
-3. [Spec-Driven Pipeline](#3-spec-driven-pipeline)
-4. [Orchestration Layer](#4-orchestration-layer)
-5. [Generation Providers](#5-generation-providers)
-6. [Processing & Validation](#6-processing--validation)
-7. [Manifest Integration](#7-manifest-integration)
-8. [Observability Integration](#8-observability-integration)
-9. [Implementation Plan](#9-implementation-plan)
-10. [Migration Steps](#10-migration-steps)
+1. [Current State Analysis](#1-current-state-analysis)
+2. [Unified System Architecture](#2-unified-system-architecture)
+3. [Directory Structure](#3-directory-structure)
+4. [Spec-Driven Pipeline](#4-spec-driven-pipeline)
+5. [Orchestration Layer](#5-orchestration-layer)
+6. [Generation Providers](#6-generation-providers)
+7. [Processing & Validation](#7-processing--validation)
+8. [Manifest Integration](#8-manifest-integration)
+9. [Observability Integration](#9-observability-integration)
+10. [Implementation Plan](#10-implementation-plan)
+11. [Migration Steps](#11-migration-steps)
 
 ---
 
-## 1. System Architecture
+## 1. Current State Analysis
 
-### 1.1 The Hybrid Modular Stack
+### 1.1 Existing Audio Generation System (Production-Ready!)
+
+**Location**: `scripts/audio-generation/`
+
+**Status**: ✅ Complete, documented, production-ready Python system
+
+**Key Components**:
+```
+scripts/audio-generation/
+├── README.md                    # Complete documentation
+├── assets.json                  # 12 jump SFX fully specified
+├── generate_assets.py           # Main orchestrator (Python)
+├── budget_guard.py              # Credit tracking & safety
+├── post_process.py              # MP3 → OGG conversion, normalization
+├── requirements.txt             # Python dependencies
+├── .env.example                 # ElevenLabs API key template
+└── audio-generation-venv/       # Isolated Python environment
+```
+
+**Capabilities**:
+- ✅ ElevenLabs API integration
+- ✅ Budget control with safety margins (5,000 credit buffer)
+- ✅ Phase-based generation (Phase 1 = 12 jump SFX)
+- ✅ Post-processing pipeline (MP3 → OGG, peak/LUFS normalization)
+- ✅ Cost tracking (generation_results_*.json timestamped logs)
+- ✅ Manifest-driven (assets.json single source of truth)
+- ✅ Comprehensive documentation (3 docs: README, AUDIO_DESIGN_SPECIFICATION, ELEVENLABS_IMPLEMENTATION_GUIDE)
+
+**Integration with Game**:
+```javascript
+// Already working flow:
+1. Run: python generate_assets.py --phase 1
+2. Outputs: assets/audio/sfx/player/*.ogg
+3. Update: assets/manifest.json (manual)
+4. Run: npm run generate-assets
+5. Use: AudioAssets.SFX_JUMP_1
+```
+
+**Why It Works**:
+- Phase-based approach aligns with Bug #4 fix priority
+- Python + FFmpeg ideal for audio processing
+- Budget guard prevents cost overruns
+- Already used to generate assets (potentially)
+
+**What It Needs**:
+- ❌ No automatic manifest.json integration
+- ❌ No observability integration (LOG system)
+- ❌ No unified orchestration with image generation
+- ❌ No spec-driven YAML format (uses JSON assets.json)
+
+### 1.2 Existing Image Generation System (Orphaned Branch)
+
+**Location**: `origin/get-more-buff:asset-generation/`
+
+**Status**: ⚠️ Complete but isolated, needs migration
+
+**Key Components**:
+```
+asset-generation/
+├── tools/wyn-gfx.mjs            # Main CLI (Bun/Node)
+├── shots.json                   # 45+ asset specifications
+├── style.md                     # Global art direction
+├── package.json                 # Bun scripts
+└── [various utilities]
+```
+
+**Capabilities**:
+- ✅ DALL-E 3 integration
+- ✅ Budget control ($20 soft cap)
+- ✅ Multi-stage pipeline (512px thumbs → scoring → 1024px finals)
+- ✅ Quality validation
+- ✅ 45+ predefined shots (backdrops, sprites, particles)
+
+**What It Needs**:
+- ❌ Migration from orphaned branch
+- ❌ Architectural alignment with A-Spec
+- ❌ Integration with manifest.json workflow
+- ❌ Observability integration
+- ❌ Spec-driven YAML format
+
+### 1.3 What's Missing: Unified Orchestration
+
+**Current Problem**: Two separate, excellent systems with no coordination
+
+**What We Need**:
+```
+┌──────────────────────────────────────────────────────────┐
+│         Unified Asset Generation Interface               │
+│         npm run asset:generate <spec>                    │
+└────────────────────┬─────────────────────────────────────┘
+                     ↓
+         ┌───────────┴───────────┐
+         ↓                       ↓
+    ┌─────────┐           ┌──────────┐
+    │ Image   │           │ Audio    │
+    │ (Node)  │           │ (Python) │
+    │ DALL-E  │           │ ElevenLbs│
+    └─────────┘           └──────────┘
+         │                       │
+         └───────────┬───────────┘
+                     ↓
+            Unified manifest.json
+            Unified observability
+            Unified cost tracking
+```
+
+### 1.4 Integration Strategy
+
+**Pragmatic Approach**: Keep what works, add orchestration layer
+
+1. **Keep Existing Audio System**: Python/ElevenLabs is production-ready
+2. **Migrate DALL-E Patterns**: Bring valuable patterns from get-more-buff
+3. **Add Orchestration**: Unified CLI that calls both systems
+4. **Spec-Driven**: Convert both to YAML spec format
+5. **Unified Observability**: LOG system for both
+6. **Automatic Integration**: Both update manifest.json automatically
+
+---
+
+## 2. Unified System Architecture
+
+### 2.1 The Hybrid Modular Stack
 
 ```
 ┌─────────────────────────────────────────────────────────┐
@@ -1028,67 +1156,85 @@ getAssetGenerationHealth() {
 
 ---
 
-## 9. Implementation Plan
+## 10. Implementation Plan (Updated for Existing Systems)
 
-### Phase 1: Core Infrastructure (Week 1)
+### Phase 1: Unified Orchestration (Week 1)
 
-**Goal**: Set up spec-driven architecture and orchestrator
+**Goal**: Create orchestration layer that coordinates existing systems
 
 **Tasks**:
-1. Create directory structure
-2. Implement spec loader and validator
-3. Build orchestrator CLI
-4. Migrate BudgetGuard from get-more-buff
-5. Create BaseProvider interface
-6. Set up cost tracking database
+1. Create orchestrator CLI (`scripts/asset-generation/orchestrator/`)
+2. Implement spec loader and validator (YAML → internal format)
+3. Build adapter for existing Python audio system
+4. Create unified cost tracking (SQLite database)
+5. Add observability integration (LOG system)
+6. Implement manifest auto-updater
 
-**Deliverable**: `npm run asset:generate --dry-run <spec>` works
+**Deliverable**: `npm run asset:generate <spec>` routes to Python or Node based on type
+
+**Note**: Audio generation already works via Python, we're just adding orchestration!
 
 ### Phase 2: DALL-E Migration (Week 2)
 
-**Goal**: Migrate DALL-E system with 2025 enhancements
+**Goal**: Migrate DALL-E patterns from get-more-buff into new structure
 
 **Tasks**:
-1. Implement DalleProvider class
-2. Convert shots.json → YAML specs
-3. Migrate quality validation logic
-4. Add image post-processing (Sharp)
-5. Integrate with manifest.json
+1. Extract BudgetGuard patterns from get-more-buff
+2. Implement DalleProvider class (Node.js)
+3. Convert shots.json → YAML specs (45+ assets)
+4. Migrate quality validation logic
+5. Add image post-processing (Sharp)
 6. Test full image generation pipeline
 
-**Deliverable**: Generate first AI image integrated with manifest
+**Deliverable**: Generate first DALL-E image via unified orchestrator
 
-### Phase 3: Audio Generation (Week 3)
+### Phase 3: Integration & Testing (Week 3)
 
-**Goal**: Add ElevenLabs audio generation
-
-**Tasks**:
-1. Implement ElevenLabsProvider class
-2. Create audio spec templates
-3. Add audio post-processing (normalization, trimming)
-4. Generate jump SFX specs
-5. Integrate audio with manifest.json
-6. Test full audio pipeline
-
-**Deliverable**: Generate 12 jump SFX files (3 types × 4 variants)
-
-### Phase 4: Observability & Polish (Week 4)
-
-**Goal**: Complete observability integration and documentation
+**Goal**: Ensure both systems work together seamlessly
 
 **Tasks**:
-1. Add all LOG calls throughout system
-2. Create debugAPI.getAssetGenerationHealth()
-3. Write comprehensive documentation
-4. Update A-Spec with asset-generation layer
-5. Create usage examples and guides
+1. Test audio generation via orchestrator
+2. Test image generation via orchestrator
+3. Verify manifest.json auto-update for both
+4. Test cost tracking across both systems
+5. Verify observability logs for both types
+6. Create batch processing workflows
+
+**Deliverable**: Generate mixed assets (images + audio) in single workflow
+
+### Phase 4: Documentation & Polish (Week 4)
+
+**Goal**: Complete documentation and production readiness
+
+**Tasks**:
+1. Update all documentation for unified system
+2. Create migration guide from old workflows
+3. Add debugAPI.getAssetGenerationHealth()
+4. Create usage examples and guides
+5. Update A-Spec with final architecture
 6. Performance benchmarking
+7. Write "Getting Started" guide
 
-**Deliverable**: Production-ready system with full observability
+**Deliverable**: Production-ready unified asset generation system
 
 ---
 
-## 10. Migration Steps
+## Simplified Timeline (Acknowledging Existing Work)
+
+**Week 1**: Orchestration layer + observability
+**Week 2**: DALL-E migration
+**Week 3**: Integration testing
+**Week 4**: Documentation
+
+**Key Insight**: Audio generation is DONE. We're mainly adding:
+1. Unified interface (orchestrator)
+2. DALL-E migration from get-more-buff
+3. Observability integration
+4. Spec-driven format for both
+
+---
+
+## 11. Migration Steps
 
 ### Step 1: Prepare Branch
 

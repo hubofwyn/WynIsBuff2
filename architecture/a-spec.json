@@ -17,11 +17,23 @@
       "vendors": ["openai", "@anthropic-ai/sdk", "elevenlabs"],
       "description": "External API integrations for AI services"
     },
-    "asset-generation": {
-      "pattern": "scripts/ai-generation/**",
-      "canImport": ["external-services", "observability", "constants"],
-      "vendors": ["dotenv"],
-      "description": "AI-powered asset generation pipeline"
+    "asset-generation-orchestrator": {
+      "pattern": "scripts/asset-generation/orchestrator/**",
+      "canImport": ["observability", "constants"],
+      "vendors": ["dotenv", "yaml"],
+      "description": "Unified orchestration layer for asset generation (Node.js/Bun)"
+    },
+    "asset-generation-audio": {
+      "pattern": "scripts/audio-generation/**",
+      "canImport": [],
+      "vendors": ["elevenlabs", "ffmpeg-python", "pydub"],
+      "description": "ElevenLabs audio generation (Python) - production-ready system"
+    },
+    "asset-generation-image": {
+      "pattern": "scripts/asset-generation/image/**",
+      "canImport": ["observability", "constants"],
+      "vendors": ["openai", "sharp"],
+      "description": "DALL-E image generation (Node.js) - migrated from get-more-buff"
     },
     "asset-management": {
       "pattern": "scripts/{generate-assets,validate-assets,create-*}.*",
