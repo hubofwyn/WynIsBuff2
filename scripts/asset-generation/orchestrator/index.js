@@ -7,6 +7,7 @@
 import { resolve } from 'path';
 import { SpecLoader } from '../utils/spec-loader.js';
 import { PythonAudioAdapter } from '../adapters/python-audio-adapter.js';
+import { OpenAIImageAdapter } from '../adapters/openai-image-adapter.js';
 import { ManifestUpdater } from '../utils/manifest-updater.js';
 import { LOG } from '../../../src/observability/index.js';
 
@@ -19,6 +20,11 @@ class AssetOrchestrator {
     // Initialize components
     this.specLoader = new SpecLoader();
     this.audioAdapter = new PythonAudioAdapter({ dryRun: this.dryRun });
+    this.imageAdapter = new OpenAIImageAdapter({
+      dryRun: this.dryRun,
+      dailyLimit: options.dailyLimit || 20.0,
+      monthlyLimit: options.monthlyLimit || 50.0
+    });
     this.manifestUpdater = new ManifestUpdater();
 
     // Stats
@@ -195,22 +201,21 @@ class AssetOrchestrator {
       specId: spec.id || spec.template
     });
 
-    // TODO: Implement DALL-E generation
-    LOG.warn('IMAGE_NOT_IMPLEMENTED', {
-      subsystem: 'asset-orchestrator',
-      message: 'Image generation not yet implemented - Phase 2 pending',
-      hint: 'This feature will be added when DALL-E migration is complete'
-    });
-
-    if (this.dryRun) {
-      return {
-        success: true,
-        dryRun: true,
-        message: 'Image generation placeholder'
-      };
+    // Check OpenAI environment
+    const available = await this.imageAdapter.checkAvailability();
+    if (!available && !this.dryRun) {
+      LOG.error('IMAGE_ENV_UNAVAILABLE', {
+        subsystem: 'asset-orchestrator',
+        message: 'OpenAI image generation environment not available',
+        hint: 'Ensure OPENAI_API_KEY is set in environment'
+      });
+      throw new Error('OpenAI image generation environment not available');
     }
 
-    throw new Error('Image generation not yet implemented');
+    // Generate using OpenAI adapter
+    const result = await this.imageAdapter.generate(spec, { dryRun: this.dryRun });
+
+    return result;
   }
 
   /**

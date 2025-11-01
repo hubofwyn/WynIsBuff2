@@ -1,0 +1,52 @@
+# Test Image Specification: White Particle
+# Simple particle effect for testing image generation
+
+version: "1.0"
+id: test-particle-white-01
+
+metadata:
+  created: 2025-11-01
+  author: orchestrator-test
+  category: particles
+  name: "Test White Particle"
+  gameContext: "2D platformer effects"
+  tags: [particle, effect, white, glow, test]
+
+generation:
+  type: image
+  provider: dalle-3
+  fallback: manual
+
+prompt:
+  base: >
+    A glowing white particle effect sprite for a 2D game. Circular shape with
+    soft radial glow emanating from bright center. Clean and simple design
+    suitable for particle systems. Transparent background. Perfect for energy
+    effects, sparkles, or impact particles.
+
+  style: "Clean game sprite, soft glow, radial gradient, vibrant"
+
+  details: >
+    Center should be pure white (#FFFFFF) with smooth falloff to transparency.
+    Glow should be soft but visible. Size approximately 64x64 pixels in the
+    center of the canvas. Perfectly centered and symmetrical.
+
+  negative: >
+    No hard edges, no complex shapes, no patterns, no colors other than white,
+    no background elements, no text
+
+  parameters:
+    size: "1024x1024"
+    quality: "hd"
+    style: "natural"
+    n: 1
+
+integration:
+  manifest_key: testParticleWhite01
+  output_path: assets/images/particles/test_particle_white_01.png
+  description: "Test white particle effect for orchestrator validation"
+
+observability:
+  track_cost: true
+  track_quality: true
+  log_level: info
