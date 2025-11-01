@@ -1,0 +1,39 @@
+# Test Audio Specification: Jump SFX
+# Simple test spec for orchestrator validation
+
+version: "1.0"
+id: test-jump-sfx-01
+
+metadata:
+  created: 2025-11-01
+  author: orchestrator-test
+  category: player_movement
+  name: "Test Jump SFX"
+  tags: [player, jump, movement, test]
+
+generation:
+  type: audio
+  provider: elevenlabs
+  fallback: manual
+
+prompt:
+  base: >
+    A short, punchy platform game jump sound. Clean bouncy feel with
+    light spring effect and slight whoosh. Bright, crisp attack with
+    quick decay. Satisfying and responsive.
+
+  style: "Clean, responsive, game-ready"
+
+  parameters:
+    duration_seconds: 0.3
+    prompt_influence: 0.35
+
+integration:
+  manifest_key: testJumpSfx01
+  output_path: assets/audio/sfx/player/test_jump_sfx_01.ogg
+  description: "Test jump SFX for orchestrator validation"
+
+observability:
+  track_cost: true
+  track_quality: true
+  log_level: info
