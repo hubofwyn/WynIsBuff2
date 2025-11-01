@@ -7,16 +7,19 @@
 import { resolve } from 'path';
 import { SpecLoader } from '../utils/spec-loader.js';
 import { PythonAudioAdapter } from '../adapters/python-audio-adapter.js';
+import { ManifestUpdater } from '../utils/manifest-updater.js';
 import { LOG } from '../../../src/observability/index.js';
 
 class AssetOrchestrator {
   constructor(options = {}) {
     this.dryRun = options.dryRun || false;
     this.verbose = options.verbose || false;
+    this.updateManifest = options.updateManifest !== false; // Default true
 
     // Initialize components
     this.specLoader = new SpecLoader();
     this.audioAdapter = new PythonAudioAdapter({ dryRun: this.dryRun });
+    this.manifestUpdater = new ManifestUpdater();
 
     // Stats
     this.stats = {
@@ -87,6 +90,29 @@ class AssetOrchestrator {
           specId: spec.id || spec.template,
           duration: Date.now() - startTime
         });
+
+        // Update manifest if not in dry run and updateManifest is enabled
+        if (!this.dryRun && !result.dryRun && this.updateManifest) {
+          try {
+            this.manifestUpdater.updateManifest(spec, result);
+            LOG.info('MANIFEST_AUTO_UPDATE', {
+              subsystem: 'asset-orchestrator',
+              message: 'Manifest automatically updated',
+              specId: spec.id || spec.template
+            });
+          } catch (manifestError) {
+            LOG.warn('MANIFEST_UPDATE_FAILED', {
+              subsystem: 'asset-orchestrator',
+              error: manifestError,
+              message: 'Failed to update manifest, but asset generation succeeded',
+              specId: spec.id || spec.template,
+              hint: 'You may need to manually add asset to manifest.json'
+            });
+            // Don't fail the generation if manifest update fails
+            console.warn('⚠️  Warning: Failed to update manifest automatically');
+            console.warn(`   ${manifestError.message}`);
+          }
+        }
       } else {
         this.stats.failed++;
         LOG.error('GENERATION_FAILED', {
@@ -239,7 +265,8 @@ function parseArgs() {
     specPath: null,
     dryRun: false,
     verbose: false,
-    help: false
+    help: false,
+    updateManifest: true  // Default to updating manifest
   };
 
   for (let i = 0; i < args.length; i++) {
@@ -251,6 +278,8 @@ function parseArgs() {
       options.dryRun = true;
     } else if (arg === '--verbose' || arg === '-v') {
       options.verbose = true;
+    } else if (arg === '--no-manifest-update') {
+      options.updateManifest = false;
     } else if (!arg.startsWith('--')) {
       options.specPath = arg;
     }
@@ -273,9 +302,10 @@ Arguments:
   spec-file              Path to YAML asset specification file
 
 Options:
-  --dry-run             Preview generation without executing
-  --verbose, -v         Enable verbose logging
-  --help, -h            Show this help message
+  --dry-run              Preview generation without executing
+  --verbose, -v          Enable verbose logging
+  --no-manifest-update   Skip automatic manifest.json update
+  --help, -h             Show this help message
 
 Examples:
   # Generate audio asset
@@ -286,6 +316,9 @@ Examples:
 
   # Verbose output
   node orchestrator/index.js --verbose specs/image/particle.yaml
+
+  # Generate without updating manifest
+  node orchestrator/index.js --no-manifest-update specs/audio/jump-sfx.yaml
 
 Spec File Format:
   See architecture/asset-spec.schema.json for complete schema
@@ -318,7 +351,8 @@ if (import.meta.url === `file://${process.argv[1]}`) {
 
   const orchestrator = new AssetOrchestrator({
     dryRun: options.dryRun,
-    verbose: options.verbose
+    verbose: options.verbose,
+    updateManifest: options.updateManifest
   });
 
   orchestrator.generate(options.specPath)
