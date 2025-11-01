@@ -1,14 +1,40 @@
 {
-  "version": "1.0.0",
+  "version": "2.0.0",
   "meta": {
     "vite": "7.1.12",
     "phaser": "3.90.0",
     "rapier": "0.19.2",
     "runtime": "bun",
     "esm": true,
-    "target": "baseline-widely-available"
+    "target": "baseline-widely-available",
+    "assetGeneration": true,
+    "observability": true
   },
   "layers": {
+    "external-services": {
+      "pattern": "integrations/**",
+      "canImport": ["observability"],
+      "vendors": ["openai", "@anthropic-ai/sdk", "elevenlabs"],
+      "description": "External API integrations for AI services"
+    },
+    "asset-generation": {
+      "pattern": "scripts/ai-generation/**",
+      "canImport": ["external-services", "observability", "constants"],
+      "vendors": ["dotenv"],
+      "description": "AI-powered asset generation pipeline"
+    },
+    "asset-management": {
+      "pattern": "scripts/{generate-assets,validate-assets,create-*}.*",
+      "canImport": ["constants", "observability"],
+      "vendors": ["canvas"],
+      "description": "Asset manifest and constant generation"
+    },
+    "documentation-analysis": {
+      "pattern": "scripts/{venv,*.py}/**",
+      "canImport": [],
+      "vendors": ["transformers", "sentence-transformers"],
+      "description": "Documentation quality analysis system"
+    },
     "core": {
       "pattern": "src/core/**",
       "canImport": ["core", "observability", "constants"],
@@ -88,6 +114,41 @@
     "minify": true,
     "sourcemaps": true,
     "treeshake": true
+  },
+  "assetGeneration": {
+    "enabled": true,
+    "providers": {
+      "image": {
+        "primary": "dall-e-3",
+        "fallback": "manual",
+        "monthlyBudget": 100,
+        "costPerAsset": 0.10
+      },
+      "audio": {
+        "primary": "elevenlabs",
+        "fallback": "bark",
+        "monthlyBudget": 50,
+        "costPerAsset": 0.05
+      }
+    },
+    "pipeline": {
+      "stages": ["prompt", "generate", "validate", "integrate"],
+      "validation": {
+        "automatic": true,
+        "manualReview": false
+      },
+      "integration": {
+        "manifest": "assets/manifest.json",
+        "constants": "src/constants/Assets.js",
+        "staging": "assets/ai-generated/"
+      }
+    },
+    "quality": {
+      "minImageSize": 32,
+      "maxImageSize": 2048,
+      "supportedFormats": ["png", "jpg", "webp"],
+      "audioFormats": ["mp3", "wav", "ogg"]
+    }
   },
   "quality": {
     "maxBuildTime": 60000,

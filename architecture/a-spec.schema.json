@@ -4,7 +4,7 @@
   "title": "WynIsBuff2 Architecture Specification Schema",
   "description": "Schema for validating the architecture specification of WynIsBuff2",
   "type": "object",
-  "required": ["version", "meta", "layers", "boundaries", "determinism", "performance"],
+  "required": ["version", "meta", "layers", "boundaries", "determinism", "performance", "assetGeneration"],
   "additionalProperties": false,
   "properties": {
     "version": {
@@ -225,6 +225,86 @@
         "treeshake": {
           "type": "boolean",
           "description": "Whether to enable tree shaking"
+        }
+      }
+    },
+    "assetGeneration": {
+      "type": "object",
+      "description": "AI-powered asset generation configuration",
+      "required": ["enabled", "providers", "pipeline"],
+      "additionalProperties": false,
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "description": "Whether asset generation is enabled"
+        },
+        "providers": {
+          "type": "object",
+          "description": "Asset generation provider configuration",
+          "additionalProperties": false,
+          "properties": {
+            "image": {
+              "type": "object",
+              "properties": {
+                "primary": { "type": "string" },
+                "fallback": { "type": "string" },
+                "monthlyBudget": { "type": "number" },
+                "costPerAsset": { "type": "number" }
+              }
+            },
+            "audio": {
+              "type": "object",
+              "properties": {
+                "primary": { "type": "string" },
+                "fallback": { "type": "string" },
+                "monthlyBudget": { "type": "number" },
+                "costPerAsset": { "type": "number" }
+              }
+            }
+          }
+        },
+        "pipeline": {
+          "type": "object",
+          "description": "Asset generation pipeline configuration",
+          "additionalProperties": false,
+          "properties": {
+            "stages": {
+              "type": "array",
+              "items": { "type": "string" }
+            },
+            "validation": {
+              "type": "object",
+              "properties": {
+                "automatic": { "type": "boolean" },
+                "manualReview": { "type": "boolean" }
+              }
+            },
+            "integration": {
+              "type": "object",
+              "properties": {
+                "manifest": { "type": "string" },
+                "constants": { "type": "string" },
+                "staging": { "type": "string" }
+              }
+            }
+          }
+        },
+        "quality": {
+          "type": "object",
+          "description": "Asset quality requirements",
+          "additionalProperties": false,
+          "properties": {
+            "minImageSize": { "type": "integer" },
+            "maxImageSize": { "type": "integer" },
+            "supportedFormats": {
+              "type": "array",
+              "items": { "type": "string" }
+            },
+            "audioFormats": {
+              "type": "array",
+              "items": { "type": "string" }
+            }
+          }
         }
       }
     },
