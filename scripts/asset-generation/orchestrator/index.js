@@ -12,292 +12,291 @@ import { ManifestUpdater } from '../utils/manifest-updater.js';
 import { LOG } from '../../../src/observability/index.js';
 
 class AssetOrchestrator {
-  constructor(options = {}) {
-    this.dryRun = options.dryRun || false;
-    this.verbose = options.verbose || false;
-    this.updateManifest = options.updateManifest !== false; // Default true
+    constructor(options = {}) {
+        this.dryRun = options.dryRun || false;
+        this.verbose = options.verbose || false;
+        this.updateManifest = options.updateManifest !== false; // Default true
 
-    // Initialize components
-    this.specLoader = new SpecLoader();
-    this.audioAdapter = new PythonAudioAdapter({ dryRun: this.dryRun });
-    this.imageAdapter = new OpenAIImageAdapter({
-      dryRun: this.dryRun,
-      dailyLimit: options.dailyLimit || 20.0,
-      monthlyLimit: options.monthlyLimit || 50.0
-    });
-    this.manifestUpdater = new ManifestUpdater();
-
-    // Stats
-    this.stats = {
-      attempted: 0,
-      succeeded: 0,
-      failed: 0,
-      skipped: 0
-    };
-  }
-
-  /**
-   * Generate asset from specification
-   * @param {string} specPath - Path to YAML spec file
-   * @returns {Promise<Object>} Generation result
-   */
-  async generate(specPath) {
-    LOG.info('ORCHESTRATOR_START', {
-      subsystem: 'asset-orchestrator',
-      message: 'Asset Generation Orchestrator started'
-    });
-
-    const startTime = Date.now();
-
-    try {
-      // Load and validate spec
-      LOG.info('SPEC_LOADING', {
-        subsystem: 'asset-orchestrator',
-        message: 'Loading specification',
-        specPath
-      });
-
-      const spec = this.specLoader.load(specPath);
-
-      LOG.info('SPEC_LOADED', {
-        subsystem: 'asset-orchestrator',
-        message: 'Specification loaded successfully',
-        spec: {
-          id: spec.id || spec.template,
-          type: spec.generation.type,
-          provider: spec.generation.provider
-        }
-      });
-
-      if (this.dryRun) {
-        LOG.info('DRY_RUN_MODE', {
-          subsystem: 'asset-orchestrator',
-          message: 'DRY RUN MODE - No actual generation will occur'
+        // Initialize components
+        this.specLoader = new SpecLoader();
+        this.audioAdapter = new PythonAudioAdapter({ dryRun: this.dryRun });
+        this.imageAdapter = new OpenAIImageAdapter({
+            dryRun: this.dryRun,
+            dailyLimit: options.dailyLimit || 20.0,
+            monthlyLimit: options.monthlyLimit || 50.0,
         });
-      }
+        this.manifestUpdater = new ManifestUpdater();
 
-      // Route to appropriate generator
-      let result;
-      this.stats.attempted++;
+        // Stats
+        this.stats = {
+            attempted: 0,
+            succeeded: 0,
+            failed: 0,
+            skipped: 0,
+        };
+    }
 
-      if (spec.generation.type === 'audio') {
-        result = await this.generateAudio(spec);
-      } else if (spec.generation.type === 'image') {
-        result = await this.generateImage(spec);
-      } else {
-        throw new Error(`Unsupported generation type: ${spec.generation.type}`);
-      }
-
-      if (result.success) {
-        this.stats.succeeded++;
-        LOG.info('GENERATION_SUCCESS', {
-          subsystem: 'asset-orchestrator',
-          message: 'Asset generation completed successfully',
-          specId: spec.id || spec.template,
-          duration: Date.now() - startTime
+    /**
+     * Generate asset from specification
+     * @param {string} specPath - Path to YAML spec file
+     * @returns {Promise<Object>} Generation result
+     */
+    async generate(specPath) {
+        LOG.info('ORCHESTRATOR_START', {
+            subsystem: 'asset-orchestrator',
+            message: 'Asset Generation Orchestrator started',
         });
 
-        // Update manifest if not in dry run and updateManifest is enabled
-        if (!this.dryRun && !result.dryRun && this.updateManifest) {
-          try {
-            this.manifestUpdater.updateManifest(spec, result);
-            LOG.info('MANIFEST_AUTO_UPDATE', {
-              subsystem: 'asset-orchestrator',
-              message: 'Manifest automatically updated',
-              specId: spec.id || spec.template
+        const startTime = Date.now();
+
+        try {
+            // Load and validate spec
+            LOG.info('SPEC_LOADING', {
+                subsystem: 'asset-orchestrator',
+                message: 'Loading specification',
+                specPath,
             });
-          } catch (manifestError) {
-            LOG.warn('MANIFEST_UPDATE_FAILED', {
-              subsystem: 'asset-orchestrator',
-              error: manifestError,
-              message: 'Failed to update manifest, but asset generation succeeded',
-              specId: spec.id || spec.template,
-              hint: 'You may need to manually add asset to manifest.json'
+
+            const spec = this.specLoader.load(specPath);
+
+            LOG.info('SPEC_LOADED', {
+                subsystem: 'asset-orchestrator',
+                message: 'Specification loaded successfully',
+                spec: {
+                    id: spec.id || spec.template,
+                    type: spec.generation.type,
+                    provider: spec.generation.provider,
+                },
             });
-            // Don't fail the generation if manifest update fails
-            console.warn('⚠️  Warning: Failed to update manifest automatically');
-            console.warn(`   ${manifestError.message}`);
-          }
+
+            if (this.dryRun) {
+                LOG.info('DRY_RUN_MODE', {
+                    subsystem: 'asset-orchestrator',
+                    message: 'DRY RUN MODE - No actual generation will occur',
+                });
+            }
+
+            // Route to appropriate generator
+            let result;
+            this.stats.attempted++;
+
+            if (spec.generation.type === 'audio') {
+                result = await this.generateAudio(spec);
+            } else if (spec.generation.type === 'image') {
+                result = await this.generateImage(spec);
+            } else {
+                throw new Error(`Unsupported generation type: ${spec.generation.type}`);
+            }
+
+            if (result.success) {
+                this.stats.succeeded++;
+                LOG.info('GENERATION_SUCCESS', {
+                    subsystem: 'asset-orchestrator',
+                    message: 'Asset generation completed successfully',
+                    specId: spec.id || spec.template,
+                    duration: Date.now() - startTime,
+                });
+
+                // Update manifest if not in dry run and updateManifest is enabled
+                if (!this.dryRun && !result.dryRun && this.updateManifest) {
+                    try {
+                        this.manifestUpdater.updateManifest(spec, result);
+                        LOG.info('MANIFEST_AUTO_UPDATE', {
+                            subsystem: 'asset-orchestrator',
+                            message: 'Manifest automatically updated',
+                            specId: spec.id || spec.template,
+                        });
+                    } catch (manifestError) {
+                        LOG.warn('MANIFEST_UPDATE_FAILED', {
+                            subsystem: 'asset-orchestrator',
+                            error: manifestError,
+                            message: 'Failed to update manifest, but asset generation succeeded',
+                            specId: spec.id || spec.template,
+                            hint: 'You may need to manually add asset to manifest.json',
+                        });
+                        // Don't fail the generation if manifest update fails
+                        console.warn('⚠️  Warning: Failed to update manifest automatically');
+                        console.warn(`   ${manifestError.message}`);
+                    }
+                }
+            } else {
+                this.stats.failed++;
+                LOG.error('GENERATION_FAILED', {
+                    subsystem: 'asset-orchestrator',
+                    message: 'Asset generation failed',
+                    specId: spec.id || spec.template,
+                    error: result.error,
+                });
+            }
+
+            // Print summary
+            const duration = Date.now() - startTime;
+            this.printSummary(duration, result);
+
+            return result;
+        } catch (error) {
+            this.stats.failed++;
+            LOG.error('GENERATION_ERROR', {
+                subsystem: 'asset-orchestrator',
+                error,
+                message: error.message,
+                specPath,
+                hint: 'Check spec file format and generation system availability',
+            });
+
+            if (this.verbose) {
+                LOG.dev('GENERATION_ERROR_STACK', {
+                    subsystem: 'asset-orchestrator',
+                    message: 'Verbose error stack trace',
+                    stack: error.stack,
+                });
+            }
+
+            const duration = Date.now() - startTime;
+            this.printSummary(duration, { success: false, error: error.message });
+
+            throw error;
         }
-      } else {
-        this.stats.failed++;
-        LOG.error('GENERATION_FAILED', {
-          subsystem: 'asset-orchestrator',
-          message: 'Asset generation failed',
-          specId: spec.id || spec.template,
-          error: result.error
+    }
+
+    /**
+     * Generate audio asset
+     * @param {Object} spec - Asset specification
+     * @returns {Promise<Object>} Generation result
+     */
+    async generateAudio(spec) {
+        LOG.info('AUDIO_GENERATION_START', {
+            subsystem: 'asset-orchestrator',
+            message: 'Starting audio generation',
+            specId: spec.id || spec.template,
         });
-      }
 
-      // Print summary
-      const duration = Date.now() - startTime;
-      this.printSummary(duration, result);
+        // Check Python environment
+        const available = await this.audioAdapter.checkAvailability();
+        if (!available) {
+            LOG.error('AUDIO_ENV_UNAVAILABLE', {
+                subsystem: 'asset-orchestrator',
+                message: 'Python audio generation environment not available',
+                hint: 'Ensure Python 3 and audio-generation dependencies are installed',
+            });
+            throw new Error('Python audio generation environment not available');
+        }
 
-      return result;
+        // Generate using Python adapter
+        const result = await this.audioAdapter.generate(spec, { dryRun: this.dryRun });
 
-    } catch (error) {
-      this.stats.failed++;
-      LOG.error('GENERATION_ERROR', {
-        subsystem: 'asset-orchestrator',
-        error,
-        message: error.message,
-        specPath,
-        hint: 'Check spec file format and generation system availability'
-      });
+        return result;
+    }
 
-      if (this.verbose) {
-        LOG.dev('GENERATION_ERROR_STACK', {
-          subsystem: 'asset-orchestrator',
-          message: 'Verbose error stack trace',
-          stack: error.stack
+    /**
+     * Generate image asset
+     * @param {Object} spec - Asset specification
+     * @returns {Promise<Object>} Generation result
+     */
+    async generateImage(spec) {
+        LOG.info('IMAGE_GENERATION_START', {
+            subsystem: 'asset-orchestrator',
+            message: 'Starting image generation',
+            specId: spec.id || spec.template,
         });
-      }
 
-      const duration = Date.now() - startTime;
-      this.printSummary(duration, { success: false, error: error.message });
+        // Check OpenAI environment
+        const available = await this.imageAdapter.checkAvailability();
+        if (!available && !this.dryRun) {
+            LOG.error('IMAGE_ENV_UNAVAILABLE', {
+                subsystem: 'asset-orchestrator',
+                message: 'OpenAI image generation environment not available',
+                hint: 'Ensure OPENAI_API_KEY is set in environment',
+            });
+            throw new Error('OpenAI image generation environment not available');
+        }
 
-      throw error;
-    }
-  }
+        // Generate using OpenAI adapter
+        const result = await this.imageAdapter.generate(spec, { dryRun: this.dryRun });
 
-  /**
-   * Generate audio asset
-   * @param {Object} spec - Asset specification
-   * @returns {Promise<Object>} Generation result
-   */
-  async generateAudio(spec) {
-    LOG.info('AUDIO_GENERATION_START', {
-      subsystem: 'asset-orchestrator',
-      message: 'Starting audio generation',
-      specId: spec.id || spec.template
-    });
-
-    // Check Python environment
-    const available = await this.audioAdapter.checkAvailability();
-    if (!available) {
-      LOG.error('AUDIO_ENV_UNAVAILABLE', {
-        subsystem: 'asset-orchestrator',
-        message: 'Python audio generation environment not available',
-        hint: 'Ensure Python 3 and audio-generation dependencies are installed'
-      });
-      throw new Error('Python audio generation environment not available');
+        return result;
     }
 
-    // Generate using Python adapter
-    const result = await this.audioAdapter.generate(spec, { dryRun: this.dryRun });
+    /**
+     * Print generation summary
+     * @param {number} duration - Total duration in ms
+     * @param {Object} result - Generation result
+     */
+    printSummary(duration, result) {
+        // Log for observability
+        LOG.info('GENERATION_SUMMARY', {
+            subsystem: 'asset-orchestrator',
+            message: 'Generation summary',
+            duration,
+            success: result.success,
+            dryRun: result.dryRun || false,
+            cost: result.cost || result.estimatedCost || 0,
+            stats: { ...this.stats },
+        });
 
-    return result;
-  }
+        // User-facing output (keep console for CLI UX)
+        console.log('\n📊 Summary');
+        console.log('==========');
+        console.log(`Duration: ${duration}ms`);
+        console.log(`Status: ${result.success ? '✅ Success' : '❌ Failed'}`);
 
-  /**
-   * Generate image asset
-   * @param {Object} spec - Asset specification
-   * @returns {Promise<Object>} Generation result
-   */
-  async generateImage(spec) {
-    LOG.info('IMAGE_GENERATION_START', {
-      subsystem: 'asset-orchestrator',
-      message: 'Starting image generation',
-      specId: spec.id || spec.template
-    });
+        if (result.dryRun) {
+            console.log('Mode: 🏜️  Dry Run');
+        }
 
-    // Check OpenAI environment
-    const available = await this.imageAdapter.checkAvailability();
-    if (!available && !this.dryRun) {
-      LOG.error('IMAGE_ENV_UNAVAILABLE', {
-        subsystem: 'asset-orchestrator',
-        message: 'OpenAI image generation environment not available',
-        hint: 'Ensure OPENAI_API_KEY is set in environment'
-      });
-      throw new Error('OpenAI image generation environment not available');
+        if (result.cost) {
+            console.log(`Cost: ${result.cost} credits`);
+        }
+
+        if (result.estimatedCost) {
+            console.log(`Estimated Cost: ${result.estimatedCost} credits`);
+        }
+
+        console.log('\nStats:');
+        console.log(`  Attempted: ${this.stats.attempted}`);
+        console.log(`  Succeeded: ${this.stats.succeeded}`);
+        console.log(`  Failed: ${this.stats.failed}`);
+        console.log(`  Skipped: ${this.stats.skipped}`);
     }
-
-    // Generate using OpenAI adapter
-    const result = await this.imageAdapter.generate(spec, { dryRun: this.dryRun });
-
-    return result;
-  }
-
-  /**
-   * Print generation summary
-   * @param {number} duration - Total duration in ms
-   * @param {Object} result - Generation result
-   */
-  printSummary(duration, result) {
-    // Log for observability
-    LOG.info('GENERATION_SUMMARY', {
-      subsystem: 'asset-orchestrator',
-      message: 'Generation summary',
-      duration,
-      success: result.success,
-      dryRun: result.dryRun || false,
-      cost: result.cost || result.estimatedCost || 0,
-      stats: { ...this.stats }
-    });
-
-    // User-facing output (keep console for CLI UX)
-    console.log('\n📊 Summary');
-    console.log('==========');
-    console.log(`Duration: ${duration}ms`);
-    console.log(`Status: ${result.success ? '✅ Success' : '❌ Failed'}`);
-
-    if (result.dryRun) {
-      console.log('Mode: 🏜️  Dry Run');
-    }
-
-    if (result.cost) {
-      console.log(`Cost: ${result.cost} credits`);
-    }
-
-    if (result.estimatedCost) {
-      console.log(`Estimated Cost: ${result.estimatedCost} credits`);
-    }
-
-    console.log('\nStats:');
-    console.log(`  Attempted: ${this.stats.attempted}`);
-    console.log(`  Succeeded: ${this.stats.succeeded}`);
-    console.log(`  Failed: ${this.stats.failed}`);
-    console.log(`  Skipped: ${this.stats.skipped}`);
-  }
 }
 
 /**
  * Parse command line arguments
  */
 function parseArgs() {
-  const args = process.argv.slice(2);
-  const options = {
-    specPath: null,
-    dryRun: false,
-    verbose: false,
-    help: false,
-    updateManifest: true  // Default to updating manifest
-  };
+    const args = process.argv.slice(2);
+    const options = {
+        specPath: null,
+        dryRun: false,
+        verbose: false,
+        help: false,
+        updateManifest: true, // Default to updating manifest
+    };
 
-  for (let i = 0; i < args.length; i++) {
-    const arg = args[i];
+    for (let i = 0; i < args.length; i++) {
+        const arg = args[i];
 
-    if (arg === '--help' || arg === '-h') {
-      options.help = true;
-    } else if (arg === '--dry-run') {
-      options.dryRun = true;
-    } else if (arg === '--verbose' || arg === '-v') {
-      options.verbose = true;
-    } else if (arg === '--no-manifest-update') {
-      options.updateManifest = false;
-    } else if (!arg.startsWith('--')) {
-      options.specPath = arg;
+        if (arg === '--help' || arg === '-h') {
+            options.help = true;
+        } else if (arg === '--dry-run') {
+            options.dryRun = true;
+        } else if (arg === '--verbose' || arg === '-v') {
+            options.verbose = true;
+        } else if (arg === '--no-manifest-update') {
+            options.updateManifest = false;
+        } else if (!arg.startsWith('--')) {
+            options.specPath = arg;
+        }
     }
-  }
 
-  return options;
+    return options;
 }
 
 /**
  * Print usage information
  */
 function printHelp() {
-  console.log(`
+    console.log(`
 🎨 WynIsBuff2 Asset Generation Orchestrator
 
 Usage:
@@ -336,44 +335,45 @@ For more information:
 
 // Main execution
 if (import.meta.url === `file://${process.argv[1]}`) {
-  const options = parseArgs();
+    const options = parseArgs();
 
-  if (options.help) {
-    printHelp();
-    process.exit(0);
-  }
+    if (options.help) {
+        printHelp();
+        process.exit(0);
+    }
 
-  if (!options.specPath) {
-    LOG.error('CLI_NO_SPEC', {
-      subsystem: 'asset-orchestrator',
-      message: 'No spec file provided to CLI',
-      hint: 'Provide a spec file path as argument'
+    if (!options.specPath) {
+        LOG.error('CLI_NO_SPEC', {
+            subsystem: 'asset-orchestrator',
+            message: 'No spec file provided to CLI',
+            hint: 'Provide a spec file path as argument',
+        });
+        console.error('❌ Error: No spec file provided\n');
+        printHelp();
+        process.exit(1);
+    }
+
+    const orchestrator = new AssetOrchestrator({
+        dryRun: options.dryRun,
+        verbose: options.verbose,
+        updateManifest: options.updateManifest,
     });
-    console.error('❌ Error: No spec file provided\n');
-    printHelp();
-    process.exit(1);
-  }
 
-  const orchestrator = new AssetOrchestrator({
-    dryRun: options.dryRun,
-    verbose: options.verbose,
-    updateManifest: options.updateManifest
-  });
-
-  orchestrator.generate(options.specPath)
-    .then(() => {
-      process.exit(0);
-    })
-    .catch((error) => {
-      LOG.fatal('CLI_FATAL_ERROR', {
-        subsystem: 'asset-orchestrator',
-        error,
-        message: 'Fatal error in CLI execution',
-        specPath: options.specPath
-      });
-      console.error('\n💥 Fatal error:', error.message);
-      process.exit(1);
-    });
+    orchestrator
+        .generate(options.specPath)
+        .then(() => {
+            process.exit(0);
+        })
+        .catch((error) => {
+            LOG.fatal('CLI_FATAL_ERROR', {
+                subsystem: 'asset-orchestrator',
+                error,
+                message: 'Fatal error in CLI execution',
+                specPath: options.specPath,
+            });
+            console.error('\n💥 Fatal error:', error.message);
+            process.exit(1);
+        });
 }
 
 export { AssetOrchestrator };

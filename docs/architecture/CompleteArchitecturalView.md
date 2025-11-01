@@ -60,6 +60,7 @@ WynIsBuff2's architecture is more sophisticated than initially documented. This 
 ### Current State: Multi-System Architecture
 
 #### System 1: Manual Asset Pipeline (Main Branch)
+
 **Location**: `scripts/`, `assets/manifest.json`
 **Status**: ✅ Production-ready, actively used
 
@@ -68,11 +69,13 @@ Manual Assets → assets/ → manifest.json → generate-assets.js → Assets.js
 ```
 
 **Components**:
+
 - `generate-assets.js` - Generates constants from manifest
 - `validate-assets.js` - Validates integrity
 - `create-placeholder-assets.cjs` - Creates basic placeholders
 
 #### System 2: DALL-E Image Generation (Orphaned Branch)
+
 **Location**: `origin/get-more-buff:asset-generation/`
 **Status**: ⚠️ Complete but isolated from main
 
@@ -81,6 +84,7 @@ Prompt → DALL-E API → Thumbnails → Scoring → Final → Integration → a
 ```
 
 **Features**:
+
 - **Budget Control**: Cost tracking with limits ($20 default)
 - **Multi-Stage Pipeline**: thumbs → score → final
 - **45+ Predefined Shots**: Complete sprite and backdrop library
@@ -88,17 +92,19 @@ Prompt → DALL-E API → Thumbnails → Scoring → Final → Integration → a
 - **Integration Tools**: Manifest updater, winner selector
 
 **Scripts**:
+
 ```json
 {
-  "gfx:init": "Initialize generation system",
-  "gfx:thumbs": "Generate thumbnails (4 variants)",
-  "gfx:score": "Rate and select best",
-  "gfx:final": "Generate high-res finals",
-  "gfx:integrate": "Move to main assets"
+    "gfx:init": "Initialize generation system",
+    "gfx:thumbs": "Generate thumbnails (4 variants)",
+    "gfx:score": "Rate and select best",
+    "gfx:final": "Generate high-res finals",
+    "gfx:integrate": "Move to main assets"
 }
 ```
 
 #### System 3: Documentation Intelligence (Python)
+
 **Location**: `scripts/venv/`
 **Status**: ✅ Active, for documentation only
 
@@ -107,6 +113,7 @@ Markdown/Code → NLP Analysis → Knowledge Graph → Insights → Reports
 ```
 
 **Capabilities**:
+
 - Semantic analysis with sentence-transformers
 - Documentation health scoring
 - Relationship mapping
@@ -148,58 +155,58 @@ Markdown/Code → NLP Analysis → Knowledge Graph → Insights → Reports
 import { LOG } from '@observability';
 
 class AssetGenerator {
-  async generateImage(prompt, options) {
-    const startTime = performance.now();
+    async generateImage(prompt, options) {
+        const startTime = performance.now();
 
-    LOG.info('ASSET_GENERATION_START', {
-      subsystem: 'asset-generation',
-      type: 'image',
-      provider: options.provider,
-      prompt: prompt.substring(0, 100), // Truncate for logs
-      budget: options.budget
-    });
+        LOG.info('ASSET_GENERATION_START', {
+            subsystem: 'asset-generation',
+            type: 'image',
+            provider: options.provider,
+            prompt: prompt.substring(0, 100), // Truncate for logs
+            budget: options.budget,
+        });
 
-    try {
-      const result = await this.callProvider(prompt, options);
+        try {
+            const result = await this.callProvider(prompt, options);
 
-      LOG.info('ASSET_GENERATION_SUCCESS', {
-        subsystem: 'asset-generation',
-        type: 'image',
-        provider: options.provider,
-        duration: performance.now() - startTime,
-        cost: result.cost,
-        dimensions: result.dimensions
-      });
+            LOG.info('ASSET_GENERATION_SUCCESS', {
+                subsystem: 'asset-generation',
+                type: 'image',
+                provider: options.provider,
+                duration: performance.now() - startTime,
+                cost: result.cost,
+                dimensions: result.dimensions,
+            });
 
-      // Track in metrics
-      this.metrics.recordGeneration({
-        type: 'image',
-        provider: options.provider,
-        cost: result.cost,
-        success: true
-      });
+            // Track in metrics
+            this.metrics.recordGeneration({
+                type: 'image',
+                provider: options.provider,
+                cost: result.cost,
+                success: true,
+            });
 
-      return result;
-    } catch (error) {
-      LOG.error('ASSET_GENERATION_FAILED', {
-        subsystem: 'asset-generation',
-        type: 'image',
-        provider: options.provider,
-        error,
-        message: 'Asset generation failed',
-        hint: 'Check API keys and budget limits',
-        duration: performance.now() - startTime
-      });
+            return result;
+        } catch (error) {
+            LOG.error('ASSET_GENERATION_FAILED', {
+                subsystem: 'asset-generation',
+                type: 'image',
+                provider: options.provider,
+                error,
+                message: 'Asset generation failed',
+                hint: 'Check API keys and budget limits',
+                duration: performance.now() - startTime,
+            });
 
-      this.metrics.recordGeneration({
-        type: 'image',
-        provider: options.provider,
-        success: false
-      });
+            this.metrics.recordGeneration({
+                type: 'image',
+                provider: options.provider,
+                success: false,
+            });
 
-      throw error;
+            throw error;
+        }
     }
-  }
 }
 ```
 
@@ -252,147 +259,147 @@ window.debugAPI.getAssetHealth = function() {
 
 ```json
 {
-  "version": "2.0.0",
-  "meta": {
-    "vite": "7.1.12",
-    "phaser": "3.90.0",
-    "rapier": "0.19.2",
-    "runtime": "bun",
-    "esm": true,
-    "target": "baseline-widely-available"
-  },
-  "layers": {
-    "external-services": {
-      "pattern": "integrations/**",
-      "canImport": [],
-      "vendors": ["openai", "@anthropic-ai/sdk", "elevenlabs"],
-      "description": "External API integrations"
+    "version": "2.0.0",
+    "meta": {
+        "vite": "7.1.12",
+        "phaser": "3.90.0",
+        "rapier": "0.19.2",
+        "runtime": "bun",
+        "esm": true,
+        "target": "baseline-widely-available"
     },
-    "asset-generation": {
-      "pattern": "scripts/ai-generation/**",
-      "canImport": ["external-services", "observability", "constants"],
-      "vendors": [],
-      "description": "AI asset generation pipeline"
+    "layers": {
+        "external-services": {
+            "pattern": "integrations/**",
+            "canImport": [],
+            "vendors": ["openai", "@anthropic-ai/sdk", "elevenlabs"],
+            "description": "External API integrations"
+        },
+        "asset-generation": {
+            "pattern": "scripts/ai-generation/**",
+            "canImport": ["external-services", "observability", "constants"],
+            "vendors": [],
+            "description": "AI asset generation pipeline"
+        },
+        "asset-management": {
+            "pattern": "scripts/{generate-assets,validate-assets}.*",
+            "canImport": ["constants", "observability"],
+            "vendors": [],
+            "description": "Asset manifest and constant generation"
+        },
+        "documentation": {
+            "pattern": "scripts/venv/**",
+            "canImport": [],
+            "vendors": ["transformers", "sentence-transformers"],
+            "description": "Documentation analysis system"
+        },
+        "core": {
+            "pattern": "src/core/**",
+            "canImport": ["core", "observability", "constants"],
+            "vendors": ["@dimforge/rapier2d-compat", "howler"],
+            "description": "Infrastructure managers and core services"
+        },
+        "scenes": {
+            "pattern": "src/scenes/**",
+            "canImport": ["public-api", "constants", "observability"],
+            "vendors": ["phaser"],
+            "description": "Phaser scenes handling presentation"
+        },
+        "gameplay-agents": {
+            "pattern": "src/modules/{player,enemy}/**",
+            "canImport": ["core", "constants", "observability"],
+            "vendors": [],
+            "description": "Agent behaviors for entities"
+        },
+        "gameplay-systems": {
+            "pattern": "src/modules/{level,effects,idle,boss,analytics,ui}/**",
+            "canImport": ["core", "gameplay-agents", "constants", "observability"],
+            "vendors": [],
+            "description": "Game systems and mechanics"
+        },
+        "public-api": {
+            "pattern": "src/features/**",
+            "canImport": ["core", "gameplay-agents", "gameplay-systems", "constants"],
+            "vendors": [],
+            "description": "Barrel exports providing clean API"
+        },
+        "constants": {
+            "pattern": "src/constants/**",
+            "canImport": [],
+            "vendors": [],
+            "description": "Generated and manual constants"
+        },
+        "observability": {
+            "pattern": "src/observability/**",
+            "canImport": ["observability"],
+            "vendors": [],
+            "description": "Logging and monitoring infrastructure"
+        }
     },
-    "asset-management": {
-      "pattern": "scripts/{generate-assets,validate-assets}.*",
-      "canImport": ["constants", "observability"],
-      "vendors": [],
-      "description": "Asset manifest and constant generation"
+    "assetGeneration": {
+        "enabled": true,
+        "providers": {
+            "image": {
+                "primary": "dall-e-3",
+                "fallback": "manual",
+                "budget": 100
+            },
+            "audio": {
+                "primary": "elevenlabs",
+                "fallback": "bark",
+                "budget": 50
+            }
+        },
+        "pipeline": {
+            "stages": ["prompt", "generate", "validate", "integrate"],
+            "validation": {
+                "automatic": true,
+                "manual": "optional"
+            }
+        }
     },
-    "documentation": {
-      "pattern": "scripts/venv/**",
-      "canImport": [],
-      "vendors": ["transformers", "sentence-transformers"],
-      "description": "Documentation analysis system"
+    "boundaries": {
+        "enforcement": "warn",
+        "exceptions": [
+            {
+                "from": "asset-generation",
+                "to": "external-services",
+                "reason": "Asset generation needs direct API access",
+                "temporary": false
+            }
+        ]
     },
-    "core": {
-      "pattern": "src/core/**",
-      "canImport": ["core", "observability", "constants"],
-      "vendors": ["@dimforge/rapier2d-compat", "howler"],
-      "description": "Infrastructure managers and core services"
+    "determinism": {
+        "enabled": true,
+        "physics": {
+            "timestep": "1/120",
+            "maxSteps": 4,
+            "deterministicBuild": false
+        },
+        "rng": {
+            "service": "DeterministicRNG",
+            "enforceMathRandom": true,
+            "defaultSeed": 1138
+        }
     },
-    "scenes": {
-      "pattern": "src/scenes/**",
-      "canImport": ["public-api", "constants", "observability"],
-      "vendors": ["phaser"],
-      "description": "Phaser scenes handling presentation"
+    "performance": {
+        "bundler": "rollup",
+        "target": "baseline-widely-available",
+        "minify": true,
+        "sourcemaps": true,
+        "treeshake": true
     },
-    "gameplay-agents": {
-      "pattern": "src/modules/{player,enemy}/**",
-      "canImport": ["core", "constants", "observability"],
-      "vendors": [],
-      "description": "Agent behaviors for entities"
-    },
-    "gameplay-systems": {
-      "pattern": "src/modules/{level,effects,idle,boss,analytics,ui}/**",
-      "canImport": ["core", "gameplay-agents", "constants", "observability"],
-      "vendors": [],
-      "description": "Game systems and mechanics"
-    },
-    "public-api": {
-      "pattern": "src/features/**",
-      "canImport": ["core", "gameplay-agents", "gameplay-systems", "constants"],
-      "vendors": [],
-      "description": "Barrel exports providing clean API"
-    },
-    "constants": {
-      "pattern": "src/constants/**",
-      "canImport": [],
-      "vendors": [],
-      "description": "Generated and manual constants"
-    },
-    "observability": {
-      "pattern": "src/observability/**",
-      "canImport": ["observability"],
-      "vendors": [],
-      "description": "Logging and monitoring infrastructure"
+    "quality": {
+        "maxBuildTime": 60000,
+        "maxBundleSize": 5242880,
+        "requiredCoverage": 80,
+        "maxComplexity": 10,
+        "assetValidation": {
+            "maxMissingAssets": 0,
+            "maxOrphanedAssets": 10,
+            "requiredVariants": 4
+        }
     }
-  },
-  "assetGeneration": {
-    "enabled": true,
-    "providers": {
-      "image": {
-        "primary": "dall-e-3",
-        "fallback": "manual",
-        "budget": 100
-      },
-      "audio": {
-        "primary": "elevenlabs",
-        "fallback": "bark",
-        "budget": 50
-      }
-    },
-    "pipeline": {
-      "stages": ["prompt", "generate", "validate", "integrate"],
-      "validation": {
-        "automatic": true,
-        "manual": "optional"
-      }
-    }
-  },
-  "boundaries": {
-    "enforcement": "warn",
-    "exceptions": [
-      {
-        "from": "asset-generation",
-        "to": "external-services",
-        "reason": "Asset generation needs direct API access",
-        "temporary": false
-      }
-    ]
-  },
-  "determinism": {
-    "enabled": true,
-    "physics": {
-      "timestep": "1/120",
-      "maxSteps": 4,
-      "deterministicBuild": false
-    },
-    "rng": {
-      "service": "DeterministicRNG",
-      "enforceMathRandom": true,
-      "defaultSeed": 1138
-    }
-  },
-  "performance": {
-    "bundler": "rollup",
-    "target": "baseline-widely-available",
-    "minify": true,
-    "sourcemaps": true,
-    "treeshake": true
-  },
-  "quality": {
-    "maxBuildTime": 60000,
-    "maxBundleSize": 5242880,
-    "requiredCoverage": 80,
-    "maxComplexity": 10,
-    "assetValidation": {
-      "maxMissingAssets": 0,
-      "maxOrphanedAssets": 10,
-      "requiredVariants": 4
-    }
-  }
 }
 ```
 
@@ -436,24 +443,28 @@ window.debugAPI.getAssetHealth = function() {
 ## 💡 Strategic Recommendations
 
 ### Phase 1: Immediate Actions
+
 1. **Migrate DALL-E system** from `get-more-buff` branch
 2. **Add ElevenLabs integration** for audio generation
 3. **Update A-Spec** to include asset generation layers
 4. **Enhance observability** for asset generation metrics
 
 ### Phase 2: Integration (Week 1-2)
+
 1. **Unify pipelines** - Merge manual and AI generation
 2. **Add budget tracking** - SQLite database for costs
 3. **Create prompt library** - Reusable templates
 4. **Implement validation** - Quality gates
 
 ### Phase 3: Optimization (Week 3-4)
+
 1. **Cache generated assets** - Avoid regenerating
 2. **Batch processing** - Generate multiple variants
 3. **A/B testing** - Compare AI vs manual assets
 4. **Performance metrics** - Track impact on game
 
 ### Phase 4: Full Production (Week 5-6)
+
 1. **CI/CD integration** - Automated asset validation
 2. **Cost optimization** - Use local models where possible
 3. **Quality assurance** - Automated testing of assets
@@ -461,19 +472,20 @@ window.debugAPI.getAssetHealth = function() {
 
 ## 🎯 Success Metrics
 
-| Metric | Current | Target | Measurement |
-|--------|---------|--------|-------------|
-| Asset Coverage | 60% | 95% | Manifest completeness |
-| AI Generation Rate | 0% | 40% | AI vs manual assets |
-| Generation Time | Hours | Minutes | Time to create asset |
-| Cost per Asset | $5-50 | $0.10 | API costs tracked |
-| Quality Score | Manual | 90%+ | Automated scoring |
-| Missing Assets | Unknown | 0 | Validation report |
-| Orphaned Assets | Unknown | <5% | Validation report |
+| Metric             | Current | Target  | Measurement           |
+| ------------------ | ------- | ------- | --------------------- |
+| Asset Coverage     | 60%     | 95%     | Manifest completeness |
+| AI Generation Rate | 0%      | 40%     | AI vs manual assets   |
+| Generation Time    | Hours   | Minutes | Time to create asset  |
+| Cost per Asset     | $5-50   | $0.10   | API costs tracked     |
+| Quality Score      | Manual  | 90%+    | Automated scoring     |
+| Missing Assets     | Unknown | 0       | Validation report     |
+| Orphaned Assets    | Unknown | <5%     | Validation report     |
 
 ## 🔐 Security & Cost Controls
 
 ### API Key Management
+
 ```javascript
 // .env.local (never commit)
 OPENAI_API_KEY=sk-...
@@ -487,50 +499,55 @@ MAX_COST_PER_ASSET=1.00
 ```
 
 ### Cost Tracking
+
 ```javascript
 class CostTracker {
-  constructor() {
-    this.db = new Database('asset-costs.db');
-    this.monthlyLimit = process.env.MONTHLY_TOTAL_BUDGET || 150;
-  }
-
-  async recordGeneration(type, provider, cost) {
-    await this.db.insert({
-      timestamp: Date.now(),
-      type,
-      provider,
-      cost,
-      month: new Date().toISOString().slice(0, 7)
-    });
-
-    const monthlySpend = await this.getMonthlySpend();
-    if (monthlySpend > this.monthlyLimit) {
-      throw new Error('Monthly budget exceeded');
+    constructor() {
+        this.db = new Database('asset-costs.db');
+        this.monthlyLimit = process.env.MONTHLY_TOTAL_BUDGET || 150;
     }
-  }
+
+    async recordGeneration(type, provider, cost) {
+        await this.db.insert({
+            timestamp: Date.now(),
+            type,
+            provider,
+            cost,
+            month: new Date().toISOString().slice(0, 7),
+        });
+
+        const monthlySpend = await this.getMonthlySpend();
+        if (monthlySpend > this.monthlyLimit) {
+            throw new Error('Monthly budget exceeded');
+        }
+    }
 }
 ```
 
 ## 📚 Complete Documentation Map
 
 ### Core Architecture
+
 - `docs/ARCHITECTURE.md` - System architecture
 - `docs/architecture/CompleteArchitecturalView.md` - THIS DOCUMENT
 - `docs/architecture/ArchitecturalImprovementPlan.md` - Enhancement plan
 - `architecture/a-spec.json` - Machine-readable specification
 
 ### Asset Management
+
 - `ASSET_MANAGEMENT.md` - Asset pipeline documentation
 - `AI_ASSET_GENERATION_FRAMEWORK_REPORT.md` - AI generation analysis
 - `assets/manifest.json` - Asset manifest
 - `src/constants/Assets.js` - Generated constants
 
 ### Observability
+
 - `docs/systems/ERROR_HANDLING_LOGGING.md` - Logging system
 - `docs/guides/DEBUGGING.md` - Debug guide
 - `STATUS_OBSERVABILITY.json` - Current status
 
 ### Migration Plans
+
 - `ASSET_GENERATION_MIGRATION_PLAN.md` - Migration from get-more-buff
 - `docs/bun-migration.md` - Bun runtime migration
 
@@ -543,6 +560,7 @@ class CostTracker {
 Building on the discovery of the DALL-E system in `get-more-buff` branch, we've designed a **spec-driven hybrid architecture** incorporating 2025 best practices:
 
 **Key Innovations**:
+
 - ✅ **Spec-as-Code**: YAML specifications for reproducible asset generation
 - ✅ **Orchestration Layer**: Route requests to optimal generation engines
 - ✅ **Multi-Modal**: Images (DALL-E) + Audio (ElevenLabs, Bark)
@@ -550,12 +568,14 @@ Building on the discovery of the DALL-E system in `get-more-buff` branch, we've 
 - ✅ **Architectural Integration**: Fits into layered A-Spec architecture
 
 **Implementation Ready**:
+
 - 📋 Complete specification schema: `architecture/asset-spec.schema.json`
 - 📝 Example specs: `architecture/examples/asset-specs/`
 - 📖 Migration guide: `docs/architecture/AssetGenerationMigration2025.md`
 - 🏗️ 4-phase implementation plan (4 weeks)
 
 **Technology Stack**:
+
 - **Image**: DALL-E 3 (primary), Stable Diffusion 3.5, Adobe Firefly
 - **Audio**: ElevenLabs (primary), Bark, MusicGen
 - **Orchestration**: Node.js/Bun with provider routing

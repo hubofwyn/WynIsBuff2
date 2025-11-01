@@ -10,6 +10,7 @@
 This plan outlines incremental architectural improvements to WynIsBuff2, leveraging our current stack (Vite 7.1.12, Rapier 0.19.2, Phaser 3.90.0, ESLint 9.14.0) to establish machine-validated architecture boundaries, enhanced determinism, and build performance optimization.
 
 **Key Objectives**:
+
 1. Formalize layer boundaries with automated enforcement
 2. Optimize build performance with Rolldown bundler (4-16x faster builds)
 3. Enhance deterministic testing capabilities for replay systems
@@ -18,6 +19,7 @@ This plan outlines incremental architectural improvements to WynIsBuff2, leverag
 ## Current State Analysis
 
 ### Stack Inventory ✅
+
 - **Build Tool**: Vite 7.1.12 with Bun runtime
 - **Physics**: Rapier 0.19.2 (already integrated, event queue configured)
 - **Game Engine**: Phaser 3.90.0
@@ -26,6 +28,7 @@ This plan outlines incremental architectural improvements to WynIsBuff2, leverag
 - **Package Manager**: Bun
 
 ### Architecture Strengths ✅
+
 - **Feature-based organization** with barrel exports already implemented
 - **Event-driven communication** via EventBus with namespaced events
 - **Singleton managers** extending BaseManager with proper lifecycle
@@ -35,6 +38,7 @@ This plan outlines incremental architectural improvements to WynIsBuff2, leverag
 - **PhysicsManager** using Rapier 0.19 with event queue
 
 ### Identified Gaps 🎯
+
 1. **No formal layer boundary enforcement** - ESLint boundaries plugin not configured
 2. **No dependency validation** - No dependency-cruiser or similar tool
 3. **Build optimization opportunities** - Rolldown bundler not yet tested
@@ -168,97 +172,97 @@ Enhancement (Layer Semantics):
 
 ```json
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
-  "title": "WynIsBuff2 Architecture Specification",
-  "type": "object",
-  "required": ["version", "meta", "layers", "boundaries", "determinism"],
-  "properties": {
-    "version": {
-      "type": "string",
-      "pattern": "^\\d+\\.\\d+\\.\\d+$",
-      "description": "Semantic version of this A-Spec"
-    },
-    "meta": {
-      "type": "object",
-      "required": ["vite", "runtime", "esm"],
-      "properties": {
-        "vite": { "type": "string" },
-        "phaser": { "type": "string" },
-        "rapier": { "type": "string" },
-        "runtime": { "enum": ["bun", "node"] },
-        "esm": { "type": "boolean" },
-        "target": { "type": "string" }
-      }
-    },
-    "layers": {
-      "type": "object",
-      "description": "Layer definitions with import rules",
-      "additionalProperties": {
-        "type": "object",
-        "required": ["pattern", "canImport"],
-        "properties": {
-          "pattern": { "type": "string" },
-          "canImport": {
-            "type": "array",
-            "items": { "type": "string" }
-          },
-          "vendors": {
-            "type": "array",
-            "items": { "type": "string" }
-          }
-        }
-      }
-    },
-    "boundaries": {
-      "type": "object",
-      "required": ["enforcement", "exceptions"],
-      "properties": {
-        "enforcement": { "enum": ["error", "warn", "off"] },
-        "exceptions": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "required": ["from", "to", "reason"],
-            "properties": {
-              "from": { "type": "string" },
-              "to": { "type": "string" },
-              "reason": { "type": "string" }
-            }
-          }
-        }
-      }
-    },
-    "determinism": {
-      "type": "object",
-      "required": ["enabled", "physics", "rng"],
-      "properties": {
-        "enabled": { "type": "boolean" },
-        "physics": {
-          "type": "object",
-          "properties": {
-            "timestep": { "type": "string" },
-            "maxSteps": { "type": "integer" },
-            "deterministicBuild": { "type": "boolean" }
-          }
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "WynIsBuff2 Architecture Specification",
+    "type": "object",
+    "required": ["version", "meta", "layers", "boundaries", "determinism"],
+    "properties": {
+        "version": {
+            "type": "string",
+            "pattern": "^\\d+\\.\\d+\\.\\d+$",
+            "description": "Semantic version of this A-Spec"
         },
-        "rng": {
-          "type": "object",
-          "properties": {
-            "service": { "type": "string" },
-            "enforceMathRandom": { "type": "boolean" }
-          }
+        "meta": {
+            "type": "object",
+            "required": ["vite", "runtime", "esm"],
+            "properties": {
+                "vite": { "type": "string" },
+                "phaser": { "type": "string" },
+                "rapier": { "type": "string" },
+                "runtime": { "enum": ["bun", "node"] },
+                "esm": { "type": "boolean" },
+                "target": { "type": "string" }
+            }
+        },
+        "layers": {
+            "type": "object",
+            "description": "Layer definitions with import rules",
+            "additionalProperties": {
+                "type": "object",
+                "required": ["pattern", "canImport"],
+                "properties": {
+                    "pattern": { "type": "string" },
+                    "canImport": {
+                        "type": "array",
+                        "items": { "type": "string" }
+                    },
+                    "vendors": {
+                        "type": "array",
+                        "items": { "type": "string" }
+                    }
+                }
+            }
+        },
+        "boundaries": {
+            "type": "object",
+            "required": ["enforcement", "exceptions"],
+            "properties": {
+                "enforcement": { "enum": ["error", "warn", "off"] },
+                "exceptions": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "required": ["from", "to", "reason"],
+                        "properties": {
+                            "from": { "type": "string" },
+                            "to": { "type": "string" },
+                            "reason": { "type": "string" }
+                        }
+                    }
+                }
+            }
+        },
+        "determinism": {
+            "type": "object",
+            "required": ["enabled", "physics", "rng"],
+            "properties": {
+                "enabled": { "type": "boolean" },
+                "physics": {
+                    "type": "object",
+                    "properties": {
+                        "timestep": { "type": "string" },
+                        "maxSteps": { "type": "integer" },
+                        "deterministicBuild": { "type": "boolean" }
+                    }
+                },
+                "rng": {
+                    "type": "object",
+                    "properties": {
+                        "service": { "type": "string" },
+                        "enforceMathRandom": { "type": "boolean" }
+                    }
+                }
+            }
+        },
+        "performance": {
+            "type": "object",
+            "properties": {
+                "bundler": { "enum": ["rollup", "rolldown"] },
+                "target": { "type": "string" },
+                "minify": { "type": "boolean" }
+            }
         }
-      }
-    },
-    "performance": {
-      "type": "object",
-      "properties": {
-        "bundler": { "enum": ["rollup", "rolldown"] },
-        "target": { "type": "string" },
-        "minify": { "type": "boolean" }
-      }
     }
-  }
 }
 ```
 
@@ -266,75 +270,77 @@ Enhancement (Layer Semantics):
 
 ```json
 {
-  "version": "1.0.0",
-  "meta": {
-    "vite": "7.1.12",
-    "phaser": "3.90.0",
-    "rapier": "0.19.2",
-    "runtime": "bun",
-    "esm": true,
-    "target": "baseline-widely-available"
-  },
-  "layers": {
-    "engine-infrastructure": {
-      "pattern": "src/core/**",
-      "canImport": ["engine-infrastructure", "observability"],
-      "vendors": ["@dimforge/rapier2d-compat", "howler"]
+    "version": "1.0.0",
+    "meta": {
+        "vite": "7.1.12",
+        "phaser": "3.90.0",
+        "rapier": "0.19.2",
+        "runtime": "bun",
+        "esm": true,
+        "target": "baseline-widely-available"
     },
-    "engine-presentation": {
-      "pattern": "src/scenes/**",
-      "canImport": ["public-api", "engine-infrastructure", "observability"],
-      "vendors": ["phaser"]
+    "layers": {
+        "engine-infrastructure": {
+            "pattern": "src/core/**",
+            "canImport": ["engine-infrastructure", "observability"],
+            "vendors": ["@dimforge/rapier2d-compat", "howler"]
+        },
+        "engine-presentation": {
+            "pattern": "src/scenes/**",
+            "canImport": ["public-api", "engine-infrastructure", "observability"],
+            "vendors": ["phaser"]
+        },
+        "gameplay-agents": {
+            "pattern": "src/modules/{player,enemy}/**",
+            "canImport": ["engine-infrastructure", "observability"],
+            "vendors": []
+        },
+        "gameplay-systems": {
+            "pattern": "src/modules/{level,effects,idle,boss}/**",
+            "canImport": ["engine-infrastructure", "gameplay-agents", "observability"],
+            "vendors": []
+        },
+        "public-api": {
+            "pattern": "src/features/**",
+            "canImport": ["engine-infrastructure", "gameplay-agents", "gameplay-systems"],
+            "vendors": []
+        },
+        "observability": {
+            "pattern": "src/observability/**",
+            "canImport": ["observability"],
+            "vendors": []
+        }
     },
-    "gameplay-agents": {
-      "pattern": "src/modules/{player,enemy}/**",
-      "canImport": ["engine-infrastructure", "observability"],
-      "vendors": []
+    "boundaries": {
+        "enforcement": "error",
+        "exceptions": []
     },
-    "gameplay-systems": {
-      "pattern": "src/modules/{level,effects,idle,boss}/**",
-      "canImport": ["engine-infrastructure", "gameplay-agents", "observability"],
-      "vendors": []
+    "determinism": {
+        "enabled": true,
+        "physics": {
+            "timestep": "1/120",
+            "maxSteps": 4,
+            "deterministicBuild": false
+        },
+        "rng": {
+            "service": "DeterministicRNG",
+            "enforceMathRandom": true
+        }
     },
-    "public-api": {
-      "pattern": "src/features/**",
-      "canImport": ["engine-infrastructure", "gameplay-agents", "gameplay-systems"],
-      "vendors": []
-    },
-    "observability": {
-      "pattern": "src/observability/**",
-      "canImport": ["observability"],
-      "vendors": []
+    "performance": {
+        "bundler": "rollup",
+        "target": "baseline-widely-available",
+        "minify": true
     }
-  },
-  "boundaries": {
-    "enforcement": "error",
-    "exceptions": []
-  },
-  "determinism": {
-    "enabled": true,
-    "physics": {
-      "timestep": "1/120",
-      "maxSteps": 4,
-      "deterministicBuild": false
-    },
-    "rng": {
-      "service": "DeterministicRNG",
-      "enforceMathRandom": true
-    }
-  },
-  "performance": {
-    "bundler": "rollup",
-    "target": "baseline-widely-available",
-    "minify": true
-  }
 }
 ```
 
 ## Deterministic Systems Enhancement
 
 ### Current State
+
 ✅ **Already Implemented**:
+
 - `src/core/DeterministicRNG.js` - Seeded RNG with state management
 - `src/core/GoldenSeedTester.js` - Recording and replay framework
 - `src/core/PhysicsManager.js` - Rapier 0.19 with fixed timestep accumulator
@@ -342,89 +348,92 @@ Enhancement (Layer Semantics):
 ### Enhancement Opportunities
 
 #### 1. Physics Determinism Configuration
+
 ```javascript
 // Enhanced PhysicsManager.js additions
 export class PhysicsManager extends BaseManager {
-  async init(scene, eventSystem, options = {}) {
-    const {
-      gravityX = PhysicsConfig.gravityX,
-      gravityY = PhysicsConfig.gravityY,
-      deterministic = false
-    } = options;
+    async init(scene, eventSystem, options = {}) {
+        const {
+            gravityX = PhysicsConfig.gravityX,
+            gravityY = PhysicsConfig.gravityY,
+            deterministic = false,
+        } = options;
 
-    await RAPIER.init();
-    this.world = new RAPIER.World(new RAPIER.Vector2(gravityX, gravityY));
+        await RAPIER.init();
+        this.world = new RAPIER.World(new RAPIER.Vector2(gravityX, gravityY));
 
-    // Configure for deterministic mode if requested
-    if (deterministic) {
-      this.world.maxVelocityIterations = 4;
-      this.world.maxPositionIterations = 1;
-      this.timestep = 1/120; // Fixed 120Hz
-      LOG.info('PHYSICS_DETERMINISTIC', {
-        subsystem: 'physics',
-        message: 'Physics determinism enabled',
-        timestep: this.timestep
-      });
+        // Configure for deterministic mode if requested
+        if (deterministic) {
+            this.world.maxVelocityIterations = 4;
+            this.world.maxPositionIterations = 1;
+            this.timestep = 1 / 120; // Fixed 120Hz
+            LOG.info('PHYSICS_DETERMINISTIC', {
+                subsystem: 'physics',
+                message: 'Physics determinism enabled',
+                timestep: this.timestep,
+            });
+        }
+
+        // ... rest of init
     }
 
-    // ... rest of init
-  }
+    step(deltaTime) {
+        this.accumulator += deltaTime;
+        let stepsRun = 0;
 
-  step(deltaTime) {
-    this.accumulator += deltaTime;
-    let stepsRun = 0;
+        while (this.accumulator >= this.timestep && stepsRun < this.maxSteps) {
+            this.world.step();
+            this.accumulator -= this.timestep;
+            stepsRun++;
+        }
 
-    while (this.accumulator >= this.timestep && stepsRun < this.maxSteps) {
-      this.world.step();
-      this.accumulator -= this.timestep;
-      stepsRun++;
+        // Track physics step metrics
+        this.eventSystem?.emit(EventNames.PHYSICS_STEP, {
+            stepsRun,
+            accumulator: this.accumulator,
+        });
     }
-
-    // Track physics step metrics
-    this.eventSystem?.emit(EventNames.PHYSICS_STEP, {
-      stepsRun,
-      accumulator: this.accumulator
-    });
-  }
 }
 ```
 
 #### 2. Replay System JSONL Format
+
 ```javascript
 // Enhanced GoldenSeedTester with JSONL export
 export class GoldenSeedTester extends BaseManager {
-  exportReplay(filename = 'replay.jsonl') {
-    const lines = this.frames.map(frame =>
-      JSON.stringify({
-        frame: frame.frameNumber,
-        input: frame.input,
-        physics: {
-          playerPos: frame.playerPosition,
-          velocity: frame.playerVelocity
-        },
-        rng: frame.rngState,
-        events: frame.events
-      })
-    );
+    exportReplay(filename = 'replay.jsonl') {
+        const lines = this.frames.map((frame) =>
+            JSON.stringify({
+                frame: frame.frameNumber,
+                input: frame.input,
+                physics: {
+                    playerPos: frame.playerPosition,
+                    velocity: frame.playerVelocity,
+                },
+                rng: frame.rngState,
+                events: frame.events,
+            })
+        );
 
-    const blob = new Blob([lines.join('\n')], { type: 'application/x-ndjson' });
-    // Export via download or save to file system
-  }
-
-  async replayFromJSONL(fileContent) {
-    const frames = fileContent
-      .split('\n')
-      .filter(line => line.trim())
-      .map(line => JSON.parse(line));
-
-    for (const frame of frames) {
-      await this.replayFrame(frame);
+        const blob = new Blob([lines.join('\n')], { type: 'application/x-ndjson' });
+        // Export via download or save to file system
     }
-  }
+
+    async replayFromJSONL(fileContent) {
+        const frames = fileContent
+            .split('\n')
+            .filter((line) => line.trim())
+            .map((line) => JSON.parse(line));
+
+        for (const frame of frames) {
+            await this.replayFrame(frame);
+        }
+    }
 }
 ```
 
 #### 3. Math.random() Prevention
+
 ```javascript
 // ESLint rule addition
 {
@@ -441,6 +450,7 @@ export class GoldenSeedTester extends BaseManager {
 ### Rolldown Bundler Integration
 
 **Expected Gains**:
+
 - Build time: 4-16x faster (GitLab: 2.5min → 40s)
 - Memory usage: Up to 100x reduction
 - HMR: Faster dev server updates
@@ -454,44 +464,41 @@ import { defineConfig } from 'vite';
 const USE_ROLLDOWN = process.env.VITE_BUNDLER === 'rolldown';
 
 export default defineConfig({
-  // Experimental Rolldown support
-  ...(USE_ROLLDOWN && {
-    experimental: {
-      rolldown: {
-        // Rolldown-specific optimizations
-        treeshake: 'recommended',
-        minify: false // Keep false for dev
-      }
-    }
-  }),
+    // Experimental Rolldown support
+    ...(USE_ROLLDOWN && {
+        experimental: {
+            rolldown: {
+                // Rolldown-specific optimizations
+                treeshake: 'recommended',
+                minify: false, // Keep false for dev
+            },
+        },
+    }),
 
-  build: {
-    target: 'baseline-widely-available', // Vite 7 default
-    sourcemap: true
-  },
+    build: {
+        target: 'baseline-widely-available', // Vite 7 default
+        sourcemap: true,
+    },
 
-  optimizeDeps: {
-    include: [
-      'phaser',
-      '@dimforge/rapier2d-compat',
-      'howler'
-    ],
-    // Pre-bundle large dependencies
-    force: false
-  },
+    optimizeDeps: {
+        include: ['phaser', '@dimforge/rapier2d-compat', 'howler'],
+        // Pre-bundle large dependencies
+        force: false,
+    },
 
-  // Bun-specific optimizations
-  server: {
-    port: 5173,
-    strictPort: false,
-    hmr: {
-      overlay: true
-    }
-  }
+    // Bun-specific optimizations
+    server: {
+        port: 5173,
+        strictPort: false,
+        hmr: {
+            overlay: true,
+        },
+    },
 });
 ```
 
 #### Rolldown Testing Plan
+
 1. **Phase 1**: Test on dev build (`bun run dev:rolldown`)
 2. **Phase 2**: Measure build time baseline vs Rolldown
 3. **Phase 3**: Test production build reliability
@@ -503,22 +510,22 @@ export default defineConfig({
 
 ```json
 {
-  "devDependencies": {
-    // Architecture validation
-    "eslint-plugin-boundaries": "^5.0.0",
-    "dependency-cruiser": "^16.0.0",
+    "devDependencies": {
+        // Architecture validation
+        "eslint-plugin-boundaries": "^5.0.0",
+        "dependency-cruiser": "^16.0.0",
 
-    // A-Spec validation
-    "ajv": "^8.12.0",
-    "ajv-formats": "^3.0.0",
+        // A-Spec validation
+        "ajv": "^8.12.0",
+        "ajv-formats": "^3.0.0",
 
-    // Testing
-    "vitest": "^2.0.0",
-    "fast-check": "^3.15.0",
+        // Testing
+        "vitest": "^2.0.0",
+        "fast-check": "^3.15.0",
 
-    // Documentation
-    "typedoc": "^0.26.0" // For API documentation generation
-  }
+        // Documentation
+        "typedoc": "^0.26.0" // For API documentation generation
+    }
 }
 ```
 
@@ -526,31 +533,32 @@ export default defineConfig({
 
 ```json
 {
-  "scripts": {
-    // Architecture enforcement
-    "arch:validate": "bun scripts/validate-architecture.js",
-    "arch:check-boundaries": "bunx --bun eslint . --rule 'boundaries/element-types: error'",
-    "arch:check-deps": "bunx --bun depcruise src --config .dependency-cruiser.cjs --output-type err",
-    "arch:snapshot": "bun scripts/generate-architecture-snapshot.js",
+    "scripts": {
+        // Architecture enforcement
+        "arch:validate": "bun scripts/validate-architecture.js",
+        "arch:check-boundaries": "bunx --bun eslint . --rule 'boundaries/element-types: error'",
+        "arch:check-deps": "bunx --bun depcruise src --config .dependency-cruiser.cjs --output-type err",
+        "arch:snapshot": "bun scripts/generate-architecture-snapshot.js",
 
-    // Build optimization
-    "dev:rolldown": "VITE_BUNDLER=rolldown bun run dev",
-    "build:rolldown": "VITE_BUNDLER=rolldown bun run build",
-    "build:benchmark": "bun scripts/benchmark-build.js",
+        // Build optimization
+        "dev:rolldown": "VITE_BUNDLER=rolldown bun run dev",
+        "build:rolldown": "VITE_BUNDLER=rolldown bun run build",
+        "build:benchmark": "bun scripts/benchmark-build.js",
 
-    // Deterministic testing
-    "test:replay": "bun scripts/run-replay-tests.js",
-    "test:determinism": "bun test tests/determinism/",
+        // Deterministic testing
+        "test:replay": "bun scripts/run-replay-tests.js",
+        "test:determinism": "bun test tests/determinism/",
 
-    // CI helpers
-    "ci:arch": "bun run arch:validate && bun run arch:check-boundaries && bun run arch:check-deps"
-  }
+        // CI helpers
+        "ci:arch": "bun run arch:validate && bun run arch:check-boundaries && bun run arch:check-deps"
+    }
 }
 ```
 
 ## Migration Timeline
 
 ### Phase 1: Foundation (Week 1-2)
+
 **Goal**: Set up tooling without breaking existing code
 
 - [ ] Install eslint-plugin-boundaries, dependency-cruiser
@@ -561,11 +569,13 @@ export default defineConfig({
 - [ ] Document layer semantics in ARCHITECTURE.md
 
 **Success Criteria**:
+
 - All tools installed and configured
 - Architecture validation runs in CI (warnings only)
 - Zero false positives in boundary checks
 
 ### Phase 2: Boundary Enforcement (Week 3-4)
+
 **Goal**: Fix boundary violations and enable strict mode
 
 - [ ] Audit and fix any layer boundary violations
@@ -576,11 +586,13 @@ export default defineConfig({
 - [ ] Update CONTRIBUTING.md with boundary rules
 
 **Success Criteria**:
+
 - Zero boundary violations
 - CI fails on new violations
 - Architecture snapshot committed
 
 ### Phase 3: Build Optimization (Week 5-6)
+
 **Goal**: Test and potentially enable Rolldown
 
 - [ ] Benchmark baseline build performance
@@ -591,11 +603,13 @@ export default defineConfig({
 - [ ] Enable Rolldown if stable (optional)
 
 **Success Criteria**:
+
 - Build time benchmarks documented
 - Rolldown stability tested
 - Decision made on adoption
 
 ### Phase 4: Determinism Enhancement (Week 7-8)
+
 **Goal**: Enhance replay and testing capabilities
 
 - [ ] Add deterministic physics configuration
@@ -606,6 +620,7 @@ export default defineConfig({
 - [ ] Create example replay test cases
 
 **Success Criteria**:
+
 - Replay system exports/imports JSONL
 - Test suite uses deterministic mode
 - Math.random() usage blocked in gameplay code
@@ -619,51 +634,52 @@ export default defineConfig({
 name: Architecture Enforcement
 
 on:
-  push:
-    branches: [main, develop, refactor/*]
-  pull_request:
-    branches: [main, develop]
+    push:
+        branches: [main, develop, refactor/*]
+    pull_request:
+        branches: [main, develop]
 
 jobs:
-  validate-architecture:
-    runs-on: ubuntu-latest
+    validate-architecture:
+        runs-on: ubuntu-latest
 
-    steps:
-      - uses: actions/checkout@v4
+        steps:
+            - uses: actions/checkout@v4
 
-      - uses: oven-sh/setup-bun@v2
-        with:
-          bun-version: latest
+            - uses: oven-sh/setup-bun@v2
+              with:
+                  bun-version: latest
 
-      - name: Install dependencies
-        run: bun install --frozen-lockfile
+            - name: Install dependencies
+              run: bun install --frozen-lockfile
 
-      - name: Validate A-Spec
-        run: bun run arch:validate
+            - name: Validate A-Spec
+              run: bun run arch:validate
 
-      - name: Check layer boundaries
-        run: bun run arch:check-boundaries
+            - name: Check layer boundaries
+              run: bun run arch:check-boundaries
 
-      - name: Check dependencies
-        run: bun run arch:check-deps
+            - name: Check dependencies
+              run: bun run arch:check-deps
 
-      - name: Generate architecture snapshot
-        run: bun run arch:snapshot
+            - name: Generate architecture snapshot
+              run: bun run arch:snapshot
 
-      - name: Check for architecture drift
-        run: |
-          if ! git diff --exit-code docs/architecture/snapshot.json; then
-            echo "::error::Architecture snapshot has drifted. Run 'bun run arch:snapshot' and commit changes."
-            exit 1
-          fi
+            - name: Check for architecture drift
+              run: |
+                  if ! git diff --exit-code docs/architecture/snapshot.json; then
+                    echo "::error::Architecture snapshot has drifted. Run 'bun run arch:snapshot' and commit changes."
+                    exit 1
+                  fi
 
-      - name: Run determinism tests
-        run: bun run test:determinism
+            - name: Run determinism tests
+              run: bun run test:determinism
 ```
 
 ## Success Metrics
 
 ### Quantitative Goals
+
 - **Build Time**: Reduce by 50%+ if Rolldown adopted
 - **CI Time**: Reduce overall CI time by 20%
 - **Boundary Violations**: Zero violations in CI
@@ -671,6 +687,7 @@ jobs:
 - **Architecture Drift**: Automated detection in every PR
 
 ### Qualitative Goals
+
 - **Developer Experience**: Clearer architecture boundaries reduce confusion
 - **Maintainability**: Automated enforcement prevents architectural decay
 - **Debugging**: Replay system enables reproducible bug investigation
@@ -679,36 +696,40 @@ jobs:
 ## Risk Mitigation
 
 ### Risk: Build Tool Instability
+
 **Mitigation**: Rolldown is optional and experimental. Keep Rollup as fallback.
 
 ### Risk: False Positives in Boundary Checks
+
 **Mitigation**: Start with warn mode, iterate on rules, use exceptions sparingly.
 
 ### Risk: Performance Regression
+
 **Mitigation**: Benchmark before/after, keep detailed metrics.
 
 ### Risk: Team Friction with New Rules
+
 **Mitigation**: Document clearly, provide examples, enforce gradually.
 
 ## Documentation Updates Required
 
 1. **docs/ARCHITECTURE.md**
-   - Add "Layer Boundaries" section referencing this plan
-   - Update "Extension Points" with boundary rules
+    - Add "Layer Boundaries" section referencing this plan
+    - Update "Extension Points" with boundary rules
 
 2. **docs/guides/DEBUGGING.md**
-   - Add section on deterministic replay debugging
+    - Add section on deterministic replay debugging
 
 3. **CONTRIBUTING.md**
-   - Add architecture compliance requirements
-   - Link to layer boundary documentation
+    - Add architecture compliance requirements
+    - Link to layer boundary documentation
 
 4. **README.md**
-   - Update commands with new architecture scripts
+    - Update commands with new architecture scripts
 
 5. **CLAUDE.md**
-   - Add architecture enforcement to core principles
-   - Update agent routing for architecture validation
+    - Add architecture enforcement to core principles
+    - Update agent routing for architecture validation
 
 ## Open Questions for Team Discussion
 

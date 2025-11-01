@@ -12,6 +12,7 @@
 **Goal**: Unify existing asset generation systems (DALL-E from `origin/get-more-buff` + ElevenLabs audio from `scripts/audio-generation/`) into a modern **spec-driven, multi-modal asset generation architecture** that integrates seamlessly with WynIsBuff2's observability, manifest system, and layered architecture.
 
 **Current State Discovery**:
+
 - ✅ **Image Generation**: Complete DALL-E system exists in `origin/get-more-buff` branch (needs migration)
 - ✅ **Audio Generation**: Complete ElevenLabs system exists in `scripts/audio-generation/` (production-ready!)
 - ❌ **Unified Architecture**: Systems are separate, need orchestration layer
@@ -19,6 +20,7 @@
 **Philosophy**: Build a brilliant implementation that won't need rollbacks by incorporating 2025 best practices from the start.
 
 **Key Innovations**:
+
 - ✅ **Spec-as-Code**: YAML specifications for reproducible asset generation
 - ✅ **Orchestration Layer**: Route requests to optimal generation engines
 - ✅ **Multi-Modal**: Images (DALL-E) + Audio (ElevenLabs) with unified interface
@@ -53,6 +55,7 @@
 **Status**: ✅ Complete, documented, production-ready Python system
 
 **Key Components**:
+
 ```
 scripts/audio-generation/
 ├── README.md                    # Complete documentation
@@ -66,15 +69,17 @@ scripts/audio-generation/
 ```
 
 **Capabilities**:
+
 - ✅ ElevenLabs API integration
 - ✅ Budget control with safety margins (5,000 credit buffer)
 - ✅ Phase-based generation (Phase 1 = 12 jump SFX)
 - ✅ Post-processing pipeline (MP3 → OGG, peak/LUFS normalization)
-- ✅ Cost tracking (generation_results_*.json timestamped logs)
+- ✅ Cost tracking (generation*results*\*.json timestamped logs)
 - ✅ Manifest-driven (assets.json single source of truth)
 - ✅ Comprehensive documentation (3 docs: README, AUDIO_DESIGN_SPECIFICATION, ELEVENLABS_IMPLEMENTATION_GUIDE)
 
 **Integration with Game**:
+
 ```javascript
 // Already working flow:
 1. Run: python generate_assets.py --phase 1
@@ -85,12 +90,14 @@ scripts/audio-generation/
 ```
 
 **Why It Works**:
+
 - Phase-based approach aligns with Bug #4 fix priority
 - Python + FFmpeg ideal for audio processing
 - Budget guard prevents cost overruns
 - Already used to generate assets (potentially)
 
 **What It Needs**:
+
 - ❌ No automatic manifest.json integration
 - ❌ No observability integration (LOG system)
 - ❌ No unified orchestration with image generation
@@ -103,6 +110,7 @@ scripts/audio-generation/
 **Status**: ⚠️ Complete but isolated, needs migration
 
 **Key Components**:
+
 ```
 asset-generation/
 ├── tools/wyn-gfx.mjs            # Main CLI (Bun/Node)
@@ -113,6 +121,7 @@ asset-generation/
 ```
 
 **Capabilities**:
+
 - ✅ DALL-E 3 integration
 - ✅ Budget control ($20 soft cap)
 - ✅ Multi-stage pipeline (512px thumbs → scoring → 1024px finals)
@@ -120,6 +129,7 @@ asset-generation/
 - ✅ 45+ predefined shots (backdrops, sprites, particles)
 
 **What It Needs**:
+
 - ❌ Migration from orphaned branch
 - ❌ Architectural alignment with A-Spec
 - ❌ Integration with manifest.json workflow
@@ -131,6 +141,7 @@ asset-generation/
 **Current Problem**: Two separate, excellent systems with no coordination
 
 **What We Need**:
+
 ```
 ┌──────────────────────────────────────────────────────────┐
 │         Unified Asset Generation Interface               │
@@ -292,82 +303,84 @@ scripts/
 **Example**: `scripts/asset-generation/specs/shots/particle-white.yaml`
 
 ```yaml
-version: "1.0"
+version: '1.0'
 id: particle-white
 metadata:
-  created: 2025-11-01
-  author: asset-generation
-  category: particles
-  tags: [effect, impact, visual-feedback]
+    created: 2025-11-01
+    author: asset-generation
+    category: particles
+    tags: [effect, impact, visual-feedback]
 
 generation:
-  type: image
-  provider: dalle-3
-  fallback: stable-diffusion
+    type: image
+    provider: dalle-3
+    fallback: stable-diffusion
 
 prompt:
-  base: >
-    32x32 soft white gradient circle particle for game effects,
-    centered, transparent background, high contrast edges,
-    suitable for bloom effects
-  style: |
-    - Flat stylized 2D art
-    - Clean gradient falloff
-    - No photorealism
-    - Crisp edges for scaling
-  parameters:
-    size: 1024x1024        # Generate high-res, downscale in post-processing
-    quality: high
-    n_variations: 4        # Generate 4 variants
+    base: >
+        32x32 soft white gradient circle particle for game effects,
+        centered, transparent background, high contrast edges,
+        suitable for bloom effects
+    style: |
+        - Flat stylized 2D art
+        - Clean gradient falloff
+        - No photorealism
+        - Crisp edges for scaling
+    parameters:
+        size: 1024x1024 # Generate high-res, downscale in post-processing
+        quality: high
+        n_variations: 4 # Generate 4 variants
 
 post_processing:
-  - action: resize
-    dimensions: 32x32
-    method: lanczos
-  - action: validate
-    checks:
-      - has_alpha
-      - dimensions_match
-      - file_size_reasonable
-  - action: convert
-    formats: [png, webp]
+    - action: resize
+      dimensions: 32x32
+      method: lanczos
+    - action: validate
+      checks:
+          - has_alpha
+          - dimensions_match
+          - file_size_reasonable
+    - action: convert
+      formats: [png, webp]
 
 integration:
-  manifest_key: particleWhite
-  manifest_path: images/particles/white.png
-  manifest_type: image
-  description: "White particle for visual effects"
+    manifest_key: particleWhite
+    manifest_path: images/particles/white.png
+    manifest_type: image
+    description: 'White particle for visual effects'
 
 observability:
-  track_cost: true
-  track_quality: true
-  log_level: info
+    track_cost: true
+    track_quality: true
+    log_level: info
 ```
 
 ### 3.2 Migrating Existing Shots
 
 **From** `origin/get-more-buff:asset-generation/shots.json`:
+
 ```json
 {
-  "key": "sprite_coin",
-  "kind": "sprite",
-  "prompt": "Glowing coin with buff arm emblem, neon rim light, high readability..."
+    "key": "sprite_coin",
+    "kind": "sprite",
+    "prompt": "Glowing coin with buff arm emblem, neon rim light, high readability..."
 }
 ```
 
 **To** `scripts/asset-generation/specs/shots/coin.yaml`:
+
 ```yaml
-version: "1.0"
+version: '1.0'
 id: sprite-coin
 generation:
-  type: image
-  provider: dalle-3
+    type: image
+    provider: dalle-3
 prompt:
-  base: "Glowing coin with buff arm emblem, neon rim light, high readability..."
-  style: "bold outline, centered object, transparent background, flat stylized 2D sprite"
+    base: 'Glowing coin with buff arm emblem, neon rim light, high readability...'
+    style: 'bold outline, centered object, transparent background, flat stylized 2D sprite'
 integration:
-  manifest_key: coin
-  manifest_path: images/collectibles/coin.png
+    manifest_key: coin
+    manifest_path: images/collectibles/coin.png
 ```
 
 ### 3.3 Template-Based Generation
@@ -375,49 +388,50 @@ integration:
 **Template**: `scripts/asset-generation/specs/templates/sfx-jump.yaml`
 
 ```yaml
-version: "1.0"
+version: '1.0'
 template: jump-sfx
 parameters:
-  - name: jump_type
-    type: enum
-    values: [dust-cloud, energy-burst, mega-explosion]
-  - name: variant
-    type: string
-    description: "Descriptive variation (e.g., 'light', 'heavy', 'crisp')"
+    - name: jump_type
+      type: enum
+      values: [dust-cloud, energy-burst, mega-explosion]
+    - name: variant
+      type: string
+      description: "Descriptive variation (e.g., 'light', 'heavy', 'crisp')"
 
 generation:
-  type: audio
-  provider: elevenlabs
-  fallback: bark
+    type: audio
+    provider: elevenlabs
+    fallback: bark
 
 prompt:
-  base: |
-    Platformer game jump sound effect, {{jump_type}} style,
-    {{variant}} variation, 0.3-0.5 seconds duration,
-    suitable for player feedback
+    base: |
+        Platformer game jump sound effect, {{jump_type}} style,
+        {{variant}} variation, 0.3-0.5 seconds duration,
+        suitable for player feedback
 
-  templates:
-    dust-cloud: "soft landing whoosh, dust cloud impact, light and airy"
-    energy-burst: "electric energy burst, powerful whoosh, crisp attack"
-    mega-explosion: "mega explosion boom, bass-heavy, dramatic cinematic impact"
+    templates:
+        dust-cloud: 'soft landing whoosh, dust cloud impact, light and airy'
+        energy-burst: 'electric energy burst, powerful whoosh, crisp attack'
+        mega-explosion: 'mega explosion boom, bass-heavy, dramatic cinematic impact'
 
 post_processing:
-  - action: normalize
-    peak: -1.0 dB
-  - action: trim_silence
-    threshold: -40 dB
-  - action: validate
-    checks:
-      - duration_range: [0.2, 0.6]
-      - format: mp3
-      - bitrate: 192k
+    - action: normalize
+      peak: -1.0 dB
+    - action: trim_silence
+      threshold: -40 dB
+    - action: validate
+      checks:
+          - duration_range: [0.2, 0.6]
+          - format: mp3
+          - bitrate: 192k
 
 integration:
-  manifest_section: audio.sfx.jump
-  naming_pattern: "sfxJump{{type_number}}{{variant_letter}}.mp3"
+    manifest_section: audio.sfx.jump
+    naming_pattern: 'sfxJump{{type_number}}{{variant_letter}}.mp3'
 ```
 
 **Usage**:
+
 ```bash
 # Generate jump SFX using template
 npm run asset:generate -- \
@@ -447,112 +461,111 @@ import { BatchProcessor } from './batch-processor.js';
 import { SpecLoader } from './spec-loader.js';
 
 export class AssetOrchestrator {
-  constructor(options = {}) {
-    this.budget = options.budget || 100; // Monthly budget in USD
-    this.dryRun = options.dryRun || false;
+    constructor(options = {}) {
+        this.budget = options.budget || 100; // Monthly budget in USD
+        this.dryRun = options.dryRun || false;
 
-    this.router = new Router();
-    this.budgetGuard = new BudgetGuard(this.budget);
-    this.batchProcessor = new BatchProcessor();
-    this.specLoader = new SpecLoader();
+        this.router = new Router();
+        this.budgetGuard = new BudgetGuard(this.budget);
+        this.batchProcessor = new BatchProcessor();
+        this.specLoader = new SpecLoader();
 
-    LOG.info('ASSET_ORCHESTRATOR_INIT', {
-      subsystem: 'asset-generation',
-      budget: this.budget,
-      dryRun: this.dryRun
-    });
-  }
-
-  async generate(specPath) {
-    const startTime = performance.now();
-
-    try {
-      // Load and validate spec
-      const spec = await this.specLoader.load(specPath);
-
-      LOG.info('ASSET_GENERATION_START', {
-        subsystem: 'asset-generation',
-        spec_id: spec.id,
-        type: spec.generation.type,
-        provider: spec.generation.provider
-      });
-
-      // Check budget
-      const estimatedCost = await this.budgetGuard.estimateCost(spec);
-      if (!await this.budgetGuard.checkBudget(estimatedCost)) {
-        throw new Error('Monthly budget exceeded');
-      }
-
-      // Route to provider
-      const provider = await this.router.getProvider(spec);
-
-      // Generate asset
-      const result = await provider.generate(spec, {
-        dryRun: this.dryRun
-      });
-
-      // Post-process
-      if (spec.post_processing) {
-        await this.processAsset(result, spec.post_processing);
-      }
-
-      // Integrate with manifest
-      if (!this.dryRun && spec.integration) {
-        await this.integrateAsset(result, spec.integration);
-      }
-
-      // Track costs
-      await this.budgetGuard.recordCost(spec.id, result.cost);
-
-      const duration = performance.now() - startTime;
-
-      LOG.info('ASSET_GENERATION_SUCCESS', {
-        subsystem: 'asset-generation',
-        spec_id: spec.id,
-        provider: result.provider,
-        cost: result.cost,
-        duration,
-        output_path: result.path
-      });
-
-      return result;
-
-    } catch (error) {
-      LOG.error('ASSET_GENERATION_FAILED', {
-        subsystem: 'asset-generation',
-        error,
-        message: 'Asset generation failed',
-        hint: 'Check provider API keys and budget limits',
-        duration: performance.now() - startTime
-      });
-      throw error;
+        LOG.info('ASSET_ORCHESTRATOR_INIT', {
+            subsystem: 'asset-generation',
+            budget: this.budget,
+            dryRun: this.dryRun,
+        });
     }
-  }
 
-  async processAsset(result, processing) {
-    // Post-processing pipeline
-    for (const step of processing) {
-      LOG.dev('ASSET_PROCESSING_STEP', {
-        subsystem: 'asset-generation',
-        action: step.action,
-        asset: result.path
-      });
+    async generate(specPath) {
+        const startTime = performance.now();
 
-      // Apply processing step...
+        try {
+            // Load and validate spec
+            const spec = await this.specLoader.load(specPath);
+
+            LOG.info('ASSET_GENERATION_START', {
+                subsystem: 'asset-generation',
+                spec_id: spec.id,
+                type: spec.generation.type,
+                provider: spec.generation.provider,
+            });
+
+            // Check budget
+            const estimatedCost = await this.budgetGuard.estimateCost(spec);
+            if (!(await this.budgetGuard.checkBudget(estimatedCost))) {
+                throw new Error('Monthly budget exceeded');
+            }
+
+            // Route to provider
+            const provider = await this.router.getProvider(spec);
+
+            // Generate asset
+            const result = await provider.generate(spec, {
+                dryRun: this.dryRun,
+            });
+
+            // Post-process
+            if (spec.post_processing) {
+                await this.processAsset(result, spec.post_processing);
+            }
+
+            // Integrate with manifest
+            if (!this.dryRun && spec.integration) {
+                await this.integrateAsset(result, spec.integration);
+            }
+
+            // Track costs
+            await this.budgetGuard.recordCost(spec.id, result.cost);
+
+            const duration = performance.now() - startTime;
+
+            LOG.info('ASSET_GENERATION_SUCCESS', {
+                subsystem: 'asset-generation',
+                spec_id: spec.id,
+                provider: result.provider,
+                cost: result.cost,
+                duration,
+                output_path: result.path,
+            });
+
+            return result;
+        } catch (error) {
+            LOG.error('ASSET_GENERATION_FAILED', {
+                subsystem: 'asset-generation',
+                error,
+                message: 'Asset generation failed',
+                hint: 'Check provider API keys and budget limits',
+                duration: performance.now() - startTime,
+            });
+            throw error;
+        }
     }
-  }
 
-  async integrateAsset(result, integration) {
-    // Update manifest.json
-    // Trigger generate-assets.js
-    // Create observability report
-  }
+    async processAsset(result, processing) {
+        // Post-processing pipeline
+        for (const step of processing) {
+            LOG.dev('ASSET_PROCESSING_STEP', {
+                subsystem: 'asset-generation',
+                action: step.action,
+                asset: result.path,
+            });
+
+            // Apply processing step...
+        }
+    }
+
+    async integrateAsset(result, integration) {
+        // Update manifest.json
+        // Trigger generate-assets.js
+        // Create observability report
+    }
 }
 
 // CLI interface
 if (import.meta.url === `file://${process.argv[1]}`) {
-  const args = process.argv.slice(2);
-  // Parse args and run orchestrator...
+    const args = process.argv.slice(2);
+    // Parse args and run orchestrator...
 }
 ```
 
@@ -569,53 +582,53 @@ import { DalleProvider } from '../providers/image/dalle-provider.js';
 import { ElevenLabsProvider } from '../providers/audio/elevenlabs-provider.js';
 
 export class Router {
-  constructor() {
-    this.providers = {
-      image: {
-        'dalle-3': new DalleProvider(),
-        'stable-diffusion': null, // To be implemented
-        'firefly': null
-      },
-      audio: {
-        'elevenlabs': new ElevenLabsProvider(),
-        'bark': null,
-        'musicgen': null
-      }
-    };
-  }
-
-  async getProvider(spec) {
-    const { type, provider, fallback } = spec.generation;
-
-    // Try primary provider
-    const primaryProvider = this.providers[type]?.[provider];
-    if (primaryProvider && await primaryProvider.isAvailable()) {
-      LOG.info('PROVIDER_SELECTED', {
-        subsystem: 'asset-generation',
-        type,
-        provider,
-        selection: 'primary'
-      });
-      return primaryProvider;
+    constructor() {
+        this.providers = {
+            image: {
+                'dalle-3': new DalleProvider(),
+                'stable-diffusion': null, // To be implemented
+                firefly: null,
+            },
+            audio: {
+                elevenlabs: new ElevenLabsProvider(),
+                bark: null,
+                musicgen: null,
+            },
+        };
     }
 
-    // Try fallback provider
-    if (fallback) {
-      const fallbackProvider = this.providers[type]?.[fallback];
-      if (fallbackProvider && await fallbackProvider.isAvailable()) {
-        LOG.warn('PROVIDER_FALLBACK', {
-          subsystem: 'asset-generation',
-          type,
-          requested: provider,
-          fallback,
-          message: 'Primary provider unavailable, using fallback'
-        });
-        return fallbackProvider;
-      }
-    }
+    async getProvider(spec) {
+        const { type, provider, fallback } = spec.generation;
 
-    throw new Error(`No available provider for ${type}:${provider}`);
-  }
+        // Try primary provider
+        const primaryProvider = this.providers[type]?.[provider];
+        if (primaryProvider && (await primaryProvider.isAvailable())) {
+            LOG.info('PROVIDER_SELECTED', {
+                subsystem: 'asset-generation',
+                type,
+                provider,
+                selection: 'primary',
+            });
+            return primaryProvider;
+        }
+
+        // Try fallback provider
+        if (fallback) {
+            const fallbackProvider = this.providers[type]?.[fallback];
+            if (fallbackProvider && (await fallbackProvider.isAvailable())) {
+                LOG.warn('PROVIDER_FALLBACK', {
+                    subsystem: 'asset-generation',
+                    type,
+                    requested: provider,
+                    fallback,
+                    message: 'Primary provider unavailable, using fallback',
+                });
+                return fallbackProvider;
+            }
+        }
+
+        throw new Error(`No available provider for ${type}:${provider}`);
+    }
 }
 ```
 
@@ -632,39 +645,39 @@ export class Router {
  */
 
 export class BaseProvider {
-  constructor(config = {}) {
-    this.config = config;
-    this.type = null; // 'image' or 'audio'
-    this.name = null; // 'dalle-3', 'elevenlabs', etc.
-  }
+    constructor(config = {}) {
+        this.config = config;
+        this.type = null; // 'image' or 'audio'
+        this.name = null; // 'dalle-3', 'elevenlabs', etc.
+    }
 
-  /**
-   * Check if provider is available (API key valid, service up)
-   */
-  async isAvailable() {
-    throw new Error('isAvailable() must be implemented');
-  }
+    /**
+     * Check if provider is available (API key valid, service up)
+     */
+    async isAvailable() {
+        throw new Error('isAvailable() must be implemented');
+    }
 
-  /**
-   * Estimate cost for generation
-   */
-  async estimateCost(spec) {
-    throw new Error('estimateCost() must be implemented');
-  }
+    /**
+     * Estimate cost for generation
+     */
+    async estimateCost(spec) {
+        throw new Error('estimateCost() must be implemented');
+    }
 
-  /**
-   * Generate asset from spec
-   */
-  async generate(spec, options = {}) {
-    throw new Error('generate() must be implemented');
-  }
+    /**
+     * Generate asset from spec
+     */
+    async generate(spec, options = {}) {
+        throw new Error('generate() must be implemented');
+    }
 
-  /**
-   * Validate generated output
-   */
-  async validate(result, spec) {
-    throw new Error('validate() must be implemented');
-  }
+    /**
+     * Validate generated output
+     */
+    async validate(result, spec) {
+        throw new Error('validate() must be implemented');
+    }
 }
 ```
 
@@ -681,103 +694,102 @@ import { BaseProvider } from '../base-provider.js';
 import { LOG } from '../../../../src/observability/index.js';
 
 export class DalleProvider extends BaseProvider {
-  constructor(config = {}) {
-    super(config);
-    this.type = 'image';
-    this.name = 'dalle-3';
-    this.client = new OpenAI({
-      apiKey: process.env.OPENAI_API_KEY
-    });
-  }
-
-  async isAvailable() {
-    try {
-      // Quick API key validation
-      return !!process.env.OPENAI_API_KEY;
-    } catch (error) {
-      return false;
+    constructor(config = {}) {
+        super(config);
+        this.type = 'image';
+        this.name = 'dalle-3';
+        this.client = new OpenAI({
+            apiKey: process.env.OPENAI_API_KEY,
+        });
     }
-  }
 
-  async estimateCost(spec) {
-    const { size, quality, n_variations } = spec.prompt.parameters;
+    async isAvailable() {
+        try {
+            // Quick API key validation
+            return !!process.env.OPENAI_API_KEY;
+        } catch (error) {
+            return false;
+        }
+    }
 
-    // DALL-E 3 pricing (as of 2025)
-    const costPerImage = {
-      '1024x1024': quality === 'hd' ? 0.08 : 0.04,
-      '1024x1792': quality === 'hd' ? 0.12 : 0.08,
-      '1792x1024': quality === 'hd' ? 0.12 : 0.08
-    };
+    async estimateCost(spec) {
+        const { size, quality, n_variations } = spec.prompt.parameters;
 
-    const unitCost = costPerImage[size] || 0.04;
-    return unitCost * n_variations;
-  }
-
-  async generate(spec, options = {}) {
-    const startTime = performance.now();
-    const { base, style, parameters } = spec.prompt;
-    const fullPrompt = `${base}\n${style}`;
-
-    LOG.info('DALLE_GENERATION_START', {
-      subsystem: 'asset-generation',
-      provider: 'dalle-3',
-      spec_id: spec.id,
-      prompt_length: fullPrompt.length,
-      size: parameters.size,
-      quality: parameters.quality
-    });
-
-    try {
-      if (options.dryRun) {
-        const cost = await this.estimateCost(spec);
-        return {
-          provider: 'dalle-3',
-          dryRun: true,
-          estimated_cost: cost
+        // DALL-E 3 pricing (as of 2025)
+        const costPerImage = {
+            '1024x1024': quality === 'hd' ? 0.08 : 0.04,
+            '1024x1792': quality === 'hd' ? 0.12 : 0.08,
+            '1792x1024': quality === 'hd' ? 0.12 : 0.08,
         };
-      }
 
-      // Generate image
-      const response = await this.client.images.generate({
-        model: 'dall-e-3',
-        prompt: fullPrompt,
-        size: parameters.size,
-        quality: parameters.quality || 'standard',
-        n: 1 // DALL-E 3 only supports n=1, handle variations in loop
-      });
-
-      const duration = performance.now() - startTime;
-      const cost = await this.estimateCost(spec);
-
-      LOG.info('DALLE_GENERATION_SUCCESS', {
-        subsystem: 'asset-generation',
-        provider: 'dalle-3',
-        spec_id: spec.id,
-        duration,
-        cost,
-        revised_prompt: response.data[0].revised_prompt
-      });
-
-      return {
-        provider: 'dalle-3',
-        url: response.data[0].url,
-        revised_prompt: response.data[0].revised_prompt,
-        cost,
-        duration
-      };
-
-    } catch (error) {
-      LOG.error('DALLE_GENERATION_FAILED', {
-        subsystem: 'asset-generation',
-        provider: 'dalle-3',
-        spec_id: spec.id,
-        error,
-        message: 'DALL-E generation failed',
-        hint: 'Check API key and rate limits'
-      });
-      throw error;
+        const unitCost = costPerImage[size] || 0.04;
+        return unitCost * n_variations;
     }
-  }
+
+    async generate(spec, options = {}) {
+        const startTime = performance.now();
+        const { base, style, parameters } = spec.prompt;
+        const fullPrompt = `${base}\n${style}`;
+
+        LOG.info('DALLE_GENERATION_START', {
+            subsystem: 'asset-generation',
+            provider: 'dalle-3',
+            spec_id: spec.id,
+            prompt_length: fullPrompt.length,
+            size: parameters.size,
+            quality: parameters.quality,
+        });
+
+        try {
+            if (options.dryRun) {
+                const cost = await this.estimateCost(spec);
+                return {
+                    provider: 'dalle-3',
+                    dryRun: true,
+                    estimated_cost: cost,
+                };
+            }
+
+            // Generate image
+            const response = await this.client.images.generate({
+                model: 'dall-e-3',
+                prompt: fullPrompt,
+                size: parameters.size,
+                quality: parameters.quality || 'standard',
+                n: 1, // DALL-E 3 only supports n=1, handle variations in loop
+            });
+
+            const duration = performance.now() - startTime;
+            const cost = await this.estimateCost(spec);
+
+            LOG.info('DALLE_GENERATION_SUCCESS', {
+                subsystem: 'asset-generation',
+                provider: 'dalle-3',
+                spec_id: spec.id,
+                duration,
+                cost,
+                revised_prompt: response.data[0].revised_prompt,
+            });
+
+            return {
+                provider: 'dalle-3',
+                url: response.data[0].url,
+                revised_prompt: response.data[0].revised_prompt,
+                cost,
+                duration,
+            };
+        } catch (error) {
+            LOG.error('DALLE_GENERATION_FAILED', {
+                subsystem: 'asset-generation',
+                provider: 'dalle-3',
+                spec_id: spec.id,
+                error,
+                message: 'DALL-E generation failed',
+                hint: 'Check API key and rate limits',
+            });
+            throw error;
+        }
+    }
 }
 ```
 
@@ -793,95 +805,94 @@ import { BaseProvider } from '../base-provider.js';
 import { LOG } from '../../../../src/observability/index.js';
 
 export class ElevenLabsProvider extends BaseProvider {
-  constructor(config = {}) {
-    super(config);
-    this.type = 'audio';
-    this.name = 'elevenlabs';
-    this.apiKey = process.env.ELEVENLABS_API_KEY;
-    this.baseUrl = 'https://api.elevenlabs.io/v1';
-  }
-
-  async isAvailable() {
-    return !!this.apiKey;
-  }
-
-  async estimateCost(spec) {
-    // ElevenLabs pricing: ~$0.05 per SFX
-    return 0.05;
-  }
-
-  async generate(spec, options = {}) {
-    const startTime = performance.now();
-    const { base } = spec.prompt;
-
-    LOG.info('ELEVENLABS_GENERATION_START', {
-      subsystem: 'asset-generation',
-      provider: 'elevenlabs',
-      spec_id: spec.id,
-      prompt_length: base.length
-    });
-
-    try {
-      if (options.dryRun) {
-        const cost = await this.estimateCost(spec);
-        return {
-          provider: 'elevenlabs',
-          dryRun: true,
-          estimated_cost: cost
-        };
-      }
-
-      // Generate audio using ElevenLabs sound effects API
-      const response = await fetch(`${this.baseUrl}/sound-generation`, {
-        method: 'POST',
-        headers: {
-          'xi-api-key': this.apiKey,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          text: base,
-          duration_seconds: 0.5,
-          prompt_influence: 0.8
-        })
-      });
-
-      if (!response.ok) {
-        throw new Error(`ElevenLabs API error: ${response.statusText}`);
-      }
-
-      const audioBuffer = await response.arrayBuffer();
-      const duration = performance.now() - startTime;
-      const cost = await this.estimateCost(spec);
-
-      LOG.info('ELEVENLABS_GENERATION_SUCCESS', {
-        subsystem: 'asset-generation',
-        provider: 'elevenlabs',
-        spec_id: spec.id,
-        duration,
-        cost,
-        audio_size: audioBuffer.byteLength
-      });
-
-      return {
-        provider: 'elevenlabs',
-        buffer: audioBuffer,
-        format: 'mp3',
-        cost,
-        duration
-      };
-
-    } catch (error) {
-      LOG.error('ELEVENLABS_GENERATION_FAILED', {
-        subsystem: 'asset-generation',
-        provider: 'elevenlabs',
-        spec_id: spec.id,
-        error,
-        message: 'ElevenLabs generation failed',
-        hint: 'Check API key and credits'
-      });
-      throw error;
+    constructor(config = {}) {
+        super(config);
+        this.type = 'audio';
+        this.name = 'elevenlabs';
+        this.apiKey = process.env.ELEVENLABS_API_KEY;
+        this.baseUrl = 'https://api.elevenlabs.io/v1';
     }
-  }
+
+    async isAvailable() {
+        return !!this.apiKey;
+    }
+
+    async estimateCost(spec) {
+        // ElevenLabs pricing: ~$0.05 per SFX
+        return 0.05;
+    }
+
+    async generate(spec, options = {}) {
+        const startTime = performance.now();
+        const { base } = spec.prompt;
+
+        LOG.info('ELEVENLABS_GENERATION_START', {
+            subsystem: 'asset-generation',
+            provider: 'elevenlabs',
+            spec_id: spec.id,
+            prompt_length: base.length,
+        });
+
+        try {
+            if (options.dryRun) {
+                const cost = await this.estimateCost(spec);
+                return {
+                    provider: 'elevenlabs',
+                    dryRun: true,
+                    estimated_cost: cost,
+                };
+            }
+
+            // Generate audio using ElevenLabs sound effects API
+            const response = await fetch(`${this.baseUrl}/sound-generation`, {
+                method: 'POST',
+                headers: {
+                    'xi-api-key': this.apiKey,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    text: base,
+                    duration_seconds: 0.5,
+                    prompt_influence: 0.8,
+                }),
+            });
+
+            if (!response.ok) {
+                throw new Error(`ElevenLabs API error: ${response.statusText}`);
+            }
+
+            const audioBuffer = await response.arrayBuffer();
+            const duration = performance.now() - startTime;
+            const cost = await this.estimateCost(spec);
+
+            LOG.info('ELEVENLABS_GENERATION_SUCCESS', {
+                subsystem: 'asset-generation',
+                provider: 'elevenlabs',
+                spec_id: spec.id,
+                duration,
+                cost,
+                audio_size: audioBuffer.byteLength,
+            });
+
+            return {
+                provider: 'elevenlabs',
+                buffer: audioBuffer,
+                format: 'mp3',
+                cost,
+                duration,
+            };
+        } catch (error) {
+            LOG.error('ELEVENLABS_GENERATION_FAILED', {
+                subsystem: 'asset-generation',
+                provider: 'elevenlabs',
+                spec_id: spec.id,
+                error,
+                message: 'ElevenLabs generation failed',
+                hint: 'Check API key and credits',
+            });
+            throw error;
+        }
+    }
 }
 ```
 
@@ -901,65 +912,62 @@ import sharp from 'sharp';
 import { LOG } from '../../../src/observability/index.js';
 
 export class ImageProcessor {
-  async process(buffer, steps) {
-    let image = sharp(buffer);
+    async process(buffer, steps) {
+        let image = sharp(buffer);
 
-    for (const step of steps) {
-      LOG.dev('IMAGE_PROCESSING_STEP', {
-        subsystem: 'asset-generation',
-        action: step.action
-      });
+        for (const step of steps) {
+            LOG.dev('IMAGE_PROCESSING_STEP', {
+                subsystem: 'asset-generation',
+                action: step.action,
+            });
 
-      switch (step.action) {
-        case 'resize':
-          image = image.resize(
-            step.dimensions.split('x')[0],
-            step.dimensions.split('x')[1],
-            { kernel: step.method || 'lanczos3' }
-          );
-          break;
+            switch (step.action) {
+                case 'resize':
+                    image = image.resize(
+                        step.dimensions.split('x')[0],
+                        step.dimensions.split('x')[1],
+                        { kernel: step.method || 'lanczos3' }
+                    );
+                    break;
 
-        case 'convert':
-          // Generate multiple formats (PNG, WebP)
-          const outputs = {};
-          for (const format of step.formats) {
-            outputs[format] = await image
-              .clone()
-              [format]({ quality: 90 })
-              .toBuffer();
-          }
-          return outputs;
+                case 'convert':
+                    // Generate multiple formats (PNG, WebP)
+                    const outputs = {};
+                    for (const format of step.formats) {
+                        outputs[format] = await image.clone()[format]({ quality: 90 }).toBuffer();
+                    }
+                    return outputs;
 
-        case 'validate':
-          await this.validate(image, step.checks);
-          break;
-      }
+                case 'validate':
+                    await this.validate(image, step.checks);
+                    break;
+            }
+        }
+
+        return { png: await image.png().toBuffer() };
     }
 
-    return { png: await image.png().toBuffer() };
-  }
+    async validate(image, checks) {
+        const metadata = await image.metadata();
 
-  async validate(image, checks) {
-    const metadata = await image.metadata();
+        for (const check of checks) {
+            switch (check) {
+                case 'has_alpha':
+                    if (!metadata.hasAlpha) {
+                        throw new Error('Image must have alpha channel');
+                    }
+                    break;
 
-    for (const check of checks) {
-      switch (check) {
-        case 'has_alpha':
-          if (!metadata.hasAlpha) {
-            throw new Error('Image must have alpha channel');
-          }
-          break;
+                case 'dimensions_match':
+                    // Validate dimensions...
+                    break;
 
-        case 'dimensions_match':
-          // Validate dimensions...
-          break;
-
-        case 'file_size_reasonable':
-          // Check file size...
-          break;
-      }
+                case 'file_size_reasonable':
+                    // Check file size...
+                    break;
+            }
+        }
     }
-  }
 }
 ```
 
@@ -981,61 +989,56 @@ import { execSync } from 'child_process';
 import { LOG } from '../../../src/observability/index.js';
 
 export class ManifestUpdater {
-  constructor(manifestPath = 'assets/manifest.json') {
-    this.manifestPath = manifestPath;
-  }
-
-  async update(result, integration) {
-    const startTime = performance.now();
-
-    try {
-      // Load manifest
-      const manifestData = await fs.readFile(this.manifestPath, 'utf-8');
-      const manifest = JSON.parse(manifestData);
-
-      // Update manifest based on asset type
-      if (integration.manifest_section === 'images') {
-        manifest.assets.images[integration.manifest_key] = {
-          type: integration.manifest_type || 'image',
-          path: integration.manifest_path,
-          description: integration.description,
-          aiGenerated: true,
-          aiProvider: result.provider,
-          aiCost: result.cost,
-          generatedDate: new Date().toISOString()
-        };
-      } else if (integration.manifest_section.startsWith('audio')) {
-        // Handle audio manifest updates...
-      }
-
-      // Write updated manifest
-      await fs.writeFile(
-        this.manifestPath,
-        JSON.stringify(manifest, null, 2),
-        'utf-8'
-      );
-
-      // Trigger constant generation
-      execSync('bun run generate-assets', { stdio: 'inherit' });
-
-      const duration = performance.now() - startTime;
-
-      LOG.info('MANIFEST_UPDATED', {
-        subsystem: 'asset-generation',
-        asset_key: integration.manifest_key,
-        duration
-      });
-
-    } catch (error) {
-      LOG.error('MANIFEST_UPDATE_FAILED', {
-        subsystem: 'asset-generation',
-        error,
-        message: 'Failed to update manifest',
-        hint: 'Check manifest.json syntax'
-      });
-      throw error;
+    constructor(manifestPath = 'assets/manifest.json') {
+        this.manifestPath = manifestPath;
     }
-  }
+
+    async update(result, integration) {
+        const startTime = performance.now();
+
+        try {
+            // Load manifest
+            const manifestData = await fs.readFile(this.manifestPath, 'utf-8');
+            const manifest = JSON.parse(manifestData);
+
+            // Update manifest based on asset type
+            if (integration.manifest_section === 'images') {
+                manifest.assets.images[integration.manifest_key] = {
+                    type: integration.manifest_type || 'image',
+                    path: integration.manifest_path,
+                    description: integration.description,
+                    aiGenerated: true,
+                    aiProvider: result.provider,
+                    aiCost: result.cost,
+                    generatedDate: new Date().toISOString(),
+                };
+            } else if (integration.manifest_section.startsWith('audio')) {
+                // Handle audio manifest updates...
+            }
+
+            // Write updated manifest
+            await fs.writeFile(this.manifestPath, JSON.stringify(manifest, null, 2), 'utf-8');
+
+            // Trigger constant generation
+            execSync('bun run generate-assets', { stdio: 'inherit' });
+
+            const duration = performance.now() - startTime;
+
+            LOG.info('MANIFEST_UPDATED', {
+                subsystem: 'asset-generation',
+                asset_key: integration.manifest_key,
+                duration,
+            });
+        } catch (error) {
+            LOG.error('MANIFEST_UPDATE_FAILED', {
+                subsystem: 'asset-generation',
+                error,
+                message: 'Failed to update manifest',
+                hint: 'Check manifest.json syntax',
+            });
+            throw error;
+        }
+    }
 }
 ```
 
@@ -1055,13 +1058,13 @@ import Database from 'better-sqlite3';
 import { LOG } from '../../../src/observability/index.js';
 
 export class CostTracker {
-  constructor(dbPath = 'scripts/asset-generation/.cost-tracking.db') {
-    this.db = new Database(dbPath);
-    this.initDatabase();
-  }
+    constructor(dbPath = 'scripts/asset-generation/.cost-tracking.db') {
+        this.db = new Database(dbPath);
+        this.initDatabase();
+    }
 
-  initDatabase() {
-    this.db.exec(`
+    initDatabase() {
+        this.db.exec(`
       CREATE TABLE IF NOT EXISTS generations (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         timestamp TEXT NOT NULL,
@@ -1077,44 +1080,54 @@ export class CostTracker {
       CREATE INDEX IF NOT EXISTS idx_month ON generations(month);
       CREATE INDEX IF NOT EXISTS idx_provider ON generations(provider);
     `);
-  }
+    }
 
-  recordGeneration(spec_id, provider, type, cost, success, duration) {
-    const month = new Date().toISOString().slice(0, 7); // YYYY-MM
+    recordGeneration(spec_id, provider, type, cost, success, duration) {
+        const month = new Date().toISOString().slice(0, 7); // YYYY-MM
 
-    this.db.prepare(`
+        this.db
+            .prepare(
+                `
       INSERT INTO generations (timestamp, spec_id, provider, type, cost, success, duration, month)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-    `).run(
-      new Date().toISOString(),
-      spec_id,
-      provider,
-      type,
-      cost,
-      success ? 1 : 0,
-      duration,
-      month
-    );
+    `
+            )
+            .run(
+                new Date().toISOString(),
+                spec_id,
+                provider,
+                type,
+                cost,
+                success ? 1 : 0,
+                duration,
+                month
+            );
 
-    LOG.info('COST_TRACKED', {
-      subsystem: 'asset-generation',
-      spec_id,
-      provider,
-      cost,
-      month
-    });
-  }
+        LOG.info('COST_TRACKED', {
+            subsystem: 'asset-generation',
+            spec_id,
+            provider,
+            cost,
+            month,
+        });
+    }
 
-  getMonthlySpend(month = new Date().toISOString().slice(0, 7)) {
-    const result = this.db.prepare(`
+    getMonthlySpend(month = new Date().toISOString().slice(0, 7)) {
+        const result = this.db
+            .prepare(
+                `
       SELECT SUM(cost) as total FROM generations WHERE month = ? AND success = 1
-    `).get(month);
+    `
+            )
+            .get(month);
 
-    return result?.total || 0;
-  }
+        return result?.total || 0;
+    }
 
-  getProviderStats() {
-    const results = this.db.prepare(`
+    getProviderStats() {
+        const results = this.db
+            .prepare(
+                `
       SELECT
         provider,
         COUNT(*) as count,
@@ -1123,10 +1136,12 @@ export class CostTracker {
         SUM(success) as success_count
       FROM generations
       GROUP BY provider
-    `).all();
+    `
+            )
+            .all();
 
-    return results;
-  }
+        return results;
+    }
 }
 ```
 
@@ -1163,6 +1178,7 @@ getAssetGenerationHealth() {
 **Goal**: Create orchestration layer that coordinates existing systems
 
 **Tasks**:
+
 1. Create orchestrator CLI (`scripts/asset-generation/orchestrator/`)
 2. Implement spec loader and validator (YAML → internal format)
 3. Build adapter for existing Python audio system
@@ -1179,6 +1195,7 @@ getAssetGenerationHealth() {
 **Goal**: Migrate DALL-E patterns from get-more-buff into new structure
 
 **Tasks**:
+
 1. Extract BudgetGuard patterns from get-more-buff
 2. Implement DalleProvider class (Node.js)
 3. Convert shots.json → YAML specs (45+ assets)
@@ -1193,6 +1210,7 @@ getAssetGenerationHealth() {
 **Goal**: Ensure both systems work together seamlessly
 
 **Tasks**:
+
 1. Test audio generation via orchestrator
 2. Test image generation via orchestrator
 3. Verify manifest.json auto-update for both
@@ -1207,6 +1225,7 @@ getAssetGenerationHealth() {
 **Goal**: Complete documentation and production readiness
 
 **Tasks**:
+
 1. Update all documentation for unified system
 2. Create migration guide from old workflows
 3. Add debugAPI.getAssetGenerationHealth()
@@ -1227,6 +1246,7 @@ getAssetGenerationHealth() {
 **Week 4**: Documentation
 
 **Key Insight**: Audio generation is DONE. We're mainly adding:
+
 1. Unified interface (orchestrator)
 2. DALL-E migration from get-more-buff
 3. Observability integration
@@ -1334,16 +1354,16 @@ window.debugAPI.getAssetGenerationHealth();
 
 ## Success Criteria
 
-| Metric | Target | Measurement |
-|--------|--------|-------------|
-| **Migration Complete** | 100% | All get-more-buff patterns migrated |
-| **Spec Coverage** | 45+ assets | All shots.json → YAML specs |
-| **Audio Support** | ElevenLabs + Bark | Both providers implemented |
-| **Cost Tracking** | Real-time | SQLite database logging all API calls |
-| **Observability** | Full integration | All operations logged with LOG |
-| **Manifest Integration** | Automatic | Generated assets → manifest.json → constants |
-| **Documentation** | Complete | Usage guides, API docs, examples |
-| **Architecture Compliance** | 100% | Passes validate-architecture-simple.js |
+| Metric                      | Target            | Measurement                                  |
+| --------------------------- | ----------------- | -------------------------------------------- |
+| **Migration Complete**      | 100%              | All get-more-buff patterns migrated          |
+| **Spec Coverage**           | 45+ assets        | All shots.json → YAML specs                  |
+| **Audio Support**           | ElevenLabs + Bark | Both providers implemented                   |
+| **Cost Tracking**           | Real-time         | SQLite database logging all API calls        |
+| **Observability**           | Full integration  | All operations logged with LOG               |
+| **Manifest Integration**    | Automatic         | Generated assets → manifest.json → constants |
+| **Documentation**           | Complete          | Usage guides, API docs, examples             |
+| **Architecture Compliance** | 100%              | Passes validate-architecture-simple.js       |
 
 ---
 

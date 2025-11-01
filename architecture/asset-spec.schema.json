@@ -1,409 +1,403 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://wynisbuff2.com/schemas/asset-spec.schema.json",
-  "title": "WynIsBuff2 Asset Generation Specification Schema",
-  "description": "Schema for validating YAML/JSON asset generation specifications",
-  "oneOf": [
-    { "$ref": "#/definitions/assetSpec" },
-    { "$ref": "#/definitions/templateSpec" }
-  ],
-  "definitions": {
-    "assetSpec": {
-      "type": "object",
-      "required": ["version", "id", "generation", "prompt"],
-      "additionalProperties": false,
-      "properties": {
-        "version": {
-          "type": "string",
-          "pattern": "^\\d+\\.\\d+$",
-          "description": "Specification version (e.g., '1.0')"
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "https://wynisbuff2.com/schemas/asset-spec.schema.json",
+    "title": "WynIsBuff2 Asset Generation Specification Schema",
+    "description": "Schema for validating YAML/JSON asset generation specifications",
+    "oneOf": [{ "$ref": "#/definitions/assetSpec" }, { "$ref": "#/definitions/templateSpec" }],
+    "definitions": {
+        "assetSpec": {
+            "type": "object",
+            "required": ["version", "id", "generation", "prompt"],
+            "additionalProperties": false,
+            "properties": {
+                "version": {
+                    "type": "string",
+                    "pattern": "^\\d+\\.\\d+$",
+                    "description": "Specification version (e.g., '1.0')"
+                },
+                "id": {
+                    "type": "string",
+                    "pattern": "^[a-z0-9-_]+$",
+                    "description": "Unique asset identifier (kebab-case)"
+                },
+                "metadata": {
+                    "$ref": "#/definitions/metadata"
+                },
+                "generation": {
+                    "$ref": "#/definitions/generation"
+                },
+                "prompt": {
+                    "$ref": "#/definitions/prompt"
+                },
+                "post_processing": {
+                    "type": "array",
+                    "description": "Post-processing pipeline steps",
+                    "items": {
+                        "$ref": "#/definitions/processingStep"
+                    }
+                },
+                "integration": {
+                    "$ref": "#/definitions/integration"
+                },
+                "observability": {
+                    "$ref": "#/definitions/observability"
+                }
+            }
         },
-        "id": {
-          "type": "string",
-          "pattern": "^[a-z0-9-_]+$",
-          "description": "Unique asset identifier (kebab-case)"
+        "templateSpec": {
+            "type": "object",
+            "required": ["version", "template", "parameters", "generation", "prompt"],
+            "additionalProperties": false,
+            "properties": {
+                "version": {
+                    "type": "string",
+                    "pattern": "^\\d+\\.\\d+$"
+                },
+                "template": {
+                    "type": "string",
+                    "description": "Template identifier"
+                },
+                "parameters": {
+                    "type": "array",
+                    "description": "Template parameters",
+                    "items": {
+                        "$ref": "#/definitions/parameter"
+                    }
+                },
+                "generation": {
+                    "$ref": "#/definitions/generation"
+                },
+                "prompt": {
+                    "$ref": "#/definitions/templatePrompt"
+                },
+                "post_processing": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/processingStep"
+                    }
+                },
+                "integration": {
+                    "$ref": "#/definitions/templateIntegration"
+                }
+            }
         },
         "metadata": {
-          "$ref": "#/definitions/metadata"
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "created": {
+                    "type": "string",
+                    "format": "date",
+                    "description": "Creation date (YYYY-MM-DD)"
+                },
+                "author": {
+                    "type": "string",
+                    "description": "Spec author"
+                },
+                "category": {
+                    "type": "string",
+                    "enum": ["sprites", "backdrops", "particles", "sfx", "music", "ui"],
+                    "description": "Asset category"
+                },
+                "tags": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "Searchable tags"
+                }
+            }
         },
         "generation": {
-          "$ref": "#/definitions/generation"
+            "type": "object",
+            "required": ["type", "provider"],
+            "additionalProperties": false,
+            "properties": {
+                "type": {
+                    "type": "string",
+                    "enum": ["image", "audio"],
+                    "description": "Asset type to generate"
+                },
+                "provider": {
+                    "type": "string",
+                    "enum": [
+                        "dalle-3",
+                        "stable-diffusion",
+                        "firefly",
+                        "elevenlabs",
+                        "bark",
+                        "musicgen"
+                    ],
+                    "description": "Primary generation provider"
+                },
+                "fallback": {
+                    "type": "string",
+                    "enum": [
+                        "dalle-3",
+                        "stable-diffusion",
+                        "firefly",
+                        "elevenlabs",
+                        "bark",
+                        "musicgen",
+                        "manual"
+                    ],
+                    "description": "Fallback provider if primary fails"
+                },
+                "model": {
+                    "type": "string",
+                    "description": "Specific model version (optional)"
+                }
+            }
         },
         "prompt": {
-          "$ref": "#/definitions/prompt"
+            "type": "object",
+            "required": ["base"],
+            "additionalProperties": false,
+            "properties": {
+                "base": {
+                    "type": "string",
+                    "minLength": 10,
+                    "maxLength": 4000,
+                    "description": "Main prompt text"
+                },
+                "style": {
+                    "type": "string",
+                    "description": "Style directives"
+                },
+                "negative": {
+                    "type": "string",
+                    "description": "Negative prompt (what to avoid)"
+                },
+                "parameters": {
+                    "type": "object",
+                    "description": "Provider-specific parameters",
+                    "properties": {
+                        "size": {
+                            "type": "string",
+                            "pattern": "^\\d+x\\d+$",
+                            "description": "Output dimensions (e.g., '1024x1024')"
+                        },
+                        "quality": {
+                            "type": "string",
+                            "enum": ["standard", "hd", "high"],
+                            "description": "Generation quality"
+                        },
+                        "n_variations": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 10,
+                            "description": "Number of variations to generate"
+                        },
+                        "duration_seconds": {
+                            "type": "number",
+                            "minimum": 0.1,
+                            "maximum": 30.0,
+                            "description": "Audio duration (for audio assets)"
+                        }
+                    }
+                }
+            }
         },
-        "post_processing": {
-          "type": "array",
-          "description": "Post-processing pipeline steps",
-          "items": {
-            "$ref": "#/definitions/processingStep"
-          }
+        "templatePrompt": {
+            "type": "object",
+            "required": ["base"],
+            "additionalProperties": false,
+            "properties": {
+                "base": {
+                    "type": "string",
+                    "description": "Template prompt with {{variable}} placeholders"
+                },
+                "style": {
+                    "type": "string"
+                },
+                "templates": {
+                    "type": "object",
+                    "description": "Named template expansions",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "parameters": {
+                    "type": "object"
+                }
+            }
+        },
+        "parameter": {
+            "type": "object",
+            "required": ["name", "type"],
+            "additionalProperties": false,
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "pattern": "^[a-z_]+$",
+                    "description": "Parameter name (snake_case)"
+                },
+                "type": {
+                    "type": "string",
+                    "enum": ["string", "integer", "number", "enum", "boolean"],
+                    "description": "Parameter type"
+                },
+                "description": {
+                    "type": "string",
+                    "description": "Parameter description"
+                },
+                "default": {
+                    "description": "Default value"
+                },
+                "values": {
+                    "type": "array",
+                    "description": "Allowed values (for enum type)",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "min": {
+                    "type": "number",
+                    "description": "Minimum value (for number/integer)"
+                },
+                "max": {
+                    "type": "number",
+                    "description": "Maximum value (for number/integer)"
+                }
+            }
+        },
+        "processingStep": {
+            "type": "object",
+            "required": ["action"],
+            "additionalProperties": true,
+            "properties": {
+                "action": {
+                    "type": "string",
+                    "enum": [
+                        "resize",
+                        "crop",
+                        "convert",
+                        "validate",
+                        "normalize",
+                        "trim_silence",
+                        "compress",
+                        "watermark"
+                    ],
+                    "description": "Processing action to perform"
+                },
+                "dimensions": {
+                    "type": "string",
+                    "pattern": "^\\d+x\\d+$",
+                    "description": "Target dimensions (for resize)"
+                },
+                "method": {
+                    "type": "string",
+                    "enum": ["nearest", "bilinear", "bicubic", "lanczos"],
+                    "description": "Resize method"
+                },
+                "formats": {
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                        "enum": ["png", "webp", "jpg", "mp3", "wav", "ogg"]
+                    },
+                    "description": "Output formats (for convert)"
+                },
+                "checks": {
+                    "type": "array",
+                    "items": {
+                        "oneOf": [{ "type": "string" }, { "type": "object" }]
+                    },
+                    "description": "Validation checks to perform"
+                },
+                "peak": {
+                    "type": "number",
+                    "description": "Peak normalization level in dB"
+                },
+                "threshold": {
+                    "type": "number",
+                    "description": "Silence threshold in dB"
+                }
+            }
         },
         "integration": {
-          "$ref": "#/definitions/integration"
+            "type": "object",
+            "required": ["manifest_key"],
+            "additionalProperties": false,
+            "properties": {
+                "manifest_key": {
+                    "type": "string",
+                    "pattern": "^[a-zA-Z][a-zA-Z0-9]*$",
+                    "description": "Asset key in manifest (camelCase)"
+                },
+                "manifest_path": {
+                    "type": "string",
+                    "description": "Relative path in assets/ directory"
+                },
+                "manifest_type": {
+                    "type": "string",
+                    "enum": ["image", "spritesheet", "atlasXML", "audio"],
+                    "description": "Manifest asset type"
+                },
+                "manifest_section": {
+                    "type": "string",
+                    "description": "Manifest section (e.g., 'images', 'audio.sfx.jump')"
+                },
+                "description": {
+                    "type": "string",
+                    "description": "Human-readable description for manifest"
+                },
+                "naming_pattern": {
+                    "type": "string",
+                    "description": "File naming pattern with {{variables}}"
+                }
+            }
+        },
+        "templateIntegration": {
+            "type": "object",
+            "required": ["naming_pattern"],
+            "properties": {
+                "manifest_section": {
+                    "type": "string"
+                },
+                "naming_pattern": {
+                    "type": "string",
+                    "description": "File naming pattern with {{variables}}"
+                },
+                "description_pattern": {
+                    "type": "string",
+                    "description": "Description pattern with {{variables}}"
+                }
+            }
         },
         "observability": {
-          "$ref": "#/definitions/observability"
-        }
-      }
-    },
-    "templateSpec": {
-      "type": "object",
-      "required": ["version", "template", "parameters", "generation", "prompt"],
-      "additionalProperties": false,
-      "properties": {
-        "version": {
-          "type": "string",
-          "pattern": "^\\d+\\.\\d+$"
-        },
-        "template": {
-          "type": "string",
-          "description": "Template identifier"
-        },
-        "parameters": {
-          "type": "array",
-          "description": "Template parameters",
-          "items": {
-            "$ref": "#/definitions/parameter"
-          }
-        },
-        "generation": {
-          "$ref": "#/definitions/generation"
-        },
-        "prompt": {
-          "$ref": "#/definitions/templatePrompt"
-        },
-        "post_processing": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/processingStep"
-          }
-        },
-        "integration": {
-          "$ref": "#/definitions/templateIntegration"
-        }
-      }
-    },
-    "metadata": {
-      "type": "object",
-      "additionalProperties": false,
-      "properties": {
-        "created": {
-          "type": "string",
-          "format": "date",
-          "description": "Creation date (YYYY-MM-DD)"
-        },
-        "author": {
-          "type": "string",
-          "description": "Spec author"
-        },
-        "category": {
-          "type": "string",
-          "enum": ["sprites", "backdrops", "particles", "sfx", "music", "ui"],
-          "description": "Asset category"
-        },
-        "tags": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "description": "Searchable tags"
-        }
-      }
-    },
-    "generation": {
-      "type": "object",
-      "required": ["type", "provider"],
-      "additionalProperties": false,
-      "properties": {
-        "type": {
-          "type": "string",
-          "enum": ["image", "audio"],
-          "description": "Asset type to generate"
-        },
-        "provider": {
-          "type": "string",
-          "enum": [
-            "dalle-3",
-            "stable-diffusion",
-            "firefly",
-            "elevenlabs",
-            "bark",
-            "musicgen"
-          ],
-          "description": "Primary generation provider"
-        },
-        "fallback": {
-          "type": "string",
-          "enum": [
-            "dalle-3",
-            "stable-diffusion",
-            "firefly",
-            "elevenlabs",
-            "bark",
-            "musicgen",
-            "manual"
-          ],
-          "description": "Fallback provider if primary fails"
-        },
-        "model": {
-          "type": "string",
-          "description": "Specific model version (optional)"
-        }
-      }
-    },
-    "prompt": {
-      "type": "object",
-      "required": ["base"],
-      "additionalProperties": false,
-      "properties": {
-        "base": {
-          "type": "string",
-          "minLength": 10,
-          "maxLength": 4000,
-          "description": "Main prompt text"
-        },
-        "style": {
-          "type": "string",
-          "description": "Style directives"
-        },
-        "negative": {
-          "type": "string",
-          "description": "Negative prompt (what to avoid)"
-        },
-        "parameters": {
-          "type": "object",
-          "description": "Provider-specific parameters",
-          "properties": {
-            "size": {
-              "type": "string",
-              "pattern": "^\\d+x\\d+$",
-              "description": "Output dimensions (e.g., '1024x1024')"
-            },
-            "quality": {
-              "type": "string",
-              "enum": ["standard", "hd", "high"],
-              "description": "Generation quality"
-            },
-            "n_variations": {
-              "type": "integer",
-              "minimum": 1,
-              "maximum": 10,
-              "description": "Number of variations to generate"
-            },
-            "duration_seconds": {
-              "type": "number",
-              "minimum": 0.1,
-              "maximum": 30.0,
-              "description": "Audio duration (for audio assets)"
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "track_cost": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Track generation cost in database"
+                },
+                "track_quality": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Track quality metrics"
+                },
+                "track_performance": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Track generation performance"
+                },
+                "log_level": {
+                    "type": "string",
+                    "enum": ["dev", "info", "warn", "error"],
+                    "default": "info",
+                    "description": "Logging verbosity level"
+                },
+                "sampling_rate": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1,
+                    "default": 1.0,
+                    "description": "Sampling rate for dev logs (0-1)"
+                }
             }
-          }
         }
-      }
-    },
-    "templatePrompt": {
-      "type": "object",
-      "required": ["base"],
-      "additionalProperties": false,
-      "properties": {
-        "base": {
-          "type": "string",
-          "description": "Template prompt with {{variable}} placeholders"
-        },
-        "style": {
-          "type": "string"
-        },
-        "templates": {
-          "type": "object",
-          "description": "Named template expansions",
-          "additionalProperties": {
-            "type": "string"
-          }
-        },
-        "parameters": {
-          "type": "object"
-        }
-      }
-    },
-    "parameter": {
-      "type": "object",
-      "required": ["name", "type"],
-      "additionalProperties": false,
-      "properties": {
-        "name": {
-          "type": "string",
-          "pattern": "^[a-z_]+$",
-          "description": "Parameter name (snake_case)"
-        },
-        "type": {
-          "type": "string",
-          "enum": ["string", "integer", "number", "enum", "boolean"],
-          "description": "Parameter type"
-        },
-        "description": {
-          "type": "string",
-          "description": "Parameter description"
-        },
-        "default": {
-          "description": "Default value"
-        },
-        "values": {
-          "type": "array",
-          "description": "Allowed values (for enum type)",
-          "items": {
-            "type": "string"
-          }
-        },
-        "min": {
-          "type": "number",
-          "description": "Minimum value (for number/integer)"
-        },
-        "max": {
-          "type": "number",
-          "description": "Maximum value (for number/integer)"
-        }
-      }
-    },
-    "processingStep": {
-      "type": "object",
-      "required": ["action"],
-      "additionalProperties": true,
-      "properties": {
-        "action": {
-          "type": "string",
-          "enum": [
-            "resize",
-            "crop",
-            "convert",
-            "validate",
-            "normalize",
-            "trim_silence",
-            "compress",
-            "watermark"
-          ],
-          "description": "Processing action to perform"
-        },
-        "dimensions": {
-          "type": "string",
-          "pattern": "^\\d+x\\d+$",
-          "description": "Target dimensions (for resize)"
-        },
-        "method": {
-          "type": "string",
-          "enum": ["nearest", "bilinear", "bicubic", "lanczos"],
-          "description": "Resize method"
-        },
-        "formats": {
-          "type": "array",
-          "items": {
-            "type": "string",
-            "enum": ["png", "webp", "jpg", "mp3", "wav", "ogg"]
-          },
-          "description": "Output formats (for convert)"
-        },
-        "checks": {
-          "type": "array",
-          "items": {
-            "oneOf": [
-              { "type": "string" },
-              { "type": "object" }
-            ]
-          },
-          "description": "Validation checks to perform"
-        },
-        "peak": {
-          "type": "number",
-          "description": "Peak normalization level in dB"
-        },
-        "threshold": {
-          "type": "number",
-          "description": "Silence threshold in dB"
-        }
-      }
-    },
-    "integration": {
-      "type": "object",
-      "required": ["manifest_key"],
-      "additionalProperties": false,
-      "properties": {
-        "manifest_key": {
-          "type": "string",
-          "pattern": "^[a-zA-Z][a-zA-Z0-9]*$",
-          "description": "Asset key in manifest (camelCase)"
-        },
-        "manifest_path": {
-          "type": "string",
-          "description": "Relative path in assets/ directory"
-        },
-        "manifest_type": {
-          "type": "string",
-          "enum": ["image", "spritesheet", "atlasXML", "audio"],
-          "description": "Manifest asset type"
-        },
-        "manifest_section": {
-          "type": "string",
-          "description": "Manifest section (e.g., 'images', 'audio.sfx.jump')"
-        },
-        "description": {
-          "type": "string",
-          "description": "Human-readable description for manifest"
-        },
-        "naming_pattern": {
-          "type": "string",
-          "description": "File naming pattern with {{variables}}"
-        }
-      }
-    },
-    "templateIntegration": {
-      "type": "object",
-      "required": ["naming_pattern"],
-      "properties": {
-        "manifest_section": {
-          "type": "string"
-        },
-        "naming_pattern": {
-          "type": "string",
-          "description": "File naming pattern with {{variables}}"
-        },
-        "description_pattern": {
-          "type": "string",
-          "description": "Description pattern with {{variables}}"
-        }
-      }
-    },
-    "observability": {
-      "type": "object",
-      "additionalProperties": false,
-      "properties": {
-        "track_cost": {
-          "type": "boolean",
-          "default": true,
-          "description": "Track generation cost in database"
-        },
-        "track_quality": {
-          "type": "boolean",
-          "default": true,
-          "description": "Track quality metrics"
-        },
-        "track_performance": {
-          "type": "boolean",
-          "default": true,
-          "description": "Track generation performance"
-        },
-        "log_level": {
-          "type": "string",
-          "enum": ["dev", "info", "warn", "error"],
-          "default": "info",
-          "description": "Logging verbosity level"
-        },
-        "sampling_rate": {
-          "type": "number",
-          "minimum": 0,
-          "maximum": 1,
-          "default": 1.0,
-          "description": "Sampling rate for dev logs (0-1)"
-        }
-      }
     }
-  }
 }
