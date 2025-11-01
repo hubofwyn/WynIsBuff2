@@ -163,6 +163,42 @@ npm run dev   # Starts at http://localhost:8080/
 - Sound Effects: MP3/WAV in `sounds/`
 - Categories: `land`, `pickup`, `click`, `hover`, `special`
 
+## Asset Standards
+
+### Minimum Dimensions
+
+To ensure proper rendering in-game, follow these minimum asset dimensions:
+
+| Asset Type         | Minimum Size | Recommended Size | Notes                                         |
+| ------------------ | ------------ | ---------------- | --------------------------------------------- |
+| Particle Textures  | 32×32px      | 32×32px          | Critical for visibility with scale 0.1-0.3    |
+| UI Icons           | 64×64px      | 128×128px        | Scale down for crisp rendering                |
+| Character Sprites  | 64×64px      | 128×128px        | Depends on art style and zoom level           |
+| Background Tiles   | 64×64px      | 64×64px or 128×128px | Match platform tile size                  |
+| Collectibles       | 32×32px      | 64×64px          | Should be clearly visible                     |
+
+**Critical Lesson**: 1×1px particle textures become invisible when scaled to 0.15-0.3. Always use 32×32px minimum for particles to ensure visibility at typical scale factors (0.1-0.3).
+
+**Mathematical Reasoning**:
+- Target visible particle size: 3-10px on screen
+- Typical particle scale: 0.1 - 0.3
+- Required texture: 32×32px (32 × 0.1 = 3.2px, 32 × 0.3 = 9.6px) ✅
+- Wrong: 1×1px (1 × 0.3 = 0.3px = invisible) ❌
+
+### Phaser 3.90 Particle Textures
+
+When creating particle textures for Phaser 3.90:
+- Use **single image textures**, not texture atlases (unless specifically needed)
+- Do NOT specify `frame` parameter when texture is a single image
+- Use simple shapes (circles, squares) with anti-aliasing
+- Save as PNG with transparency
+
+Example particle creation:
+```bash
+# Create 32×32 white circle with ImageMagick
+convert -size 32x32 xc:none -fill white -draw "circle 16,16 16,0" white.png
+```
+
 ## Commands
 
 | Command                                       | Description                           |
