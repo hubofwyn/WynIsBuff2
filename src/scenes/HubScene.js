@@ -76,7 +76,7 @@ export class HubScene extends Scene {
 
     createHubLayout() {
         const centerX = this.scale.width / 2;
-        const centerY = this.scale.height / 2;
+        const _centerY = this.scale.height / 2;
 
         // Hub title
         this.add
@@ -490,22 +490,22 @@ export class HubScene extends Scene {
     }
 
     // Event handlers
-    onResourceGained(data) {
+    onResourceGained(_data) {
         // Update resource display
         this.updateResourceDisplay();
     }
 
-    onResourceSpent(data) {
+    onResourceSpent(_data) {
         // Update resource display
         this.updateResourceDisplay();
     }
 
-    onUpgradePurchased(data) {
+    onUpgradePurchased(_data) {
         // Update progress display
         this.updateProgressDisplay();
     }
 
-    onAutomationStarted(data) {
+    onAutomationStarted(_data) {
         // Update automation count
         this.updateProgressDisplay();
     }
@@ -572,7 +572,7 @@ export class HubScene extends Scene {
         this.autoSave();
     }
 
-    update(time, delta) {
+    update(_time, _delta) {
         // Update animations and visual effects
     }
 }

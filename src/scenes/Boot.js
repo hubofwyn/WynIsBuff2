@@ -1,7 +1,6 @@
 import { Scene } from 'phaser';
 
 import { SceneKeys } from '../constants/SceneKeys.js';
-import { ImageAssets, ImagePaths } from '../constants/Assets.js';
 import { LOG } from '../observability/core/LogSystem.js';
 
 export class Boot extends Scene {
@@ -36,7 +35,7 @@ export class Boot extends Scene {
         this.scene.start(SceneKeys.PRELOADER);
     }
 
-    update(time, delta) {
+    update(_time, _delta) {
         // Placeholder update method for Boot scene
     }
 }

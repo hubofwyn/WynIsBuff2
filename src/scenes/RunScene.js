@@ -9,7 +9,7 @@ import { LevelManager, PlatformFactory } from '@features/level';
 import { EventBus, AudioManager, GameStateManager } from '@features/core';
 import { DNAExtractor, TimeEchoRecorder } from '@features/idle';
 
-import { ImageAssets, AudioAssets } from '../constants/Assets.js';
+import { ImageAssets } from '../constants/Assets.js';
 import { EventNames } from '../constants/EventNames.js';
 import { SceneKeys } from '../constants/SceneKeys.js';
 
@@ -227,20 +227,20 @@ export class RunScene extends Scene {
 
     createTouchControls() {
         // Left/Right zones
-        const leftZone = this.add
+        const _leftZone = this.add
             .zone(100, 400, 200, 200)
             .setInteractive()
             .on('pointerdown', () => (this.touchLeft = true))
             .on('pointerup', () => (this.touchLeft = false));
 
-        const rightZone = this.add
+        const _rightZone = this.add
             .zone(700, 400, 200, 200)
             .setInteractive()
             .on('pointerdown', () => (this.touchRight = true))
             .on('pointerup', () => (this.touchRight = false));
 
         // Jump zone
-        const jumpZone = this.add
+        const _jumpZone = this.add
             .zone(400, 300, 400, 300)
             .setInteractive()
             .on('pointerdown', () => (this.touchJump = true))

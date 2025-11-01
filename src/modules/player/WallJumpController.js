@@ -75,7 +75,7 @@ export class WallJumpController {
      * @param {Array} platforms - Array of platforms for wall detection
      * @param {boolean} isOnGround - Whether player is on ground
      */
-    update(body, sprite, input, platforms, isOnGround) {
+    update(body, sprite, input, platforms, _isOnGround) {
         if (!body) return;
 
         // Update wall detection
@@ -122,19 +122,19 @@ export class WallJumpController {
         const rayBottom = { x: position.x, y: position.y + this.wallDetection.rayOffset };
 
         // Check left wall
-        const leftRayTop = { x: rayTop.x - this.wallDetection.rayLength, y: rayTop.y };
-        const leftRayBottom = { x: rayBottom.x - this.wallDetection.rayLength, y: rayBottom.y };
+        const _leftRayTop = { x: rayTop.x - this.wallDetection.rayLength, y: rayTop.y };
+        const _leftRayBottom = { x: rayBottom.x - this.wallDetection.rayLength, y: rayBottom.y };
 
         // Check right wall
-        const rightRayTop = { x: rayTop.x + this.wallDetection.rayLength, y: rayTop.y };
-        const rightRayBottom = { x: rayBottom.x + this.wallDetection.rayLength, y: rayBottom.y };
+        const _rightRayTop = { x: rayTop.x + this.wallDetection.rayLength, y: rayTop.y };
+        const _rightRayBottom = { x: rayBottom.x + this.wallDetection.rayLength, y: rayBottom.y };
 
         // Simplified wall detection using platform bounds
         // In a full implementation, this would use proper physics raycasting
         platforms.forEach((platform) => {
             if (!platform.body) return;
 
-            const platformPos = platform.body.translation();
+            const _platformPos = platform.body.translation();
             const bounds = this.getPlatformBounds(platform);
 
             // Check if player is at wall height and close enough horizontally

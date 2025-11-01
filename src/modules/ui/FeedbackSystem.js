@@ -614,7 +614,7 @@ export class FeedbackSystem extends BaseManager {
      * @param {number} time - Current time
      * @param {number} delta - Delta time
      */
-    update(time, delta) {
+    update(_time, _delta) {
         // Update any time-based feedback animations
         // This method can be expanded for complex feedback systems
     }

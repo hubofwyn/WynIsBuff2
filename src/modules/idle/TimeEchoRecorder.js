@@ -419,7 +419,7 @@ export class TimeEchoRecorder {
             (p) => p.occurrences > 2 && p.effectiveness > 0.7
         );
 
-        for (const pattern of successfulPatterns) {
+        for (const _pattern of successfulPatterns) {
             this.stats.successfulPatterns++;
         }
     }
@@ -617,7 +617,7 @@ export class TimeEchoRecorder {
      * Reinforce a successful pattern
      */
     reinforcePattern(data) {
-        const { patternType, context, success } = data;
+        const { patternType, context, success: _success } = data;
 
         if (!this.decisionPatterns[patternType]) return;
 

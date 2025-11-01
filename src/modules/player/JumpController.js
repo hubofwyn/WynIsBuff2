@@ -1,5 +1,5 @@
 import { EventNames } from '../../constants/EventNames.js';
-import { SceneKeys } from '../../constants/SceneKeys';
+import { SceneKeys } from '../../constants/SceneKeys.js';
 import { LOG } from '../../observability/core/LogSystem.js';
 
 /**

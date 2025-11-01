@@ -362,7 +362,7 @@ export class WallDashController {
      * Calculate dash direction based on input
      */
     calculateDashDirection(input, velocity) {
-        const options = this.wallParams.wallDash.angleOptions;
+        const _options = this.wallParams.wallDash.angleOptions;
 
         // Default to horizontal dash away from wall
         const baseDir = { x: 1, y: 0 };
@@ -388,7 +388,7 @@ export class WallDashController {
     /**
      * Update active dash
      */
-    updateDash(body, deltaTime) {
+    updateDash(body, _deltaTime) {
         const now = performance.now();
         const dashTime = now - this.dashState.startTime;
 
@@ -521,7 +521,7 @@ export class WallDashController {
     /**
      * Create wall slide particle effects
      */
-    createWallSlideParticles(position, velocity) {
+    createWallSlideParticles(_position, _velocity) {
         const side = this.wallState.touchingLeft ? -1 : 1;
 
         // Create sparks at contact point

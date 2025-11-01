@@ -1,7 +1,7 @@
 import { Scene } from 'phaser';
 import { AudioManager } from '@features/core';
 
-import { UIConfig } from '../constants/UIConfig';
+import { UIConfig } from '../constants/UIConfig.js';
 import { SceneKeys } from '../constants/SceneKeys.js';
 
 /**

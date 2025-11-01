@@ -203,7 +203,7 @@ export class ErrorSuggestions {
      * @param {Object} context - Optional context (recent logs, game state)
      * @returns {Object} Suggestions with metadata
      */
-    getSuggestions(errorCode, context = {}) {
+    getSuggestions(errorCode, _context = {}) {
         // Direct match
         if (this.knowledgeBase[errorCode]) {
             return {

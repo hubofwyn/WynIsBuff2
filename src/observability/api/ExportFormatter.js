@@ -296,7 +296,7 @@ export class ExportFormatter {
         const display = logs.slice(-limit);
         let output = `\n=== Showing last ${display.length} of ${logs.length} logs ===\n\n`;
 
-        display.forEach((log, i) => {
+        display.forEach((log, _i) => {
             const frame = log.context && log.context.frame ? `[F${log.context.frame}]` : '[F?]';
             const level = log.level.toUpperCase().padEnd(5);
             const subsystem = log.subsystem.padEnd(10);

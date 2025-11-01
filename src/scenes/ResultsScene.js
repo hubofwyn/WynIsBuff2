@@ -5,7 +5,7 @@ import { PerformanceAnalyzer } from '@features/analytics';
 
 import { SceneKeys } from '../constants/SceneKeys.js';
 import { EventNames } from '../constants/EventNames.js';
-import { ImageAssets, AudioAssets } from '../constants/Assets.js';
+import { ImageAssets } from '../constants/Assets.js';
 
 export class ResultsScene extends Scene {
     constructor() {
@@ -88,10 +88,10 @@ export class ResultsScene extends Scene {
 
     createBackground() {
         // Dark overlay
-        const overlay = this.add.rectangle(400, 300, 800, 600, 0x000000, 0.8);
+        const _overlay = this.add.rectangle(400, 300, 800, 600, 0x000000, 0.8);
 
         // Animated particles
-        const particles = this.add.particles(400, 300, ImageAssets.PARTICLE_WHITE, {
+        const _particles = this.add.particles(400, 300, ImageAssets.PARTICLE_WHITE, {
             color: [0xffffff, 0xffdd00, 0xff00ff],
             colorEase: 'quad.out',
             lifespan: 2000,

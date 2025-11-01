@@ -2,7 +2,7 @@ import { Scene } from 'phaser';
 import { GameStateManager, EventSystem, AudioManager } from '@features/core';
 
 import { EventNames } from '../constants/EventNames.js';
-import { UIConfig } from '../constants/UIConfig';
+import { UIConfig } from '../constants/UIConfig.js';
 import { SceneKeys } from '../constants/SceneKeys.js';
 import { LOG } from '../observability/core/LogSystem.js';
 
@@ -411,7 +411,7 @@ export class CharacterSelect extends Scene {
         });
     }
 
-    update(time, delta) {
+    update(_time, _delta) {
         // No per-frame logic needed
     }
 }
