@@ -1,4 +1,5 @@
 import { BaseController } from '../../core/BaseController.js';
+import { DeterministicRNG } from '../../core/DeterministicRNG.js';
 import { EventNames } from '../../constants/EventNames.js';
 import { LOG } from '../../observability/core/LogSystem.js';
 
@@ -45,6 +46,9 @@ export class BossController extends BaseController {
     }
 
     init() {
+        // Initialize deterministic RNG for boss behavior
+        this.rng = DeterministicRNG.getInstance();
+
         this.createSprite();
         this.createPhysicsBody();
         this.scheduleNextJump();
@@ -117,7 +121,7 @@ export class BossController extends BaseController {
         // Schedule next jump with random timing
         const minInterval = this.bossParams.jumpIntervalMin;
         const maxInterval = this.bossParams.jumpIntervalMax;
-        const interval = minInterval + Math.random() * (maxInterval - minInterval);
+        const interval = minInterval + this.rng.next('main') * (maxInterval - minInterval);
 
         this.nextJumpTime = Date.now() + interval;
 
@@ -138,10 +142,10 @@ export class BossController extends BaseController {
         // Random jump force between min and max
         const jumpForce =
             this.bossParams.jumpForceMin +
-            Math.random() * (this.bossParams.jumpForceMax - this.bossParams.jumpForceMin);
+            this.rng.next('main') * (this.bossParams.jumpForceMax - this.bossParams.jumpForceMin);
 
         // Optional small horizontal drift
-        const horizontalDrift = (Math.random() - 0.5) * this.bossParams.horizontalDrift;
+        const horizontalDrift = (this.rng.next('main') - 0.5) * this.bossParams.horizontalDrift;
 
         // Apply jump impulse
         this.body.setLinvel({ x: horizontalDrift, y: jumpForce }, true);

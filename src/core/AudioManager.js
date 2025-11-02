@@ -2,6 +2,7 @@ import { Howl, Howler } from 'howler';
 
 // Using the new path alias introduced in Step 2
 import { AudioAssets, AudioPaths } from '../constants/Assets.js';
+import { DeterministicRNG } from './DeterministicRNG.js';
 import { LOG } from '../observability/core/LogSystem.js';
 
 import { BaseManager } from './BaseManager.js';
@@ -88,6 +89,9 @@ export class AudioManager extends BaseManager {
         if (this.isInitialized()) {
             return AudioManager.getInstance();
         }
+        // Initialize deterministic RNG for SFX variant selection
+        this.rng = DeterministicRNG.getInstance();
+
         this.music = {};
         this.sfx = {};
         this.settings = {
@@ -392,7 +396,7 @@ export class AudioManager extends BaseManager {
             });
             return;
         }
-        const howl = arr[Math.floor(Math.random() * arr.length)];
+        const howl = arr[this.rng.int(0, arr.length - 1, 'main')];
         const id = howl.play();
         if (typeof howl.stereo === 'function') {
             howl.stereo(pan, id);

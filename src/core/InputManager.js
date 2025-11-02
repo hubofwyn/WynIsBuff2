@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 
 import { EventNames } from '../constants/EventNames.js';
 import { createEmptyInputState } from '../types/InputState.js';
+import { DeterministicRNG } from './DeterministicRNG.js';
 import { LOG } from '../observability/core/LogSystem.js';
 
 import { GameStateManager } from './GameStateManager.js';
@@ -18,6 +19,9 @@ export class InputManager extends BaseManager {
     constructor() {
         super();
         if (this.isInitialized()) return;
+
+        // Initialize deterministic RNG for debug sampling
+        this.rng = DeterministicRNG.getInstance();
 
         this.scene = null;
         this.eventSystem = null;
@@ -114,7 +118,7 @@ export class InputManager extends BaseManager {
      */
     getSnapshot() {
         // Debug: Log occasionally
-        if (Math.random() < 0.005) {
+        if (this.rng.next('main') < 0.005) {
             LOG.dev('INPUT_SNAPSHOT_SAMPLE', {
                 subsystem: 'input',
                 message: 'getSnapshot called (sampled)',

@@ -1,3 +1,4 @@
+import { DeterministicRNG } from '../../core/DeterministicRNG.js';
 import { EventNames } from '../../constants/EventNames.js';
 import { LOG } from '../../observability/core/LogSystem.js';
 
@@ -14,6 +15,9 @@ export class WallJumpController {
     constructor(scene, eventSystem) {
         this.scene = scene;
         this.eventSystem = eventSystem;
+
+        // Initialize deterministic RNG for particle effects
+        this.rng = DeterministicRNG.getInstance();
 
         // Wall detection state
         this.wallContactLeft = false;
@@ -403,13 +407,13 @@ export class WallJumpController {
 
         // Create particles at wall contact point
         for (let i = 0; i < particleCount; i++) {
-            const angle = Math.PI * 0.5 + (Math.random() - 0.5) * Math.PI * 0.8;
-            const speed = 60 + Math.random() * 40;
+            const angle = Math.PI * 0.5 + (this.rng.next('main') - 0.5) * Math.PI * 0.8;
+            const speed = 60 + this.rng.next('main') * 40;
 
             const particle = this.scene.add.circle(
                 position.x - direction * 25, // Offset to wall side
-                position.y + Math.random() * 20 - 10,
-                3 + Math.random() * 2,
+                position.y + this.rng.next('main') * 20 - 10,
+                3 + this.rng.next('main') * 2,
                 i < 8 ? wallColor : energyColor,
                 0.8
             );
@@ -423,7 +427,7 @@ export class WallJumpController {
                 y: particle.y - Math.sin(angle) * speed,
                 alpha: 0,
                 scale: 0.3,
-                duration: 500 + Math.random() * 200,
+                duration: 500 + this.rng.next('main') * 200,
                 ease: 'Power2.Out',
                 onComplete: () => particle.destroy(),
             });

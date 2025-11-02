@@ -13,6 +13,7 @@ import { EventNames } from '../constants/EventNames.js';
 import { LOG } from '../observability/core/LogSystem.js';
 
 import { BaseManager } from './BaseManager.js';
+import { DeterministicRNG } from './DeterministicRNG.js';
 import { EventBus } from './EventBus.js';
 
 export class CloneManager extends BaseManager {
@@ -64,6 +65,9 @@ export class CloneManager extends BaseManager {
     }
 
     init() {
+        // Initialize deterministic RNG for clone mutations and generation
+        this.rng = DeterministicRNG.getInstance();
+
         this.setupEventListeners();
         this.loadSavedClones();
         this.setInitialized();
@@ -181,9 +185,9 @@ export class CloneManager extends BaseManager {
         const mutations = [];
 
         for (const stat in mutatedDNA.stats) {
-            if (Math.random() < this.mutationChance) {
+            if (this.rng.next('main') < this.mutationChance) {
                 const originalValue = mutatedDNA.stats[stat];
-                const variation = (Math.random() - 0.5) * 2 * this.mutationStrength;
+                const variation = (this.rng.next('main') - 0.5) * 2 * this.mutationStrength;
                 const newValue = Math.max(
                     0,
                     Math.min(this.statCaps[stat], originalValue * (1 + variation))
@@ -302,14 +306,14 @@ export class CloneManager extends BaseManager {
 
         // Crossover stats - randomly choose from each parent
         for (const stat in dna1.stats) {
-            if (Math.random() < 0.5) {
+            if (this.rng.next('main') < 0.5) {
                 combined.stats[stat] = dna1.stats[stat];
             } else {
                 combined.stats[stat] = dna2.stats[stat];
             }
 
             // Small chance of averaging for hybrid vigor
-            if (Math.random() < 0.2) {
+            if (this.rng.next('main') < 0.2) {
                 combined.stats[stat] = (dna1.stats[stat] + dna2.stats[stat]) / 2;
             }
         }
@@ -713,9 +717,9 @@ export class CloneManager extends BaseManager {
         };
 
         const spec = this.determineSpecialization(dna);
-        const prefix = prefixes[spec]?.[Math.floor(Math.random() * 4)] || 'Clone';
+        const prefix = prefixes[spec]?.[this.rng.int(0, 3, 'main')] || 'Clone';
         const suffix = generation > 0 ? ` G${generation}` : '';
-        const id = Math.floor(Math.random() * 1000);
+        const id = this.rng.int(0, 999, 'main');
 
         return `${prefix}-${id}${suffix}`;
     }
@@ -836,7 +840,13 @@ export class CloneManager extends BaseManager {
      * Generate a unique clone ID
      */
     generateCloneId() {
-        return `clone_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+        // Generate 9-character random string using deterministic RNG
+        const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+        let randomStr = '';
+        for (let i = 0; i < 9; i++) {
+            randomStr += chars[this.rng.int(0, chars.length - 1, 'main')];
+        }
+        return `clone_${Date.now()}_${randomStr}`;
     }
 
     /**

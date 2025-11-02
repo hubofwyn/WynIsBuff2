@@ -1,3 +1,4 @@
+import { DeterministicRNG } from '../../core/DeterministicRNG.js';
 import { EventNames } from '../../constants/EventNames.js';
 import { SceneKeys } from '../../constants/SceneKeys.js';
 import { LOG } from '../../observability/core/LogSystem.js';
@@ -15,6 +16,9 @@ export class JumpController {
     constructor(scene, eventSystem) {
         this.scene = scene;
         this.eventSystem = eventSystem;
+
+        // Initialize deterministic RNG for particle effects
+        this.rng = DeterministicRNG.getInstance();
 
         // Jump state
         this.jumpsUsed = 0;
@@ -517,8 +521,8 @@ export class JumpController {
 
         // Create jump burst particles
         for (let i = 0; i < config.count; i++) {
-            const angle = (Math.PI * 2 * i) / config.count + Math.random() * 0.3;
-            const distance = config.speed + Math.random() * 40;
+            const angle = (Math.PI * 2 * i) / config.count + this.rng.next('main') * 0.3;
+            const distance = config.speed + this.rng.next('main') * 40;
 
             const particle = this.scene.add.circle(
                 position.x,
@@ -537,7 +541,7 @@ export class JumpController {
                 y: position.y + Math.sin(angle) * distance + 20,
                 alpha: 0,
                 scale: 0.2,
-                duration: 400 + Math.random() * 200,
+                duration: 400 + this.rng.next('main') * 200,
                 ease: 'Power2.Out',
                 onComplete: () => particle.destroy(),
             });

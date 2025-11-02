@@ -1,4 +1,5 @@
-import { BaseManager } from '../../core/BaseManager.js';
+// Observability layer must have zero dependencies on core layer
+// Implements own singleton pattern to maintain architectural independence
 import { LOG } from '../core/LogSystem.js';
 
 /**
@@ -18,11 +19,33 @@ import { LOG } from '../core/LogSystem.js';
  *   context.registerProvider(new PlayerStateProvider(player));
  *   const snapshot = context.captureSnapshot();
  */
-export class DebugContext extends BaseManager {
+export class DebugContext {
+    static _instance = null;
+
     constructor() {
-        super();
-        if (this.isInitialized()) return;
+        // Singleton pattern
+        if (DebugContext._instance) {
+            return DebugContext._instance;
+        }
+
+        DebugContext._instance = this;
+        this._initialized = false;
         this.init();
+    }
+
+    static getInstance() {
+        if (!DebugContext._instance) {
+            new DebugContext();
+        }
+        return DebugContext._instance;
+    }
+
+    isInitialized() {
+        return this._initialized;
+    }
+
+    setInitialized() {
+        this._initialized = true;
     }
 
     init() {

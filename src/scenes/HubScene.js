@@ -1,5 +1,5 @@
 import { Scene } from 'phaser';
-import { GameStateManager, EventBus, EconomyManager } from '@features/core';
+import { GameStateManager, EventBus, EconomyManager, DeterministicRNG } from '@features/core';
 import { BossRewardSystem } from '@features/boss';
 import { EnhancedCloneManager } from '@features/idle';
 
@@ -24,6 +24,7 @@ export class HubScene extends Scene {
         this.gameStateManager = GameStateManager.getInstance();
         this.economyManager = EconomyManager.getInstance();
         this.eventBus = EventBus.getInstance();
+        this.rng = DeterministicRNG.getInstance();
 
         // Initialize game systems (ensure they're listening to events)
         this.bossRewardSystem = BossRewardSystem.getInstance();
@@ -550,7 +551,7 @@ export class HubScene extends Scene {
             'Time to maximize those gains!',
             'The grind never stops!',
         ];
-        return messages[Math.floor(Math.random() * messages.length)];
+        return messages[this.rng.int(0, messages.length - 1, 'main')];
     }
 
     cleanup() {

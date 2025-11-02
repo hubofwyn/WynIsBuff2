@@ -1,5 +1,6 @@
 import RAPIER from '@dimforge/rapier2d-compat';
 
+import { DeterministicRNG } from '../../core/DeterministicRNG.js';
 import { EventNames } from '../../constants/EventNames.js';
 import { LOG } from '../../observability/core/LogSystem.js';
 
@@ -18,6 +19,9 @@ export class WallDashController {
     constructor(scene, eventSystem) {
         this.scene = scene;
         this.eventSystem = eventSystem;
+
+        // Initialize deterministic RNG for particle effects
+        this.rng = DeterministicRNG.getInstance();
 
         // Wall detection state
         this.wallState = {
@@ -525,7 +529,7 @@ export class WallDashController {
         const side = this.wallState.touchingLeft ? -1 : 1;
 
         // Create sparks at contact point
-        if (Math.random() < 0.3) {
+        if (this.rng.next('main') < 0.3) {
             // 30% chance per frame
             const particle = this.scene.add.circle(
                 this.wallState.contactPoint.x,

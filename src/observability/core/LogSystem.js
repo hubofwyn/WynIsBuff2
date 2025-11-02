@@ -1,4 +1,6 @@
-import { BaseManager } from '../../core/BaseManager.js';
+// Observability layer must have zero dependencies on core layer
+// Implements own singleton pattern to maintain architectural independence
+// Note: Math.random is allowed here for log sampling (non-gameplay critical)
 
 import { BoundedBuffer } from './BoundedBuffer.js';
 import { LogLevel, DefaultSamplingRates, shouldLog } from './LogLevel.js';
@@ -19,11 +21,33 @@ import { LogLevel, DefaultSamplingRates, shouldLog } from './LogLevel.js';
  *   LOG.dev('PLAYER_JUMP', { height: 100 });
  *   LOG.error('PHYSICS_ERROR', { error: e, hint: 'Check body init' });
  */
-export class LogSystem extends BaseManager {
+export class LogSystem {
+    static _instance = null;
+
     constructor() {
-        super();
-        if (this.isInitialized()) return;
+        // Singleton pattern
+        if (LogSystem._instance) {
+            return LogSystem._instance;
+        }
+
+        LogSystem._instance = this;
+        this._initialized = false;
         this.init();
+    }
+
+    static getInstance() {
+        if (!LogSystem._instance) {
+            new LogSystem();
+        }
+        return LogSystem._instance;
+    }
+
+    isInitialized() {
+        return this._initialized;
+    }
+
+    setInitialized() {
+        this._initialized = true;
     }
 
     init() {
@@ -110,6 +134,7 @@ export class LogSystem extends BaseManager {
         }
 
         // Sampling (always log errors and fatal)
+        // Note: Using Math.random here is acceptable as log sampling is not gameplay-critical
         if (level !== LogLevel.ERROR && level !== LogLevel.FATAL) {
             const samplingRate = this.config.samplingRates[level];
             if (Math.random() > samplingRate) {

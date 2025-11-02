@@ -1,5 +1,5 @@
 import { Scene } from 'phaser';
-import { EventBus, AudioManager, GameStateManager } from '@features/core';
+import { EventBus, AudioManager, GameStateManager, DeterministicRNG } from '@features/core';
 import { CloneManager, EconomyManager } from '@features/idle';
 import { PerformanceAnalyzer } from '@features/analytics';
 
@@ -47,6 +47,7 @@ export class ResultsScene extends Scene {
         this.cloneManager = CloneManager.getInstance();
         this.economyManager = EconomyManager.getInstance();
         this.performanceAnalyzer = PerformanceAnalyzer.getInstance();
+        this.rng = DeterministicRNG.getInstance();
 
         // Analyze run performance using the new system
         this.performanceReport = this.performanceAnalyzer.generateReport(this.completeRunData);
@@ -411,10 +412,10 @@ export class ResultsScene extends Scene {
 
         const traits = traitPool[specialty] || traitPool.balanced;
         // Pick 1-2 random traits
-        const numTraits = Math.floor(Math.random() * 2) + 1;
+        const numTraits = this.rng.int(1, 2, 'main');
         const selected = [];
         for (let i = 0; i < numTraits; i++) {
-            const trait = traits[Math.floor(Math.random() * traits.length)];
+            const trait = traits[this.rng.int(0, traits.length - 1, 'main')];
             if (!selected.includes(trait)) {
                 selected.push(trait);
             }

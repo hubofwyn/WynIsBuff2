@@ -1,4 +1,5 @@
-import { LOG } from '../observability/core/LogSystem.js';
+// Constants should have zero dependencies
+// Using console.warn for deprecation warnings (not LOG to avoid circular deps)
 
 export const EventNames = {
     // Game state events
@@ -219,12 +220,12 @@ export const DeprecatedEventNames = Object.freeze({
     get: (deprecatedName) => {
         const newName = DeprecatedEventNames[deprecatedName];
         if (newName && process.env.NODE_ENV !== 'production') {
-            LOG.warn('EVENTNAMES_DEPRECATED_USAGE', {
-                subsystem: 'core',
-                message: `Deprecated event name "${deprecatedName}" used`,
-                deprecatedName,
-                recommendedUsage: `EventNames.${Object.keys(EventNames).find((key) => EventNames[key] === newName)}`,
-            });
+            // Use console.warn to avoid dependency on LOG (constants must have zero deps)
+            const newKey = Object.keys(EventNames).find((key) => EventNames[key] === newName);
+            console.warn(
+                `[EventNames] Deprecated event name "${deprecatedName}" used. ` +
+                    `Use EventNames.${newKey} instead`
+            );
         }
         return newName || deprecatedName;
     },

@@ -9,11 +9,15 @@
  * - Allow mutation and evolution of recorded patterns
  */
 
+import { DeterministicRNG } from '../../core/DeterministicRNG.js';
 import { EventBus } from '../../core/EventBus.js';
 import { EventNames } from '../../constants/EventNames.js';
 
 export class TimeEchoRecorder {
     constructor() {
+        // Initialize deterministic RNG
+        this.rng = DeterministicRNG.getInstance();
+
         // Current recording session
         this.currentRecording = null;
         this.isRecording = false;
@@ -520,7 +524,7 @@ export class TimeEchoRecorder {
      * Mutate an event for variation
      */
     mutateEvent(event) {
-        if (Math.random() > this.config.mutationRate) {
+        if (this.rng.next('main') > this.config.mutationRate) {
             return event; // No mutation
         }
 
@@ -530,19 +534,19 @@ export class TimeEchoRecorder {
         switch (event.type) {
             case 'input':
                 // Slight timing variation
-                mutated.timestamp += (Math.random() - 0.5) * 100;
+                mutated.timestamp += (this.rng.next('main') - 0.5) * 100;
 
                 // Chance to skip or double
-                if (Math.random() < 0.1) {
+                if (this.rng.next('main') < 0.1) {
                     mutated.skip = true;
-                } else if (Math.random() < 0.05) {
+                } else if (this.rng.next('main') < 0.05) {
                     mutated.double = true;
                 }
                 break;
 
             case 'decision':
                 // Chance to choose alternative
-                if (Math.random() < 0.2) {
+                if (this.rng.next('main') < 0.2) {
                     mutated.data = this.getAlternativeDecision(event);
                 }
                 break;
@@ -564,7 +568,7 @@ export class TimeEchoRecorder {
             // Choose a different decision
             const filtered = alternatives.filter((a) => a.decision !== event.data);
             if (filtered.length > 0) {
-                return filtered[Math.floor(Math.random() * filtered.length)].decision;
+                return filtered[this.rng.int(0, filtered.length - 1, 'main')].decision;
             }
         }
 
@@ -714,7 +718,13 @@ export class TimeEchoRecorder {
      * Generate unique echo ID
      */
     generateEchoId() {
-        return `echo_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+        // Generate 9-character random string using deterministic RNG
+        const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+        let randomStr = '';
+        for (let i = 0; i < 9; i++) {
+            randomStr += chars[this.rng.int(0, chars.length - 1, 'main')];
+        }
+        return `echo_${Date.now()}_${randomStr}`;
     }
 
     /**

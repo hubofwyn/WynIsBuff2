@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import RAPIER from '@dimforge/rapier2d-compat';
 
+import { DeterministicRNG } from '../../core/DeterministicRNG.js';
 import { EventNames } from '../../constants/EventNames.js';
 import { PhysicsConfig } from '../../constants/PhysicsConfig.js';
 import { pixelsToMeters, metersToPixels } from '../../constants/PhysicsConstants.js';
@@ -30,6 +31,9 @@ export class PlayerController {
         this.world = world;
         this.eventSystem = eventSystem;
         this.textureKey = textureKey;
+
+        // Initialize deterministic RNG for debug sampling
+        this.rng = DeterministicRNG.getInstance();
 
         // Modern character controller setup
         this.body = null; // KinematicPositionBased body
@@ -301,7 +305,7 @@ export class PlayerController {
                 inputState = this.inputManager.getSnapshot();
 
                 // Debug: Log input state occasionally
-                if (Math.random() < 0.01) {
+                if (this.rng.next('main') < 0.01) {
                     LOG.dev('PLAYER_INPUT_STATE', {
                         subsystem: 'player',
                         message: 'Input state snapshot',
@@ -352,7 +356,7 @@ export class PlayerController {
             this.updateGroundState(desiredMovement, correctedMovement);
 
             // Debug: Log ground detection
-            if (Math.random() < 0.01) {
+            if (this.rng.next('main') < 0.01) {
                 LOG.dev('PLAYER_GROUND_DETECTION', {
                     subsystem: 'player',
                     message: 'Ground detection state',

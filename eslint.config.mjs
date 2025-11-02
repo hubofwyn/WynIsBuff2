@@ -161,6 +161,14 @@ export default [
         },
     },
 
+    // Observability layer exception: allow Math.random for sampling (non-gameplay)
+    {
+        files: ['src/observability/**/*.js'],
+        rules: {
+            'no-restricted-properties': 'off', // Math.random allowed for observability sampling
+        },
+    },
+
     // Ignore patterns
     {
         ignores: [
