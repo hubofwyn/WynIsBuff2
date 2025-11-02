@@ -834,4 +834,53 @@ export class Game extends BaseScene {
             });
         }
     }
+
+    /**
+     * Shutdown method - clean up event listeners and resources
+     * This prevents memory leaks and runaway sound effects when scene restarts
+     */
+    shutdown() {
+        LOG.info('GAME_SHUTDOWN', {
+            subsystem: 'scene',
+            scene: SceneKeys.GAME,
+            message: 'Game scene shutting down - cleaning up event listeners',
+        });
+
+        // Remove all event listeners from event system
+        if (this.eventSystem) {
+            this.eventSystem.off(EventNames.PLAYER_LANDED);
+            this.eventSystem.off(EventNames.PLAYER_JUMPED);
+            this.eventSystem.off(EventNames.COLLECTIBLE_COLLECTED);
+            this.eventSystem.off(EventNames.LEVEL_COMPLETE);
+            this.eventSystem.off(EventNames.BOSS_DEFEATED);
+            
+            LOG.dev('GAME_EVENTS_CLEANED', {
+                subsystem: 'scene',
+                scene: SceneKeys.GAME,
+                message: 'Event listeners removed',
+                events: [
+                    'PLAYER_LANDED',
+                    'PLAYER_JUMPED', 
+                    'COLLECTIBLE_COLLECTED',
+                    'LEVEL_COMPLETE',
+                    'BOSS_DEFEATED'
+                ],
+            });
+        }
+
+        // Clean up managers
+        if (this.levelManager) {
+            this.levelManager.cleanup?.();
+        }
+
+        if (this.particleManager) {
+            this.particleManager.cleanup?.();
+        }
+
+        LOG.info('GAME_SHUTDOWN_COMPLETE', {
+            subsystem: 'scene',
+            scene: SceneKeys.GAME,
+            message: 'Game scene shutdown complete',
+        });
+    }
 }

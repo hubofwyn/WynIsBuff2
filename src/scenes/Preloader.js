@@ -177,24 +177,30 @@ export class Preloader extends BaseScene {
         // TRIAGE FIX: Add error handlers for asset loading
         this.load.on('loaderror', (fileObj) => {
             LOG.error('PRELOADER_ASSET_LOAD_ERROR', {
-                subsystem: 'scene',
+                subsystem: 'assets',
                 scene: SceneKeys.PRELOADER,
                 error: fileObj,
                 message: 'Failed to load asset',
                 assetKey: fileObj.key,
                 assetSrc: fileObj.src,
+                assetType: fileObj.type,
                 hint: 'Check asset path and file existence. Verify manifest.json configuration.',
             });
         });
+        
+        // NOTE: WebGL texture upload warnings (INVALID_VALUE: texImage2D) are expected
+        // during asset loading. These are non-critical browser warnings that Phaser
+        // handles internally. See docs/systems/KNOWN_WEBGL_ISSUES.md for details.
 
-        this.load.on('filecomplete', (key) => {
-            // TRIAGE FIX: Set safe texture filters to prevent mipmap errors
-            if (this.textures.exists(key)) {
-                const texture = this.textures.get(key);
-                if (texture && texture.setFilter) {
-                    texture.setFilter(Phaser.Textures.FilterMode.LINEAR);
-                }
-            }
+        this.load.on('filecomplete', (key, type) => {
+            // AGENTIC DEBUG: Log asset loading completion
+            LOG.dev('PRELOADER_ASSET_LOADED', {
+                subsystem: 'assets',
+                scene: SceneKeys.PRELOADER,
+                key,
+                type,
+                message: `Asset loaded: ${key}`,
+            });
         });
 
         // Load the custom game logo with smart resolution and format selection
@@ -303,6 +309,9 @@ export class Preloader extends BaseScene {
         //  When all the assets have loaded, it's often worth creating global objects here that the rest of the game can use.
         //  For example, you can define global animations here, so we can use them in other scenes.
 
+        // TRIAGE FIX: Configure all loaded textures to prevent mipmap errors
+        this.configureTextureFilters();
+
         // Define player animations that can be used across scenes
         this.createPlayerAnimations();
 
@@ -359,6 +368,31 @@ export class Preloader extends BaseScene {
 
     update(_time, _delta) {
         // Placeholder update method for Preloader scene
+    }
+
+    configureTextureFilters() {
+        // Configure all loaded textures to use LINEAR filtering (no mipmaps)
+        // This prevents WebGL errors with non-power-of-two textures
+        let configuredCount = 0;
+        const textureManager = this.textures;
+        
+        textureManager.each((texture) => {
+            if (texture.key !== '__DEFAULT' && texture.key !== '__MISSING') {
+                // Set LINEAR filter for all texture sources
+                if (texture.setFilter) {
+                    texture.setFilter(Phaser.Textures.FilterMode.LINEAR);
+                    configuredCount++;
+                }
+            }
+        });
+
+        LOG.info('PRELOADER_TEXTURES_CONFIGURED', {
+            subsystem: 'assets',
+            scene: SceneKeys.PRELOADER,
+            message: 'All textures configured with LINEAR filtering',
+            texturesConfigured: configuredCount,
+            hint: 'This prevents mipmap generation errors for non-power-of-two textures',
+        });
     }
 
     createPlayerAnimations() {

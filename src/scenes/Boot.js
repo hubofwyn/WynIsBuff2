@@ -14,6 +14,26 @@ export class Boot extends BaseScene {
             scene: SceneKeys.BOOT,
             message: 'Boot scene preload started',
         });
+        
+        // TRIAGE FIX: Patch WebGL context to prevent mipmap generation
+        // This must be done early, before any textures are loaded
+        if (this.sys.game.renderer && this.sys.game.renderer.gl) {
+            const gl = this.sys.game.renderer.gl;
+            
+            // Override generateMipmap to be a no-op
+            gl.generateMipmap = function(_target) {
+                // Do nothing - prevents mipmap generation errors
+                // This is safe because we're using LINEAR filtering everywhere
+            };
+            
+            LOG.info('BOOT_WEBGL_MIPMAP_DISABLED', {
+                subsystem: 'scene',
+                scene: 'Boot',
+                message: 'WebGL mipmap generation disabled globally',
+                hint: 'Prevents GL_INVALID_OPERATION errors for non-POT textures',
+            });
+        }
+        
         // Skip asset loading for now to test scene flow
         // this.load.image(ImageAssets.BACKGROUND, 'assets/' + ImagePaths.BACKGROUND);
     }

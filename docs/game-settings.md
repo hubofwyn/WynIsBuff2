@@ -1,6 +1,23 @@
-# Game Settings UI: Subtask Breakdown (Task 031)
+# Game Settings UI: Implementation Tasks
 
-This document outlines the bite-sized subtasks required to fully implement the in-game Settings UI (Task 031). Each subtask is numbered 031.x and covers a distinct piece of functionality, including missing aspects such as storage schema and default values.
+**Last Updated**: November 2, 2025
+**Status**: ⏳ Implementation Guide
+**Purpose**: Subtask breakdown for implementing in-game Settings UI
+**See Also**: [UI/UX Architecture](architecture/UI_UX_ARCHITECTURE.md) - UI/UX patterns and design system
+
+---
+
+## Overview
+
+This document outlines the implementation tasks for the in-game Settings UI. Each subtask (031.x) covers a distinct piece of functionality.
+
+**💡 Architecture Context**: This is an **implementation guide** focusing on specific tasks. For UI/UX patterns, design system, and best practices, see [UI/UX Architecture](architecture/UI_UX_ARCHITECTURE.md).
+
+**Recommended**: Use [DesignTokens](architecture/UI_UX_ARCHITECTURE.md#design-tokens) for all styling instead of hardcoded values.
+
+---
+
+## Implementation Tasks
 
 ## 031.1 SettingsScene Skeleton
 

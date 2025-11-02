@@ -2,6 +2,8 @@
 
 Development guide for Claude Code and AI assistants working on WynIsBuff2.
 
+> **Note for Windsurf/Cascade Users**: This project includes optimized Windsurf configuration in `.windsurf/` with workspace rules, file-scoped rules, and automated workflows. See [.windsurf/README.md](.windsurf/README.md) for details.
+
 ## Quick Start
 
 ```bash
@@ -268,6 +270,7 @@ const value = rng.int(1, 100, 'streamName');
 
 ## Documentation
 
+- **Windsurf Configuration**: [.windsurf/README.md](.windsurf/README.md) - Cascade AI setup and rules
 - **Architecture**: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
 - **Systems**: [docs/systems/](docs/systems/)
 - **Features**: [docs/features/](docs/features/)
@@ -279,6 +282,7 @@ const value = rng.int(1, 100, 'streamName');
 
 ## Questions?
 
+- Windsurf/Cascade setup → [.windsurf/README.md](.windsurf/README.md)
 - Architecture questions → [docs/architecture/](docs/architecture/)
 - Physics/Rapier → [docs/technology/RapierPhysics.md](docs/technology/RapierPhysics.md)
 - Phaser integration → [docs/technology/PhaserFramework.md](docs/technology/PhaserFramework.md)

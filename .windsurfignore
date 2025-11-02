@@ -1,0 +1,99 @@
+# Windsurf Ignore File
+# Files and directories that Cascade should not analyze or modify
+
+# Dependencies
+node_modules/
+bun.lock
+package-lock.json
+yarn.lock
+
+# Build outputs
+dist/
+build/
+.cache/
+
+# Generated files (DO NOT EDIT)
+src/constants/Assets.js
+
+# Git
+.git/
+.gitignore
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs
+*.log
+logs/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
+.tmp/
+.temp/
+
+# Test coverage
+coverage/
+.nyc_output/
+
+# Husky
+.husky/_/
+
+# Migration backups
+.migration-backup/
+
+# Documentation that shouldn't be modified by AI
+CHANGELOG.md
+LICENSE
+
+# Large binary assets (reference only, don't modify)
+assets/**/*.png
+assets/**/*.jpg
+assets/**/*.jpeg
+assets/**/*.gif
+assets/**/*.mp3
+assets/**/*.ogg
+assets/**/*.wav
+
+# Session notes (read-only for context)
+SESSION_*.md
+*_COMPLETE.md
+*_NOTES.md
+*_PROGRESS.md
+
+# Architecture snapshots (read-only)
+STATUS-ARCHITECTURE.json
+STATUS_OBSERVABILITY.json
+STATUS_REPORT.json
+
+# Codex and other AI tool configs (unless explicitly editing)
+.codex/
+.claude/
+run-codex*
+.roomodes
+.clinerules-*
+.claude-orchestration.json
+
+# Debug/test HTML files
+debug.html
+test-*.html
+movement-*.html
+
+# Documentation scans
+doc-scan-report.json

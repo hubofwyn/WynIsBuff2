@@ -29,6 +29,8 @@ This document provides a comprehensive evaluation of WynIsBuff2's error handling
 
 ## Quick Start: Using the Observability System
 
+### In Code
+
 ```javascript
 // 1. Import the LOG system
 import { LOG } from '../observability/core/LogSystem.js';
@@ -52,15 +54,39 @@ LOG.error('SUBSYSTEM_WHAT_FAILED', {
 // - Input state (keys pressed, mouse position)
 
 // 4. Use appropriate log levels
-LOG.dev(); // Development/debug info (1% sampling)
-LOG.info(); // Important state changes (100%)
-LOG.warn(); // Degradation, unexpected states (100%)
-LOG.error(); // Failures, exceptions (100%)
-LOG.fatal(); // Critical failures, crash dumps (100%)
+LOG.dev(); // Development/debug info (10% sampling)
+LOG.info(); // Important state changes (50% sampling)
+LOG.warn(); // Degradation, unexpected states (80% sampling)
+LOG.error(); // Failures, exceptions (100% - never sampled)
+LOG.fatal(); // Critical failures, crash dumps (100% - never sampled)
 
 // 5. Query logs programmatically
 const recentErrors = LOG.getByLevel('error', 10);
 const physicsErrors = LOG.getByCode('PHYSICS_UPDATE_ERROR');
+```
+
+### In Browser Console (Agentic Debugging)
+
+The game exposes the LOG system to `window` for runtime debugging:
+
+```javascript
+// Get all logs with metadata
+window.getGameLogs()          // Returns: { metadata, logs, config }
+
+// Get recent logs
+window.getRecentLogs(50)      // Last 50 logs
+
+// Get logging statistics
+window.getLogStats()          // Returns: { totalLogs, droppedLogs, buffer: {...} }
+
+// Access LOG system directly
+window.LOG.export()           // Full export with metadata
+window.LOG.getRecent(10)      // Last 10 entries
+window.LOG.getByLevel('error', 20)  // Last 20 errors
+window.LOG.getByCode('PHYSICS_ERROR', 10)  // Specific error code
+
+// Filter by subsystem
+window.LOG.export().logs.filter(l => l.subsystem === 'physics')
 ```
 
 **See Also:**
@@ -68,6 +94,7 @@ const physicsErrors = LOG.getByCode('PHYSICS_UPDATE_ERROR');
 - [Section 5: Logging Standards](#5-logging-standards) - Complete API documentation
 - [Section 11: Observability System](#11-observability-system) - Architecture and features
 - [OBSERVABILITY_IMPLEMENTATION.md](../../OBSERVABILITY_IMPLEMENTATION.md) - Implementation plan
+- [OBSERVABILITY_FINAL_SUMMARY.md](../../OBSERVABILITY_FINAL_SUMMARY.md) - Complete system summary
 
 ---
 

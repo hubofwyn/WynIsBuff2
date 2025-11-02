@@ -82,7 +82,7 @@ export class CollectibleManager {
 
                     // Create a visual representation (sprite if available, otherwise circle)
                     let collectibleSprite;
-                    const spriteKey = `collectible-${collectible.config.type}`;
+                    const spriteKey = `collectible-${collectible.type}`;
                     if (this.scene.textures.exists(spriteKey)) {
                         collectibleSprite = this.scene.add
                             .image(collectible.x, collectible.y, spriteKey)

@@ -81,15 +81,44 @@ Complete navigation hub for all WynIsBuff2 documentation.
 - [level-progression-plan.md](level-progression-plan.md) - Level progression design
 - [buffed_level_system_workflow.md](buffed_level_system_workflow.md) - Level workflow
 
-#### UI Systems
+#### UI/UX Architecture
 
-- [systems/UIManager.md](systems/UIManager.md) - UI management system
-- [game-settings.md](game-settings.md) - Game settings UI
+**Core Documentation:**
+
+- [architecture/UI_UX_ARCHITECTURE.md](architecture/UI_UX_ARCHITECTURE.md) - **START HERE** - Complete UI/UX architecture guide
+- [systems/LOADING_SCREEN_ARCHITECTURE.md](systems/LOADING_SCREEN_ARCHITECTURE.md) - Unified loading screen system
+- [systems/UIManager.md](systems/UIManager.md) - UI element management API
 - [SUBTITLE_SYSTEM.md](SUBTITLE_SYSTEM.md) - Subtitle/caption system for accessibility
+
+**Design System:**
+
+- **DesignTokens** (`src/constants/DesignTokens.js`) - Primary design system (spacing, colors, typography, components)
+- **UIConfig** (`src/constants/UIConfig.js`) - ⚠️ Legacy (deprecated in favor of DesignTokens)
+
+**Core Managers:**
+
+- **LoadingScreenManager** (`src/core/LoadingScreenManager.js`) - Unified loading screens with progress/status
+- **UIManager** (`src/modules/UIManager.js`) - UI element creation and management
+
+**Implementation Guides:**
+
+- [game-settings.md](game-settings.md) - Settings UI implementation tasks
+
+#### Audio Systems
+
+- [systems/AUDIO_UNLOCK_SYSTEM.md](systems/AUDIO_UNLOCK_SYSTEM.md) - **Audio autoplay handling** - Browser permission management
+
+#### Known Issues
+
+- [systems/KNOWN_WEBGL_ISSUES.md](systems/KNOWN_WEBGL_ISSUES.md) - WebGL warnings and non-critical issues
 
 #### Debugging & Diagnostics
 
 **✅ Observability System - PRODUCTION READY (Phases 0-5 Complete)**
+
+**📖 Navigation Guide**:
+
+- [OBSERVABILITY_DOCS_GUIDE.md](OBSERVABILITY_DOCS_GUIDE.md) - **Documentation navigation** - Find the right doc for your task
 
 **Quick Start**:
 
@@ -109,7 +138,7 @@ Complete navigation hub for all WynIsBuff2 documentation.
 - [architecture/Observability.md](architecture/Observability.md) - Architecture deep dive and migration guide
 - [systems/INPUT_MOVEMENT_AUDIT.md](systems/INPUT_MOVEMENT_AUDIT.md) - Input and movement system technical audit
 
-**Debugging Guide** (NEW):
+**Debugging Guide**:
 
 - [guides/DEBUGGING.md](guides/DEBUGGING.md) - **Practical debugging guide** with common scenarios and solutions
 

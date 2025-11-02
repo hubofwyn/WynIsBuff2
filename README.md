@@ -210,6 +210,7 @@ See [docs/guides/DEBUGGING.md](docs/guides/DEBUGGING.md) for complete guide.
 
 ## Documentation
 
+- **Windsurf/Cascade**: [.windsurf/README.md](.windsurf/README.md) - AI configuration and rules
 - **Development Guide**: [CLAUDE.md](CLAUDE.md) - AI assistant and developer guide
 - **Debugging Guide**: [docs/guides/DEBUGGING.md](docs/guides/DEBUGGING.md) - Observability and debugging
 - **Contributing**: [CONTRIBUTING.md](CONTRIBUTING.md) - Development workflow and conventions

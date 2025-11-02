@@ -1,5 +1,9 @@
 # UI Manager
 
+**Last Updated**: November 2, 2025
+**Status**: ✅ Active
+**See Also**: [UI/UX Architecture](../architecture/UI_UX_ARCHITECTURE.md) - Complete UI/UX guide
+
 ## Table of Contents
 
 - [Overview](#overview)
@@ -8,10 +12,14 @@
 - [Usage Examples](#usage-examples)
 - [Integration with Event System](#integration-with-event-system)
 - [Responsive UI](#responsive-ui)
+- [Design Tokens Integration](#design-tokens-integration)
+- [Related Documentation](#related-documentation)
 
 ## Overview
 
 The UI Manager is a core architectural component of the WynIsBuff2 game that centralizes all UI-related functionality. It provides a structured approach to creating, organizing, and updating UI elements, ensuring consistent behavior and appearance across the game.
+
+**💡 Tip**: For comprehensive UI/UX guidance including design system and best practices, see [UI/UX Architecture](../architecture/UI_UX_ARCHITECTURE.md).
 
 ## Features
 
@@ -135,3 +143,70 @@ The UI Manager includes built-in support for responsive UI that adjusts to diffe
 3. The UI Manager listens for the Phaser `resize` event and updates all responsive elements accordingly.
 
 This ensures that the UI remains properly positioned and usable across different devices and screen resolutions.
+
+---
+
+## Design Tokens Integration
+
+**Recommended**: Use [DesignTokens](../architecture/UI_UX_ARCHITECTURE.md#design-tokens) for consistent styling instead of hardcoded values.
+
+### Using Design Tokens with UIManager
+
+```javascript
+import { UIManager } from '@features/core';
+import { DesignTokens } from '../constants/DesignTokens.js';
+
+const uiManager = new UIManager(this, this.eventSystem);
+
+// Create text with design tokens
+uiManager.createText('title', 512, 100, 'Welcome', {
+    fontSize: DesignTokens.fontSize.heading,
+    color: DesignTokens.colors.primary,
+    fontFamily: DesignTokens.fontFamily.heading,
+    stroke: DesignTokens.colors.bgDark,
+    strokeThickness: 4
+});
+
+// Use spacing tokens for positioning
+const spacing = DesignTokens.spacing.lg; // 24px
+uiManager.createText('subtitle', 512, 100 + spacing, 'Subtitle', {
+    fontSize: DesignTokens.fontSize.large,
+    color: DesignTokens.colors.textOnDark
+});
+```
+
+### Benefits of Using Design Tokens
+
+- ✅ **Consistency**: Same values across all UI elements
+- ✅ **Theming**: Change global design with one update
+- ✅ **Responsive**: Built-in responsive helpers
+- ✅ **Accessibility**: WCAG-compliant contrast ratios
+- ✅ **Maintainability**: Semantic names instead of magic numbers
+
+See [Design Tokens](../architecture/UI_UX_ARCHITECTURE.md#design-tokens) for complete reference.
+
+---
+
+## Related Documentation
+
+**Core Documentation:**
+- [UI/UX Architecture](../architecture/UI_UX_ARCHITECTURE.md) - Complete UI/UX architecture guide
+- [Loading Screen Architecture](LOADING_SCREEN_ARCHITECTURE.md) - Unified loading screen system
+- [Subtitle System](../SUBTITLE_SYSTEM.md) - Accessibility features
+
+**Design System:**
+- [DesignTokens Reference](../architecture/UI_UX_ARCHITECTURE.md#design-tokens) - Design token documentation
+- **DesignTokens** (`src/constants/DesignTokens.js`) - Source code
+
+**Migration:**
+- [UIConfig → DesignTokens Migration](../architecture/UI_UX_ARCHITECTURE.md#migration-guide) - Migration guide
+
+**Best Practices:**
+- [UI Best Practices](../architecture/UI_UX_ARCHITECTURE.md#best-practices) - Recommended patterns
+- [Responsive Design](../architecture/UI_UX_ARCHITECTURE.md#responsive-design) - Adaptive layouts
+- [Accessibility](../architecture/UI_UX_ARCHITECTURE.md#accessibility) - WCAG compliance
+
+---
+
+**Maintained By**: Core Systems Team
+**Last Reviewed**: November 2, 2025
