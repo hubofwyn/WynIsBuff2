@@ -1,4 +1,4 @@
-import RAPIER from '@dimforge/rapier2d-compat';
+import { RigidBodyDesc, ColliderDesc } from '@features/core';
 
 import { EventNames } from '../../constants/EventNames.js';
 import { PhysicsConfig } from '../../constants/PhysicsConfig.js';
@@ -87,7 +87,7 @@ export class PlatformFactory {
                     );
 
                     // Create a fixed rigid body with proper scaling (pixels to meters)
-                    const platformBodyDesc = RAPIER.RigidBodyDesc.fixed().setTranslation(
+                    const platformBodyDesc = RigidBodyDesc.fixed().setTranslation(
                         pixelsToMeters(platform.x),
                         pixelsToMeters(platform.y)
                     );
@@ -98,7 +98,7 @@ export class PlatformFactory {
                     this.bodyToSprite.set(platformBody.handle, platformSprite);
 
                     // Create a collider with proper scaling and physics properties
-                    const platformColliderDesc = RAPIER.ColliderDesc.cuboid(
+                    const platformColliderDesc = ColliderDesc.cuboid(
                         pixelsToMeters(platform.width / 2),
                         pixelsToMeters(platform.height / 2)
                     )

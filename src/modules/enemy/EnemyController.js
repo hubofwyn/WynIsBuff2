@@ -1,4 +1,4 @@
-import RAPIER from '@dimforge/rapier2d-compat';
+import { RigidBodyDesc, ColliderDesc } from '@features/core';
 
 /**
  * EnemyController handles a single enemy's creation and behavior.
@@ -6,7 +6,7 @@ import RAPIER from '@dimforge/rapier2d-compat';
 export class EnemyController {
     /**
      * @param {Phaser.Scene} scene
-     * @param {RAPIER.World} world
+     * @param {World} world
      * @param {EventSystem} eventSystem
      * @param {number} x - spawn x position
      * @param {number} y - spawn y position
@@ -44,10 +44,10 @@ export class EnemyController {
         this.sprite.setOrigin(0.5);
         this.sprite.setDisplaySize(64, 64);
         // Create kinematic physics body
-        const bodyDesc = RAPIER.RigidBodyDesc.kinematicPositioned({ x: this.x, y: this.y });
+        const bodyDesc = RigidBodyDesc.kinematicPositioned({ x: this.x, y: this.y });
         this.body = this.world.createRigidBody(bodyDesc);
         // Create collider sized to sprite
-        const colliderDesc = RAPIER.ColliderDesc.cuboid(32, 32);
+        const colliderDesc = ColliderDesc.cuboid(32, 32);
         this.world.createCollider(colliderDesc, this.body);
         // Register with PhysicsManager for sprite sync
         if (this.scene.physicsManager) {

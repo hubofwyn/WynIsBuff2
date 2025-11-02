@@ -169,6 +169,22 @@ export default [
         },
     },
 
+    // Core layer exception: allow vendor imports (core abstracts vendors for the rest of the codebase)
+    {
+        files: ['src/core/**/*.js'],
+        rules: {
+            'no-restricted-imports': 'off', // Core layer is the only layer allowed to import vendors directly
+        },
+    },
+
+    // Constants layer exception: allow console for deprecation warnings (no LOG dependency allowed)
+    {
+        files: ['src/constants/**/*.js'],
+        rules: {
+            'no-console': 'off', // Constants layer can't use LOG (zero dependencies), console is acceptable
+        },
+    },
+
     // Ignore patterns
     {
         ignores: [

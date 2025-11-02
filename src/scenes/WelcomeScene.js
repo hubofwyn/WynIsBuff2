@@ -1,5 +1,4 @@
-import { Scene } from 'phaser';
-import { AudioManager } from '@features/core';
+import { BaseScene, AudioManager } from '@features/core';
 
 import { SceneKeys } from '../constants/SceneKeys.js';
 import { AudioAssets } from '../constants/Assets.js';
@@ -7,7 +6,7 @@ import { AudioAssets } from '../constants/Assets.js';
 /**
  * WelcomeScene: shows the game title and prompts player to start.
  */
-export class WelcomeScene extends Scene {
+export class WelcomeScene extends BaseScene {
     constructor() {
         super(SceneKeys.WELCOME);
     }

@@ -1,4 +1,4 @@
-import RAPIER from '@dimforge/rapier2d-compat';
+import { RigidBodyDesc, ColliderDesc } from '@features/core';
 
 import { EventNames } from '../../constants/EventNames.js';
 
@@ -89,12 +89,12 @@ export class PulsatingBoss {
 
     createPhysicsBody() {
         // Create a static body for the boss
-        const bodyDesc = RAPIER.RigidBodyDesc.fixed().setTranslation(this.x, this.y);
+        const bodyDesc = RigidBodyDesc.fixed().setTranslation(this.x, this.y);
 
         this.body = this.world.createRigidBody(bodyDesc);
 
         // Create collider
-        const colliderDesc = RAPIER.ColliderDesc.ball(this.baseSize).setSensor(true); // Sensor to detect collisions without physics response
+        const colliderDesc = ColliderDesc.ball(this.baseSize).setSensor(true); // Sensor to detect collisions without physics response
 
         this.collider = this.world.createCollider(colliderDesc, this.body);
 
@@ -124,7 +124,7 @@ export class PulsatingBoss {
                 if (this.collider && this.world) {
                     this.world.removeCollider(this.collider);
 
-                    const colliderDesc = RAPIER.ColliderDesc.ball(this.currentSize).setSensor(true);
+                    const colliderDesc = ColliderDesc.ball(this.currentSize).setSensor(true);
 
                     this.collider = this.world.createCollider(colliderDesc, this.body);
                 }

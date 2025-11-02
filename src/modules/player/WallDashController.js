@@ -1,6 +1,5 @@
-import RAPIER from '@dimforge/rapier2d-compat';
+import { DeterministicRNG, Ray, QueryFilterFlags } from '@features/core';
 
-import { DeterministicRNG } from '../../core/DeterministicRNG.js';
 import { EventNames } from '../../constants/EventNames.js';
 import { LOG } from '../../observability/core/LogSystem.js';
 
@@ -109,7 +108,7 @@ export class WallDashController {
 
     /**
      * Update wall dash system
-     * @param {RAPIER.RigidBody} body - Player physics body
+     * @param {RigidBody} body - Player physics body
      * @param {object} sprite - Player sprite
      * @param {object} input - Input state
      * @param {number} deltaTime - Frame time
@@ -163,7 +162,7 @@ export class WallDashController {
             const angleOffset = ((i - 1) * params.angleSpread * Math.PI) / 180;
 
             // Left wall detection
-            const leftRay = new RAPIER.Ray(
+            const leftRay = new Ray(
                 { x: position.x, y: position.y },
                 { x: -Math.cos(angleOffset), y: Math.sin(angleOffset) }
             );
@@ -172,7 +171,7 @@ export class WallDashController {
                 leftRay,
                 params.rayLength,
                 true, // Include solid bodies
-                RAPIER.QueryFilterFlags.EXCLUDE_DYNAMIC,
+                QueryFilterFlags.EXCLUDE_DYNAMIC,
                 null,
                 body // Exclude self
             );
@@ -187,7 +186,7 @@ export class WallDashController {
             }
 
             // Right wall detection
-            const rightRay = new RAPIER.Ray(
+            const rightRay = new Ray(
                 { x: position.x, y: position.y },
                 { x: Math.cos(angleOffset), y: Math.sin(angleOffset) }
             );
@@ -196,7 +195,7 @@ export class WallDashController {
                 rightRay,
                 params.rayLength,
                 true,
-                RAPIER.QueryFilterFlags.EXCLUDE_DYNAMIC,
+                QueryFilterFlags.EXCLUDE_DYNAMIC,
                 null,
                 body
             );

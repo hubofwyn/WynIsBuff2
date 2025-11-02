@@ -2,9 +2,9 @@ import Phaser from 'phaser';
 
 import { EventNames } from '../constants/EventNames.js';
 import { createEmptyInputState } from '../types/InputState.js';
-import { DeterministicRNG } from './DeterministicRNG.js';
 import { LOG } from '../observability/core/LogSystem.js';
 
+import { DeterministicRNG } from './DeterministicRNG.js';
 import { GameStateManager } from './GameStateManager.js';
 import { BaseManager } from './BaseManager.js';
 

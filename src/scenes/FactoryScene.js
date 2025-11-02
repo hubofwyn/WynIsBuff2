@@ -1,5 +1,4 @@
-import { Scene } from 'phaser';
-import { GameStateManager, EventBus } from '@features/core';
+import { BaseScene, GameStateManager, EventBus } from '@features/core';
 import { EnhancedCloneManager } from '@features/idle';
 
 import { SceneKeys } from '../constants/SceneKeys.js';
@@ -12,9 +11,9 @@ import { LOG } from '../observability/core/LogSystem.js';
  * Where players set up and manage their automated production lines,
  * upgrade factory components, and optimize resource generation.
  */
-export class FactoryScene extends Scene {
+export class FactoryScene extends BaseScene {
     constructor() {
-        super({ key: SceneKeys.FACTORY });
+        super(SceneKeys.FACTORY);
     }
 
     init() {

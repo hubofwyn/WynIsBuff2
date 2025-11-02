@@ -1,5 +1,4 @@
-import { Scene } from 'phaser';
-import { GameStateManager, EventSystem, AudioManager } from '@features/core';
+import { BaseScene, GameStateManager, EventSystem, AudioManager } from '@features/core';
 
 import { EventNames } from '../constants/EventNames.js';
 import { UIConfig } from '../constants/UIConfig.js';
@@ -9,7 +8,7 @@ import { LOG } from '../observability/core/LogSystem.js';
 /**
  * CharacterSelectScene allows the player to choose their character before gameplay.
  */
-export class CharacterSelect extends Scene {
+export class CharacterSelect extends BaseScene {
     constructor() {
         super(SceneKeys.CHARACTER_SELECT);
         this.gameState = new GameStateManager();

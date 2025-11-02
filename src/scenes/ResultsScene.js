@@ -1,5 +1,4 @@
-import { Scene } from 'phaser';
-import { EventBus, AudioManager, GameStateManager, DeterministicRNG } from '@features/core';
+import { BaseScene, EventBus, AudioManager, GameStateManager, DeterministicRNG } from '@features/core';
 import { CloneManager, EconomyManager } from '@features/idle';
 import { PerformanceAnalyzer } from '@features/analytics';
 
@@ -7,7 +6,7 @@ import { SceneKeys } from '../constants/SceneKeys.js';
 import { EventNames } from '../constants/EventNames.js';
 import { ImageAssets } from '../constants/Assets.js';
 
-export class ResultsScene extends Scene {
+export class ResultsScene extends BaseScene {
     constructor() {
         super(SceneKeys.RESULTS);
     }

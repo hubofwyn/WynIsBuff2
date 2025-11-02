@@ -9,29 +9,31 @@ npm install             # Install dependencies
 npm run dev             # Start development server (port 5173)
 npm test                # Run tests
 npm run build           # Production build
+npm run arch:health     # Check architecture health
 ```
 
 ## Architecture Essentials
 
 **Core Pattern**: Feature-based architecture with event-driven communication and generated constants.
 
-**Five Principles:**
+**Six Principles:**
 
 1. **Barrel Exports** - Import from `@features/*`, never from `../modules/*`
-2. **Generated Constants** - Use `ImageAssets.*`, `AudioAssets.*`, `SceneKeys.*`, `EventNames.*`
-3. **Singleton Managers** - Extend `BaseManager` with `init()` and `setInitialized()`
-4. **Event-Driven** - Communicate via `EventBus` with namespaced events (`namespace:action`)
-5. **Observability First** - Use structured logging via `LOG` system, never `console.*`
+2. **Vendor Abstraction** - Use `BaseScene` and `PhysicsTypes` from `@features/core`, never import vendor libraries directly
+3. **Generated Constants** - Use `ImageAssets.*`, `AudioAssets.*`, `SceneKeys.*`, `EventNames.*`
+4. **Singleton Managers** - Extend `BaseManager` with `init()` and `setInitialized()`
+5. **Event-Driven** - Communicate via `EventBus` with namespaced events (`namespace:action`)
+6. **Observability First** - Use structured logging via `LOG` system, never `console.*`
 
 ### Project Structure
 
 ```
 src/
 ├── constants/        # AUTO-GENERATED: Assets.js | MANUAL: EventNames.js, SceneKeys.js
-├── core/             # BaseManager, EventBus, AudioManager, GameStateManager
+├── core/             # Vendor abstractions (BaseScene, PhysicsTypes) + Core managers
 ├── features/         # Barrel exports (@features/player, @features/level, @features/core)
 ├── modules/          # Implementation (player/, level/, effects/, enemy/)
-└── scenes/           # Phaser scenes (Boot, Preloader, Game, MainMenu)
+└── scenes/           # Game scenes extending BaseScene
 ```
 
 ## Critical Rules
@@ -49,6 +51,32 @@ import { PlayerController } from '../modules/player/PlayerController.js';
 this.load.image('logo', 'images/ui/logo.png');
 this.scene.start('MainMenu');
 ```
+
+### Vendor Abstraction (Enforce Strictly)
+
+**Rule**: Only `src/core/` may import vendor libraries. All other code uses abstractions from `@features/core`.
+
+```javascript
+// ✅ CORRECT - Use abstractions
+import { BaseScene } from '@features/core';
+import { Vector2, RigidBodyDesc, ColliderDesc } from '@features/core';
+
+export class GameScene extends BaseScene {
+    constructor() {
+        super(SceneKeys.GAME);
+    }
+}
+
+// ❌ WRONG - Direct vendor imports
+import { Scene } from 'phaser';
+import RAPIER from '@dimforge/rapier2d-compat';
+```
+
+**Available Abstractions:**
+- `BaseScene` - Extends Phaser.Scene with observability
+- `PhysicsTypes` - All Rapier types (Vector2, RigidBodyDesc, ColliderDesc, etc.) and helper functions
+
+See [ADR-001](docs/architecture/adrs/ADR-001-vendor-abstraction-layer.md) for rationale.
 
 ### Manager Pattern (Required)
 
@@ -145,9 +173,10 @@ window.debugAPI.analyzeSubsystem('physics');
 ### Add Scene
 
 1. Add key to `SceneKeys.js`
-2. Create scene in `src/scenes/`
-3. Reference: `this.scene.start(SceneKeys.YOUR_SCENE)`
-4. Emit events for state changes
+2. Create scene in `src/scenes/` extending `BaseScene` from `@features/core`
+3. Constructor: `super(SceneKeys.YOUR_SCENE)`
+4. Reference: `this.scene.start(SceneKeys.YOUR_SCENE)`
+5. Emit events for state changes
 
 ### Add Assets
 
@@ -232,9 +261,10 @@ const value = rng.int(1, 100, 'streamName');
 ## Key Principles
 
 1. **Separation of Concerns** - Modules are independent
-2. **Testability** - Design for unit testing
-3. **Performance** - Singletons, efficient events
-4. **Developer Experience** - Clean imports, consistent patterns
+2. **Architectural Boundaries** - Enforced layer boundaries with vendor abstraction
+3. **Testability** - Design for unit testing
+4. **Performance** - Singletons, efficient events
+5. **Developer Experience** - Clean imports, consistent patterns, real-time validation
 
 ## Documentation
 

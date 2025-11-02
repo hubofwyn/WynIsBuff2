@@ -1,4 +1,3 @@
-import { Scene } from 'phaser';
 import {
     PlayerController,
     EnhancedMovementController,
@@ -6,14 +5,14 @@ import {
     WallDashController,
 } from '@features/player';
 import { LevelManager, PlatformFactory } from '@features/level';
-import { EventBus, AudioManager, GameStateManager } from '@features/core';
+import { BaseScene, EventBus, AudioManager, GameStateManager } from '@features/core';
 import { DNAExtractor, TimeEchoRecorder } from '@features/idle';
 
 import { ImageAssets } from '../constants/Assets.js';
 import { EventNames } from '../constants/EventNames.js';
 import { SceneKeys } from '../constants/SceneKeys.js';
 
-export class RunScene extends Scene {
+export class RunScene extends BaseScene {
     constructor() {
         super(SceneKeys.RUN);
     }

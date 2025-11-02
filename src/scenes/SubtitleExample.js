@@ -1,5 +1,4 @@
-import { Scene } from 'phaser';
-import { AudioManager, UIManager, GameStateManager } from '@features/core';
+import { BaseScene, AudioManager, UIManager, GameStateManager } from '@features/core';
 
 import { EventNames } from '../constants/EventNames.js';
 
@@ -7,7 +6,7 @@ import { EventNames } from '../constants/EventNames.js';
  * Example scene demonstrating subtitle integration
  * This can be used as a reference for implementing subtitles in other scenes
  */
-export class SubtitleExample extends Scene {
+export class SubtitleExample extends BaseScene {
     constructor() {
         super('SubtitleExample'); // Not in SceneKeys, just an example
     }

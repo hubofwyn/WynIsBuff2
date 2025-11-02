@@ -2,9 +2,9 @@ import { Howl, Howler } from 'howler';
 
 // Using the new path alias introduced in Step 2
 import { AudioAssets, AudioPaths } from '../constants/Assets.js';
-import { DeterministicRNG } from './DeterministicRNG.js';
 import { LOG } from '../observability/core/LogSystem.js';
 
+import { DeterministicRNG } from './DeterministicRNG.js';
 import { BaseManager } from './BaseManager.js';
 
 /**

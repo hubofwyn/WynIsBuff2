@@ -1,5 +1,4 @@
-import { Scene } from 'phaser';
-import { GameStateManager, EventBus, EconomyManager, DeterministicRNG } from '@features/core';
+import { BaseScene, GameStateManager, EventBus, EconomyManager, DeterministicRNG } from '@features/core';
 import { BossRewardSystem } from '@features/boss';
 import { EnhancedCloneManager } from '@features/idle';
 
@@ -14,9 +13,9 @@ import { LOG } from '../observability/core/LogSystem.js';
  * and view their overall progression. Acts as the central navigation point between
  * the platformer runs, factory management, and upgrade systems.
  */
-export class HubScene extends Scene {
+export class HubScene extends BaseScene {
     constructor() {
-        super({ key: SceneKeys.HUB });
+        super(SceneKeys.HUB);
     }
 
     init() {

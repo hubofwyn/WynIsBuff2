@@ -1,11 +1,10 @@
-import { Scene } from 'phaser';
-import { GameStateManager, AudioManager } from '@features/core';
+import { BaseScene, GameStateManager, AudioManager } from '@features/core';
 
 import { UIConfig } from '../constants/UIConfig.js';
 import { SceneKeys } from '../constants/SceneKeys.js';
 import { ImageAssets, AudioAssets } from '../constants/Assets.js';
 
-export class MainMenu extends Scene {
+export class MainMenu extends BaseScene {
     constructor() {
         super(SceneKeys.MAIN_MENU);
 

@@ -1,7 +1,7 @@
-import { Scene } from 'phaser';
 import { PlayerController } from '@features/player';
 import { ParticleManager, CameraManager, ColorManager } from '@features/effects';
 import {
+    BaseScene,
     PhysicsManager,
     EventSystem,
     InputManager,
@@ -25,7 +25,7 @@ import {
 import { ErrorPatternDetector } from '../observability/utils/ErrorPatternDetector.js';
 import { DebugAPI } from '../observability/api/DebugAPI.js';
 
-export class Game extends Scene {
+export class Game extends BaseScene {
     constructor() {
         super(SceneKeys.GAME);
         LOG.dev('GAME_SCENE_CONSTRUCTOR', {

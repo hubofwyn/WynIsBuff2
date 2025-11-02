@@ -1,5 +1,27 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
-# Run tests using Bun (keep hook lightweight)
-bun run test
+echo "🔍 Running pre-commit checks..."
+
+# Run tests using Bun
+echo "\n📋 Running tests..."
+bun run test || {
+    echo "❌ Tests failed. Please fix before committing."
+    exit 1
+}
+
+# Architecture validation
+echo "\n🏗️  Validating architecture..."
+bun run arch:validate || {
+    echo "❌ Architecture validation failed. Run 'bun run arch:check' for details."
+    exit 1
+}
+
+# Boundary checks (allow 1 warning - documented SettingsScene TODO)
+echo "\n🚧 Checking layer boundaries..."
+bun run lint:boundaries --max-warnings=1 || {
+    echo "❌ Layer boundary violations detected. Fix architecture issues."
+    exit 1
+}
+
+echo "\n✅ Pre-commit checks passed!"

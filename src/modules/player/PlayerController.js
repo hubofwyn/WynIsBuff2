@@ -1,10 +1,14 @@
-import Phaser from 'phaser';
-import RAPIER from '@dimforge/rapier2d-compat';
+import {
+    DeterministicRNG,
+    Vector2,
+    RigidBodyDesc,
+    ColliderDesc,
+    PhysicsConfig,
+    pixelsToMeters,
+    metersToPixels,
+} from '@features/core';
 
-import { DeterministicRNG } from '../../core/DeterministicRNG.js';
 import { EventNames } from '../../constants/EventNames.js';
-import { PhysicsConfig } from '../../constants/PhysicsConfig.js';
-import { pixelsToMeters, metersToPixels } from '../../constants/PhysicsConstants.js';
 import { createEmptyInputState } from '../../types/InputState.js';
 import { LOG } from '../../observability/core/LogSystem.js';
 import { CrashDumpGenerator } from '../../observability/utils/CrashDumpGenerator.js';
@@ -20,7 +24,7 @@ export class PlayerController {
     /**
      * Create a new PlayerController using KinematicCharacterController
      * @param {Phaser.Scene} scene - The scene this controller belongs to
-     * @param {RAPIER.World} world - The Rapier physics world
+     * @param {World} world - The Rapier physics world
      * @param {EventSystem} eventSystem - The event system for communication
      * @param {number} x - Initial x position in pixels
      * @param {number} y - Initial y position in pixels
@@ -42,7 +46,7 @@ export class PlayerController {
         this.sprite = null; // Visual representation
 
         // Movement state for proper physics integration
-        this.velocity = new RAPIER.Vector2(0, 0); // In meters per second
+        this.velocity = new Vector2(0, 0); // In meters per second
         this.isGrounded = false;
         this.groundContactTimer = 0;
 
@@ -119,7 +123,7 @@ export class PlayerController {
             this.createGlowEffect();
 
             // Create KinematicPositionBased body (not Dynamic!)
-            const bodyDesc = RAPIER.RigidBodyDesc.kinematicPositionBased().setTranslation(
+            const bodyDesc = RigidBodyDesc.kinematicPositionBased().setTranslation(
                 pixelsToMeters(x),
                 pixelsToMeters(y)
             );
@@ -133,7 +137,7 @@ export class PlayerController {
 
             // Create capsule collider for smooth movement over edges
             const halfHeight = pixelsToMeters(playerHeight / 2) - PhysicsConfig.player.radius;
-            const colliderDesc = RAPIER.ColliderDesc.capsule(
+            const colliderDesc = ColliderDesc.capsule(
                 halfHeight,
                 PhysicsConfig.player.radius
             )
@@ -519,10 +523,10 @@ export class PlayerController {
      *
      * @param {InputState} input - Clean input data (no Phaser types)
      * @param {number} dt - Delta time in seconds
-     * @returns {RAPIER.Vector2} Desired movement in meters
+     * @returns {Vector2} Desired movement in meters
      */
     calculateMovementFromInput(input, dt) {
-        const movement = new RAPIER.Vector2(0, 0);
+        const movement = new Vector2(0, 0);
 
         // ═══════════════════════════════════════════════════════════
         // HORIZONTAL INPUT (from snapshot)
@@ -548,7 +552,7 @@ export class PlayerController {
                 acceleration,
                 hint: 'Check PhysicsConfig movement settings',
             });
-            return new RAPIER.Vector2(0, 0);
+            return new Vector2(0, 0);
         }
 
         // Apply landing recovery
@@ -663,7 +667,7 @@ export class PlayerController {
 
     /**
      * Update velocity based on actual movement that occurred
-     * @param {RAPIER.Vector2} correctedMovement - The actual movement after collision
+     * @param {Vector2} correctedMovement - The actual movement after collision
      * @param {number} dt - Delta time in seconds
      */
     updateVelocityFromMovement(correctedMovement, dt) {
@@ -758,7 +762,7 @@ export class PlayerController {
             const duckHalfHeight =
                 pixelsToMeters(duckPixelHeight / 2) - PhysicsConfig.player.radius;
 
-            const colliderDesc = RAPIER.ColliderDesc.capsule(
+            const colliderDesc = ColliderDesc.capsule(
                 duckHalfHeight,
                 PhysicsConfig.player.radius
             ) // ✅ METERS
@@ -784,7 +788,7 @@ export class PlayerController {
             const standHalfHeight =
                 pixelsToMeters(standPixelHeight / 2) - PhysicsConfig.player.radius;
 
-            const colliderDesc = RAPIER.ColliderDesc.capsule(
+            const colliderDesc = ColliderDesc.capsule(
                 standHalfHeight,
                 PhysicsConfig.player.radius
             ) // ✅ METERS

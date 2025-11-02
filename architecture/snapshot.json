@@ -1,13 +1,13 @@
 {
   "version": "1.0.0",
-  "timestamp": "2025-11-02T17:11:39.739Z",
+  "timestamp": "2025-11-02T18:48:52.435Z",
   "stats": {
-    "totalFiles": 102,
+    "totalFiles": 104,
     "totalDirs": 30,
     "layerCounts": {
       "scenes": 16,
       "types": 1,
-      "core": 15,
+      "core": 17,
       "constants": 8,
       "public-api": 9,
       "utils": 1,
@@ -17,7 +17,7 @@
       "enemy-agent": 3,
       "player-agent": 9
     },
-    "violationCount": 43
+    "violationCount": 0
   },
   "layers": {
     "scenes": {
@@ -35,11 +35,11 @@
       ]
     },
     "core": {
-      "fileCount": 15,
+      "fileCount": 17,
       "examples": [
         "core/AgentOrchestrator.js",
-        "core/InputManager.js",
-        "core/CloneManager.js"
+        "core/PhysicsTypes.js",
+        "core/InputManager.js"
       ]
     },
     "constants": {
@@ -103,130 +103,9 @@
       ]
     }
   },
-  "violations": [
-    {
-      "file": "scenes/ResultsScene.js",
-      "layer": "scenes",
-      "import": "Math.random()",
-      "rule": "Use DeterministicRNG instead of Math.random()"
-    },
-    {
-      "file": "scenes/ResultsScene.js",
-      "layer": "scenes",
-      "import": "Math.random()",
-      "rule": "Use DeterministicRNG instead of Math.random()"
-    },
-    {
-      "file": "scenes/ResultsScene.js",
-      "layer": "scenes",
-      "import": "Math.random()",
-      "rule": "Use DeterministicRNG instead of Math.random()"
-    },
-    {
-      "file": "scenes/ResultsScene.js",
-      "layer": "scenes",
-      "import": "Math.random()",
-      "rule": "Use DeterministicRNG instead of Math.random()"
-    },
-    {
-      "file": "scenes/ResultsScene.js",
-      "layer": "scenes",
-      "import": "Math.random()",
-      "rule": "Use DeterministicRNG instead of Math.random()"
-    },
-    {
-      "file": "scenes/ResultsScene.js",
-      "layer": "scenes",
-      "import": "Math.random()",
-      "rule": "Use DeterministicRNG instead of Math.random()"
-    },
-    {
-      "file": "scenes/ResultsScene.js",
-      "layer": "scenes",
-      "import": "Math.random()",
-      "rule": "Use DeterministicRNG instead of Math.random()"
-    },
-    {
-      "file": "scenes/HubScene.js",
-      "layer": "scenes",
-      "import": "Math.random()",
-      "rule": "Use DeterministicRNG instead of Math.random()"
-    },
-    {
-      "file": "scenes/HubScene.js",
-      "layer": "scenes",
-      "import": "Math.random()",
-      "rule": "Use DeterministicRNG instead of Math.random()"
-    },
-    {
-      "file": "scenes/HubScene.js",
-      "layer": "scenes",
-      "import": "Math.random()",
-      "rule": "Use DeterministicRNG instead of Math.random()"
-    },
-    {
-      "file": "scenes/HubScene.js",
-      "layer": "scenes",
-      "import": "Math.random()",
-      "rule": "Use DeterministicRNG instead of Math.random()"
-    },
-    {
-      "file": "scenes/HubScene.js",
-      "layer": "scenes",
-      "import": "Math.random()",
-      "rule": "Use DeterministicRNG instead of Math.random()"
-    },
-    {
-      "file": "scenes/HubScene.js",
-      "layer": "scenes",
-      "import": "Math.random()",
-      "rule": "Use DeterministicRNG instead of Math.random()"
-    },
-    {
-      "file": "scenes/HubScene.js",
-      "layer": "scenes",
-      "import": "Math.random()",
-      "rule": "Use DeterministicRNG instead of Math.random()"
-    },
-    {
-      "file": "modules/idle/TimeEchoRecorder.js",
-      "layer": "game-systems",
-      "import": "Math.random()",
-      "rule": "Use DeterministicRNG instead of Math.random()"
-    },
-    {
-      "file": "modules/idle/TimeEchoRecorder.js",
-      "layer": "game-systems",
-      "import": "Math.random()",
-      "rule": "Use DeterministicRNG instead of Math.random()"
-    },
-    {
-      "file": "modules/boss/PulsarController.js",
-      "layer": "game-systems",
-      "import": "@dimforge/rapier2d-compat",
-      "rule": "Gameplay code should use manager facades, not vendors directly"
-    },
-    {
-      "file": "modules/enemy/BossController.js",
-      "layer": "enemy-agent",
-      "import": "Math.random()",
-      "rule": "Use DeterministicRNG instead of Math.random()"
-    },
-    {
-      "file": "modules/enemy/BossController.js",
-      "layer": "enemy-agent",
-      "import": "Math.random()",
-      "rule": "Use DeterministicRNG instead of Math.random()"
-    },
-    {
-      "file": "modules/enemy/BossController.js",
-      "layer": "enemy-agent",
-      "import": "Math.random()",
-      "rule": "Use DeterministicRNG instead of Math.random()"
-    }
-  ],
+  "violations": [],
   "summary": {
-    "healthScore": 7,
-    "recommendation": "Needs attention. Review and fix violations."
+    "healthScore": 100,
+    "recommendation": "Excellent! Architecture is clean."
   }
 }

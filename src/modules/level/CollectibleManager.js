@@ -1,4 +1,4 @@
-import RAPIER from '@dimforge/rapier2d-compat';
+import { RigidBodyDesc, ColliderDesc } from '@features/core';
 
 import { EventNames } from '../../constants/EventNames.js';
 import { LOG } from '../../observability/core/LogSystem.js';
@@ -106,7 +106,7 @@ export class CollectibleManager {
                     });
 
                     // Create a sensor rigid body for the collectible
-                    const collectibleBodyDesc = RAPIER.RigidBodyDesc.fixed().setTranslation(
+                    const collectibleBodyDesc = RigidBodyDesc.fixed().setTranslation(
                         collectible.x,
                         collectible.y
                     );
@@ -117,7 +117,7 @@ export class CollectibleManager {
                     this.bodyToSprite.set(collectibleBody.handle, collectibleSprite);
 
                     // Create a sensor collider for the collectible
-                    const collectibleColliderDesc = RAPIER.ColliderDesc.ball(15) // radius
+                    const collectibleColliderDesc = ColliderDesc.ball(15) // radius
                         .setSensor(true); // Make it a sensor (no physical collision)
 
                     const collectibleCollider = this.world.createCollider(

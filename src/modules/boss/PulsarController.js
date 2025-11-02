@@ -1,4 +1,4 @@
-import RAPIER from '@dimforge/rapier2d-compat';
+import { RigidBodyDesc, ColliderDesc, ActiveEvents } from '@features/core';
 
 import { EventNames } from '../../constants/EventNames.js';
 import { LOG } from '../../observability/core/LogSystem.js';
@@ -91,7 +91,7 @@ export class PulsarController {
      */
     initialize() {
         // Create main boss body
-        const bossDesc = RAPIER.RigidBodyDesc.kinematicPositionBased().setTranslation(
+        const bossDesc = RigidBodyDesc.kinematicPositionBased().setTranslation(
             this.state.position.x,
             this.state.position.y
         );
@@ -99,10 +99,10 @@ export class PulsarController {
         this.bossBody = this.world.createRigidBody(bossDesc);
 
         // Create boss collider
-        const bossCollider = RAPIER.ColliderDesc.ball(50)
+        const bossCollider = ColliderDesc.ball(50)
             .setSensor(true)
             .setCollisionGroups(this.pulseConfig.optimization.collisionLayers)
-            .setActiveEvents(RAPIER.ActiveEvents.COLLISION_EVENTS);
+            .setActiveEvents(ActiveEvents.COLLISION_EVENTS);
 
         this.world.createCollider(bossCollider, this.bossBody);
 
@@ -131,13 +131,13 @@ export class PulsarController {
      */
     createPooledObstacle() {
         // Create kinematic body for obstacle
-        const bodyDesc = RAPIER.RigidBodyDesc.kinematicPositionBased();
+        const bodyDesc = RigidBodyDesc.kinematicPositionBased();
         const body = this.world.createRigidBody(bodyDesc);
 
         // Create collider
-        const colliderDesc = RAPIER.ColliderDesc.ball(20)
+        const colliderDesc = ColliderDesc.ball(20)
             .setCollisionGroups(this.pulseConfig.optimization.collisionLayers)
-            .setActiveEvents(RAPIER.ActiveEvents.COLLISION_EVENTS);
+            .setActiveEvents(ActiveEvents.COLLISION_EVENTS);
 
         const collider = this.world.createCollider(colliderDesc, body);
 
@@ -409,7 +409,7 @@ export class PulsarController {
         const newRadius = 20 * sizeMultiplier;
         this.world.removeCollider(obstacle.collider);
         obstacle.collider = this.world.createCollider(
-            RAPIER.ColliderDesc.ball(newRadius).setCollisionGroups(
+            ColliderDesc.ball(newRadius).setCollisionGroups(
                 this.pulseConfig.optimization.collisionLayers
             ),
             obstacle.body

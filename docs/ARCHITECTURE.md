@@ -19,6 +19,22 @@ This document explains system architecture, design goals, event flows, and core 
 3. **Developer Experience** - Clean imports, no magic strings, consistent patterns
 4. **Performance** - Singleton managers, efficient event system, optimized asset loading
 5. **Testability** - Modular design allows for isolated testing
+6. **Architectural Boundaries** - Enforced layer boundaries with vendor abstraction
+
+### Vendor Abstraction Layer
+
+**Rule**: Only the `core` layer may import vendor libraries directly. All other layers use abstractions exported via `@features/core`.
+
+**Key Abstractions:**
+- **BaseScene** - Abstracts `Phaser.Scene` with built-in observability and EventBus integration
+- **PhysicsTypes** - Abstracts Rapier physics types and helper functions
+
+**Benefits:**
+- Easy library upgrades (change version in one place)
+- Simplified testing (mock abstractions, not vendors)
+- Enforced boundaries (ESLint catches violations at development time)
+
+See [ADR-001](./architecture/adrs/ADR-001-vendor-abstraction-layer.md) for implementation details.
 
 ## 📊 System Layers
 
@@ -51,6 +67,11 @@ This document explains system architecture, design goals, event flows, and core 
 
 Infrastructure and shared services that all features depend on.
 
+**Vendor Abstractions:**
+- **BaseScene** - Phaser Scene abstraction with observability
+- **PhysicsTypes** - Rapier physics type exports and helpers
+
+**Core Managers:**
 - **BaseManager** - Singleton lifecycle management
 - **EventBus** - Environment-agnostic event system
 - **AudioManager** - Centralized audio management
@@ -104,6 +125,8 @@ Clean import interfaces that hide implementation details.
 
 ```javascript
 // features/core/index.js
+export { BaseScene } from '../../core/BaseScene.js';
+export { World, RigidBodyDesc, ColliderDesc, Vector2 /* ... */ } from '../../core/PhysicsTypes.js';
 export { AudioManager } from '../../core/AudioManager.js';
 export { GameStateManager } from '../../core/GameStateManager.js';
 // ... other core managers
@@ -229,7 +252,10 @@ init(data) → preload() → create() → update(time, delta) → destroy()
 ### Scene Dependencies
 
 ```javascript
-export class GameScene extends Scene {
+import { BaseScene } from '@features/core';
+import { SceneKeys } from '../constants/SceneKeys.js';
+
+export class GameScene extends BaseScene {
     constructor() {
         super(SceneKeys.GAME);
 
@@ -327,16 +353,18 @@ See [ASSET_MANAGEMENT.md](../ASSET_MANAGEMENT.md) for complete workflow and guid
 
 ## 🚀 Architectural Improvements
 
-**Status**: Planning phase in progress on branch `refactor/architectural-improvements`
+**Status**: ✅ Implemented - Architecture enforcement is now active
 
-WynIsBuff2 is implementing enhanced architectural validation and build optimization. See [Architectural Improvement Plan](./architecture/ArchitecturalImprovementPlan.md) for:
+WynIsBuff2 has implemented comprehensive architectural validation:
 
-- **Layer boundary enforcement** with ESLint plugin
-- **Build performance optimization** with Rolldown bundler (4-16x faster)
-- **Enhanced deterministic testing** with replay system
-- **Machine-readable architecture specification** (A-Spec JSON)
+- **Layer boundary enforcement** - ESLint plugin with real-time validation (97% violation reduction)
+- **Vendor abstraction layer** - BaseScene and PhysicsTypes isolate vendor dependencies
+- **Pre-commit validation** - Automated checks block architectural violations
+- **Architecture health dashboard** - `bun run arch:health` for comprehensive system checks
+- **VS Code integration** - Real-time violation detection with auto-fix on save
+- **Machine-readable specification** - A-Spec v2.0.0 defines layer rules
 
-This work leverages our current stack (Vite 7.1.12, Rapier 0.19.2, ESLint 9.14.0) without disrupting the existing file structure.
+See [ADR-001](./architecture/adrs/ADR-001-vendor-abstraction-layer.md) for vendor abstraction details and [STATUS-ARCHITECTURE.json](../STATUS-ARCHITECTURE.json) for current metrics.
 
 ## 🔧 Extension Points
 
@@ -344,12 +372,13 @@ This work leverages our current stack (Vite 7.1.12, Rapier 0.19.2, ESLint 9.14.0
 
 1. **Create Module Directory** - `src/modules/newfeature/`
 2. **Implement Controllers** - Following existing patterns
-3. **Create Barrel Export** - `src/features/newfeature/index.js`
-4. **Add Event Names** - Extend `EventNames.js`
-5. **Add Assets** - Update `manifest.json` and regenerate
-6. **Write Tests** - Follow existing test patterns
-7. **Update Documentation** - This file and CONTRIBUTING.md
-8. **Respect Layer Boundaries** - See [Architectural Improvement Plan](./architecture/ArchitecturalImprovementPlan.md) for layer rules
+3. **Use Vendor Abstractions** - Import from `@features/core`, never from vendor libraries directly
+4. **Create Barrel Export** - `src/features/newfeature/index.js`
+5. **Add Event Names** - Extend `EventNames.js` with namespaced events
+6. **Add Assets** - Update `manifest.json` and regenerate
+7. **Write Tests** - Follow existing test patterns
+8. **Validate Architecture** - Run `bun run arch:health` before committing
+9. **Update Documentation** - This file and CONTRIBUTING.md
 
 ### Creating New Managers
 

@@ -1,10 +1,10 @@
-import { Scene } from 'phaser';
+import { BaseScene } from '@features/core';
 
 import { LOG } from '../observability/core/LogSystem.js';
 
-export class TestScene extends Scene {
+export class TestScene extends BaseScene {
     constructor() {
-        super({ key: 'TestScene' });
+        super('TestScene');
     }
 
     create() {

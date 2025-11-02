@@ -1,4 +1,4 @@
-import RAPIER from '@dimforge/rapier2d-compat';
+import { RigidBodyDesc, ColliderDesc } from '@features/core';
 
 import { EventNames } from '../../constants/EventNames.js';
 import { LOG } from '../../observability/core/LogSystem.js';
@@ -94,7 +94,7 @@ export class LevelCompletionManager {
             });
 
             // Create a sensor rigid body for the trigger
-            const triggerBodyDesc = RAPIER.RigidBodyDesc.fixed().setTranslation(
+            const triggerBodyDesc = RigidBodyDesc.fixed().setTranslation(
                 triggerConfig.x,
                 triggerConfig.y
             );
@@ -105,7 +105,7 @@ export class LevelCompletionManager {
             this.bodyToSprite.set(triggerBody.handle, triggerSprite);
 
             // Create a sensor collider for the trigger
-            const triggerColliderDesc = RAPIER.ColliderDesc.cuboid(
+            const triggerColliderDesc = ColliderDesc.cuboid(
                 triggerConfig.width / 2,
                 triggerConfig.height / 2
             ).setSensor(true); // Make it a sensor (no physical collision)

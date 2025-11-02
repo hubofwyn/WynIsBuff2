@@ -30,6 +30,7 @@
         "arch:snapshot": "bun scripts/validate-architecture.js",
         "arch:validate": "bun scripts/validate-architecture-simple.js",
         "arch:check": "bun run arch:snapshot && bun run arch:validate",
+        "arch:health": "bun scripts/architecture-health.js",
         "deps:check": "bunx --bun dependency-cruise src --config ./architecture/rules/depcruise.config.cjs",
         "deps:graph": "bunx --bun dependency-cruise src --config ./architecture/rules/depcruise.config.cjs --output-type dot | dot -T svg > docs/architecture/dependency-graph.svg",
         "deps:dead": "bunx --bun knip --reporter json > docs/architecture/dead-code-report.json",

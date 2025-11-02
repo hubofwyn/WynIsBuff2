@@ -1,10 +1,9 @@
-import { Scene } from 'phaser';
-import { GameStateManager, AudioManager } from '@features/core';
+import { BaseScene, GameStateManager, AudioManager } from '@features/core';
 
 import { UIConfig } from '../constants/UIConfig.js';
 import { SceneKeys } from '../constants/SceneKeys.js';
 
-export class GameOver extends Scene {
+export class GameOver extends BaseScene {
     constructor() {
         super(SceneKeys.GAME_OVER);
 

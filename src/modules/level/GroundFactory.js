@@ -1,8 +1,6 @@
-import RAPIER from '@dimforge/rapier2d-compat';
+import { RigidBodyDesc, ColliderDesc, PhysicsConfig, pixelsToMeters } from '@features/core';
 
 import { EventNames } from '../../constants/EventNames.js';
-import { PhysicsConfig } from '../../constants/PhysicsConfig.js';
-import { pixelsToMeters } from '../../constants/PhysicsConstants.js';
 import { LOG } from '../../observability/core/LogSystem.js';
 
 /**
@@ -77,7 +75,7 @@ export class GroundFactory {
             this.log('Ground sprite created');
 
             // Create a fixed (static) rigid body with proper scaling (pixels to meters)
-            const groundBodyDesc = RAPIER.RigidBodyDesc.fixed().setTranslation(
+            const groundBodyDesc = RigidBodyDesc.fixed().setTranslation(
                 pixelsToMeters(width / 2),
                 pixelsToMeters(y)
             );
@@ -89,7 +87,7 @@ export class GroundFactory {
             this.bodyToSprite.set(groundBody.handle, groundSprite);
 
             // Create a collider with proper scaling and physics properties
-            const groundColliderDesc = RAPIER.ColliderDesc.cuboid(
+            const groundColliderDesc = ColliderDesc.cuboid(
                 pixelsToMeters(width / 2),
                 pixelsToMeters(height / 2)
             )

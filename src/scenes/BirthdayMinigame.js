@@ -1,5 +1,4 @@
-import { Scene } from 'phaser';
-import { AudioManager } from '@features/core';
+import { BaseScene, AudioManager } from '@features/core';
 
 import { SceneKeys } from '../constants/SceneKeys.js';
 import { AudioAssets } from '../constants/Assets.js';
@@ -9,7 +8,7 @@ import { LOG } from '../observability/core/LogSystem.js';
  * Birthday Minigame: "Wyn's 9th Birthday Shake Rush!"
  * Deliver exactly 9 special Shake Shakes for Wyn's birthday!
  */
-export class BirthdayMinigame extends Scene {
+export class BirthdayMinigame extends BaseScene {
     constructor() {
         super(SceneKeys.BIRTHDAY_MINIGAME);
 

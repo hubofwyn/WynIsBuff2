@@ -1,5 +1,4 @@
-import { Scene } from 'phaser';
-import { AudioManager } from '@features/core';
+import { BaseScene, AudioManager } from '@features/core';
 
 import { UIConfig } from '../constants/UIConfig.js';
 import { SceneKeys } from '../constants/SceneKeys.js';
@@ -7,7 +6,7 @@ import { SceneKeys } from '../constants/SceneKeys.js';
 /**
  * PauseScene: overlays the game with a pause menu.
  */
-export class PauseScene extends Scene {
+export class PauseScene extends BaseScene {
     constructor() {
         super(SceneKeys.PAUSE);
     }

@@ -1,4 +1,4 @@
-import RAPIER from '@dimforge/rapier2d-compat';
+import { RigidBodyDesc, ColliderDesc } from '@features/core';
 
 import { EventNames } from '../../constants/EventNames.js';
 import { LOG } from '../../observability/core/LogSystem.js';
@@ -77,7 +77,7 @@ export class MovingPlatformController {
 
                     // Create a kinematic rigid body for the moving platform
                     const platformBodyDesc =
-                        RAPIER.RigidBodyDesc.kinematicPositionBased().setTranslation(
+                        RigidBodyDesc.kinematicPositionBased().setTranslation(
                             platform.x,
                             platform.y
                         );
@@ -88,7 +88,7 @@ export class MovingPlatformController {
                     this.bodyToSprite.set(platformBody.handle, platformSprite);
 
                     // Create a collider for the platform
-                    const platformColliderDesc = RAPIER.ColliderDesc.cuboid(
+                    const platformColliderDesc = ColliderDesc.cuboid(
                         platform.width / 2,
                         platform.height / 2
                     ).setRestitution(0.0);

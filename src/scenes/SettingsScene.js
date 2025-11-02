@@ -1,5 +1,5 @@
-import Phaser, { Scene } from 'phaser';
-import { AudioManager, GameStateManager } from '@features/core';
+import Phaser from 'phaser'; // TODO: Abstract Phaser.Math utilities to core layer
+import { BaseScene, AudioManager, GameStateManager } from '@features/core';
 
 import { UIConfig } from '../constants/UIConfig.js';
 import { SceneKeys } from '../constants/SceneKeys.js';
@@ -7,7 +7,7 @@ import { SceneKeys } from '../constants/SceneKeys.js';
 /**
  * SettingsScene: placeholder scene for game settings UI.
  */
-export class SettingsScene extends Scene {
+export class SettingsScene extends BaseScene {
     constructor() {
         super(SceneKeys.SETTINGS);
     }

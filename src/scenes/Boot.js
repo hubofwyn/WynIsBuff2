@@ -1,9 +1,9 @@
-import { Scene } from 'phaser';
+import { BaseScene } from '@features/core';
 
 import { SceneKeys } from '../constants/SceneKeys.js';
 import { LOG } from '../observability/core/LogSystem.js';
 
-export class Boot extends Scene {
+export class Boot extends BaseScene {
     constructor() {
         super(SceneKeys.BOOT);
     }

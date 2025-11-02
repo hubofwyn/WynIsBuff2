@@ -1,5 +1,4 @@
-import { Scene } from 'phaser';
-import { AudioManager, GameStateManager } from '@features/core';
+import { BaseScene, AudioManager, GameStateManager } from '@features/core';
 
 import { SceneKeys } from '../constants/SceneKeys.js';
 import {
@@ -12,7 +11,7 @@ import {
 import { LOG } from '../observability/core/LogSystem.js';
 import { LogoLoader } from '../utils/LogoLoader.js';
 
-export class Preloader extends Scene {
+export class Preloader extends BaseScene {
     constructor() {
         super(SceneKeys.PRELOADER);
     }
