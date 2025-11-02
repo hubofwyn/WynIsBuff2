@@ -75,6 +75,7 @@ Complete navigation hub for all WynIsBuff2 documentation.
 
 #### Level System
 
+- [features/LEVEL_SELECT_SCREEN_IMPLEMENTATION.md](features/LEVEL_SELECT_SCREEN_IMPLEMENTATION.md) - **Level Select Screen** - Production-ready UI implementation
 - [features/LevelImplementationArchitecture.md](features/LevelImplementationArchitecture.md) - Level architecture
 - [systems/ModularLevelArchitecture.md](systems/ModularLevelArchitecture.md) - Modular level design
 - [systems/ModularLevelSystemImplementation.md](systems/ModularLevelSystemImplementation.md) - Level implementation
@@ -343,6 +344,7 @@ WynIsBuff2/
 | Add a new feature            | [CONTRIBUTING.md](../CONTRIBUTING.md) + [CLAUDE.md](../CLAUDE.md)                       |
 | Work with assets             | [ASSET_MANAGEMENT.md](../ASSET_MANAGEMENT.md)                                           |
 | Understand physics           | [technology/RapierPhysics.md](technology/RapierPhysics.md)                              |
+| **Implement level select UI** | **[features/LEVEL_SELECT_SCREEN_IMPLEMENTATION.md](features/LEVEL_SELECT_SCREEN_IMPLEMENTATION.md)** |
 | Design a level               | [level-progression-plan.md](level-progression-plan.md)                                  |
 | **Use structured logging**   | **[systems/ERROR_HANDLING_LOGGING.md](systems/ERROR_HANDLING_LOGGING.md) - Section 5**  |
 | **Debug with observability** | **[systems/ERROR_HANDLING_LOGGING.md](systems/ERROR_HANDLING_LOGGING.md) - Section 11** |
