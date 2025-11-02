@@ -1,9 +1,9 @@
 {
   "version": "1.0.0",
-  "lastUpdated": "2025-11-01T21:00:00Z",
+  "lastUpdated": "2025-11-01T21:30:00Z",
   "status": "IN_PROGRESS",
-  "currentPhase": "Phase 2 - CI Integration",
-  "completionPercentage": 60,
+  "currentPhase": "Phase 3 - Directory Restructure",
+  "completionPercentage": 70,
 
   "phases": {
     "phase1_foundation": {
@@ -94,29 +94,46 @@
 
     "phase2_ci_integration": {
       "name": "CI/CD Integration",
-      "status": "PENDING",
+      "status": "COMPLETED",
+      "completedAt": "2025-11-01T21:30:00Z",
       "items": {
         "ci_architecture_job": {
           "description": "Add architecture validation to CI workflow",
-          "status": "PENDING",
+          "status": "COMPLETED",
           "priority": "CRITICAL",
           "estimatedTime": "30min",
+          "actualTime": "20min",
           "file": ".github/workflows/ci.yml"
         },
         "ci_boundary_checks": {
           "description": "Add boundary validation step to CI",
-          "status": "PENDING",
+          "status": "COMPLETED",
           "priority": "HIGH",
           "estimatedTime": "10min",
+          "actualTime": "5min",
           "file": ".github/workflows/ci.yml"
         },
         "ci_snapshot_drift": {
           "description": "Add snapshot drift detection to CI",
-          "status": "PENDING",
+          "status": "COMPLETED",
           "priority": "MEDIUM",
           "estimatedTime": "10min",
+          "actualTime": "5min",
           "file": ".github/workflows/ci.yml"
+        },
+        "fix_validation_command": {
+          "description": "Fix arch:validate to use proper validation script",
+          "status": "COMPLETED",
+          "priority": "HIGH",
+          "actualTime": "5min",
+          "file": "package.json"
         }
+      },
+      "summary": {
+        "ciSteps": ["A-Spec validation", "Layer boundaries (ESLint)", "Dependency graph", "Architecture snapshot", "Drift detection"],
+        "artifactsUploaded": ["architecture/snapshot.json", "STATUS-ARCHITECTURE.json"],
+        "continueOnError": true,
+        "notes": "All checks run but don't block CI until violations are fixed"
       }
     },
 

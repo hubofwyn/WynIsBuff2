@@ -28,7 +28,7 @@
         "generate-assets": "bun scripts/generate-assets.js",
         "validate-assets": "bun scripts/validate-assets.js",
         "arch:snapshot": "bun scripts/validate-architecture.js",
-        "arch:validate": "bunx --bun ajv validate -s architecture/a-spec.schema.json -d architecture/a-spec.json",
+        "arch:validate": "bun scripts/validate-architecture-simple.js",
         "arch:check": "bun run arch:snapshot && bun run arch:validate",
         "deps:check": "bunx --bun dependency-cruise src --config ./architecture/rules/depcruise.config.cjs",
         "deps:graph": "bunx --bun dependency-cruise src --config ./architecture/rules/depcruise.config.cjs --output-type dot | dot -T svg > docs/architecture/dependency-graph.svg",
