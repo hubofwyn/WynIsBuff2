@@ -1,0 +1,254 @@
+{
+  "version": "1.0.0",
+  "lastUpdated": "2025-11-01T21:00:00Z",
+  "status": "IN_PROGRESS",
+  "currentPhase": "Phase 2 - CI Integration",
+  "completionPercentage": 60,
+
+  "phases": {
+    "phase1_foundation": {
+      "name": "Foundation & Tooling Setup",
+      "status": "COMPLETED",
+      "completedAt": "2025-11-01T21:00:00Z",
+      "items": {
+        "status_tracker": {
+          "description": "Create STATUS-ARCHITECTURE.json",
+          "status": "COMPLETED",
+          "priority": "CRITICAL",
+          "estimatedTime": "5min",
+          "actualTime": "5min"
+        },
+        "install_packages": {
+          "description": "Install architecture tooling (ajv, ajv-formats, eslint-plugin-boundaries, dependency-cruiser, knip)",
+          "status": "COMPLETED",
+          "priority": "CRITICAL",
+          "estimatedTime": "5min",
+          "actualTime": "3min",
+          "packages": [
+            "ajv@8.17.1",
+            "ajv-formats@3.0.1",
+            "eslint-plugin-boundaries@5.1.0",
+            "dependency-cruiser@17.2.0",
+            "knip@5.66.4"
+          ]
+        },
+        "configure_boundaries": {
+          "description": "Add boundaries plugin to eslint.config.mjs with layer rules",
+          "status": "COMPLETED",
+          "priority": "CRITICAL",
+          "estimatedTime": "30min",
+          "actualTime": "25min",
+          "file": "eslint.config.mjs",
+          "violations": 15
+        },
+        "math_random_rule": {
+          "description": "Add no-restricted-properties rule for Math.random (determinism)",
+          "status": "COMPLETED",
+          "priority": "HIGH",
+          "estimatedTime": "5min",
+          "actualTime": "5min",
+          "file": "eslint.config.mjs",
+          "violations": 15
+        },
+        "dependency_cruiser_config": {
+          "description": "Create dependency-cruiser configuration",
+          "status": "COMPLETED",
+          "priority": "CRITICAL",
+          "estimatedTime": "30min",
+          "actualTime": "20min",
+          "file": "architecture/rules/depcruise.config.cjs",
+          "violations": 4
+        },
+        "remove_eslintignore": {
+          "description": "Remove deprecated .eslintignore file (ESLint 9 uses config)",
+          "status": "COMPLETED",
+          "priority": "MEDIUM",
+          "actualTime": "1min"
+        },
+        "package_json_scripts": {
+          "description": "Add architecture commands to package.json",
+          "status": "COMPLETED",
+          "priority": "HIGH",
+          "estimatedTime": "10min",
+          "actualTime": "5min",
+          "file": "package.json",
+          "scriptsAdded": [
+            "lint:boundaries",
+            "arch:snapshot",
+            "arch:validate",
+            "arch:check",
+            "deps:check",
+            "deps:graph",
+            "deps:dead"
+          ]
+        }
+      },
+      "summary": {
+        "totalViolations": 19,
+        "eslintBoundariesViolations": 1,
+        "eslintMathRandomViolations": 15,
+        "dependencyCruiserViolations": 4,
+        "requiresFixes": true
+      }
+    },
+
+    "phase2_ci_integration": {
+      "name": "CI/CD Integration",
+      "status": "PENDING",
+      "items": {
+        "ci_architecture_job": {
+          "description": "Add architecture validation to CI workflow",
+          "status": "PENDING",
+          "priority": "CRITICAL",
+          "estimatedTime": "30min",
+          "file": ".github/workflows/ci.yml"
+        },
+        "ci_boundary_checks": {
+          "description": "Add boundary validation step to CI",
+          "status": "PENDING",
+          "priority": "HIGH",
+          "estimatedTime": "10min",
+          "file": ".github/workflows/ci.yml"
+        },
+        "ci_snapshot_drift": {
+          "description": "Add snapshot drift detection to CI",
+          "status": "PENDING",
+          "priority": "MEDIUM",
+          "estimatedTime": "10min",
+          "file": ".github/workflows/ci.yml"
+        }
+      }
+    },
+
+    "phase3_restructure": {
+      "name": "Directory Restructure (Major)",
+      "status": "PENDING",
+      "items": {
+        "plan_migration": {
+          "description": "Create detailed migration plan for src/ restructure",
+          "status": "PENDING",
+          "priority": "CRITICAL",
+          "estimatedTime": "1hr",
+          "output": "Migration plan in existing docs"
+        },
+        "create_engine_layer": {
+          "description": "Create src/engine/ and migrate core, physics, audio, phaser modules",
+          "status": "PENDING",
+          "priority": "CRITICAL",
+          "estimatedTime": "2hr",
+          "affectedModules": ["core", "scenes", "modules/physics", "modules/audio", "modules/phaser"]
+        },
+        "create_gameplay_layer": {
+          "description": "Create src/gameplay/ and migrate player, enemy, effects, level modules",
+          "status": "PENDING",
+          "priority": "CRITICAL",
+          "estimatedTime": "2hr",
+          "affectedModules": ["modules/player", "modules/enemy", "modules/effects", "modules/level"]
+        },
+        "update_imports": {
+          "description": "Update all imports throughout codebase",
+          "status": "PENDING",
+          "priority": "CRITICAL",
+          "estimatedTime": "1hr",
+          "tooling": "Find/replace with validation"
+        },
+        "update_features": {
+          "description": "Update feature barrel exports to match new structure",
+          "status": "PENDING",
+          "priority": "HIGH",
+          "estimatedTime": "30min",
+          "directory": "src/features/"
+        },
+        "test_restructure": {
+          "description": "Run full test suite and validate builds",
+          "status": "PENDING",
+          "priority": "CRITICAL",
+          "estimatedTime": "30min",
+          "commands": ["bun test", "bun run build", "bun run lint"]
+        }
+      }
+    },
+
+    "phase4_determinism": {
+      "name": "Determinism Implementation",
+      "status": "PENDING",
+      "items": {
+        "rapier_deterministic": {
+          "description": "Test Rapier deterministic flavor",
+          "status": "PENDING",
+          "priority": "MEDIUM",
+          "estimatedTime": "1hr",
+          "file": "src/engine/physics/RapierAdapter.js"
+        },
+        "replay_system": {
+          "description": "Implement JSONL replay system",
+          "status": "PENDING",
+          "priority": "MEDIUM",
+          "estimatedTime": "2hr",
+          "newFiles": ["src/engine/replay/ReplayRecorder.js", "src/engine/replay/ReplayPlayer.js"]
+        },
+        "property_tests": {
+          "description": "Add property-based physics tests",
+          "status": "PENDING",
+          "priority": "LOW",
+          "estimatedTime": "2hr",
+          "directory": "tests/properties/"
+        }
+      }
+    },
+
+    "phase5_optimization": {
+      "name": "Build Optimization",
+      "status": "PENDING",
+      "items": {
+        "rolldown_testing": {
+          "description": "Test Vite 7 Rolldown bundler",
+          "status": "PENDING",
+          "priority": "LOW",
+          "estimatedTime": "1hr",
+          "file": "vite/config.prod.mjs"
+        },
+        "build_profiling": {
+          "description": "Profile build times and bundle sizes",
+          "status": "PENDING",
+          "priority": "LOW",
+          "estimatedTime": "30min"
+        }
+      }
+    }
+  },
+
+  "documentation": {
+    "updated": [
+      "architecture/a-spec.json",
+      "architecture/a-spec.schema.json"
+    ],
+    "needsUpdate": [
+      "docs/ARCHITECTURE.md",
+      "CLAUDE.md",
+      "docs/architecture/README.md"
+    ],
+    "created": []
+  },
+
+  "risks": {
+    "phase3_restructure": {
+      "level": "HIGH",
+      "description": "Major directory restructure will touch many files",
+      "mitigation": "Create feature branch, thorough testing, incremental commits"
+    },
+    "breaking_changes": {
+      "level": "MEDIUM",
+      "description": "Import path changes may break development workflows",
+      "mitigation": "Clear documentation, team communication, migration guide"
+    }
+  },
+
+  "nextSteps": [
+    "Install architecture tooling packages",
+    "Configure ESLint boundaries",
+    "Create dependency-cruiser config",
+    "Add CI validation",
+    "Plan directory restructure"
+  ]
+}

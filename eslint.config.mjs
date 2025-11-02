@@ -1,6 +1,7 @@
 import js from '@eslint/js';
 import importPlugin from 'eslint-plugin-import';
 import prettierConfig from 'eslint-config-prettier';
+import boundariesPlugin from 'eslint-plugin-boundaries';
 
 export default [
     // Base JavaScript configuration
@@ -13,7 +14,7 @@ export default [
     {
         files: ['**/*.{js,mjs}'],
         languageOptions: {
-            ecmaVersion: 2022,
+            ecmaVersion: 2025,
             sourceType: 'module',
             globals: {
                 // Node.js globals
@@ -49,6 +50,29 @@ export default [
         },
         plugins: {
             import: importPlugin,
+            boundaries: boundariesPlugin,
+        },
+        settings: {
+            'import/resolver': {
+                node: {
+                    extensions: ['.js', '.mjs'],
+                },
+            },
+            // Boundaries plugin configuration - matches A-Spec v2.0.0
+            'boundaries/elements': [
+                { type: 'observability', pattern: 'src/observability/**' },
+                { type: 'constants', pattern: 'src/constants/**' },
+                { type: 'core', pattern: 'src/core/**' },
+                { type: 'scenes', pattern: 'src/scenes/**' },
+                { type: 'gameplay-agents', pattern: 'src/modules/{player,enemy}/**' },
+                { type: 'gameplay-systems', pattern: 'src/modules/{level,effects,idle,boss,analytics,ui}/**' },
+                { type: 'public-api', pattern: 'src/features/**' },
+            ],
+            'boundaries/ignore': [
+                'src/main.js',
+                'src/utils/**',
+                'src/types/**',
+            ],
         },
         rules: {
             'no-console': 'warn',
@@ -79,13 +103,61 @@ export default [
             'no-var': 'error',
             'object-shorthand': 'error',
             'arrow-body-style': ['error', 'as-needed'],
-        },
-        settings: {
-            'import/resolver': {
-                node: {
-                    extensions: ['.js', '.mjs'],
+
+            // Architecture enforcement rules
+            'boundaries/element-types': [
+                'error',
+                {
+                    default: 'disallow',
+                    rules: [
+                        // Observability can only import itself
+                        { from: 'observability', allow: ['observability'] },
+                        // Constants import nothing
+                        { from: 'constants', allow: [] },
+                        // Core can import: core, observability, constants
+                        { from: 'core', allow: ['core', 'observability', 'constants'] },
+                        // Scenes can import: public-api, constants, observability
+                        { from: 'scenes', allow: ['public-api', 'constants', 'observability'] },
+                        // Gameplay agents can import: core, constants, observability
+                        { from: 'gameplay-agents', allow: ['core', 'constants', 'observability'] },
+                        // Gameplay systems can import: core, gameplay-agents, constants, observability
+                        {
+                            from: 'gameplay-systems',
+                            allow: ['core', 'gameplay-agents', 'constants', 'observability'],
+                        },
+                        // Public API can import: core, gameplay-agents, gameplay-systems, constants
+                        {
+                            from: 'public-api',
+                            allow: ['core', 'gameplay-agents', 'gameplay-systems', 'constants'],
+                        },
+                    ],
                 },
-            },
+            ],
+
+            // Determinism enforcement: no Math.random in gameplay code
+            'no-restricted-properties': [
+                'error',
+                {
+                    object: 'Math',
+                    property: 'random',
+                    message:
+                        'Use DeterministicRNG from @features/core instead of Math.random() for reproducible gameplay',
+                },
+            ],
+
+            // Vendor access enforcement (warn for now, will error after restructure)
+            'no-restricted-imports': [
+                'warn',
+                {
+                    patterns: [
+                        {
+                            group: ['phaser', 'howler', '@dimforge/rapier2d-compat'],
+                            message:
+                                'Direct vendor imports should only occur in core layer. Use managers from @features/* instead.',
+                        },
+                    ],
+                },
+            ],
         },
     },
 
