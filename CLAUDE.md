@@ -7,11 +7,11 @@ Development guide for Claude Code and AI assistants working on WynIsBuff2.
 ## Quick Start
 
 ```bash
-npm install             # Install dependencies
-npm run dev             # Start development server (port 5173)
-npm test                # Run tests
-npm run build           # Production build
-npm run arch:health     # Check architecture health
+bun install             # Install dependencies
+bun run dev             # Start development server (port 5173)
+bun test                # Run tests
+bun run build           # Production build
+bun run arch:health     # Check architecture health
 ```
 
 ## Architecture Essentials
@@ -159,7 +159,7 @@ window.debugAPI.analyzeSubsystem('physics');
 ### Asset Workflow (Three Steps)
 
 1. Add asset to `/assets/manifest.json`
-2. Run `npm run generate-assets`
+2. Run `bun run generate-assets`
 3. Use via constants: `ImageAssets.PLAYER_SPRITE`
 
 ## Common Development Tasks
@@ -191,7 +191,7 @@ window.debugAPI.analyzeSubsystem('physics');
         "path": "images/my-asset.png"
     }
     ```
-3. Run `npm run generate-assets`
+3. Run `bun run generate-assets`
 4. Use: `ImageAssets.MY_ASSET`
 
 ## Naming Conventions
@@ -215,7 +215,7 @@ window.debugAPI.analyzeSubsystem('physics');
 Tests use CommonJS (`.cjs`) with Node.js `assert`. No external framework.
 
 ```bash
-npm test  # Runs all tests/ files
+bun test  # Runs all tests/ files
 ```
 
 **Focus Areas:**
@@ -276,7 +276,7 @@ const value = rng.int(1, 100, 'streamName');
 - **Features**: [docs/features/](docs/features/)
 - **Observability**: [docs/systems/ERROR_HANDLING_LOGGING.md](docs/systems/ERROR_HANDLING_LOGGING.md)
 - **Debugging Guide**: [docs/guides/DEBUGGING.md](docs/guides/DEBUGGING.md)
-- **Asset Management**: [ASSET_MANAGEMENT.md](ASSET_MANAGEMENT.md)
+- **Asset Management**: [docs/guides/ASSET_MANAGEMENT.md](docs/guides/ASSET_MANAGEMENT.md)
 - **Contributing**: [CONTRIBUTING.md](CONTRIBUTING.md)
 - **Full Index**: [docs/INDEX.md](docs/INDEX.md)
 
@@ -287,5 +287,5 @@ const value = rng.int(1, 100, 'streamName');
 - Physics/Rapier → [docs/technology/RapierPhysics.md](docs/technology/RapierPhysics.md)
 - Phaser integration → [docs/technology/PhaserFramework.md](docs/technology/PhaserFramework.md)
 - Debugging/Observability → [docs/guides/DEBUGGING.md](docs/guides/DEBUGGING.md)
-- Agent system → [AGENTS.md](AGENTS.md)
+- Windsurf/Cascade tools → [docs/tools/WINDSURF_SETUP.md](docs/tools/WINDSURF_SETUP.md)
 - Everything else → [docs/INDEX.md](docs/INDEX.md)

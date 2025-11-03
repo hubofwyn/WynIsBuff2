@@ -1,19 +1,19 @@
 {
   "version": "1.0.0",
-  "timestamp": "2025-11-02T19:32:29.421Z",
+  "timestamp": "2025-11-03T20:32:29.800Z",
   "stats": {
-    "totalFiles": 104,
+    "totalFiles": 109,
     "totalDirs": 30,
     "layerCounts": {
       "scenes": 16,
       "types": 1,
-      "core": 17,
-      "constants": 8,
+      "core": 20,
+      "constants": 9,
       "public-api": 9,
       "utils": 1,
       "observability": 21,
       "other": 1,
-      "game-systems": 18,
+      "game-systems": 19,
       "enemy-agent": 3,
       "player-agent": 9
     },
@@ -35,15 +35,15 @@
       ]
     },
     "core": {
-      "fileCount": 17,
+      "fileCount": 20,
       "examples": [
-        "core/AgentOrchestrator.js",
-        "core/PhysicsTypes.js",
-        "core/InputManager.js"
+        "core/LoadingScreenManager.js",
+        "core/AudioUnlockManager.js",
+        "core/AgentOrchestrator.js"
       ]
     },
     "constants": {
-      "fileCount": 8,
+      "fileCount": 9,
       "examples": [
         "constants/EventNames.js",
         "constants/PhysicsConstants.js",
@@ -79,7 +79,7 @@
       ]
     },
     "game-systems": {
-      "fileCount": 18,
+      "fileCount": 19,
       "examples": [
         "modules/ui/FeedbackSystem.js",
         "modules/idle/TimeEchoRecorder.js",

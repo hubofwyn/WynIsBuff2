@@ -115,5 +115,5 @@ _≤ 700 lines, headings exactly as shown, deterministic sub‑ordering._
 
 - All four deliverables present and parse without errors.
 - `current-foundation.md` has all seven required sections.
-- No unresolved “TBD” markers unless mirrored in §7 Open Questions.
-- Lint/format checks pass (`npm run lint`, `markdownlint`).
+- No unresolved “TBD” markers unless mirrored in §7 Open Questions.
+- Lint/format checks pass (`bun run lint`, `markdownlint`).

@@ -141,7 +141,7 @@ Available in `hud/` directory
 
 1. **Decide on approach**: Spritesheet (recommended) or individual
 2. **Add to manifest.json**: Define in appropriate section
-3. **Run generator**: `npm run generate-assets`
+3. **Run generator**: `bun run generate-assets`
 4. **Use constants**: Import from `Assets.js`
 5. **Load in Preloader**: Reference via generated constants
 
@@ -172,7 +172,7 @@ See: https://kenney.nl/assets/platformer-pack-redux
 ## Next Steps
 
 1. Add commonly used atlases to `manifest.json`
-2. Generate constants: `npm run generate-assets`
+2. Generate constants: `bun run generate-assets`
 3. Load in `Preloader.js`
 4. Reference in game scenes via constants
 5. Expand manifest as you add more sprites

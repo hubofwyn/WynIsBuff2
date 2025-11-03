@@ -44,7 +44,7 @@ Example entry:
 2) Regenerate constants
 
 ```
-npm run generate-assets
+bun run generate-assets
 ```
 
 3) Load in Preloader

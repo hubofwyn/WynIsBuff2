@@ -5,16 +5,16 @@ Purpose: reduce orphaned assets and keep the working set focused without losing 
 ## Process
 
 1) Inventory orphans
-   - Run: `npm run validate-assets`
+   - Run: `bun run validate-assets`
    - Export list to a working note (copy from console)
 
 2) Decide for each path
-   - Keep (in use soon): add to `assets/manifest.json`, then `npm run generate-assets`
+   - Keep (in use soon): add to `assets/manifest.json`, then `bun run generate-assets`
    - Archive (not in use): move to `assets/archive/` preserving subfolders
    - Remove (accidental/temporary): delete
 
 3) Verify
-   - Re-run: `npm run validate-assets`
+   - Re-run: `bun run validate-assets`
    - Ensure orphans drop; no new missing assets
 
 ## Initial Candidates (from latest validation)

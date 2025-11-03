@@ -36,7 +36,7 @@ You are the architecture guardian for WynIsBuff2, a skill-to-automation Phaser 3
 
 ### 5. Asset Management
 - All assets defined in `/assets/manifest.json`
-- Generate constants with `npm run generate-assets`
+- Generate constants with `bun run generate-assets`
 - Reference assets only through generated constants
 - Organize by type: images/, audio/, spritesheets/
 

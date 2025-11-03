@@ -34,6 +34,11 @@
         "deps:check": "bunx --bun dependency-cruise src --config ./architecture/rules/depcruise.config.cjs",
         "deps:graph": "bunx --bun dependency-cruise src --config ./architecture/rules/depcruise.config.cjs --output-type dot | dot -T svg > docs/architecture/dependency-graph.svg",
         "deps:dead": "bunx --bun knip --reporter json > docs/architecture/dead-code-report.json",
+        "docs:extract": "bun scripts/extract-docs.js",
+        "docs:index": "bun scripts/generate-doc-index.js",
+        "docs:update": "bun run docs:extract && bun run docs:index",
+        "validate:level": "bun scripts/validate-level.js",
+        "validate:levels": "bun scripts/validate-level.js all",
         "prepare": "bunx --bun husky"
     },
     "devDependencies": {
@@ -50,7 +55,8 @@
         "lint-staged": "^15.2.10",
         "prettier": "^3.3.3",
         "terser": "^5.44.0",
-        "vite": "^7.1.12"
+        "vite": "^7.1.12",
+        "yaml": "^2.8.1"
     },
     "dependencies": {
         "@dimforge/rapier2d-compat": "^0.19.2",

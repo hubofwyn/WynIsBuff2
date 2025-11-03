@@ -8,7 +8,7 @@ Use this folder to keep the working set lean while preserving files that may be 
 
 - Keep (in use soon)
   - Add to `assets/manifest.json`
-  - Run `npm run generate-assets`
+  - Run `bun run generate-assets`
   - Reference via generated constants (no raw paths)
 
 - Archive (not in use)

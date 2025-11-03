@@ -8,7 +8,8 @@ This guide focuses on day-to-day contribution flow: environment setup, folder st
 
 - Use this when onboarding and contributing code
 - For system design, see docs/ARCHITECTURE.md
-- For asset pipeline details, see ASSET_MANAGEMENT.md
+- For asset pipeline details, see docs/guides/ASSET_MANAGEMENT.md
+- For documentation standards, see docs/meta/DOCUMENTATION_STANDARDS.md
 
 ## 📋 Table of Contents
 

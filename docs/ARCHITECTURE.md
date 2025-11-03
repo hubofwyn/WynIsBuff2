@@ -292,7 +292,7 @@ export class GameScene extends BaseScene {
 Assets use a code generation pipeline to eliminate magic strings:
 
 ```
-manifest.json → npm run generate-assets → Assets.js constants → Scene loading
+manifest.json → bun run generate-assets → Assets.js constants → Scene loading
 ```
 
 **Key Constants**: `ImageAssets`, `ImagePaths`, `AudioAssets`, `AudioPaths`, `SpritesheetConfigs`

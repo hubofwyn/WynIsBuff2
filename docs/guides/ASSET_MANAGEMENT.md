@@ -52,14 +52,14 @@ scripts/
 ```bash
 git clone [repository]
 cd WynIsBuff2
-npm install
+bun install
 ```
 
 ### 2. Generate Assets
 
 ```bash
-npm run generate-assets   # Generate constants from manifest
-npm run validate-assets   # Check asset integrity
+bun run generate-assets   # Generate constants from manifest
+bun run validate-assets   # Check asset integrity
 ```
 
 ### 3. Create Placeholders (if needed)
@@ -71,7 +71,7 @@ node scripts/create-simple-placeholders.cjs  # Creates minimal PNG placeholders
 ### 4. Start Development
 
 ```bash
-npm run dev   # Starts at http://localhost:8080/
+bun run dev   # Starts at http://localhost:5173/
 ```
 
 ## Asset Workflow
@@ -107,7 +107,7 @@ npm run dev   # Starts at http://localhost:8080/
 3. **Regenerate constants**:
 
     ```bash
-    npm run generate-assets
+    bun run generate-assets
     ```
 
 4. **Use in code**:
@@ -206,14 +206,14 @@ convert -size 32x32 xc:none -fill white -draw "circle 16,16 16,0" white.png
 
 | Command                                       | Description                           |
 | --------------------------------------------- | ------------------------------------- |
-| `npm run generate-assets`                     | Generate Assets.js from manifest.json |
-| `npm run validate-assets`                     | Check all assets exist and are valid  |
+| `bun run generate-assets`                     | Generate Assets.js from manifest.json |
+| `bun run validate-assets`                     | Check all assets exist and are valid  |
 | `node scripts/create-simple-placeholders.cjs` | Create placeholder PNG files          |
 
 ## Validation Output
 
 ```bash
-npm run validate-assets
+bun run validate-assets
 ```
 
 Shows:
@@ -231,14 +231,14 @@ Shows:
 
 ### Issue: "Cannot find ImageAssets.MY_ASSET"
 
-**Solution**: Run `npm run generate-assets` after adding to manifest
+**Solution**: Run `bun run generate-assets` after adding to manifest
 
 ### Issue: Build fails with missing asset
 
 **Solution**: Run validation and create placeholders:
 
 ```bash
-npm run validate-assets
+bun run validate-assets
 node scripts/create-simple-placeholders.cjs
 ```
 
@@ -260,7 +260,7 @@ The project includes placeholder assets for quick development:
 ## Best Practices
 
 1. **Always use constants**: Never hardcode asset paths
-2. **Run validation**: Before commits, run `npm run validate-assets`
+2. **Run validation**: Before commits, run `bun run validate-assets`
 3. **Document assets**: Add clear descriptions in manifest.json
 4. **Organize by type**: Keep similar assets in same directories
 5. **Optimize files**: Compress images before adding (PNG/JPG)
@@ -268,11 +268,11 @@ The project includes placeholder assets for quick development:
 
 ## Orphaned Assets Policy
 
-When `npm run validate-assets` reports orphaned files, handle them deliberately:
+When `bun run validate-assets` reports orphaned files, handle them deliberately:
 
 - Keep (in use soon):
     - Add entries to `assets/manifest.json`
-    - Run `npm run generate-assets`
+    - Run `bun run generate-assets`
     - Reference via `ImageAssets/*`, `ImagePaths/*`, or audio equivalents
 
 - Archive (not in use):
@@ -310,7 +310,7 @@ See [assets/KENNEY_ASSETS.md](assets/KENNEY_ASSETS.md) for complete reference an
 
 For issues with assets:
 
-1. Run `npm run validate-assets` first
+1. Run `bun run validate-assets` first
 2. Check console for loading errors
 3. Verify manifest.json entries
 4. Ensure files exist at specified paths

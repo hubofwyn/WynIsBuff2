@@ -1,7 +1,7 @@
 import { BaseScene, AudioManager } from '@features/core';
 
+import { LOG } from '../observability/core/LogSystem.js';
 import { SceneKeys } from '../constants/SceneKeys.js';
-import { AudioAssets } from '../constants/Assets.js';
 
 /**
  * WelcomeScene: shows the game title and prompts player to start.
@@ -120,14 +120,30 @@ export class WelcomeScene extends BaseScene {
         });
 
         // Handle user interaction
-        const startGame = () => {
-            // Try to unlock audio context
+        const startGame = async () => {
+            // Ensure audio context is resumed (belt and suspenders approach)
             if (window.Howler && window.Howler.ctx && window.Howler.ctx.state === 'suspended') {
-                window.Howler.ctx.resume();
+                try {
+                    await window.Howler.ctx.resume();
+                    LOG.dev('WELCOME_AUDIO_RESUMED', {
+                        subsystem: 'scene',
+                        scene: SceneKeys.WELCOME,
+                        message: 'AudioContext resumed on user interaction',
+                    });
+                } catch (err) {
+                    LOG.warn('WELCOME_AUDIO_RESUME_FAILED', {
+                        subsystem: 'scene',
+                        scene: SceneKeys.WELCOME,
+                        error: err,
+                        message: 'Failed to resume AudioContext',
+                    });
+                }
             }
 
+            // Play click sound
             audio.playSFX('click');
-            audio.playMusic(AudioAssets.PROTEIN_PIXEL_ANTHEM);
+
+            // Note: Music will start in MainMenu scene after character selection
 
             // Smooth transition
             this.cameras.main.fadeOut(800, 0, 0, 0);

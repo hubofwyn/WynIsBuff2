@@ -536,16 +536,16 @@ async function testCoreLoop() {
 
 ### Code Quality
 
-- [ ] All linting errors fixed (`npm run lint:fix`)
-- [ ] Code formatted (`npm run format`)
-- [ ] Type checking passes (`npm run typecheck`)
+- [ ] All linting errors fixed (`bun run lint:fix`)
+- [ ] Code formatted (`bun run format`)
+- [ ] Type checking passes (`bun run typecheck`)
 - [ ] No console errors/warnings
 
 ### Testing
 
-- [ ] Unit tests pass (`npm test`)
-- [ ] Integration tests pass (`npm run test:integration`)
-- [ ] Determinism test passes (`npm run test:determinism`)
+- [ ] Unit tests pass (`bun test`)
+- [ ] Integration tests pass (`bun run test:integration`)
+- [ ] Determinism test passes (`bun run test:determinism`)
 - [ ] Manual testing checklist complete
 
 ### Documentation
@@ -626,10 +626,10 @@ After each task:
 
 ```bash
 # Quick validation
-npm run lint:fix && npm run format && npm test
+bun run lint:fix && bun run format && bun test
 
 # Full validation
-npm run validate:all
+bun run validate:all
 
 # Commit with confidence
 git add . && git commit -m "feat: [description]"

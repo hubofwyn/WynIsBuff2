@@ -1,4 +1,4 @@
-import { BaseScene, AudioManager, GameStateManager } from '@features/core';
+import { BaseScene, AudioManager, GameStateManager, LoadingScreenManager } from '@features/core';
 
 import { SceneKeys } from '../constants/SceneKeys.js';
 import {
@@ -17,157 +17,53 @@ export class Preloader extends BaseScene {
     }
 
     init() {
-        const { width, height } = this.cameras.main;
-
-        // Create a professional gradient background
-        this.cameras.main.setBackgroundColor('#0F1B2B');
-
-        // Add animated gradient overlay
-        const gradientBg = this.add.graphics();
-        gradientBg.fillGradientStyle(0x1a1a2e, 0x16213e, 0x0f3460, 0x16213e, 1);
-        gradientBg.fillRect(0, 0, width, height);
-
-        // Game logo/title with enhanced styling
-        const titleText = this.add
-            .text(width / 2, height * 0.3, 'WYN IS BUFF 2', {
-                fontFamily: 'Impact, Arial Black, sans-serif',
-                fontSize: '64px',
-                color: '#FFE66D',
-                stroke: '#000000',
-                strokeThickness: 6,
-                shadow: { offsetX: 4, offsetY: 4, color: '#000000', blur: 8, fill: true },
-            })
-            .setOrigin(0.5);
-
-        // Subtitle with skill-to-automation theme
-        const subtitleText = this.add
-            .text(width / 2, height * 0.4, 'SKILL TO AUTOMATION', {
-                fontFamily: 'Arial, sans-serif',
-                fontSize: '24px',
-                color: '#4ECDC4',
-                letterSpacing: '4px',
-            })
-            .setOrigin(0.5);
-
-        // Modern progress bar container
-        const progressBarBg = this.add.graphics();
-        const barWidth = 400;
-        const barHeight = 20;
-        const barX = width / 2 - barWidth / 2;
-        const barY = height * 0.6;
-
-        // Progress bar background with rounded corners and glow
-        progressBarBg.fillStyle(0x000000, 0.5);
-        progressBarBg.fillRoundedRect(barX, barY, barWidth, barHeight, 10);
-        progressBarBg.lineStyle(2, 0x4ecdc4, 0.8);
-        progressBarBg.strokeRoundedRect(barX, barY, barWidth, barHeight, 10);
-
-        // Animated progress bar fill
-        const progressBar = this.add.graphics();
-
-        // Loading text with animation
-        const loadingText = this.add
-            .text(width / 2, barY + 50, 'INITIALIZING SYSTEMS...', {
-                fontFamily: 'Arial, sans-serif',
-                fontSize: '18px',
-                color: '#FFFFFF',
-                alpha: 0.8,
-            })
-            .setOrigin(0.5);
-
-        // Percentage text
-        const percentText = this.add
-            .text(width / 2, barY - 30, '0%', {
-                fontFamily: 'Arial, sans-serif',
-                fontSize: '22px',
-                color: '#FFE66D',
-                fontWeight: 'bold',
-            })
-            .setOrigin(0.5);
-
-        // Loading stages
-        const loadingStages = [
-            'INITIALIZING SYSTEMS...',
-            'LOADING AUDIO ASSETS...',
-            'PREPARING GRAPHICS...',
-            'CALIBRATING PHYSICS...',
-            'READY FOR BUFF TRAINING!',
-        ];
-
-        let currentStage = 0;
-
-        // Animate title entrance
-        titleText.setScale(0).setAlpha(0);
-        this.tweens.add({
-            targets: titleText,
-            scale: 1,
-            alpha: 1,
-            duration: 800,
-            ease: 'Back.easeOut',
-        });
-
-        // Animate subtitle entrance
-        subtitleText.setY(subtitleText.y + 50).setAlpha(0);
-        this.tweens.add({
-            targets: subtitleText,
-            y: subtitleText.y - 50,
-            alpha: 1,
-            duration: 600,
-            delay: 400,
-            ease: 'Power2.easeOut',
-        });
-
-        //  Use the 'progress' event emitted by the LoaderPlugin to update the loading bar
-        this.load.on('progress', (progress) => {
-            // Clear and redraw progress bar
-            progressBar.clear();
-
-            // Calculate progress width
-            const fillWidth = (barWidth - 4) * progress;
-
-            // Create gradient fill based on progress
-            const startColor = progress < 0.5 ? 0xff6b9d : 0x4ecdc4;
-            const endColor = progress < 0.5 ? 0xffe66d : 0x00ff88;
-
-            progressBar.fillGradientStyle(startColor, endColor, startColor, endColor, 1);
-            progressBar.fillRoundedRect(barX + 2, barY + 2, fillWidth, barHeight - 4, 8);
-
-            // Update percentage text
-            const percent = Math.floor(progress * 100);
-            percentText.setText(`${percent}%`);
-
-            // Update loading stage text
-            const newStage = Math.floor(progress * loadingStages.length);
-            if (newStage !== currentStage && newStage < loadingStages.length) {
-                currentStage = newStage;
-                loadingText.setText(loadingStages[currentStage]);
-
-                // Animate text change
-                this.tweens.add({
-                    targets: loadingText,
-                    alpha: 0.4,
-                    duration: 100,
-                    yoyo: true,
-                    ease: 'Power2.easeInOut',
-                });
-            }
-        });
-
-        // Add loading dots animation
-        this.loadingDotsTimer = this.time.addEvent({
-            delay: 500,
-            callback: () => {
-                const currentText = loadingText.text;
-                const baseText = currentText.replace(/\.+$/, '');
-                const dots = currentText.match(/\.+$/)?.[0] || '';
-                const newDots = dots.length >= 3 ? '' : dots + '.';
-                loadingText.setText(baseText + newDots);
-            },
-            loop: true,
+        // Initialize unified loading screen
+        this.loadingManager = LoadingScreenManager.getInstance();
+        
+        LOG.info('PRELOADER_INIT', {
+            subsystem: 'scene',
+            scene: SceneKeys.PRELOADER,
+            message: 'Preloader scene initialized with LoadingScreenManager',
         });
     }
 
     preload() {
+        // Show unified loading screen
+        this.loadingManager.show(this, {
+            title: 'WYN IS BUFF 2',
+            showLogo: true,
+            showProgress: true,
+            message: 'Initializing systems...',
+        });
+
+        // Loading stages for status updates
+        const loadingStages = [
+            'Initializing systems...',
+            'Loading audio assets...',
+            'Preparing graphics...',
+            'Calibrating physics...',
+            'Ready for buff training!',
+        ];
+
+        // Update progress and status as assets load
+        this.load.on('progress', (progress) => {
+            // Update progress bar
+            this.loadingManager.updateProgress(progress);
+
+            // Update status message based on progress
+            const stageIndex = Math.min(
+                Math.floor(progress * loadingStages.length),
+                loadingStages.length - 1
+            );
+            this.loadingManager.updateStatus(loadingStages[stageIndex]);
+        });
+
+        // Update status on individual file loads
+        this.load.on('fileprogress', (file) => {
+            const fileName = file.key || 'unknown';
+            this.loadingManager.updateStatus(`Loading: ${fileName}`);
+        });
+
         //  Load the assets for the game
         this.load.setPath('assets');
 
@@ -300,11 +196,9 @@ export class Preloader extends BaseScene {
         this.load.image(ImageAssets.PARALLAX_FOREGROUND, ImagePaths.PARALLAX_FOREGROUND);
     }
 
-    create() {
-        // Clean up loading timer
-        if (this.loadingDotsTimer) {
-            this.loadingDotsTimer.destroy();
-        }
+    async create() {
+        // Update loading screen to show completion
+        this.loadingManager.updateProgress(1.0, 'Systems ready!');
 
         //  When all the assets have loaded, it's often worth creating global objects here that the rest of the game can use.
         //  For example, you can define global animations here, so we can use them in other scenes.
@@ -333,37 +227,20 @@ export class Preloader extends BaseScene {
             volumes: settings.volumes || 'default',
         });
 
-        // Show completion animation before transitioning
-        const { width, height } = this.cameras.main;
+        // Brief pause to show completion, then hide loading screen
+        await new Promise((resolve) => this.time.delayedCall(500, resolve));
+        
+        // Hide loading screen with fade
+        await this.loadingManager.hide(600);
 
-        const completedText = this.add
-            .text(width / 2, height * 0.75, 'SYSTEMS READY!', {
-                fontFamily: 'Impact, Arial Black, sans-serif',
-                fontSize: '32px',
-                color: '#00FF88',
-                stroke: '#000000',
-                strokeThickness: 3,
-            })
-            .setOrigin(0.5)
-            .setAlpha(0);
-
-        // Animate completion
-        this.tweens.add({
-            targets: completedText,
-            alpha: 1,
-            scale: { from: 0.8, to: 1.2 },
-            duration: 400,
-            ease: 'Back.easeOut',
-            onComplete: () => {
-                // Brief pause then transition
-                this.time.delayedCall(800, () => {
-                    this.cameras.main.fadeOut(600, 0, 0, 0);
-                    this.time.delayedCall(600, () => {
-                        this.scene.start(SceneKeys.WELCOME);
-                    });
-                });
-            },
+        // Transition to next scene
+        LOG.info('PRELOADER_COMPLETE', {
+            subsystem: 'scene',
+            scene: SceneKeys.PRELOADER,
+            message: 'Asset loading complete, transitioning to Welcome scene',
         });
+        
+        this.scene.start(SceneKeys.WELCOME);
     }
 
     update(_time, _delta) {

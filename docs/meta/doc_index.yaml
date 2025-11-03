@@ -1,0 +1,277 @@
+version: 1.0.0
+schema_version: 1.1.0
+systems:
+  - id: level-system
+    title: Level System Architecture
+    source:
+      - src/modules/level
+      - src/constants/LevelData.js
+    documentation:
+      - docs/sessions/2025-11-02-level-select-layout-fixes.md
+      - docs/LEVEL_SELECT_REVISION_PLAN.md
+    keywords:
+      - level
+      - platformer
+      - factory
+      - layout
+      - responsive
+    components:
+      - LevelManager
+      - LevelLoader
+      - LevelCardComponent
+      - CollectibleManager
+      - LevelTransitionController
+    updated: 2025-11-03
+  - id: event-system
+    title: Event-Driven Architecture
+    source:
+      - src/constants/EventNames.js
+      - src/core/EventBus.js
+    documentation:
+      - docs/ARCHITECTURE.md#event-system
+    keywords:
+      - events
+      - pub-sub
+      - communication
+    related:
+      - player-controller
+      - level-system
+      - observability
+    updated: 2025-11-02
+  - id: physics-system
+    title: Physics System (Rapier)
+    source:
+      - src/core/PhysicsManager.js
+      - src/modules/player/PlayerPhysics.js
+    documentation:
+      - docs/technology/RapierPhysics.md
+    keywords:
+      - physics
+      - rapier
+      - collision
+      - movement
+    related:
+      - player-controller
+      - level-system
+    updated: 2025-11-01
+  - id: player-controller
+    title: Player Control System
+    source:
+      - src/modules/player/PlayerController.js
+      - src/modules/player/PlayerMovement.js
+    documentation:
+      - docs/features/PLAYER_CONTROLLER.md
+    keywords:
+      - player
+      - input
+      - movement
+      - mechanics
+    related:
+      - physics-system
+      - event-system
+    updated: 2025-11-02
+  - id: observability
+    title: Observability & Logging System
+    source:
+      - src/observability/core/LogSystem.js
+      - src/observability/core/ErrorHandler.js
+    documentation:
+      - docs/systems/ERROR_HANDLING_LOGGING.md
+      - docs/guides/DEBUGGING.md
+    keywords:
+      - logging
+      - debugging
+      - monitoring
+      - errors
+    related:
+      - event-system
+    updated: 2025-11-02
+  - id: ui-system
+    title: UI/UX Design System
+    source:
+      - src/constants/DesignTokens.js
+      - src/modules/level/LevelCardComponent.js
+      - src/scenes/MainMenu.js
+    documentation:
+      - docs/sessions/2025-11-02-level-select-layout-fixes.md
+      - docs/sessions/2025-11-02-ui-ux-implementation-status.md
+    keywords:
+      - ui
+      - ux
+      - design
+      - responsive
+      - layout
+    patterns:
+      - Center-point positioning
+      - Two-pass layout calculation
+      - Dynamic bounds measurement
+      - 50/50 vertical centering
+    updated: 2025-11-03
+patterns:
+  - id: vendor-abstraction
+    title: Vendor Abstraction Layer
+    source:
+      - src/core/BaseScene.js
+      - src/core/PhysicsTypes.js
+    documentation:
+      - docs/architecture/adrs/ADR-001-vendor-abstraction-layer.md
+    keywords:
+      - architecture
+      - abstraction
+      - phaser
+      - rapier
+    principle: Only src/core/ imports vendor libraries
+    updated: 2025-11-02
+  - id: barrel-exports
+    title: Barrel Export Pattern
+    source:
+      - src/features/*/index.js
+    documentation:
+      - CLAUDE.md#import-pattern
+    keywords:
+      - imports
+      - exports
+      - modules
+    principle: Import from @features/*, never from ../modules/*
+    updated: 2025-11-02
+  - id: singleton-pattern
+    title: BaseManager Singleton Pattern
+    source:
+      - src/core/BaseManager.js
+    documentation:
+      - CLAUDE.md#manager-pattern
+    keywords:
+      - singleton
+      - manager
+      - initialization
+    principle: All managers extend BaseManager with init() and setInitialized()
+    updated: 2025-11-02
+schemas:
+  - id: level-data-schema
+    title: Level Data Schema
+    version: 1.1.0
+    source: src/constants/LevelData.js
+    validation: scripts/validate-level.js
+    documentation:
+      - docs/reference/data/level_schema.md
+    fields:
+      - id
+      - name
+      - description
+      - spawnPoint
+      - collectibles
+      - platforms
+      - movingPlatforms
+      - backgroundAssets
+      - foregroundAssets
+      - music
+      - levelBounds
+      - physics
+    updated: 2025-11-02
+  - id: design-tokens-schema
+    title: Design Tokens Schema
+    version: 1.0.0
+    source: src/constants/DesignTokens.js
+    documentation:
+      - docs/sessions/2025-11-02-ui-ux-implementation-status.md
+    categories:
+      - colors
+      - spacing
+      - typography
+      - breakpoints
+      - card
+      - button
+      - animation
+    updated: 2025-11-02
+scenes:
+  - id: welcome-scene
+    title: Welcome/Title Screen
+    source: src/scenes/WelcomeScene.js
+    pattern: Percentage-based positioning (0.25, 0.35, 0.65, 0.75)
+    keywords:
+      - title
+      - splash
+      - intro
+    updated: 2025-11-02
+  - id: main-menu-scene
+    title: Main Menu / Level Select
+    source: src/scenes/MainMenu.js
+    components:
+      - LevelCardComponent
+    documentation:
+      - docs/sessions/2025-11-02-level-select-layout-fixes.md
+    pattern: Two-pass layout with 50/50 centering
+    keywords:
+      - menu
+      - level-select
+      - responsive
+    updated: 2025-11-02
+  - id: game-scene
+    title: Main Game Scene
+    source: src/scenes/Game.js
+    keywords:
+      - gameplay
+      - physics
+      - player
+    updated: 2025-11-02
+guides:
+  - id: debugging-guide
+    title: Debugging & Observability Guide
+    path: docs/guides/DEBUGGING.md
+    topics:
+      - Using window.debugAPI
+      - LOG system usage
+      - Error analysis
+      - Performance profiling
+    updated: 2025-11-02
+  - id: architecture-guide
+    title: Architecture Principles
+    path: CLAUDE.md
+    topics:
+      - Six core principles
+      - Import patterns
+      - Manager pattern
+      - Event system
+      - Observability
+    updated: 2025-11-02
+cross_references:
+  level-system:
+    - event-system
+    - ui-system
+  event-system:
+    - level-system
+    - physics-system
+    - ui-system
+  physics-system:
+    - level-system
+    - event-system
+    - player-controller
+  player-controller:
+    - level-system
+    - physics-system
+  observability: []
+  ui-system:
+    - level-system
+    - event-system
+quality_gates:
+  - id: architecture-health
+    command: bun run arch:health
+    threshold: 75%
+    checks:
+      - A-Spec schema validation
+      - Layer boundary compliance
+      - Dependency graph validation
+      - Test suite
+  - id: lint-boundaries
+    command: bun run lint:boundaries
+    threshold: 0 errors
+    checks:
+      - ESLint boundary rules
+      - Vendor abstraction enforcement
+  - id: tests
+    command: bun test
+    threshold: 100% pass
+    checks:
+      - Unit tests
+      - Integration tests
+last_generated: 2025-11-03T05:17:28.778Z

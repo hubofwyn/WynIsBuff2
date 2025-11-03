@@ -75,6 +75,24 @@ doc-analysis-slim/
 knowledge_graph.json
 
 # ───────────────────────────────────────────
+# Historical Planning & Reports (Not for VCS)
+# ───────────────────────────────────────────
+# Phase planning documents (historical snapshots)
+PHASE*_PLAN.md
+IMPLEMENTATION_PLAN*.md
+
+# Status reports and audits (regenerate as needed)
+STATUS_REPORT*.md
+*_AUDIT_REPORT.md
+*_FRAMEWORK_REPORT.md
+
+# Workflow documents (prefer living docs in docs/)
+*_WORKFLOW.md
+
+# Session notes older than 30 days should be archived
+# (manual cleanup - keep recent sessions for context)
+
+# ───────────────────────────────────────────
 # Audio Generation (ElevenLabs)
 # ───────────────────────────────────────────
 # Python virtual environment

@@ -15,7 +15,7 @@ Automated asset management workflow for WynIsBuff2.
 2. **Processing Phase**
    - **asset-optimizer**: Compress and optimize images
    - **manifest-updater**: Update manifest.json automatically
-   - **constant-generator**: Run `npm run generate-assets`
+   - **constant-generator**: Run `bun run generate-assets`
    - **validator**: Verify all assets load correctly
 
 3. **Integration Phase** (architecture-guardian)

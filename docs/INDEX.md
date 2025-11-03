@@ -2,8 +2,29 @@
 
 Complete navigation hub for all WynIsBuff2 documentation.
 
-**Last Updated**: October 28, 2025
+**Last Updated**: November 2, 2025
 **Documentation Health**: See [DOC_ANALYSIS_SUMMARY.md](../DOC_ANALYSIS_SUMMARY.md)
+**Agentic System**: See [meta/doc_index.yaml](meta/doc_index.yaml) for queryable cross-reference system
+
+---
+
+## 🤖 Agentic Development System (NEW)
+
+**AI-assisted development with automated validation and documentation**
+
+| Document | Purpose | Audience |
+|----------|---------|----------|
+| [meta/AGENTIC_WORKFLOW.md](meta/AGENTIC_WORKFLOW.md) | Complete workflow guide | AI assistants, Developers |
+| [meta/doc_index.yaml](meta/doc_index.yaml) | Cross-reference index (queryable) | AI tools, Scripts |
+| [meta/IMPLEMENTATION_SUMMARY.md](meta/IMPLEMENTATION_SUMMARY.md) | Implementation details | Developers |
+| [reference/data/level_schema.md](reference/data/level_schema.md) | Level data schema v1.1.0 | Level designers, AI |
+
+**Quick Commands**:
+```bash
+bun run docs:update        # Update documentation index
+bun run validate:levels    # Validate all level data
+bun run arch:health        # Check architecture compliance
+```
 
 ---
 
@@ -13,7 +34,8 @@ Complete navigation hub for all WynIsBuff2 documentation.
 
 1. [README.md](../README.md) - Game overview and installation
 2. [CLAUDE.md](../CLAUDE.md) - Development guide for AI assistants
-3. [CONTRIBUTING.md](../CONTRIBUTING.md) - Contributing guidelines
+3. [meta/AGENTIC_WORKFLOW.md](meta/AGENTIC_WORKFLOW.md) - AI-assisted development
+4. [CONTRIBUTING.md](../CONTRIBUTING.md) - Contributing guidelines
 
 ---
 

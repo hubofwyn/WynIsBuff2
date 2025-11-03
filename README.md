@@ -167,7 +167,7 @@ this.eventSystem.on(EventNames.LEVEL_COMPLETE, this.handleComplete);
 Tests use CommonJS format (`.cjs`) with Node.js assert module:
 
 ```bash
-npm test  # Runs all tests/ files
+bun test  # Runs all tests/ files
 ```
 
 ### Observability & Debugging
@@ -235,7 +235,7 @@ Multi-agent system for development with specialized agents:
 - `game-physics-expert` - Phaser/Rapier physics specialist
 - `game-design-innovator` - Game mechanics and design
 
-See [AGENTS.md](AGENTS.md) for details.
+See [CLAUDE.md](CLAUDE.md) for details.
 
 ## Contributing
 
@@ -253,4 +253,4 @@ Read [CONTRIBUTING.md](CONTRIBUTING.md) for:
 
 ## Scope
 
-This README introduces the project, controls, technology stack, and links to the rest of the docs. For contribution workflow, see CONTRIBUTING.md. For system design, see docs/ARCHITECTURE.md. For assets, see ASSET_MANAGEMENT.md.
+This README introduces the project, controls, technology stack, and links to the rest of the docs. For contribution workflow, see CONTRIBUTING.md. For system design, see docs/ARCHITECTURE.md. For assets, see docs/guides/ASSET_MANAGEMENT.md.

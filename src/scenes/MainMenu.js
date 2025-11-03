@@ -1,8 +1,28 @@
-import { BaseScene, GameStateManager, AudioManager } from '@features/core';
+/**
+ * MainMenu Scene - Level Select Screen
+ *
+ * ARCHITECTURE:
+ * - Extends BaseScene (vendor abstraction)
+ * - Uses DesignTokens for all styling
+ * - Uses LevelCardComponent for reusable cards
+ * - Responsive design (mobile/tablet/desktop)
+ * - Accessible (keyboard navigation, ARIA labels)
+ * - Observable (LOG system, no console.*)
+ *
+ * LAYOUT (4 sections):
+ * 1. Hero Section: Logo + Title
+ * 2. Level Grid: Adaptive cards (1-3 columns)
+ * 3. Special Event Banner: Birthday minigame
+ * 4. Footer: Reset progress
+ */
 
-import { UIConfig } from '../constants/UIConfig.js';
+import { BaseScene, GameStateManager, AudioManager } from '@features/core';
+import { LevelCardComponent } from '@features/level';
+
+import { LOG } from '../observability/core/LogSystem.js';
 import { SceneKeys } from '../constants/SceneKeys.js';
 import { ImageAssets, AudioAssets } from '../constants/Assets.js';
+import { DesignTokens } from '../constants/DesignTokens.js';
 
 export class MainMenu extends BaseScene {
     constructor() {
@@ -10,93 +30,355 @@ export class MainMenu extends BaseScene {
 
         // Game state manager for level progress
         this.gameStateManager = null;
+
+        // UI state
+        this.levelCards = [];
+        this.focusedCardIndex = 0;
+        this.keyboardEnabled = true;
     }
 
-    create() {
+    async create() {
         // Initialize game state manager
         this.gameStateManager = new GameStateManager();
-        // Play title screen music
-        AudioManager.getInstance().playMusic(AudioAssets.PROTEIN_PIXEL_ANTHEM);
-        // Enhanced gradient background for consistency
+
+        // Ensure audio context is ready before playing music
+        await this.initializeAudio();
+
+        // Get viewport dimensions
         const { width, height } = this.cameras.main;
-        const gradientBg = this.add.graphics();
-        gradientBg.fillGradientStyle(0x0f1b2b, 0x1a1a2e, 0x16213e, 0x0f3460, 1);
-        gradientBg.fillRect(0, 0, width, height);
+
+        // Determine breakpoint for responsive layout with height constraints
+        this.updateBreakpoint(width, height);
+
+        LOG.info('MAIN_MENU_INIT', {
+            subsystem: 'scene',
+            scene: SceneKeys.MAIN_MENU,
+            message: 'MainMenu scene initialized',
+            viewport: { width, height },
+            breakpoint: this.breakpoint,
+        });
+
+        // Calculate layout positions for all sections
+        this.calculateLayout();
+
+        // Create 4-section layout with calculated positions
+        this.createBackground();
+        this.createHeroSection();
+        this.createLevelGrid();
+        this.createEventBanner();
+        this.createFooter();
+
+        // Setup keyboard navigation
+        this.setupKeyboardNavigation();
+
+        // Setup resize handler
+        this.setupResizeHandler();
 
         // Fade in camera
-        this.cameras.main.fadeIn(UIConfig.animations.fadeInDuration);
-
-        // Enhanced main title
-        const _mainTitle = this.add
-            .text(width / 2, 180, 'WYN IS BUFF 2', {
-                fontFamily: 'Impact, Arial Black, sans-serif',
-                fontSize: '64px',
-                color: '#FFE66D',
-                stroke: '#000000',
-                strokeThickness: 6,
-                shadow: { offsetX: 4, offsetY: 4, color: '#000000', blur: 8, fill: true },
-            })
-            .setOrigin(0.5);
-
-        // Skill to automation subtitle
-        const _subtitle = this.add
-            .text(width / 2, 230, 'SKILL TO AUTOMATION', {
-                fontFamily: 'Arial, sans-serif',
-                fontSize: '20px',
-                color: '#4ECDC4',
-                letterSpacing: '4px',
-            })
-            .setOrigin(0.5);
-
-        // Add logo if available (smaller, positioned above title)
-        if (this.textures.exists(ImageAssets.LOGO)) {
-            this.add
-                .image(width / 2, 120, ImageAssets.LOGO)
-                .setOrigin(0.5)
-                .setScale(0.4);
-        }
-
-        // Create a more dynamic background panel with gradient effect
-        const panelCfg = UIConfig.panel;
-        const levelPanel = this.add.graphics();
-        levelPanel.fillStyle(panelCfg.backgroundColor, panelCfg.backgroundAlpha);
-        levelPanel.fillRoundedRect(262, 350, 500, 350, panelCfg.borderRadius);
-        levelPanel.lineStyle(panelCfg.borderWidth, panelCfg.borderColor);
-        levelPanel.strokeRoundedRect(262, 350, 500, 350, panelCfg.borderRadius);
-
-        // Add section title
-        this.add
-            .text(512, 380, 'Select Level', {
-                ...UIConfig.text.heading,
-                fontSize: '36px',
-            })
-            .setOrigin(0.5);
-
-        // Create level selection UI
-        this.createLevelSelection();
-        // Add birthday minigame button - special for Wyn's 9th!
-        this.createBirthdayButton();
-        // Add reset progress button
-        this.createResetButton();
-    }
-
-    update(_time, _delta) {
-        // Placeholder update method for MainMenu scene
+        this.cameras.main.fadeIn(500);
     }
 
     /**
-     * Create level selection buttons with WynIsBuff2 skill-to-automation theming
+     * Determine responsive breakpoint with aggressive scaling for viewport constraints
      */
-    createLevelSelection() {
+    updateBreakpoint(width, height) {
+        // Determine base breakpoint with more generous scaling
+        if (width < DesignTokens.breakpoints.mobile) {
+            this.breakpoint = 'mobile';
+            this.gridColumns = 1;
+            this.logoScale = 0.3; // Larger base logo
+        } else if (width < DesignTokens.breakpoints.tablet) {
+            this.breakpoint = 'tablet';
+            this.gridColumns = 2;
+            this.logoScale = 0.4; // Larger base logo
+        } else {
+            this.breakpoint = 'desktop';
+            this.gridColumns = 3;
+            this.logoScale = 0.5; // Larger base logo
+        }
+
+        // Scale based on viewport height - but keep elements larger
+        if (height < 800) {
+            this.logoScale *= 0.7; // Less aggressive scaling
+            this.cardHeightScale = 1.0; // Keep cards full size
+        } else if (height < 900) {
+            this.logoScale *= 0.85; // Less aggressive scaling
+            this.cardHeightScale = 1.0; // Keep cards full size
+        } else {
+            this.cardHeightScale = 1.1; // Even larger on big screens
+        }
+
+        LOG.dev('MAIN_MENU_BREAKPOINT', {
+            subsystem: 'scene',
+            breakpoint: this.breakpoint,
+            gridColumns: this.gridColumns,
+            logoScale: this.logoScale,
+            cardHeightScale: this.cardHeightScale,
+        });
+    }
+
+    /**
+     * Calculate dynamic layout positions for all sections
+     * Uses ACTUAL measured heights and SCALES to fit viewport
+     */
+    calculateLayout() {
+        const { width, height } = this.cameras.main;
+
+        // Adaptive spacing based on viewport height - more generous
+        const spacingScale = height < 800 ? 0.8 : height < 900 ? 0.9 : 1.2;
+        const getSpacing = (size) => Math.floor(size * spacingScale);
+
+        this.layout = {
+            hero: {},
+            grid: {},
+            banner: {},
+            footer: {},
+        };
+
+        // FIRST PASS: Calculate positions relative to Y=0 to get total height
+        let currentY = 0;
+
+        // 1. Logo - measure actual height and scale down if needed
+        let logoHeight = 0;
+        if (this.textures.exists(ImageAssets.LOGO)) {
+            const logoTexture = this.textures.get(ImageAssets.LOGO);
+            logoHeight = logoTexture.source[0].height * this.logoScale;
+        }
+
+        this.layout.hero.logoY = currentY + logoHeight / 2;
+        currentY = this.layout.hero.logoY + logoHeight / 2 + getSpacing(DesignTokens.spacing.xs);
+
+        // 2. Title - measure actual bounds with height-scaled font
+        const titleFontSize = height < 800 ? DesignTokens.fontSize.h2 : DesignTokens.fontSize.displayMedium;
+        const tempTitle = this.add.text(0, 0, 'WYN IS BUFF 2', {
+            fontFamily: DesignTokens.fontFamily.heading,
+            fontSize: titleFontSize,
+            stroke: DesignTokens.colors.bgDark,
+            strokeThickness: height < 800 ? 4 : 6,
+        });
+        const titleBounds = tempTitle.getBounds();
+        const titleHeight = titleBounds.height;
+        tempTitle.destroy();
+        this.titleFontSize = titleFontSize; // Store for later use
+        this.titleStrokeThickness = height < 800 ? 4 : 6;
+
+        this.layout.hero.titleY = currentY + titleHeight / 2;
+        currentY = this.layout.hero.titleY + titleHeight / 2 + getSpacing(DesignTokens.spacing.xs);
+
+        // 3. Subtitle - measure actual bounds with height-scaled font
+        const subtitleFontSize = height < 800 ? DesignTokens.fontSize.body : DesignTokens.fontSize.h3;
+        const tempSubtitle = this.add.text(0, 0, 'Select Your Challenge', {
+            fontFamily: DesignTokens.fontFamily.primary,
+            fontSize: subtitleFontSize,
+            letterSpacing: height < 800 ? '2px' : '4px',
+        });
+        const subtitleBounds = tempSubtitle.getBounds();
+        const subtitleHeight = subtitleBounds.height;
+        tempSubtitle.destroy();
+        this.subtitleFontSize = subtitleFontSize; // Store for later use
+        this.subtitleLetterSpacing = height < 800 ? '2px' : '4px';
+
+        this.layout.hero.subtitleY = currentY + subtitleHeight / 2;
+        currentY = this.layout.hero.subtitleY + subtitleHeight / 2 + getSpacing(DesignTokens.spacing.xl);
+
+        // 4. Level Grid - calculate based on SCALED card dimensions
+        const baseCardHeight = DesignTokens.card.level.height;
+        const cardHeight = Math.floor(baseCardHeight * this.cardHeightScale);
+        const cardSpacing = getSpacing(DesignTokens.spacing.md);
+        const levels = 3;
+        const rows = Math.ceil(levels / this.gridColumns);
+        const gridHeight = rows * cardHeight + (rows - 1) * cardSpacing;
+
+        // CRITICAL: Cards are positioned by their CENTER, so add half card height
+        // currentY is at the bottom of subtitle + spacing (where card TOP should be)
+        // Card center needs to be at: cardTop + (cardHeight / 2)
+        this.layout.grid.startY = currentY + (cardHeight / 2);
+
+        // Calculate where the grid ENDS (bottom of last row + spacing)
+        // Last row center = startY + (rows-1) * (cardHeight + spacing)
+        // Last row bottom = last row center + cardHeight/2
+        const lastRowCenterY = this.layout.grid.startY + (rows - 1) * (cardHeight + cardSpacing);
+        const gridBottomY = lastRowCenterY + (cardHeight / 2);
+        currentY = gridBottomY + getSpacing(DesignTokens.spacing.xl);
+
+        // 5. Event Banner - fixed 80px height
+        const bannerHeight = 80;
+        this.layout.banner.y = currentY + bannerHeight / 2;
+        currentY = this.layout.banner.y + bannerHeight / 2 + getSpacing(DesignTokens.spacing.md);
+
+        // 6. Footer - measure text bounds
+        const tempFooter = this.add.text(0, 0, 'Reset Progress', {
+            fontFamily: DesignTokens.fontFamily.primary,
+            fontSize: DesignTokens.fontSize.body,
+            stroke: DesignTokens.colors.bgDark,
+            strokeThickness: 3,
+        });
+        const footerBounds = tempFooter.getBounds();
+        const footerHeight = footerBounds.height;
+        tempFooter.destroy();
+
+        this.layout.footer.y = currentY + footerHeight / 2;
+        currentY = this.layout.footer.y + footerHeight / 2 + getSpacing(DesignTokens.spacing.md);
+
+        // Calculate total content height and vertical centering offset
+        const totalHeight = currentY;
+        const contentFits = totalHeight <= height;
+
+        // SECOND PASS: Apply vertical centering offset
+        let verticalOffset = 0;
+        if (contentFits) {
+            // Center the content vertically - put equal space top and bottom
+            const availableSpace = height - totalHeight;
+            verticalOffset = Math.floor(availableSpace / 2); // True vertical centering
+
+            LOG.info('MAIN_MENU_VERTICALLY_CENTERED', {
+                subsystem: 'scene',
+                message: 'Content centered vertically',
+                totalHeight,
+                viewportHeight: height,
+                availableSpace,
+                verticalOffset,
+                topMargin: `${Math.floor((verticalOffset / height) * 100)}%`,
+                bottomMargin: `${Math.floor((verticalOffset / height) * 100)}%`,
+            });
+        } else {
+            LOG.warn('MAIN_MENU_LAYOUT_OVERFLOW', {
+                subsystem: 'scene',
+                message: 'Layout exceeds viewport height - content will scroll',
+                totalHeight,
+                viewportHeight: height,
+                overflow: totalHeight - height,
+                spacingScale,
+                hint: 'Content is too tall for viewport. Consider scrolling or reducing elements.',
+            });
+        }
+
+        // Apply vertical offset to all calculated positions
+        this.layout.hero.logoY += verticalOffset;
+        this.layout.hero.titleY += verticalOffset;
+        this.layout.hero.subtitleY += verticalOffset;
+        this.layout.grid.startY += verticalOffset;
+        this.layout.banner.y += verticalOffset;
+        this.layout.footer.y += verticalOffset;
+
+        LOG.info('MAIN_MENU_LAYOUT_CALCULATED', {
+            subsystem: 'scene',
+            message: 'Layout positions calculated using actual measurements',
+            viewport: { width, height },
+            totalHeight,
+            contentFits,
+            spacingScale,
+            cardHeightScale: this.cardHeightScale,
+            verticalOffset,
+            measurements: {
+                logoHeight,
+                titleHeight,
+                subtitleHeight,
+                gridHeight,
+                cardHeight,
+                bannerHeight,
+                footerHeight,
+            },
+            layout: this.layout,
+        });
+    }
+
+    /**
+     * Create gradient background
+     */
+    createBackground() {
+        const { width, height } = this.cameras.main;
+        const gradientBg = this.add.graphics();
+
+        // Use DesignTokens gradient colors
+        const colors = DesignTokens.colors.gradientBackground.map((hex) =>
+            Phaser.Display.Color.HexStringToColor(hex).color
+        );
+
+        gradientBg.fillGradientStyle(colors[0], colors[1], colors[2], colors[3], 1);
+        gradientBg.fillRect(0, 0, width, height);
+
+        LOG.dev('MAIN_MENU_BACKGROUND', {
+            subsystem: 'scene',
+            message: 'Background created with DesignTokens gradient',
+        });
+    }
+
+    /**
+     * Create hero section (Section 1)
+     * Logo + Title - using calculated layout positions
+     */
+    createHeroSection() {
+        const { width } = this.cameras.main;
+        const centerX = width / 2;
+
+        // Hero section container
+        this.heroSection = this.add.container(0, 0);
+
+        // Add logo if available (using calculated position)
+        if (this.textures.exists(ImageAssets.LOGO)) {
+            const logo = this.add
+                .image(centerX, this.layout.hero.logoY, ImageAssets.LOGO)
+                .setOrigin(0.5)
+                .setScale(this.logoScale);
+            this.heroSection.add(logo);
+            this.logo = logo;
+
+            LOG.dev('MAIN_MENU_LOGO', {
+                subsystem: 'scene',
+                message: 'Logo added',
+                scale: this.logoScale,
+                y: this.layout.hero.logoY,
+            });
+        }
+
+        // Main title (using calculated position and scaled font)
+        const mainTitle = this.add
+            .text(centerX, this.layout.hero.titleY, 'WYN IS BUFF 2', {
+                fontFamily: DesignTokens.fontFamily.heading,
+                fontSize: this.titleFontSize,
+                color: DesignTokens.colors.secondary,
+                stroke: DesignTokens.colors.bgDark,
+                strokeThickness: this.titleStrokeThickness,
+            })
+            .setOrigin(0.5);
+        this.heroSection.add(mainTitle);
+
+        // Subtitle (using calculated position and scaled font)
+        const subtitle = this.add
+            .text(centerX, this.layout.hero.subtitleY, 'Select Your Challenge', {
+                fontFamily: DesignTokens.fontFamily.primary,
+                fontSize: this.subtitleFontSize,
+                color: DesignTokens.colors.primary,
+                letterSpacing: this.subtitleLetterSpacing,
+            })
+            .setOrigin(0.5);
+        this.heroSection.add(subtitle);
+
+        LOG.info('MAIN_MENU_HERO', {
+            subsystem: 'scene',
+            message: 'Hero section created',
+            positions: this.layout.hero,
+        });
+    }
+
+    /**
+     * Create level selection grid (Section 2)
+     * Adaptive 1-3 column grid - using calculated layout positions
+     */
+    createLevelGrid() {
+        const { width } = this.cameras.main;
+        const centerX = width / 2;
+        const gridY = this.layout.grid.startY;
+
+        // Level data
         const levels = [
             {
                 id: 'level1',
                 name: 'Protein Plant',
                 description: 'Master basic movements\n& build strength foundation',
                 biome: '🏭 INDUSTRIAL',
-                color: '#4ECDC4',
-                gradient: ['#4ECDC4', '#44A08D'],
-                difficulty: 'BEGINNER',
+                difficulty: 'beginner',
                 skillFocus: 'Movement Mastery',
             },
             {
@@ -104,307 +386,103 @@ export class MainMenu extends BaseScene {
                 name: 'Metronome Mines',
                 description: 'Perfect timing drills\n& rhythm coordination',
                 biome: '⛏️ UNDERGROUND',
-                color: '#FFE66D',
-                gradient: ['#FFE66D', '#F09819'],
-                difficulty: 'INTERMEDIATE',
+                difficulty: 'intermediate',
                 skillFocus: 'Timing Precision',
-                locked: true,
             },
             {
                 id: 'level3',
                 name: 'Automation Apex',
                 description: 'Ultimate muscle memory\n& peak performance',
                 biome: '🚀 FUTURISTIC',
-                color: '#FF6B9D',
-                gradient: ['#FF6B9D', '#C73E1D'],
-                difficulty: 'MASTER',
+                difficulty: 'master',
                 skillFocus: 'Full Automation',
-                locked: true,
             },
         ];
 
         // Get completed levels
         const completedLevels = this.gameStateManager.getCompletedLevels();
 
+        // Calculate card layout with scaled dimensions
+        const baseCardWidth = DesignTokens.card.level.width;
+        const baseCardHeight = DesignTokens.card.level.height;
+        const scaledCardWidth = Math.floor(baseCardWidth * this.cardHeightScale);
+        const scaledCardHeight = Math.floor(baseCardHeight * this.cardHeightScale);
+        const cardSpacing = DesignTokens.spacing.md;
+        const totalWidth = this.gridColumns * scaledCardWidth + (this.gridColumns - 1) * cardSpacing;
+        const startX = centerX - totalWidth / 2 + scaledCardWidth / 2;
+
         // Create level cards
-        const cardWidth = 140;
-        const cardHeight = 180;
-        const spacing = 20;
-        const startX = 512 - (levels.length * (cardWidth + spacing) - spacing) / 2 + cardWidth / 2;
+        this.levelCards = [];
+        levels.forEach((levelData, index) => {
+            // Determine position based on grid
+            const row = Math.floor(index / this.gridColumns);
+            const col = index % this.gridColumns;
+            const x = startX + col * (scaledCardWidth + cardSpacing);
+            const y = gridY + row * (scaledCardHeight + cardSpacing);
 
-        levels.forEach((level, index) => {
-            const x = startX + index * (cardWidth + spacing);
-            const y = 490;
-
-            // Determine if level is unlocked
+            // Determine unlock state
             const isUnlocked = index === 0 || completedLevels.includes(`level${index}`);
+            const isCompleted = completedLevels.includes(levelData.id);
 
-            // Create card container
-            const cardContainer = this.add.container(x, y);
+            // Get progress
+            const progress = this.gameStateManager.getLevelProgress(levelData.id);
 
-            // Enhanced card background with gradient
-            const cardBg = this.add.graphics();
-
-            if (isUnlocked) {
-                // Create gradient background for unlocked levels
-                const startColor = Phaser.Display.Color.HexStringToColor(level.gradient[0]).color;
-                const endColor = Phaser.Display.Color.HexStringToColor(level.gradient[1]).color;
-
-                cardBg.fillGradientStyle(startColor, endColor, startColor, endColor, 0.15);
-                cardBg.fillRoundedRect(-cardWidth / 2, -cardHeight / 2, cardWidth, cardHeight, 15);
-
-                // Glowing border effect
-                cardBg.lineStyle(3, Phaser.Display.Color.HexStringToColor(level.color).color, 0.8);
-                cardBg.strokeRoundedRect(
-                    -cardWidth / 2,
-                    -cardHeight / 2,
-                    cardWidth,
-                    cardHeight,
-                    15
-                );
-
-                // Inner glow
-                cardBg.lineStyle(1, 0xffffff, 0.4);
-                cardBg.strokeRoundedRect(
-                    -cardWidth / 2 + 2,
-                    -cardHeight / 2 + 2,
-                    cardWidth - 4,
-                    cardHeight - 4,
-                    13
-                );
-            } else {
-                // Locked card styling
-                cardBg.fillStyle(0x1a1a1a, 0.8);
-                cardBg.fillRoundedRect(-cardWidth / 2, -cardHeight / 2, cardWidth, cardHeight, 15);
-                cardBg.lineStyle(2, 0x444444, 0.6);
-                cardBg.strokeRoundedRect(
-                    -cardWidth / 2,
-                    -cardHeight / 2,
-                    cardWidth,
-                    cardHeight,
-                    15
-                );
-            }
-
-            // Biome badge at top
-            const biomeBadge = this.add
-                .text(0, -cardHeight / 2 + 20, level.biome, {
-                    fontFamily: 'Arial, sans-serif',
-                    fontSize: '14px',
-                    color: isUnlocked ? '#FFFFFF' : '#666666',
-                    backgroundColor: isUnlocked ? '#000000' : '#333333',
-                    backgroundAlpha: 0.7,
-                    padding: { x: 8, y: 4 },
-                })
-                .setOrigin(0.5);
-
-            // Level name with enhanced styling
-            const levelName = this.add
-                .text(0, -cardHeight / 2 + 50, level.name, {
-                    fontFamily: 'Impact, Arial Black, sans-serif',
-                    fontSize: '22px',
-                    color: isUnlocked ? level.color : '#666666',
-                    align: 'center',
-                    stroke: '#000000',
-                    strokeThickness: 2,
-                    wordWrap: { width: cardWidth - 20 },
-                })
-                .setOrigin(0.5);
-
-            // Skill focus label
-            const skillLabel = this.add
-                .text(0, -5, level.skillFocus, {
-                    fontFamily: 'Arial, sans-serif',
-                    fontSize: '12px',
-                    color: isUnlocked ? '#FFE66D' : '#555555',
-                    fontStyle: 'italic',
-                    align: 'center',
-                })
-                .setOrigin(0.5);
-
-            // Description with better formatting
-            const description = this.add
-                .text(0, 25, level.description, {
-                    fontFamily: 'Arial, sans-serif',
-                    fontSize: '13px',
-                    color: isUnlocked ? '#E0E0E0' : '#555555',
-                    align: 'center',
-                    lineSpacing: 2,
-                    wordWrap: { width: cardWidth - 20 },
-                })
-                .setOrigin(0.5);
-
-            // Difficulty badge at bottom
-            const difficultyBadge = this.add
-                .text(0, cardHeight / 2 - 45, level.difficulty, {
-                    fontFamily: 'Arial, sans-serif',
-                    fontSize: '11px',
-                    color: '#000000',
-                    backgroundColor: isUnlocked ? level.color : '#666666',
-                    backgroundAlpha: 0.9,
-                    padding: { x: 6, y: 2 },
-                })
-                .setOrigin(0.5);
-
-            // Progress or lock icon
-            if (isUnlocked) {
-                const progress = this.gameStateManager.getLevelProgress(level.id);
-                if (progress) {
-                    // Progress bar
-                    const barWidth = cardWidth - 40;
-                    const barHeight = 8;
-                    const barY = cardHeight / 2 - 25;
-
-                    // Background bar
-                    cardBg.fillStyle(0x000000, 0.5);
-                    cardBg.fillRoundedRect(
-                        -barWidth / 2,
-                        barY - barHeight / 2,
-                        barWidth,
-                        barHeight,
-                        4
-                    );
-
-                    // Progress fill
-                    const progressPercent =
-                        progress.totalCollectibles > 0
-                            ? progress.collectiblesCollected / progress.totalCollectibles
-                            : 0;
-                    if (progressPercent > 0) {
-                        cardBg.fillStyle(0x00ff00, 0.8);
-                        cardBg.fillRoundedRect(
-                            -barWidth / 2,
-                            barY - barHeight / 2,
-                            barWidth * progressPercent,
-                            barHeight,
-                            4
-                        );
-                    }
-
-                    // Progress text
-                    const progressText = this.add
-                        .text(
-                            0,
-                            barY,
-                            `${progress.collectiblesCollected}/${progress.totalCollectibles}`,
-                            {
-                                fontFamily: 'Arial, sans-serif',
-                                fontSize: '12px',
-                                color: '#FFFFFF',
-                            }
-                        )
-                        .setOrigin(0.5);
-                    cardContainer.add(progressText);
-                }
-            } else {
-                // Lock icon
-                const lockIcon = this.add
-                    .text(0, cardHeight / 2 - 25, '🔒', {
-                        fontSize: '24px',
-                    })
-                    .setOrigin(0.5);
-                cardContainer.add(lockIcon);
-            }
-
-            // Completion checkmark
-            if (completedLevels.includes(level.id)) {
-                const checkmark = this.add
-                    .text(cardWidth / 2 - 15, -cardHeight / 2 + 15, '✓', {
-                        fontFamily: 'Arial',
-                        fontSize: '24px',
-                        color: '#00FF00',
-                        stroke: '#000000',
-                        strokeThickness: 3,
-                    })
-                    .setOrigin(0.5);
-                cardContainer.add(checkmark);
-            }
-
-            // Add all elements to container
-            cardContainer.add([
-                cardBg,
-                biomeBadge,
-                levelName,
-                skillLabel,
-                description,
-                difficultyBadge,
-            ]);
-
-            // Interactive hitbox
-            const hitArea = this.add
-                .rectangle(0, 0, cardWidth, cardHeight, 0x000000, 0)
-                .setInteractive({ useHandCursor: isUnlocked });
-            cardContainer.add(hitArea);
-
-            // Animate entrance
-            cardContainer.setAlpha(0).setScale(0.8);
-            this.tweens.add({
-                targets: cardContainer,
-                alpha: 1,
-                scale: 1,
-                duration: UIConfig.animations.scaleIn.duration,
-                ease: UIConfig.animations.scaleIn.ease,
-                delay: index * 100,
+            // Create card with scaled dimensions
+            const card = new LevelCardComponent(this, {
+                x,
+                y,
+                levelData,
+                isUnlocked,
+                isCompleted,
+                progress,
+                onClick: (data) => this.onLevelSelected(data),
+                width: scaledCardWidth,
+                height: scaledCardHeight,
             });
 
-            // Make interactive if unlocked
-            if (isUnlocked) {
-                hitArea.on('pointerover', () => {
-                    AudioManager.getInstance().playSFX('hover');
-                    this.tweens.add({
-                        targets: cardContainer,
-                        scale: 1.05,
-                        duration: 200,
-                        ease: 'Power2.easeOut',
-                    });
-                });
+            this.add.existing(card);
+            this.levelCards.push(card);
 
-                hitArea.on('pointerout', () => {
-                    this.tweens.add({
-                        targets: cardContainer,
-                        scale: 1,
-                        duration: 200,
-                        ease: 'Power2.easeOut',
-                    });
-                });
+            // Animate entrance with stagger
+            card.animateEntrance(index * 100);
+        });
 
-                hitArea.on('pointerdown', () => {
-                    AudioManager.getInstance().playSFX('click');
-                    this.tweens.add({
-                        targets: cardContainer,
-                        scale: 0.95,
-                        duration: 100,
-                        ease: 'Power2.easeOut',
-                        yoyo: true,
-                        onComplete: () => {
-                            this.cameras.main.fadeOut(300);
-                            this.time.delayedCall(300, () => {
-                                this.scene.start(SceneKeys.GAME, { levelId: level.id });
-                            });
-                        },
-                    });
-                });
-            }
+        LOG.info('MAIN_MENU_GRID', {
+            subsystem: 'scene',
+            message: 'Level grid created',
+            levels: levels.length,
+            columns: this.gridColumns,
+            unlocked: this.levelCards.filter((c) => c.isUnlocked).length,
         });
     }
 
     /**
-     * Create special birthday minigame button
+     * Create special event banner (Section 3)
+     * Birthday minigame promotion - using calculated layout position
      */
-    createBirthdayButton() {
-        // Birthday button with special animation - positioned BELOW the level cards to avoid overlap
-        const birthdayContainer = this.add.container(512, 640);
+    createEventBanner() {
+        const { width } = this.cameras.main;
+        const centerX = width / 2;
+        const bannerY = this.layout.banner.y;
+
+        // Birthday button container
+        const birthdayContainer = this.add.container(centerX, bannerY);
 
         // Glowing background
-        const buttonBg = this.add.rectangle(0, 0, 300, 80, 0xffd700).setStrokeStyle(4, 0xff00ff);
+        const buttonBg = this.add
+            .rectangle(0, 0, 300, 80, 0xffd700)
+            .setStrokeStyle(
+                4,
+                Phaser.Display.Color.HexStringToColor(DesignTokens.colors.tertiary).color
+            );
 
         // Birthday text
         const birthdayText = this.add
             .text(0, -10, "🎂 WYN'S 9TH BIRTHDAY RUSH! 🎂", {
-                fontFamily: 'Impact',
-                fontSize: '22px',
-                color: '#000000',
-                stroke: '#FFFFFF',
+                fontFamily: DesignTokens.fontFamily.heading,
+                fontSize: DesignTokens.fontSize.h4,
+                color: DesignTokens.colors.bgDark,
+                stroke: DesignTokens.colors.textPrimary,
                 strokeThickness: 3,
                 align: 'center',
             })
@@ -412,10 +490,10 @@ export class MainMenu extends BaseScene {
 
         const subText = this.add
             .text(0, 15, 'Special Birthday Minigame!', {
-                fontFamily: 'Arial',
-                fontSize: '14px',
-                color: '#FFFFFF',
-                stroke: '#000000',
+                fontFamily: DesignTokens.fontFamily.primary,
+                fontSize: DesignTokens.fontSize.body,
+                color: DesignTokens.colors.textPrimary,
+                stroke: DesignTokens.colors.bgDark,
                 strokeThickness: 2,
                 align: 'center',
             })
@@ -423,10 +501,10 @@ export class MainMenu extends BaseScene {
 
         birthdayContainer.add([buttonBg, birthdayText, subText]);
 
-        // Make it interactive
+        // Make interactive
         buttonBg.setInteractive({ useHandCursor: true });
 
-        // Constant celebration animation
+        // Celebration animation
         this.tweens.add({
             targets: birthdayContainer,
             scale: { from: 0.95, to: 1.05 },
@@ -436,7 +514,7 @@ export class MainMenu extends BaseScene {
             ease: 'Sine.InOut',
         });
 
-        // Rainbow color animation
+        // Rainbow animation
         let hue = 0;
         this.time.addEvent({
             delay: 100,
@@ -450,7 +528,7 @@ export class MainMenu extends BaseScene {
 
         // Hover effects
         buttonBg.on('pointerover', () => {
-            AudioManager.getInstance().playSFX('hover');
+            AudioManager.getInstance().playSFX(AudioAssets.UI_HOVER);
             this.tweens.add({
                 targets: birthdayContainer,
                 scale: 1.15,
@@ -469,23 +547,13 @@ export class MainMenu extends BaseScene {
         });
 
         buttonBg.on('pointerdown', () => {
-            // Unlock audio on click (browser autoplay policy)
-            if (this.sound.context && this.sound.context.state === 'suspended') {
-                this.sound.context.resume();
-            }
-            if (window.Howler && window.Howler.ctx && window.Howler.ctx.state === 'suspended') {
-                window.Howler.ctx.resume();
-            }
-
-            AudioManager.getInstance().playSFX('click');
-            // Add click animation
+            AudioManager.getInstance().playSFX(AudioAssets.UI_CLICK);
             this.tweens.add({
                 targets: birthdayContainer,
                 scale: 0.9,
                 duration: 100,
                 yoyo: true,
                 onComplete: () => {
-                    // Fade out and start the birthday minigame
                     this.cameras.main.fadeOut(300);
                     this.time.delayedCall(300, () => {
                         this.scene.start(SceneKeys.BIRTHDAY_MINIGAME);
@@ -494,116 +562,277 @@ export class MainMenu extends BaseScene {
             });
         });
 
-        // Add floating 9s around the button
-        for (let i = 0; i < 3; i++) {
-            const floatingNine = this.add.text(
-                512 + Phaser.Math.Between(-200, 200),
-                620 + Phaser.Math.Between(-60, 60),
-                '9',
-                {
-                    fontSize: '24px',
-                    color: '#FFD700',
-                    fontFamily: 'Impact',
-                    alpha: 0.3,
-                }
-            );
-
-            this.tweens.add({
-                targets: floatingNine,
-                y: '-=30',
-                alpha: 0,
-                duration: 3000,
-                delay: i * 1000,
-                repeat: -1,
-                ease: 'Sine.Out',
-            });
-        }
+        LOG.info('MAIN_MENU_EVENT_BANNER', {
+            subsystem: 'scene',
+            message: 'Event banner created',
+        });
     }
 
     /**
-     * Create reset progress button
+     * Create footer (Section 4)
+     * Reset progress button - using calculated layout position
      */
-    createResetButton() {
+    createFooter() {
+        const { width } = this.cameras.main;
+        const centerX = width / 2;
+        const footerY = this.layout.footer.y;
+
+        // Reset button
         const resetButton = this.add
-            .text(512, 720, 'Reset Progress', {
-                fontFamily: 'Arial',
-                fontSize: 18,
-                color: '#ff0000',
-                stroke: '#000000',
+            .text(centerX, footerY, 'Reset Progress', {
+                fontFamily: DesignTokens.fontFamily.primary,
+                fontSize: DesignTokens.fontSize.body,
+                color: DesignTokens.colors.error,
+                stroke: DesignTokens.colors.bgDark,
                 strokeThickness: 3,
                 align: 'center',
             })
             .setOrigin(0.5)
-            .setInteractive();
+            .setInteractive({ useHandCursor: true });
 
+        // Hover effects
         resetButton.on('pointerover', () => {
-            resetButton.setTint(0xffff00);
-            AudioManager.getInstance().playSFX('hover');
+            resetButton.setColor(DesignTokens.colors.warning);
+            AudioManager.getInstance().playSFX(AudioAssets.UI_HOVER);
         });
 
         resetButton.on('pointerout', () => {
-            resetButton.clearTint();
+            resetButton.setColor(DesignTokens.colors.error);
         });
 
         resetButton.on('pointerdown', () => {
-            AudioManager.getInstance().playSFX('click');
-            // Create confirmation dialog
-            const confirmBg = this.add.rectangle(512, 384, 400, 200, 0x000000, 0.8);
+            AudioManager.getInstance().playSFX(AudioAssets.UI_CLICK);
+            this.showResetConfirmation();
+        });
 
-            const confirmText = this.add
-                .text(512, 350, 'Reset all progress?', {
-                    fontFamily: 'Arial',
-                    fontSize: 24,
-                    color: '#ffffff',
-                    align: 'center',
-                })
-                .setOrigin(0.5);
+        LOG.info('MAIN_MENU_FOOTER', {
+            subsystem: 'scene',
+            message: 'Footer created',
+        });
+    }
 
-            const yesButton = this.add
-                .text(450, 400, 'Yes', {
-                    fontFamily: 'Arial',
-                    fontSize: 20,
-                    color: '#ffffff',
-                    align: 'center',
-                })
-                .setOrigin(0.5)
-                .setInteractive();
+    /**
+     * Show reset progress confirmation dialog
+     */
+    showResetConfirmation() {
+        const { width, height } = this.cameras.main;
+        const centerX = width / 2;
+        const centerY = height / 2;
 
-            const noButton = this.add
-                .text(550, 400, 'No', {
-                    fontFamily: 'Arial',
-                    fontSize: 20,
-                    color: '#ffffff',
-                    align: 'center',
-                })
-                .setOrigin(0.5)
-                .setInteractive();
+        // Overlay
+        const overlay = this.add.rectangle(
+            0,
+            0,
+            width,
+            height,
+            Phaser.Display.Color.HexStringToColor(DesignTokens.colors.overlay).color,
+            0.8
+        ).setOrigin(0, 0);
 
-            // Yes button
-            yesButton.on('pointerover', () => {
-                yesButton.setTint(0xffff00);
-                AudioManager.getInstance().playSFX('hover');
-            });
-            yesButton.on('pointerout', () => yesButton.clearTint());
-            yesButton.on('pointerdown', () => {
-                AudioManager.getInstance().playSFX('click');
-                this.gameStateManager.resetProgress();
-                this.scene.restart();
-            });
+        // Confirmation panel
+        const confirmBg = this.add.rectangle(
+            centerX,
+            centerY,
+            400,
+            200,
+            Phaser.Display.Color.HexStringToColor(DesignTokens.colors.bgMedium).color
+        ).setStrokeStyle(
+            2,
+            Phaser.Display.Color.HexStringToColor(DesignTokens.colors.borderAccent).color
+        );
 
-            // No button
-            noButton.on('pointerover', () => {
-                noButton.setTint(0xffff00);
-                AudioManager.getInstance().playSFX('hover');
-            });
-            noButton.on('pointerout', () => noButton.clearTint());
-            noButton.on('pointerdown', () => {
-                AudioManager.getInstance().playSFX('click');
-                confirmBg.destroy();
-                confirmText.destroy();
-                yesButton.destroy();
-                noButton.destroy();
+        const confirmText = this.add
+            .text(centerX, centerY - 30, 'Reset all progress?', {
+                fontFamily: DesignTokens.fontFamily.primary,
+                fontSize: DesignTokens.fontSize.h3,
+                color: DesignTokens.colors.textPrimary,
+                align: 'center',
+            })
+            .setOrigin(0.5);
+
+        const yesButton = this.add
+            .text(centerX - 60, centerY + 40, 'Yes', {
+                fontFamily: DesignTokens.fontFamily.primary,
+                fontSize: DesignTokens.fontSize.h4,
+                color: DesignTokens.colors.textPrimary,
+                backgroundColor: DesignTokens.colors.error,
+                padding: { x: DesignTokens.spacing.lg, y: DesignTokens.spacing.sm },
+            })
+            .setOrigin(0.5)
+            .setInteractive({ useHandCursor: true });
+
+        const noButton = this.add
+            .text(centerX + 60, centerY + 40, 'No', {
+                fontFamily: DesignTokens.fontFamily.primary,
+                fontSize: DesignTokens.fontSize.h4,
+                color: DesignTokens.colors.textPrimary,
+                backgroundColor: DesignTokens.colors.success,
+                padding: { x: DesignTokens.spacing.lg, y: DesignTokens.spacing.sm },
+            })
+            .setOrigin(0.5)
+            .setInteractive({ useHandCursor: true });
+
+        // Yes button logic
+        yesButton.on('pointerover', () => {
+            yesButton.setBackgroundColor(DesignTokens.colors.warning);
+            AudioManager.getInstance().playSFX(AudioAssets.UI_HOVER);
+        });
+        yesButton.on('pointerout', () => {
+            yesButton.setBackgroundColor(DesignTokens.colors.error);
+        });
+        yesButton.on('pointerdown', () => {
+            AudioManager.getInstance().playSFX(AudioAssets.UI_CLICK);
+            this.gameStateManager.resetProgress();
+            this.scene.restart();
+        });
+
+        // No button logic
+        noButton.on('pointerover', () => {
+            noButton.setBackgroundColor(DesignTokens.colors.primary);
+            AudioManager.getInstance().playSFX(AudioAssets.UI_HOVER);
+        });
+        noButton.on('pointerout', () => {
+            noButton.setBackgroundColor(DesignTokens.colors.success);
+        });
+        noButton.on('pointerdown', () => {
+            AudioManager.getInstance().playSFX(AudioAssets.UI_CLICK);
+            overlay.destroy();
+            confirmBg.destroy();
+            confirmText.destroy();
+            yesButton.destroy();
+            noButton.destroy();
+        });
+
+        LOG.info('MAIN_MENU_RESET_CONFIRMATION', {
+            subsystem: 'scene',
+            message: 'Reset confirmation dialog shown',
+        });
+    }
+
+    /**
+     * Handle level selection
+     */
+    onLevelSelected(levelData) {
+        LOG.info('MAIN_MENU_LEVEL_SELECTED', {
+            subsystem: 'scene',
+            levelId: levelData.id,
+            levelName: levelData.name,
+        });
+
+        // Fade out and start level
+        this.cameras.main.fadeOut(300);
+        this.time.delayedCall(300, () => {
+            this.scene.start(SceneKeys.GAME, { levelId: levelData.id });
+        });
+    }
+
+    /**
+     * Setup keyboard navigation
+     */
+    setupKeyboardNavigation() {
+        // TAB: cycle through cards
+        this.input.keyboard.on('keydown-TAB', (event) => {
+            event.preventDefault();
+
+            // Hide current focus
+            if (this.levelCards[this.focusedCardIndex]) {
+                this.levelCards[this.focusedCardIndex].hideFocus();
+            }
+
+            // Move to next card
+            this.focusedCardIndex = (this.focusedCardIndex + 1) % this.levelCards.length;
+
+            // Show new focus
+            if (this.levelCards[this.focusedCardIndex]) {
+                this.levelCards[this.focusedCardIndex].showFocus();
+            }
+
+            AudioManager.getInstance().playSFX(AudioAssets.UI_HOVER);
+
+            LOG.dev('MAIN_MENU_TAB_NAVIGATION', {
+                subsystem: 'scene',
+                focusedCardIndex: this.focusedCardIndex,
             });
         });
+
+        // ENTER: select focused card
+        this.input.keyboard.on('keydown-ENTER', () => {
+            const card = this.levelCards[this.focusedCardIndex];
+            if (card && card.isUnlocked) {
+                card.onClickHandler();
+            }
+        });
+
+        LOG.info('MAIN_MENU_KEYBOARD_NAV', {
+            subsystem: 'scene',
+            message: 'Keyboard navigation setup complete',
+        });
+    }
+
+    /**
+     * Setup resize handler for responsive layout
+     */
+    setupResizeHandler() {
+        this.scale.on('resize', (gameSize) => {
+            const { width } = gameSize;
+            const { height } = gameSize;
+            const previousBreakpoint = this.breakpoint;
+
+            // Update breakpoint with height
+            this.updateBreakpoint(width, height);
+
+            // Recreate layout if breakpoint changed
+            if (this.breakpoint !== previousBreakpoint) {
+                LOG.info('MAIN_MENU_RESIZE', {
+                    subsystem: 'scene',
+                    message: 'Breakpoint changed, recreating layout',
+                    from: previousBreakpoint,
+                    to: this.breakpoint,
+                });
+
+                // Recreate scene
+                this.scene.restart();
+            }
+        });
+    }
+
+    /**
+     * Initialize audio and start music
+     */
+    async initializeAudio() {
+        const audio = AudioManager.getInstance();
+
+        // Ensure AudioContext is resumed (required after user interaction)
+        if (window.Howler && window.Howler.ctx && window.Howler.ctx.state === 'suspended') {
+            try {
+                await window.Howler.ctx.resume();
+                LOG.dev('MAIN_MENU_AUDIO_RESUMED', {
+                    subsystem: 'scene',
+                    scene: SceneKeys.MAIN_MENU,
+                    message: 'AudioContext resumed successfully',
+                });
+            } catch (err) {
+                LOG.warn('MAIN_MENU_AUDIO_RESUME_FAILED', {
+                    subsystem: 'scene',
+                    scene: SceneKeys.MAIN_MENU,
+                    error: err,
+                    message: 'Failed to resume AudioContext',
+                });
+            }
+        }
+
+        // Start title screen music
+        audio.playMusic(AudioAssets.PROTEIN_PIXEL_ANTHEM);
+
+        LOG.info('MAIN_MENU_MUSIC_STARTED', {
+            subsystem: 'scene',
+            scene: SceneKeys.MAIN_MENU,
+            message: 'Title screen music playback initiated',
+            track: AudioAssets.PROTEIN_PIXEL_ANTHEM,
+        });
+    }
+
+    update(_time, _delta) {
+        // Placeholder update method for MainMenu scene
     }
 }
