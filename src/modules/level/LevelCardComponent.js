@@ -267,7 +267,6 @@ export class LevelCardComponent extends Phaser.GameObjects.Container {
             .setOrigin(0.5);
         const descriptionBounds = description.getBounds();
         description.setY(currentY + descriptionBounds.height / 2);
-        currentY += descriptionBounds.height + getSpacing(DesignTokens.spacing.sm);
         this.add(description);
 
         // 5. Difficulty badge (work from bottom up to ensure it fits)
