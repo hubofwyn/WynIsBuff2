@@ -226,7 +226,7 @@ export class GameOver extends BaseScene {
             .setOrigin(0.5);
 
         // Add congratulatory message
-        let message = 'You completed the game!';
+        let message;
 
         if (completionPercentage < 50) {
             message = 'Good effort! Try to collect more items.';

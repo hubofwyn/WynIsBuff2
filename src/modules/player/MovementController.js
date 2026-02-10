@@ -222,7 +222,7 @@ export class MovementController {
     calculateFallingVelocity(currentVelY) {
         // Only apply falling acceleration if moving downward and not on ground
         if (currentVelY > 0 && !this.isOnGround) {
-            let newVelY = currentVelY;
+            let newVelY;
 
             if (this.fallingParams.accelerationCurve) {
                 // Accelerate falling speed with a curve for better feel
@@ -271,7 +271,7 @@ export class MovementController {
         wasMovingLeft,
         wasMovingRight
     ) {
-        let newVelX = currentVelX;
+        let newVelX;
 
         if (targetVelX !== 0) {
             // Direction change detection for buff momentum system

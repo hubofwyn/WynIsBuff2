@@ -1369,12 +1369,7 @@ export class BirthdayMinigame extends BaseScene {
         indicatorContainer.add(glow);
 
         // Show appropriate icon
-        let indicatorText = '';
-        if (this.carriedType === 'shakeshake') {
-            indicatorText = 'S²';
-        } else {
-            indicatorText = '🥤';
-        }
+        const indicatorText = this.carriedType === 'shakeshake' ? 'S²' : '🥤';
 
         const indicator = this.add
             .text(0, 0, indicatorText, {
