@@ -11,17 +11,20 @@
 ### 1. Collectible Type Error ❌ → ✅ FIXED
 
 **Error Message:**
-```
+
+```text
 TypeError: Cannot read properties of undefined (reading 'type')
 at CollectibleManager.createCollectibles (CollectibleManager.js:85:73)
 ```
 
 **Root Cause:**
+
 - Data structure mismatch in `CollectibleManager.js`
 - Line 85 was accessing `collectible.config.type`
 - But level data structure is `{ x, y, type, value }` (no `config` wrapper)
 
 **Fix Applied:**
+
 ```javascript
 // BEFORE (incorrect)
 const spriteKey = `collectible-${collectible.config.type}`;
@@ -31,9 +34,11 @@ const spriteKey = `collectible-${collectible.type}`;
 ```
 
 **File Changed:**
+
 - `src/modules/level/CollectibleManager.js` (line 85)
 
 **Impact:**
+
 - ✅ Collectibles now render correctly
 - ✅ No more type errors during level initialization
 - ✅ Collectible collection works as expected
@@ -43,11 +48,13 @@ const spriteKey = `collectible-${collectible.type}`;
 ### 2. Runaway Sound Effects ❌ → ✅ FIXED
 
 **Symptoms:**
+
 - Sound effects playing repeatedly
 - Multiple instances of jump/land/pickup sounds
 - Audio overlapping excessively
 
 **Root Cause:**
+
 - Missing `shutdown()` method in `Game.js` scene
 - Event listeners not cleaned up when scene restarts
 - Each scene restart added duplicate event listeners
@@ -72,9 +79,11 @@ shutdown() {
 ```
 
 **File Changed:**
+
 - `src/scenes/Game.js` (added shutdown method)
 
 **Impact:**
+
 - ✅ Event listeners properly cleaned up on scene restart
 - ✅ No duplicate sound effect playback
 - ✅ Prevents memory leaks from accumulated listeners
@@ -91,6 +100,7 @@ shutdown() {
 **Purpose**: Systematic approach to diagnosing gameplay issues
 
 **Contents:**
+
 - Quick diagnostic commands for browser console
 - Common issue patterns and solutions
 - Event system diagnostics
@@ -101,6 +111,7 @@ shutdown() {
 - Diagnostic session creation
 
 **Key Features:**
+
 - Task-based diagnostic commands
 - Copy-paste ready console snippets
 - Integration with observability system
@@ -113,6 +124,7 @@ shutdown() {
 **Purpose**: Document non-critical WebGL warnings
 
 **Contents:**
+
 - WebGL texture upload warnings documentation
 - Root cause analysis
 - Impact assessment (non-critical)
@@ -130,6 +142,7 @@ shutdown() {
 3. Verify all collectibles appear on screen
 4. Collect collectibles - should work without errors
 5. Check observability:
+
    ```javascript
    window.LOG.export().logs.filter(l => 
        l.subsystem === 'level' && 
@@ -144,6 +157,7 @@ shutdown() {
 3. Die and restart level
 4. Repeat actions - sounds should still play once (not doubled)
 5. Check event cleanup:
+
    ```javascript
    window.LOG.export().logs.filter(l => 
        l.code === 'GAME_SHUTDOWN' ||
@@ -171,11 +185,13 @@ window.debugAPI?.analyzeSubsystem('audio', 300000)
 ### Event Lifecycle Management
 
 **Pattern Established:**
+
 - All scenes with event listeners MUST have `shutdown()` method
 - Event listeners registered in `create()` must be removed in `shutdown()`
 - Use `this.eventSystem.off(EventNames.EVENT_NAME)` for cleanup
 
 **Benefits:**
+
 - Prevents memory leaks
 - Prevents duplicate event handlers
 - Ensures clean scene transitions
@@ -184,11 +200,13 @@ window.debugAPI?.analyzeSubsystem('audio', 300000)
 ### Data Structure Consistency
 
 **Lesson Learned:**
+
 - Always verify data structure before accessing nested properties
 - Use structured logging to capture data structure in errors
 - Add defensive checks for critical data access
 
 **Pattern:**
+
 ```javascript
 // Good: Defensive access with logging
 if (!collectible.type) {
@@ -209,6 +227,7 @@ const spriteKey = `collectible-${collectible.type}`;
 ### Error Detection
 
 The observability system successfully captured:
+
 - ✅ Exact error location (file + line number)
 - ✅ Data structure causing the error
 - ✅ Stack trace for debugging
@@ -217,6 +236,7 @@ The observability system successfully captured:
 ### Diagnostic Value
 
 Browser console commands provided:
+
 - ✅ Real-time system health monitoring
 - ✅ Subsystem-specific analysis
 - ✅ Event listener tracking
@@ -251,10 +271,12 @@ Browser console commands provided:
 ## Files Modified
 
 ### Source Code
+
 - `src/modules/level/CollectibleManager.js` - Fixed type access
 - `src/scenes/Game.js` - Added shutdown method
 
 ### Documentation
+
 - `docs/guides/GAME_DIAGNOSTICS.md` - NEW: Diagnostic guide
 - `docs/systems/KNOWN_WEBGL_ISSUES.md` - NEW: WebGL issues
 - `docs/INDEX.md` - Updated with new docs
@@ -287,11 +309,13 @@ Browser console commands provided:
 ## Success Metrics
 
 ### Before Fixes
+
 - ❌ Collectible errors on level load
 - ❌ Sound effects multiply on each restart
 - ❌ No diagnostic tools for gameplay issues
 
 ### After Fixes
+
 - ✅ Collectibles load without errors
 - ✅ Sound effects play correctly (once per event)
 - ✅ Comprehensive diagnostic guide available

@@ -164,7 +164,7 @@ WynIsBuff2 employs a **multi-layered error handling architecture** with defensiv
 
 ### 2.1 Architectural Layers
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────┐
 │ Layer 1: Game Scene (Game.js)                              │
 │ - try-catch in create() - displays error on screen         │
@@ -472,6 +472,7 @@ LOG.error('ERROR_CODE_NAME', {
 ```
 
 **Log Levels**:
+
 | Level | Method | When to Use | Sampling | Auto-Context |
 |-------|--------|-------------|----------|--------------|
 | **FATAL** | `LOG.fatal()` | Critical failures, crash dumps | 100% | ✅ Yes |
@@ -618,7 +619,7 @@ if (Math.random() < 0.01) {
 
 **Example (InputManager.js):**
 
-```
+```text
 Line 30: '[InputManager] Initializing...'
 Line 37: '[InputManager] Created cursor keys'
 Line 43: '[InputManager] Created WASD and SPACE keys'
@@ -905,7 +906,7 @@ When circuit breaker triggers, users see generic "too many errors" message but a
 
 **Example Scenario:**
 
-```
+```text
 Frame 1: Physics body missing → error 1
 Frame 2: Movement calculation returns NaN → error 2
 Frame 3: Collider state invalid → error 3
@@ -980,7 +981,7 @@ Once circuit breaker triggers, it never resets unless update succeeds. If physic
 
 **Example Cascade:**
 
-```
+```text
 Physics fails → Player can't move → Player errors accumulate
 → Player circuit breaker triggers → Player permanently disabled
 → Even if physics recovers, player stays disabled
@@ -1113,6 +1114,7 @@ If localStorage fails (blocked, quota exceeded), progress saving silently disabl
     ```
 
 5. ✅ **Use consistent logging format**
+
     ```javascript
     console.log('[ModuleName] Initialization complete');
     console.warn('[ModuleName] Degraded mode: using fallback');
@@ -1153,6 +1155,7 @@ If localStorage fails (blocked, quota exceeded), progress saving silently disabl
     ```
 
 4. **Swallowing Errors in Async**
+
     ```javascript
     async function loadData() {
         try {
@@ -1196,6 +1199,7 @@ If localStorage fails (blocked, quota exceeded), progress saving silently disabl
     ```
 
 5. **Include Context**
+
     ```javascript
     console.error('[LevelLoader] Failed to create platform', {
         index: i,
@@ -1339,6 +1343,7 @@ If localStorage fails (blocked, quota exceeded), progress saving silently disabl
     ```
 
 4. **Test Import Directly**
+
     ```javascript
     // In browser console:
     import('../enemy/PulsatingBoss.js')
@@ -1361,7 +1366,7 @@ Circuit breakers were triggering with "too many errors" messages due to Rapier 0
 
 **Console Output (Before Fix)**:
 
-```
+```text
 [PhysicsManager] ERROR 1/10 in update loop
 Error Type: Error
 Error Message: expected instance of z

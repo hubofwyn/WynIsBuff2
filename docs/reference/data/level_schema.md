@@ -95,6 +95,7 @@ interface LevelData {
 ## Required Fields
 
 Every level **must** include:
+
 - `id`, `name`, `description`
 - `spawnPoint` (x, y)
 - `collectibles` (array, can be empty)
@@ -163,10 +164,12 @@ export const LEVEL_TEMPLATE = {
 ## Schema Evolution
 
 ### v1.0.0 (Initial)
+
 - Basic level structure
 - No meta tracking
 
 ### v1.1.0 (Current)
+
 - Added `meta` field for schema tracking
 - Added `author`, `created`, `description`, `references`
 - Recommended for all new levels

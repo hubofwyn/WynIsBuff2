@@ -86,17 +86,20 @@ create() {
 ## Common Scene Patterns
 
 ### Preloader Scene
+
 - Load all assets using constants
 - Show loading progress
 - Transition to MainMenu when complete
 
 ### Game Scene
+
 - Initialize physics via PhysicsManager
 - Create player via PlayerController
 - Set up level via LevelManager
 - Handle game loop and state
 
 ### MainMenu Scene
+
 - Simple UI with buttons
 - Scene transitions to Game or BirthdayMinigame
 - Background effects
@@ -104,6 +107,7 @@ create() {
 ## Testing Scenes
 
 Test across all scenes when making changes:
+
 - Boot
 - Preloader
 - MainMenu

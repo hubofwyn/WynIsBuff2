@@ -4,7 +4,7 @@
 
 ## Constants Directory Structure
 
-```
+```text
 src/constants/
 ├── Assets.js          # AUTO-GENERATED - Never edit manually
 ├── EventNames.js      # MANUAL - Event name constants
@@ -18,6 +18,7 @@ src/constants/
 **NEVER edit `Assets.js` manually.** It is generated from `/assets/manifest.json`.
 
 **Workflow:**
+
 1. Edit `/assets/manifest.json`
 2. Run `bun run generate-assets`
 3. Use generated constants
@@ -72,16 +73,19 @@ export const EventNames = {
 ```
 
 **Naming Convention:**
+
 - Constant name: `SCREAMING_SNAKE_CASE`
 - Event value: `namespace:action` (lowercase)
 - Group by namespace (player, level, game, etc.)
 
 **When to Add:**
+
 1. Creating new event-driven feature
 2. Adding cross-module communication
 3. Implementing new game mechanics
 
 **Usage:**
+
 ```javascript
 import { EventNames } from '../constants/EventNames.js';
 
@@ -110,14 +114,17 @@ export const SceneKeys = {
 ```
 
 **Naming Convention:**
+
 - Constant name: `SCREAMING_SNAKE_CASE`
 - Scene value: `PascalCase` (matches scene class name)
 
 **When to Add:**
+
 1. Creating new scene
 2. Adding menu or UI overlay
 
 **Usage:**
+
 ```javascript
 import { SceneKeys } from '../constants/SceneKeys.js';
 
@@ -144,6 +151,7 @@ this.scene.launch(SceneKeys.PAUSE);
    - Data: `/assets/data/`
 
 2. **Update manifest.json**:
+
 ```json
 {
     "images": [
@@ -163,12 +171,14 @@ this.scene.launch(SceneKeys.PAUSE);
 }
 ```
 
-3. **Generate constants**:
+1. **Generate constants**:
+
 ```bash
 bun run generate-assets
 ```
 
-4. **Use in code**:
+1. **Use in code**:
+
 ```javascript
 import { ImageAssets, ImagePaths } from '../constants/Assets.js';
 this.load.image(ImageAssets.NEW_SPRITE, ImagePaths.NEW_SPRITE);
@@ -191,6 +201,7 @@ bun run validate-assets  # Checks manifest integrity and file existence
 ## Testing Constants
 
 Verify constants are used correctly:
+
 - Check for magic strings in code review
 - Run `bun run lint:boundaries` to check import boundaries
 - Validate asset loading in Preloader scene

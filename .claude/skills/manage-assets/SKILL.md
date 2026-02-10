@@ -3,6 +3,7 @@
 Automated asset management workflow for WynIsBuff2.
 
 ## Usage
+
 `/manage-assets "Asset operation description"`
 
 ## Workflow
@@ -27,6 +28,7 @@ Automated asset management workflow for WynIsBuff2.
    - Verify all assets referenced through `ImageAssets.*` / `AudioAssets.*` constants
 
 ## Supported Operations
+
 - Adding new assets to manifest.json
 - Reorganizing asset directory structure
 - Generating asset constants
@@ -34,6 +36,7 @@ Automated asset management workflow for WynIsBuff2.
 - Validating asset references
 
 ## Rules
+
 - All assets referenced through generated constants only
 - No magic strings in asset loading
 - Assets.js is auto-generated - never edit manually

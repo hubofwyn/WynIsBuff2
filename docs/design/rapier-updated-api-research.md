@@ -140,12 +140,11 @@ Implementation Example: Ray-Cast Ground Check
 
 The following JavaScript example demonstrates a typical ground check implementation using world.castRay. This function would be called every frame to determine if the character is on or near the ground.
 
-JavaScript
-
+```javascript
 // JavaScript Example: Ray-Cast Ground Detection
 function isCharacterGrounded(world, characterRigidBody) {
-const rayOrigin = characterRigidBody.translation();
-const rayDirection = { x: 0.0, y: -1.0, z: 0.0 };
+    const rayOrigin = characterRigidBody.translation();
+    const rayDirection = { x: 0.0, y: -1.0, z: 0.0 };
 
     // Set the ray length slightly longer than the distance from the
     // character's origin to its feet to provide a small buffer.
@@ -165,7 +164,7 @@ const rayDirection = { x: 0.0, y: -1.0, z: 0.0 };
         filter
     );
 
-    if (hit!= null) {
+    if (hit != null) {
         // A collider was hit within the ray's length.
         // hit.toi contains the distance to the hit point.
         console.log(`Grounded. Distance to ground: ${hit.toi}`);
@@ -173,8 +172,8 @@ const rayDirection = { x: 0.0, y: -1.0, z: 0.0 };
     }
 
     return false;
-
 }
+```
 
 18
 
@@ -196,14 +195,13 @@ Implementation Example: Shape-Cast Ground Check
 
 This example uses a small sphere shape, representing the area under the character's feet, and casts it downwards to detect the ground.
 
-JavaScript
-
+```javascript
 // JavaScript Example: Shape-Cast Ground Detection
 function isCharacterGroundedWithShape(world, characterRigidBody) {
-const shape = new RAPIER.Ball(0.4); // A small sphere to represent the feet area.
-const shapePos = characterRigidBody.translation();
-const shapeRot = { w: 1.0, x: 0.0, y: 0.0, z: 0.0 }; // Identity rotation
-const shapeVel = { x: 0.0, y: -1.0, z: 0.0 }; // Direction to cast
+    const shape = new RAPIER.Ball(0.4); // A small sphere to represent the feet area.
+    const shapePos = characterRigidBody.translation();
+    const shapeRot = { w: 1.0, x: 0.0, y: 0.0, z: 0.0 }; // Identity rotation
+    const shapeVel = { x: 0.0, y: -1.0, z: 0.0 }; // Direction to cast
 
     const maxToi = 0.7; // Cast distance
     const stopAtPenetration = true;
@@ -220,15 +218,15 @@ const shapeVel = { x: 0.0, y: -1.0, z: 0.0 }; // Direction to cast
         filter
     );
 
-    if (hit!= null) {
+    if (hit != null) {
         // The volume hit a collider.
         console.log(`Grounded via shape-cast. Hit collider: ${hit.collider.handle()}`);
         return true;
     }
 
     return false;
-
 }
+```
 
 16
 
@@ -326,33 +324,33 @@ Architect for Change: Isolate Physics Code: The most effective technical strateg
 
 Ultimately, the transition away from properties like numGroundedColliders is a positive evolution for the Rapier ecosystem. It guides developers toward a more robust and declarative style of programming. The path to creating sophisticated and reliable agents lies in embracing the high-level abstractions the engine provides. By leveraging tools like the KinematicCharacterController and the Scene Queries API, a development team's code becomes more resilient to change, easier to maintain, and more closely aligned with the intended use of the engine. This allows developers to dedicate their efforts where they add the most value: programming intelligent and compelling agent behavior, built upon a solid and stable physical foundation.
 Works cited
-Deprecated init parameteres when using Rapier via CDN · Issue ..., accessed October 29, 2025, https://github.com/dimforge/rapier/issues/811
-accessed December 31, 1969, https://github.com/dimforge/rapier/blob/master/CHANGELOG.md
-accessed December 31, 1969, https://raw.githubusercontent.com/dimforge/rapier/master/CHANGELOG.md
-Announcing the Rapier physics engine - Dimforge, accessed October 29, 2025, https://dimforge.com/blog/2020/08/25/announcing-the-rapier-physics-engine/
-Physics simulation with Rapier: 2021 roadmap : r/rust - Reddit, accessed October 29, 2025, https://www.reddit.com/r/rust/comments/koe8kf/physics_simulation_with_rapier_2021_roadmap/
-CharacterController.isGrounded is way too inconsistent? : r/Unity3D - Reddit, accessed October 29, 2025, https://www.reddit.com/r/Unity3D/comments/168qfeb/charactercontrollerisgrounded_is_way_too/
-Integration parameters - Rapier physics engine, accessed October 29, 2025, https://rapier.rs/docs/user_guides/rust/integration_parameters/
-Keeping a Character Controller grounded? - Game Development Stack Exchange, accessed October 29, 2025, https://gamedev.stackexchange.com/questions/132187/keeping-a-character-controller-grounded
-Issue with Ground Detection (Rapier3d) : r/bevy - Reddit, accessed October 29, 2025, https://www.reddit.com/r/bevy/comments/144ww0n/issue_with_ground_detection_rapier3d/
-About Rapier - Rapier physics engine, accessed October 29, 2025, https://rapier.rs/docs/
-Rapier physics engine | Rapier, accessed October 29, 2025, https://rapier.rs/
-Character controller - Rapier physics engine, accessed October 29, 2025, https://rapier.rs/docs/user_guides/bevy_plugin/character_controller/
-Character controller - Rapier physics engine, accessed October 29, 2025, https://rapier.rs/docs/user_guides/javascript/character_controller/
-Character controller - Rapier physics engine, accessed October 29, 2025, https://rapier.rs/docs/user_guides/rust/character_controller/
-Scene queries - Rapier physics engine, accessed October 29, 2025, https://rapier.rs/docs/user_guides/templates_injected/scene_queries/
-Scene queries - Rapier physics engine, accessed October 29, 2025, https://rapier.rs/docs/user_guides/rust/scene_queries/
-Scene queries - Ray-casting - Rapier physics engine, accessed October 29, 2025, https://rapier.rs/docs/user_guides/bevy_plugin/scene_queries/
-Scene queries - Ray-casting - Rapier physics engine, accessed October 29, 2025, https://rapier.rs/docs/user_guides/javascript/scene_queries/
-character_controller_setup - Rapier physics engine, accessed October 29, 2025, https://rapier.rs/docs/user_guides/templates_injected/character_controller_setup/
-Scene queries - Ray-casting - Rapier physics engine, accessed October 29, 2025, https://rapier.rs/docs/user_guides/bevy_plugin/scene_queries
-Really solid ground detection - Gino Dekovic, accessed October 29, 2025, https://dekovicc.medium.com/really-solid-ground-detection-e8e5b9a7647
-scene_queries_shape_casting | Rapier, accessed October 29, 2025, https://rapier.rs/docs/user_guides/javascript/scene_queries_shape_casting/
-scene_queries_filters | Rapier, accessed October 29, 2025, https://rapier.rs/docs/user_guides/javascript/scene_queries_filters/
-Rigid-bodies - Rapier physics engine, accessed October 29, 2025, https://rapier.rs/docs/user_guides/javascript/rigid_bodies
-Rigid-bodies - Rapier physics engine, accessed October 29, 2025, https://rapier.rs/docs/user_guides/javascript/rigid_bodies/
-Bevy Physics: Rapier - Tainted Coders, accessed October 29, 2025, https://taintedcoders.com/bevy/physics/rapier
-Physics based character controller with Rapier.rs and Pixi - DEV Community, accessed October 29, 2025, https://dev.to/jerzakm/physics-based-character-controller-with-rapierrs-and-pixi-5e31
-dimforge/rapier: 2D and 3D physics engines focused on performance. - GitHub, accessed October 29, 2025, https://github.com/dimforge/rapier
-Releases · pmndrs/react-three-rapier - GitHub, accessed October 29, 2025, https://github.com/pmndrs/react-three-rapier/releases
-How do I control the movement of a cube? - Stack Overflow, accessed October 29, 2025, https://stackoverflow.com/questions/75453473/how-do-i-control-the-movement-of-a-cube
+Deprecated init parameteres when using Rapier via CDN · Issue ..., accessed October 29, 2025, <https://github.com/dimforge/rapier/issues/811>
+accessed December 31, 1969, <https://github.com/dimforge/rapier/blob/master/CHANGELOG.md>
+accessed December 31, 1969, <https://raw.githubusercontent.com/dimforge/rapier/master/CHANGELOG.md>
+Announcing the Rapier physics engine - Dimforge, accessed October 29, 2025, <https://dimforge.com/blog/2020/08/25/announcing-the-rapier-physics-engine/>
+Physics simulation with Rapier: 2021 roadmap : r/rust - Reddit, accessed October 29, 2025, <https://www.reddit.com/r/rust/comments/koe8kf/physics_simulation_with_rapier_2021_roadmap/>
+CharacterController.isGrounded is way too inconsistent? : r/Unity3D - Reddit, accessed October 29, 2025, <https://www.reddit.com/r/Unity3D/comments/168qfeb/charactercontrollerisgrounded_is_way_too/>
+Integration parameters - Rapier physics engine, accessed October 29, 2025, <https://rapier.rs/docs/user_guides/rust/integration_parameters/>
+Keeping a Character Controller grounded? - Game Development Stack Exchange, accessed October 29, 2025, <https://gamedev.stackexchange.com/questions/132187/keeping-a-character-controller-grounded>
+Issue with Ground Detection (Rapier3d) : r/bevy - Reddit, accessed October 29, 2025, <https://www.reddit.com/r/bevy/comments/144ww0n/issue_with_ground_detection_rapier3d/>
+About Rapier - Rapier physics engine, accessed October 29, 2025, <https://rapier.rs/docs/>
+Rapier physics engine | Rapier, accessed October 29, 2025, <https://rapier.rs/>
+Character controller - Rapier physics engine, accessed October 29, 2025, <https://rapier.rs/docs/user_guides/bevy_plugin/character_controller/>
+Character controller - Rapier physics engine, accessed October 29, 2025, <https://rapier.rs/docs/user_guides/javascript/character_controller/>
+Character controller - Rapier physics engine, accessed October 29, 2025, <https://rapier.rs/docs/user_guides/rust/character_controller/>
+Scene queries - Rapier physics engine, accessed October 29, 2025, <https://rapier.rs/docs/user_guides/templates_injected/scene_queries/>
+Scene queries - Rapier physics engine, accessed October 29, 2025, <https://rapier.rs/docs/user_guides/rust/scene_queries/>
+Scene queries - Ray-casting - Rapier physics engine, accessed October 29, 2025, <https://rapier.rs/docs/user_guides/bevy_plugin/scene_queries/>
+Scene queries - Ray-casting - Rapier physics engine, accessed October 29, 2025, <https://rapier.rs/docs/user_guides/javascript/scene_queries/>
+character_controller_setup - Rapier physics engine, accessed October 29, 2025, <https://rapier.rs/docs/user_guides/templates_injected/character_controller_setup/>
+Scene queries - Ray-casting - Rapier physics engine, accessed October 29, 2025, <https://rapier.rs/docs/user_guides/bevy_plugin/scene_queries>
+Really solid ground detection - Gino Dekovic, accessed October 29, 2025, <https://dekovicc.medium.com/really-solid-ground-detection-e8e5b9a7647>
+scene_queries_shape_casting | Rapier, accessed October 29, 2025, <https://rapier.rs/docs/user_guides/javascript/scene_queries_shape_casting/>
+scene_queries_filters | Rapier, accessed October 29, 2025, <https://rapier.rs/docs/user_guides/javascript/scene_queries_filters/>
+Rigid-bodies - Rapier physics engine, accessed October 29, 2025, <https://rapier.rs/docs/user_guides/javascript/rigid_bodies>
+Rigid-bodies - Rapier physics engine, accessed October 29, 2025, <https://rapier.rs/docs/user_guides/javascript/rigid_bodies/>
+Bevy Physics: Rapier - Tainted Coders, accessed October 29, 2025, <https://taintedcoders.com/bevy/physics/rapier>
+Physics based character controller with Rapier.rs and Pixi - DEV Community, accessed October 29, 2025, <https://dev.to/jerzakm/physics-based-character-controller-with-rapierrs-and-pixi-5e31>
+dimforge/rapier: 2D and 3D physics engines focused on performance. - GitHub, accessed October 29, 2025, <https://github.com/dimforge/rapier>
+Releases · pmndrs/react-three-rapier - GitHub, accessed October 29, 2025, <https://github.com/pmndrs/react-three-rapier/releases>
+How do I control the movement of a cube? - Stack Overflow, accessed October 29, 2025, <https://stackoverflow.com/questions/75453473/how-do-i-control-the-movement-of-a-cube>

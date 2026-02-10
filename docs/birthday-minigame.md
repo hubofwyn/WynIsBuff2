@@ -31,9 +31,9 @@
 
 - Start with 3 lives (❤️)
 - Lose a life when:
-    - Hitting an obstacle
-    - Missing a parcel (goes off-screen)
-    - Taking too long to deliver (10 seconds)
+  - Hitting an obstacle
+  - Missing a parcel (goes off-screen)
+  - Taking too long to deliver (10 seconds)
 - Game ends when all lives are lost
 
 ### Progressive Difficulty
@@ -75,18 +75,18 @@ const collisionX = this.playerContainer?.x ?? this.playerX;
 
 - **Parcels**: Spawn from right at x=1100, scroll left at base speed
 - **Obstacles**:
-    - Poop (💩): Standard speed, plays fart sound on hit
-    - Cone (🚧): 30% faster, wobbles vertically
-    - Bird (🦆): 20% slower, flaps wings
+  - Poop (💩): Standard speed, plays fart sound on hit
+  - Cone (🚧): 30% faster, wobbles vertically
+  - Bird (🦆): 20% slower, flaps wings
 - **Delivery Zone**: Right side at x=900+, green pulsing area
 
 ### Special Features
 
 - **Birthday Celebration**: Special animation at 9 deliveries with:
-    - Animated cake with 9 candles
-    - 90 pieces of confetti (9 x 10)
-    - Floating 9s and shake bottles
-    - Giant pulsing "9" in background
+  - Animated cake with 9 candles
+  - 90 pieces of confetti (9 x 10)
+  - Floating 9s and shake bottles
+  - Giant pulsing "9" in background
 - **Leaderboard**: Top 10 scores saved locally
 - **Audio**: Birthday-themed music, sound effects for all actions
 

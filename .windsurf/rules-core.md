@@ -5,6 +5,7 @@
 ## Core Module Responsibilities
 
 The `src/core/` directory is the ONLY place where:
+
 1. Vendor libraries can be imported directly
 2. Vendor abstractions are created
 3. Framework-specific code lives
@@ -254,6 +255,7 @@ export { PhysicsTypes } from '../../core/PhysicsTypes.js';
 ## Documentation
 
 Core modules should be well-documented:
+
 - Purpose and responsibilities
 - Public API surface
 - Usage examples

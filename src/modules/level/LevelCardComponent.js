@@ -109,7 +109,8 @@ export class LevelCardComponent extends Phaser.GameObjects.Container {
 
         if (this.isUnlocked) {
             // Get difficulty color
-            const difficultyColor = this.difficultyColors[this.levelData.difficulty] || DesignTokens.colors.primary;
+            const difficultyColor =
+                this.difficultyColors[this.levelData.difficulty] || DesignTokens.colors.primary;
             const color = Phaser.Display.Color.HexStringToColor(difficultyColor);
 
             // Gradient background
@@ -129,11 +130,7 @@ export class LevelCardComponent extends Phaser.GameObjects.Container {
             );
 
             // Glowing border
-            graphics.lineStyle(
-                DesignTokens.card.level.borderWidth,
-                color.color,
-                0.8
-            );
+            graphics.lineStyle(DesignTokens.card.level.borderWidth, color.color, 0.8);
             graphics.strokeRoundedRect(
                 -halfWidth,
                 -halfHeight,
@@ -193,32 +190,35 @@ export class LevelCardComponent extends Phaser.GameObjects.Container {
         let currentY = -halfHeight + getSpacing(DesignTokens.spacing.sm);
 
         // 1. Biome badge at top
-        const biomeBadge = this.scene.add.text(
-            0,
-            0, // Will reposition after measuring
-            this.levelData.biome,
-            {
-                fontFamily: DesignTokens.fontFamily.primary,
-                fontSize: getFontSize(DesignTokens.fontSize.tiny),
-                color: this.isUnlocked ? DesignTokens.colors.textPrimary : DesignTokens.colors.textDisabled,
-                backgroundColor: this.isUnlocked ? DesignTokens.colors.bgDark : DesignTokens.colors.bgMedium,
-                padding: {
-                    x: getSpacing(DesignTokens.spacing.xs),
-                    y: getSpacing(DesignTokens.spacing.xs)
-                },
-            }
-        ).setOrigin(0.5);
+        const biomeBadge = this.scene.add
+            .text(
+                0,
+                0, // Will reposition after measuring
+                this.levelData.biome,
+                {
+                    fontFamily: DesignTokens.fontFamily.primary,
+                    fontSize: getFontSize(DesignTokens.fontSize.tiny),
+                    color: this.isUnlocked
+                        ? DesignTokens.colors.textPrimary
+                        : DesignTokens.colors.textDisabled,
+                    backgroundColor: this.isUnlocked
+                        ? DesignTokens.colors.bgDark
+                        : DesignTokens.colors.bgMedium,
+                    padding: {
+                        x: getSpacing(DesignTokens.spacing.xs),
+                        y: getSpacing(DesignTokens.spacing.xs),
+                    },
+                }
+            )
+            .setOrigin(0.5);
         const biomeBounds = biomeBadge.getBounds();
         biomeBadge.setY(currentY + biomeBounds.height / 2);
         currentY += biomeBounds.height + getSpacing(DesignTokens.spacing.xs);
         this.add(biomeBadge);
 
         // 2. Level name
-        const levelName = this.scene.add.text(
-            0,
-            0,
-            this.levelData.name,
-            {
+        const levelName = this.scene.add
+            .text(0, 0, this.levelData.name, {
                 fontFamily: DesignTokens.fontFamily.heading,
                 fontSize: getFontSize(DesignTokens.fontSize.h4),
                 color: this.isUnlocked
@@ -228,45 +228,43 @@ export class LevelCardComponent extends Phaser.GameObjects.Container {
                 stroke: DesignTokens.colors.bgDark,
                 strokeThickness: this.isCompact ? 1 : 2,
                 wordWrap: { width: this.cardWidth - getSpacing(DesignTokens.spacing.md) },
-            }
-        ).setOrigin(0.5);
+            })
+            .setOrigin(0.5);
         const levelNameBounds = levelName.getBounds();
         levelName.setY(currentY + levelNameBounds.height / 2);
         currentY += levelNameBounds.height + getSpacing(DesignTokens.spacing.xs);
         this.add(levelName);
 
         // 3. Skill focus label
-        const skillLabel = this.scene.add.text(
-            0,
-            0,
-            this.levelData.skillFocus,
-            {
+        const skillLabel = this.scene.add
+            .text(0, 0, this.levelData.skillFocus, {
                 fontFamily: DesignTokens.fontFamily.primary,
                 fontSize: getFontSize(DesignTokens.fontSize.tiny),
-                color: this.isUnlocked ? DesignTokens.colors.secondary : DesignTokens.colors.textMuted,
+                color: this.isUnlocked
+                    ? DesignTokens.colors.secondary
+                    : DesignTokens.colors.textMuted,
                 fontStyle: 'italic',
                 align: 'center',
-            }
-        ).setOrigin(0.5);
+            })
+            .setOrigin(0.5);
         const skillLabelBounds = skillLabel.getBounds();
         skillLabel.setY(currentY + skillLabelBounds.height / 2);
         currentY += skillLabelBounds.height + getSpacing(DesignTokens.spacing.xs);
         this.add(skillLabel);
 
         // 4. Description
-        const description = this.scene.add.text(
-            0,
-            0,
-            this.levelData.description,
-            {
+        const description = this.scene.add
+            .text(0, 0, this.levelData.description, {
                 fontFamily: DesignTokens.fontFamily.primary,
                 fontSize: getFontSize(DesignTokens.fontSize.tiny),
-                color: this.isUnlocked ? DesignTokens.colors.textSecondary : DesignTokens.colors.textMuted,
+                color: this.isUnlocked
+                    ? DesignTokens.colors.textSecondary
+                    : DesignTokens.colors.textMuted,
                 align: 'center',
                 lineSpacing: 0,
                 wordWrap: { width: this.cardWidth - getSpacing(DesignTokens.spacing.md) },
-            }
-        ).setOrigin(0.5);
+            })
+            .setOrigin(0.5);
         const descriptionBounds = description.getBounds();
         description.setY(currentY + descriptionBounds.height / 2);
         currentY += descriptionBounds.height + getSpacing(DesignTokens.spacing.sm);
@@ -274,11 +272,8 @@ export class LevelCardComponent extends Phaser.GameObjects.Container {
 
         // 5. Difficulty badge (work from bottom up to ensure it fits)
         const difficultyText = this.levelData.difficulty.toUpperCase();
-        const difficultyBadge = this.scene.add.text(
-            0,
-            halfHeight - getSpacing(DesignTokens.spacing.sm),
-            difficultyText,
-            {
+        const difficultyBadge = this.scene.add
+            .text(0, halfHeight - getSpacing(DesignTokens.spacing.sm), difficultyText, {
                 fontFamily: DesignTokens.fontFamily.primary,
                 fontSize: getFontSize(DesignTokens.fontSize.tiny),
                 color: DesignTokens.colors.bgDark,
@@ -287,10 +282,10 @@ export class LevelCardComponent extends Phaser.GameObjects.Container {
                     : DesignTokens.colors.textMuted,
                 padding: {
                     x: getSpacing(DesignTokens.spacing.xs),
-                    y: this.isCompact ? 1 : 2
+                    y: this.isCompact ? 1 : 2,
                 },
-            }
-        ).setOrigin(0.5, 1); // Bottom-aligned
+            })
+            .setOrigin(0.5, 1); // Bottom-aligned
         this.add(difficultyBadge);
 
         // Progress or lock icon
@@ -339,7 +334,9 @@ export class LevelCardComponent extends Phaser.GameObjects.Container {
                 : 0;
 
         if (progressPercent > 0) {
-            const progressColor = Phaser.Display.Color.HexStringToColor(DesignTokens.colors.success);
+            const progressColor = Phaser.Display.Color.HexStringToColor(
+                DesignTokens.colors.success
+            );
             this.backgroundGraphics.fillStyle(progressColor.color, 0.8);
             this.backgroundGraphics.fillRoundedRect(
                 -barWidth / 2,
@@ -351,16 +348,18 @@ export class LevelCardComponent extends Phaser.GameObjects.Container {
         }
 
         // Progress text with responsive sizing
-        const progressText = this.scene.add.text(
-            0,
-            barY,
-            `${this.progress.collectiblesCollected}/${this.progress.totalCollectibles}`,
-            {
-                fontFamily: DesignTokens.fontFamily.primary,
-                fontSize: getFontSize(DesignTokens.fontSize.tiny),
-                color: DesignTokens.colors.textPrimary,
-            }
-        ).setOrigin(0.5);
+        const progressText = this.scene.add
+            .text(
+                0,
+                barY,
+                `${this.progress.collectiblesCollected}/${this.progress.totalCollectibles}`,
+                {
+                    fontFamily: DesignTokens.fontFamily.primary,
+                    fontSize: getFontSize(DesignTokens.fontSize.tiny),
+                    color: DesignTokens.colors.textPrimary,
+                }
+            )
+            .setOrigin(0.5);
         this.add(progressText);
     }
 
@@ -372,14 +371,11 @@ export class LevelCardComponent extends Phaser.GameObjects.Container {
         const getFontSize = (size) => `${Math.floor(parseInt(size) * fontScale)}px`;
         const getSpacing = (size) => Math.floor(size * fontScale);
 
-        const lockIcon = this.scene.add.text(
-            0,
-            halfHeight - getSpacing(DesignTokens.spacing.xl),
-            '🔒',
-            {
+        const lockIcon = this.scene.add
+            .text(0, halfHeight - getSpacing(DesignTokens.spacing.xl), '🔒', {
                 fontSize: getFontSize(DesignTokens.fontSize.h2),
-            }
-        ).setOrigin(0.5, 1); // Bottom-aligned
+            })
+            .setOrigin(0.5, 1); // Bottom-aligned
         this.add(lockIcon);
     }
 
@@ -391,18 +387,20 @@ export class LevelCardComponent extends Phaser.GameObjects.Container {
         const getFontSize = (size) => `${Math.floor(parseInt(size) * fontScale)}px`;
         const getSpacing = (size) => Math.floor(size * fontScale);
 
-        const checkmark = this.scene.add.text(
-            this.cardWidth / 2 - getSpacing(DesignTokens.spacing.sm),
-            -halfHeight + getSpacing(DesignTokens.spacing.sm),
-            '✓',
-            {
-                fontFamily: DesignTokens.fontFamily.primary,
-                fontSize: getFontSize(DesignTokens.fontSize.h4),
-                color: DesignTokens.colors.success,
-                stroke: DesignTokens.colors.bgDark,
-                strokeThickness: this.isCompact ? 2 : 3,
-            }
-        ).setOrigin(1, 0); // Top-right aligned
+        const checkmark = this.scene.add
+            .text(
+                this.cardWidth / 2 - getSpacing(DesignTokens.spacing.sm),
+                -halfHeight + getSpacing(DesignTokens.spacing.sm),
+                '✓',
+                {
+                    fontFamily: DesignTokens.fontFamily.primary,
+                    fontSize: getFontSize(DesignTokens.fontSize.h4),
+                    color: DesignTokens.colors.success,
+                    stroke: DesignTokens.colors.bgDark,
+                    strokeThickness: this.isCompact ? 2 : 3,
+                }
+            )
+            .setOrigin(1, 0); // Top-right aligned
         this.add(checkmark);
     }
 
@@ -411,14 +409,9 @@ export class LevelCardComponent extends Phaser.GameObjects.Container {
      */
     createInteractivity() {
         // Interactive hitbox
-        const hitArea = this.scene.add.rectangle(
-            0,
-            0,
-            this.cardWidth,
-            this.cardHeight,
-            0x000000,
-            0
-        ).setInteractive({ useHandCursor: this.isUnlocked });
+        const hitArea = this.scene.add
+            .rectangle(0, 0, this.cardWidth, this.cardHeight, 0x000000, 0)
+            .setInteractive({ useHandCursor: this.isUnlocked });
 
         this.add(hitArea);
         this.hitArea = hitArea;
@@ -573,4 +566,3 @@ export class LevelCardComponent extends Phaser.GameObjects.Container {
         super.destroy(fromScene);
     }
 }
-

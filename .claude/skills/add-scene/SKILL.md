@@ -3,11 +3,13 @@
 Step-by-step workflow for adding a new scene to WynIsBuff2.
 
 ## Usage
+
 `/add-scene "Scene name and purpose"`
 
 ## Steps
 
 1. **Add scene key** to `src/constants/SceneKeys.js`
+
    ```javascript
    export const SceneKeys = {
        // ... existing keys
@@ -16,6 +18,7 @@ Step-by-step workflow for adding a new scene to WynIsBuff2.
    ```
 
 2. **Create scene class** in `src/scenes/YourScene.js`
+
    ```javascript
    import { BaseScene } from '@features/core';
    import { SceneKeys } from '../constants/SceneKeys.js';
@@ -51,6 +54,7 @@ Step-by-step workflow for adding a new scene to WynIsBuff2.
    - Test scene transitions with `this.scene.start(SceneKeys.YOUR_SCENE)`
 
 ## Rules
+
 - Extend `BaseScene` from `@features/core`, never `Phaser.Scene`
 - Use `SceneKeys.*` constant in constructor
 - Use structured logging (LOG), never console.*

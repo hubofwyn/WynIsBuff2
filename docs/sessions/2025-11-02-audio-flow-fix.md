@@ -9,13 +9,15 @@
 ## Problem
 
 ### Symptoms
+
 1. Music not playing in WelcomeScene (where it was attempted)
 2. Music playing later in CharacterSelect or after
 3. Console error: "Playback was unable to start... not within a user interaction"
 4. Inconsistent audio behavior
 
 ### Scene Flow
-```
+
+```text
 Preloader → WelcomeScene → CharacterSelect → MainMenu
                 ❌ Tried music here        ✅ Should play here
 ```
@@ -25,18 +27,21 @@ Preloader → WelcomeScene → CharacterSelect → MainMenu
 ## Root Cause
 
 ### Issue 1: Wrong Scene for Music
+
 - **WelcomeScene** tried to play music on user click
 - But the game flow is: Welcome → CharacterSelect → **MainMenu**
 - Music should start in **MainMenu** (the actual level selection screen)
 - WelcomeScene is just a splash screen with "Press SPACE to Start"
 
 ### Issue 2: Howler Error Handling
+
 - `audio.playMusic()` doesn't throw synchronous errors
 - Howler uses async callbacks for errors
 - Try/catch around `playMusic()` doesn't catch Howler errors
 - Errors are logged via Howler's internal error handler
 
 ### Issue 3: AudioContext State
+
 - AudioContext may be suspended even after initial unlock
 - Each scene needs to verify and resume AudioContext
 - Must use async/await for proper resume
@@ -48,12 +53,14 @@ Preloader → WelcomeScene → CharacterSelect → MainMenu
 ### 1. Remove Music from WelcomeScene
 
 **Before**:
+
 ```javascript
 // WelcomeScene tried to play music
 audio.playMusic(AudioAssets.PROTEIN_PIXEL_ANTHEM);
 ```
 
 **After**:
+
 ```javascript
 // WelcomeScene only plays click sound
 audio.playSFX('click');
@@ -65,6 +72,7 @@ audio.playSFX('click');
 ### 2. Proper Audio Handling in MainMenu
 
 **Before**:
+
 ```javascript
 create() {
     // Synchronous, no error handling
@@ -73,6 +81,7 @@ create() {
 ```
 
 **After**:
+
 ```javascript
 async create() {
     // Initialize audio with proper handling
@@ -104,28 +113,33 @@ async initializeAudio() {
 ## Scene-by-Scene Audio Strategy
 
 ### Preloader
+
 - ✅ No music
 - ✅ Shows loading screen
 - ✅ Loads all audio assets
 
 ### WelcomeScene
+
 - ✅ No music (splash screen)
 - ✅ Plays click SFX on interaction
 - ✅ Resumes AudioContext for future scenes
 - ✅ Transitions to CharacterSelect
 
 ### CharacterSelect
+
 - ✅ No music (quick selection screen)
 - ✅ Plays click/hover SFX
 - ✅ Transitions to MainMenu
 
 ### MainMenu
+
 - ✅ **Starts title music** 🎵
 - ✅ Resumes AudioContext if needed
 - ✅ Handles errors gracefully
 - ✅ Music continues during level selection
 
 ### Game Scene
+
 - ✅ Plays level-specific music
 - ✅ Stops menu music
 - ✅ Handles level transitions
@@ -184,22 +198,26 @@ window.LOG.export().logs.filter(l =>
 ## Why This Works
 
 ### 1. Correct Scene for Music
+
 - MainMenu is where users spend time selecting levels
 - Music enhances the menu experience
 - Splash screens (Welcome) don't need music
 
 ### 2. Proper AudioContext Management
+
 - Each scene checks AudioContext state
 - Uses async/await for resume
 - Logs all audio events for debugging
 
 ### 3. Graceful Error Handling
+
 - Howler errors logged but don't break game
 - Game proceeds even if audio fails
 - Users can enable audio in settings
 
 ### 4. User Interaction Chain
-```
+
+```text
 User clicks "Tap to Play" (unlock)
     ↓
 User presses SPACE (WelcomeScene)
@@ -233,6 +251,7 @@ MainMenu loads → AudioContext verified → Music plays ✅
 ### For All Scenes
 
 1. **Check AudioContext State**
+
    ```javascript
    if (window.Howler?.ctx?.state === 'suspended') {
        await window.Howler.ctx.resume();
@@ -240,6 +259,7 @@ MainMenu loads → AudioContext verified → Music plays ✅
    ```
 
 2. **Use Async/Await**
+
    ```javascript
    async create() {
        await this.initializeAudio();
@@ -247,6 +267,7 @@ MainMenu loads → AudioContext verified → Music plays ✅
    ```
 
 3. **Log Audio Events**
+
    ```javascript
    LOG.info('SCENE_MUSIC_STARTED', {
        subsystem: 'scene',

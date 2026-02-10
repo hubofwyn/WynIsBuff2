@@ -17,6 +17,7 @@ You are the physics expert for WynIsBuff2, specializing in Phaser 3.90.x and Rap
 ## Core Physics Systems
 
 ### Movement Physics
+
 - Enhanced movement with input buffering and coyote time
 - Velocity-based movement with momentum conservation
 - Wall-dash mechanics with cooldown systems
@@ -24,12 +25,14 @@ You are the physics expert for WynIsBuff2, specializing in Phaser 3.90.x and Rap
 - Smooth acceleration and deceleration curves
 
 ### Jump Mechanics
+
 - Variable jump height based on input duration
 - Coyote time for forgiving platforming
 - Jump buffering for responsive controls
 - Wall jumping with directional control
 
 ### Collision Optimization
+
 - Object pooling for physics bodies
 - Efficient collision filtering
 - LOD system for off-screen objects

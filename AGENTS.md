@@ -27,7 +27,7 @@
 
 ## Directory Structure
 
-```
+```text
 src/
 ├── constants/        # AUTO-GENERATED: Assets.js | MANUAL: EventNames.js, SceneKeys.js
 ├── core/             # Vendor abstractions (BaseScene, PhysicsTypes) + Core managers
@@ -72,6 +72,7 @@ import RAPIER from '@dimforge/rapier2d-compat';
 ```
 
 Available abstractions:
+
 - `BaseScene` - Extends Phaser.Scene with observability
 - `PhysicsTypes` - All Rapier types (Vector2, RigidBodyDesc, ColliderDesc, etc.)
 

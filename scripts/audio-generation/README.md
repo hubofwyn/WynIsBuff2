@@ -58,7 +58,7 @@ python generate_assets.py --phase 1 --dry-run
 
 ## File Structure
 
-```
+```text
 scripts/audio-generation/
 ├── README.md                    # This file
 ├── requirements.txt             # Python dependencies
@@ -171,7 +171,7 @@ python budget_guard.py
 
 Output:
 
-```
+```text
 ✅ Current credits: 142,350
    User tier: starter
 
@@ -278,7 +278,7 @@ sudo apt-get install ffmpeg
 **Solution**:
 
 1. Check balance: `python budget_guard.py`
-2. Top up at https://elevenlabs.io/pricing
+2. Top up at <https://elevenlabs.io/pricing>
 3. Reduce safety margin: `--safety-margin 1000`
 
 ### Generation Fails for Specific Asset
@@ -316,13 +316,13 @@ After generation:
 }
 ```
 
-2. **Regenerate Constants**:
+1. **Regenerate Constants**:
 
 ```bash
 npm run generate-assets
 ```
 
-3. **Use in Code**:
+1. **Use in Code**:
 
 ```javascript
 import { AudioAssets } from '../constants/Assets.js';
@@ -363,8 +363,8 @@ Example output:
 
 ## Support
 
-- ElevenLabs API Docs: https://elevenlabs.io/docs
-- ElevenLabs Discord: https://discord.gg/elevenlabs
+- ElevenLabs API Docs: <https://elevenlabs.io/docs>
+- ElevenLabs Discord: <https://discord.gg/elevenlabs>
 - Project Issues: File in WynIsBuff2 repository
 
 ## License

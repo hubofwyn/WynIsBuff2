@@ -11,6 +11,7 @@
 **Current State**: UI/UX documentation is fragmented across 6+ files with significant overlap between `UIConfig.js` and `DesignTokens.js`. New systems (`LoadingScreenManager`, `DesignTokens`) are not properly documented or indexed.
 
 **Issues Identified**:
+
 1. ❌ **Duplication**: UIConfig.js and DesignTokens.js overlap significantly
 2. ❌ **Missing Index Entries**: LoadingScreenManager and DesignTokens not in INDEX.md
 3. ❌ **No Cross-References**: UIManager.md doesn't reference DesignTokens
@@ -61,6 +62,7 @@
 ### Issue 1: UIConfig.js vs DesignTokens.js Overlap
 
 **UIConfig.js** (186 lines):
+
 - Panel styling
 - Button styling
 - Text presets (title, subtitle, heading, label, stats, message, button)
@@ -68,6 +70,7 @@
 - Character select card styling
 
 **DesignTokens.js** (~400 lines):
+
 - ✅ Spacing scale
 - ✅ Complete color palette
 - ✅ Typography system
@@ -84,6 +87,7 @@
 **Overlap**: 60-70% (panels, buttons, text, animations)
 
 **Recommendation**:
+
 - **Keep DesignTokens.js** as the primary design system (more comprehensive, responsive helpers)
 - **Deprecate UIConfig.js** gradually (migrate existing code to DesignTokens)
 - **Create migration guide** for developers
@@ -91,6 +95,7 @@
 ### Issue 2: Missing INDEX.md Entries
 
 **Not indexed**:
+
 - ✅ `LOADING_SCREEN_ARCHITECTURE.md` (comprehensive, production-ready)
 - ✅ `DesignTokens.js` (critical design system)
 - ✅ `LoadingScreenManager` (core system)
@@ -104,6 +109,7 @@
 **Current state**: Documents don't reference each other
 
 **Example**:
+
 - `UIManager.md` doesn't mention `DesignTokens` (should recommend using tokens)
 - `LOADING_SCREEN_ARCHITECTURE.md` not linked from architecture docs
 - `game-settings.md` not linked to `UIManager.md`
@@ -115,6 +121,7 @@
 **Current state**: Scattered information across multiple docs
 
 **Need**: Single "UI/UX Architecture Overview" that:
+
 - Explains the design system (DesignTokens)
 - Links to component docs (UIManager, LoadingScreenManager)
 - Provides best practices
@@ -132,6 +139,7 @@
 **Create**: `docs/architecture/UI_UX_ARCHITECTURE.md`
 
 **Contents**:
+
 1. **Overview** - Design philosophy and principles
 2. **Design System** - DesignTokens explained
 3. **Component Hierarchy** - UIManager → LoadingScreenManager → Scenes
@@ -144,12 +152,14 @@
 ### Phase 2: Update Existing Documentation
 
 **Update `UIManager.md`**:
+
 - ✅ Add DesignTokens section (recommend using tokens)
 - ✅ Add "Related Documentation" section
 - ✅ Update examples to show DesignTokens usage
 - ✅ Add responsive design section
 
 **Update `game-settings.md`**:
+
 - ✅ Add architecture context at top
 - ✅ Link to UI_UX_ARCHITECTURE.md
 - ✅ Clarify this is implementation tasks, not architecture
@@ -157,6 +167,7 @@
 ### Phase 3: Index Updates
 
 **Update `INDEX.md`**:
+
 ```markdown
 #### UI/UX Architecture
 
@@ -185,6 +196,7 @@
 ### Phase 4: Add Cross-References
 
 **Every UI/UX doc should have**:
+
 ```markdown
 ## Related Documentation
 
@@ -204,7 +216,7 @@
 
 ## Quality Standards
 
-### High-Quality Documentation Must Have:
+### High-Quality Documentation Must Have
 
 ✅ **Clear Purpose**: Single, well-defined purpose
 ✅ **Complete Examples**: Working code examples
@@ -215,7 +227,7 @@
 ✅ **Accessible**: Easy to find and navigate
 ✅ **Concise**: No unnecessary duplication
 
-### Current Scores:
+### Current Scores
 
 | Document | Purpose | Examples | Structure | X-Refs | Indexed | Updated | Accessible | Concise | **Total** |
 |----------|---------|----------|-----------|--------|---------|---------|------------|---------|-----------|
@@ -230,24 +242,27 @@
 ## Implementation Priority
 
 ### 🔴 CRITICAL (Do First)
+
 1. Create `UI_UX_ARCHITECTURE.md` - Unified guide
 2. Update `INDEX.md` - Add UI/UX section
 3. Add cross-references to LOADING_SCREEN_ARCHITECTURE.md
 
 ### 🟡 HIGH (Do Soon)
-4. Update UIManager.md with DesignTokens references
-5. Add migration guide (UIConfig → DesignTokens)
-6. Update game-settings.md with architecture context
+
+1. Update UIManager.md with DesignTokens references
+2. Add migration guide (UIConfig → DesignTokens)
+3. Update game-settings.md with architecture context
 
 ### 🟢 MEDIUM (Future)
-7. Create examples using DesignTokens across all scenes
-8. Deprecate UIConfig.js (after migration)
+
+1. Create examples using DesignTokens across all scenes
+2. Deprecate UIConfig.js (after migration)
 
 ---
 
 ## Success Criteria
 
-### Documentation is Successfully Consolidated When:
+### Documentation is Successfully Consolidated When
 
 ✅ All UI/UX docs are indexed in INDEX.md
 ✅ All UI/UX docs cross-reference each other

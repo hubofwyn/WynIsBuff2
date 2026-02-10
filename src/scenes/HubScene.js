@@ -1,4 +1,10 @@
-import { BaseScene, GameStateManager, EventBus, EconomyManager, DeterministicRNG } from '@features/core';
+import {
+    BaseScene,
+    GameStateManager,
+    EventBus,
+    EconomyManager,
+    DeterministicRNG,
+} from '@features/core';
 import { BossRewardSystem } from '@features/boss';
 import { EnhancedCloneManager } from '@features/idle';
 

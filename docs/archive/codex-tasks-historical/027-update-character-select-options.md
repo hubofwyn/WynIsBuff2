@@ -5,9 +5,9 @@ Estimate: 2
 
 # Update Character Selection Options
 
-# Task: Modify `CharacterSelectScene` to present the three playable characters:
+# Task: Modify `CharacterSelectScene` to present the three playable characters
 
-# - Updated options in `CharacterSelect.js` to:
+# - Updated options in `CharacterSelect.js` to
 
 # • `ila_sprite` → Favorite Sister
 
@@ -15,9 +15,9 @@ Estimate: 2
 
 # • `wyn_sprite` → Wyn the Buff
 
-# - Ensured sprites use new keys with `setDisplaySize(128,128)`.
+# - Ensured sprites use new keys with `setDisplaySize(128,128)`
 
-# - Removed placeholder options (`axelface`, `wynface`).
+# - Removed placeholder options (`axelface`, `wynface`)
 
 ## Change Log
 

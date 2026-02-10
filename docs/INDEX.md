@@ -20,6 +20,7 @@ Complete navigation hub for all WynIsBuff2 documentation.
 | [reference/data/level_schema.md](reference/data/level_schema.md) | Level data schema v1.1.0 | Level designers, AI |
 
 **Quick Commands**:
+
 ```bash
 bun run docs:update        # Update documentation index
 bun run validate:levels    # Validate all level data
@@ -309,7 +310,7 @@ Start here if you're an AI assistant:
 
 ### Directory Structure
 
-```
+```text
 WynIsBuff2/
 ├── README.md                  # Player-facing entry point
 ├── CLAUDE.md                  # Developer-facing entry point
@@ -337,12 +338,12 @@ WynIsBuff2/
 
 - ✅ Main docs: `docs/` directory with topic-based subdirectories
 - ✅ AIProjectDocs consolidated: 31 files reorganized into docs/
-    - architecture/ (4 files)
-    - technology/ (4 files)
-    - systems/ (7 files)
-    - features/ (5 files)
-    - design/ (6 files)
-    - archive/aiprojectdocs-historical/ (5 files)
+  - architecture/ (4 files)
+  - technology/ (4 files)
+  - systems/ (7 files)
+  - features/ (5 files)
+  - design/ (6 files)
+  - archive/aiprojectdocs-historical/ (5 files)
 - Meta docs: Root level (process and tooling)
 - Config: `.claude/`, `.codex/`
 

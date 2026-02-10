@@ -61,9 +61,9 @@ Acceptance Criteria:
 - Three controls: Master, Music, SFX
   • Each with label, current percentage (0–100%), and “−”/“+” buttons in 5% increments
   • Hook events to call:
-    - `AudioManager.getInstance().setMasterVolume(value)`
-    - `AudioManager.getInstance().setMusicVolume(value)`
-    - `AudioManager.getInstance().setSFXVolume(value)`
+  - `AudioManager.getInstance().setMasterVolume(value)`
+  - `AudioManager.getInstance().setMusicVolume(value)`
+  - `AudioManager.getInstance().setSFXVolume(value)`
       • Default values: Master 80%, Music 70%, SFX 90%
       • Persist values via `GameStateManager.saveSettings({ volumes })`
 
@@ -92,8 +92,8 @@ Acceptance Criteria:
 - Control with three options: Low, Medium, High
   • A left/right arrow or dropdown selector
   • On change, call:
-    - `ParticleManager.setQuality(level)` (affects particle count)
-    - `CameraManager.setQuality(level)` (affects bloom/intensity)
+  - `ParticleManager.setQuality(level)` (affects particle count)
+  - `CameraManager.setQuality(level)` (affects bloom/intensity)
       • Persist via `GameStateManager.saveSettings({ graphicsQuality })`
 
 Acceptance Criteria:
@@ -137,6 +137,7 @@ Acceptance Criteria:
   • `saveSettings(settings: object)`
   • `loadSettings(): object`
   • Default schema:
+
     ```json
     {
         "volumes": { "master": 0.8, "music": 0.7, "sfx": 0.9 },
@@ -145,6 +146,7 @@ Acceptance Criteria:
         "accessibility": { "palette": "Off", "highContrast": false, "subtitles": false }
     }
     ```
+
 - Load and apply these settings in `Preloader.create()` or at game start
 
 Acceptance Criteria:

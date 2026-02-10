@@ -3,6 +3,7 @@
 Deterministic testing workflow using GoldenSeedTester and DeterministicRNG.
 
 ## Usage
+
 `/playtest-check`
 
 ## Steps
@@ -13,6 +14,7 @@ Deterministic testing workflow using GoldenSeedTester and DeterministicRNG.
    - Review seed values and frame limits
 
 2. **Verify test infrastructure**
+
    ```javascript
    import { GoldenSeedTester, DeterministicRNG } from '@features/core';
 
@@ -22,6 +24,7 @@ Deterministic testing workflow using GoldenSeedTester and DeterministicRNG.
    ```
 
 3. **Run recording test**
+
    ```javascript
    tester.startRecording({ seed: 1138, maxFrames: 600 });
    // ... gameplay frames ...
@@ -29,6 +32,7 @@ Deterministic testing workflow using GoldenSeedTester and DeterministicRNG.
    ```
 
 4. **Validate playback**
+
    ```javascript
    tester.startPlayback(recording);
    // Verify frame-by-frame determinism
@@ -36,6 +40,7 @@ Deterministic testing workflow using GoldenSeedTester and DeterministicRNG.
    ```
 
 5. **Check RNG streams**
+
    ```javascript
    rng.init(seedValue);
    const value = rng.int(1, 100, 'streamName');
@@ -49,7 +54,9 @@ Deterministic testing workflow using GoldenSeedTester and DeterministicRNG.
    - Recommendations for non-deterministic code paths
 
 ## Purpose
+
 Ensures gameplay is reproducible for:
+
 - Bug reproduction
 - Regression testing
 - Performance benchmarking

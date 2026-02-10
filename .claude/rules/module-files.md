@@ -7,6 +7,7 @@ globs: src/modules/**/*.js
 Modules contain domain implementation code (player, level, effects, enemy).
 
 **Strict rules:**
+
 - NO direct vendor imports (no `phaser`, `@dimforge/rapier2d-compat`, `howler`)
 - Import abstractions from `@features/core` (BaseScene, PhysicsTypes, etc.)
 - Import sibling modules via barrel exports: `@features/player`, `@features/level`, etc.

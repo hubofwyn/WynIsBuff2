@@ -56,7 +56,7 @@
 
 **Key Components**:
 
-```
+```text
 scripts/audio-generation/
 ├── README.md                    # Complete documentation
 ├── assets.json                  # 12 jump SFX fully specified
@@ -111,7 +111,7 @@ scripts/audio-generation/
 
 **Key Components**:
 
-```
+```text
 asset-generation/
 ├── tools/wyn-gfx.mjs            # Main CLI (Bun/Node)
 ├── shots.json                   # 45+ asset specifications
@@ -142,7 +142,7 @@ asset-generation/
 
 **What We Need**:
 
-```
+```text
 ┌──────────────────────────────────────────────────────────┐
 │         Unified Asset Generation Interface               │
 │         npm run asset:generate <spec>                    │
@@ -180,7 +180,7 @@ asset-generation/
 
 ### 2.1 The Hybrid Modular Stack
 
-```
+```text
 ┌─────────────────────────────────────────────────────────┐
 │  Developer Interface (CLI + Scripts)                    │
 │  npm run asset:generate <spec-file>                     │
@@ -242,7 +242,7 @@ asset-generation/
 
 ## 2. Directory Structure
 
-```
+```text
 scripts/
 ├── asset-generation/
 │   ├── orchestrator/

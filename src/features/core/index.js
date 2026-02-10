@@ -3,10 +3,7 @@
 export { AgentOrchestrator } from '../../core/AgentOrchestrator.js';
 export { AudioManager } from '../../core/AudioManager.js';
 export { AudioUnlockManager } from '../../core/AudioUnlockManager.js';
-export {
-    createAudioUnlockOverlay,
-    removeAudioUnlockOverlay,
-} from '../../core/AudioUnlockUI.js';
+export { createAudioUnlockOverlay, removeAudioUnlockOverlay } from '../../core/AudioUnlockUI.js';
 export { BaseManager } from '../../core/BaseManager.js';
 export { BaseScene } from '../../core/BaseScene.js';
 export { CloneManager } from '../../core/CloneManager.js';

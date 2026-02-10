@@ -237,7 +237,7 @@ export function attachCollider(world, colliderDesc, body) {
  * @returns {RAPIER.ColliderDesc} The modified collider descriptor (for chaining)
  */
 export function setCollisionGroups(colliderDesc, groups, mask) {
-    return colliderDesc.setCollisionGroups(groups << 16 | mask);
+    return colliderDesc.setCollisionGroups((groups << 16) | mask);
 }
 
 /**

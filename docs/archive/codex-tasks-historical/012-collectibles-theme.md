@@ -5,7 +5,7 @@ Estimate: 3
 
 # Themed Collectibles for Level 1
 
-# Task: Use buff-themed icons for collectibles in level1.
+# Task: Use buff-themed icons for collectibles in level1
 
 - Updated `src/scenes/Preloader.js` to load `collectible-protein` and `collectible-dumbbell` textures.
 - Modified `CollectibleManager.createCollectibles()` to use sprite key `collectible-<type>` when available, otherwise fallback to colored circle.

@@ -13,12 +13,12 @@
 
 - [Overview](#overview)
 - [Modern Implementation (Current)](#modern-implementation-current)
-    - [Character Controller Approach](#character-controller-approach)
-    - [Physics-Based Ground Detection](#physics-based-ground-detection)
+  - [Character Controller Approach](#character-controller-approach)
+  - [Physics-Based Ground Detection](#physics-based-ground-detection)
 - [Implementation Details (Historical)](#implementation-details-historical)
-    - [Player Movement](#player-movement)
-    - [Jumping Mechanics](#jumping-mechanics)
-    - [Collision Detection](#collision-detection)
+  - [Player Movement](#player-movement)
+  - [Jumping Mechanics](#jumping-mechanics)
+  - [Collision Detection](#collision-detection)
 - [Improvements Made](#improvements-made)
 - [Lessons Learned](#lessons-learned)
 - [Future Enhancements](#future-enhancements)
@@ -336,17 +336,17 @@ The following improvements were made to the movement system:
 
 ### General Movement (Historical)
 
-4. **Movement Speed Calibration**:
+1. **Movement Speed Calibration**:
     - Initial movement speed (3) was too slow for satisfying gameplay
     - Direct velocity setting feels abrupt; acceleration provides smoother movement
     - Movement speed must be balanced with the game's scale and physics simulation
 
-5. **Jump Mechanics**:
+2. **Jump Mechanics**:
     - Jump force needs to be proportional to gravity and game scale
     - Variable jump heights add depth to platforming mechanics
     - Visual feedback helps players understand the triple jump system
 
-6. **Collision Detection**:
+3. **Collision Detection**:
     - CharacterController is more reliable than manual position checks
     - Considering velocity direction improves ground detection accuracy
     - Coyote time significantly improves the feel of platforming games

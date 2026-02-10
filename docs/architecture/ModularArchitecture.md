@@ -4,9 +4,9 @@
 
 - [Overview](#overview)
 - [Module Structure](#module-structure)
-    - [PhysicsManager](#physicsmanager)
-    - [LevelManager](#levelmanager)
-    - [PlayerController](#playercontroller)
+  - [PhysicsManager](#physicsmanager)
+  - [LevelManager](#levelmanager)
+  - [PlayerController](#playercontroller)
 - [Integration with Phaser Scenes](#integration-with-phaser-scenes)
 - [Benefits of Modularization](#benefits-of-modularization)
 - [Best Practices](#best-practices)

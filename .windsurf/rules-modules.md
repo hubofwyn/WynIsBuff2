@@ -114,6 +114,7 @@ this.eventBus.emit('player:jump');
 ### 6. Module Organization
 
 Each module should have:
+
 - Clear single responsibility
 - Minimal dependencies on other modules
 - Communication via events, not direct coupling
@@ -164,21 +165,25 @@ class PlayerController {
 ## Module Categories
 
 ### Player Module
+
 - PlayerController - Main player logic
 - PlayerMovement - Movement mechanics
 - PlayerAnimation - Animation state machine
 
 ### Level Module
+
 - LevelManager - Level loading and management
 - LevelLoader - Asset and data loading
 - Platform - Platform entities
 
 ### Effects Module
+
 - ParticleManager - Particle effects
 - ScreenShake - Camera shake effects
 - ColorTransition - Color transition effects
 
 ### Enemy Module
+
 - EnemyController - Enemy AI and behavior
 - EnemySpawner - Enemy spawning logic
 

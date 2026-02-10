@@ -18,7 +18,7 @@ WynIsBuff2's architecture is more sophisticated than initially documented. This 
 
 ### Enhanced Layer Model
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────┐
 │                    External Services Layer                   │
 │          (OpenAI, ElevenLabs, Anthropic, GitHub)            │
@@ -64,7 +64,7 @@ WynIsBuff2's architecture is more sophisticated than initially documented. This 
 **Location**: `scripts/`, `assets/manifest.json`
 **Status**: ✅ Production-ready, actively used
 
-```
+```text
 Manual Assets → assets/ → manifest.json → generate-assets.js → Assets.js constants
 ```
 
@@ -79,7 +79,7 @@ Manual Assets → assets/ → manifest.json → generate-assets.js → Assets.js
 **Location**: `origin/get-more-buff:asset-generation/`
 **Status**: ⚠️ Complete but isolated from main
 
-```
+```text
 Prompt → DALL-E API → Thumbnails → Scoring → Final → Integration → assets/
 ```
 
@@ -108,7 +108,7 @@ Prompt → DALL-E API → Thumbnails → Scoring → Final → Integration → a
 **Location**: `scripts/venv/`
 **Status**: ✅ Active, for documentation only
 
-```
+```text
 Markdown/Code → NLP Analysis → Knowledge Graph → Insights → Reports
 ```
 
@@ -407,7 +407,7 @@ window.debugAPI.getAssetHealth = function() {
 
 ### Asset Generation to Game Flow
 
-```
+```text
 1. Prompt Creation
    ├─ Manual: Developer writes prompt
    ├─ Template: Use predefined templates

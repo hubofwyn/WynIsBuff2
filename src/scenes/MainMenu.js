@@ -149,7 +149,8 @@ export class MainMenu extends BaseScene {
         currentY = this.layout.hero.logoY + logoHeight / 2 + getSpacing(DesignTokens.spacing.xs);
 
         // 2. Title - measure actual bounds with height-scaled font
-        const titleFontSize = height < 800 ? DesignTokens.fontSize.h2 : DesignTokens.fontSize.displayMedium;
+        const titleFontSize =
+            height < 800 ? DesignTokens.fontSize.h2 : DesignTokens.fontSize.displayMedium;
         const tempTitle = this.add.text(0, 0, 'WYN IS BUFF 2', {
             fontFamily: DesignTokens.fontFamily.heading,
             fontSize: titleFontSize,
@@ -166,7 +167,8 @@ export class MainMenu extends BaseScene {
         currentY = this.layout.hero.titleY + titleHeight / 2 + getSpacing(DesignTokens.spacing.xs);
 
         // 3. Subtitle - measure actual bounds with height-scaled font
-        const subtitleFontSize = height < 800 ? DesignTokens.fontSize.body : DesignTokens.fontSize.h3;
+        const subtitleFontSize =
+            height < 800 ? DesignTokens.fontSize.body : DesignTokens.fontSize.h3;
         const tempSubtitle = this.add.text(0, 0, 'Select Your Challenge', {
             fontFamily: DesignTokens.fontFamily.primary,
             fontSize: subtitleFontSize,
@@ -179,7 +181,8 @@ export class MainMenu extends BaseScene {
         this.subtitleLetterSpacing = height < 800 ? '2px' : '4px';
 
         this.layout.hero.subtitleY = currentY + subtitleHeight / 2;
-        currentY = this.layout.hero.subtitleY + subtitleHeight / 2 + getSpacing(DesignTokens.spacing.xl);
+        currentY =
+            this.layout.hero.subtitleY + subtitleHeight / 2 + getSpacing(DesignTokens.spacing.xl);
 
         // 4. Level Grid - calculate based on SCALED card dimensions
         const baseCardHeight = DesignTokens.card.level.height;
@@ -192,13 +195,13 @@ export class MainMenu extends BaseScene {
         // CRITICAL: Cards are positioned by their CENTER, so add half card height
         // currentY is at the bottom of subtitle + spacing (where card TOP should be)
         // Card center needs to be at: cardTop + (cardHeight / 2)
-        this.layout.grid.startY = currentY + (cardHeight / 2);
+        this.layout.grid.startY = currentY + cardHeight / 2;
 
         // Calculate where the grid ENDS (bottom of last row + spacing)
         // Last row center = startY + (rows-1) * (cardHeight + spacing)
         // Last row bottom = last row center + cardHeight/2
         const lastRowCenterY = this.layout.grid.startY + (rows - 1) * (cardHeight + cardSpacing);
-        const gridBottomY = lastRowCenterY + (cardHeight / 2);
+        const gridBottomY = lastRowCenterY + cardHeight / 2;
         currentY = gridBottomY + getSpacing(DesignTokens.spacing.xl);
 
         // 5. Event Banner - fixed 80px height
@@ -291,8 +294,8 @@ export class MainMenu extends BaseScene {
         const gradientBg = this.add.graphics();
 
         // Use DesignTokens gradient colors
-        const colors = DesignTokens.colors.gradientBackground.map((hex) =>
-            Phaser.Display.Color.HexStringToColor(hex).color
+        const colors = DesignTokens.colors.gradientBackground.map(
+            (hex) => Phaser.Display.Color.HexStringToColor(hex).color
         );
 
         gradientBg.fillGradientStyle(colors[0], colors[1], colors[2], colors[3], 1);
@@ -408,7 +411,8 @@ export class MainMenu extends BaseScene {
         const scaledCardWidth = Math.floor(baseCardWidth * this.cardHeightScale);
         const scaledCardHeight = Math.floor(baseCardHeight * this.cardHeightScale);
         const cardSpacing = DesignTokens.spacing.md;
-        const totalWidth = this.gridColumns * scaledCardWidth + (this.gridColumns - 1) * cardSpacing;
+        const totalWidth =
+            this.gridColumns * scaledCardWidth + (this.gridColumns - 1) * cardSpacing;
         const startX = centerX - totalWidth / 2 + scaledCardWidth / 2;
 
         // Create level cards
@@ -620,26 +624,30 @@ export class MainMenu extends BaseScene {
         const centerY = height / 2;
 
         // Overlay
-        const overlay = this.add.rectangle(
-            0,
-            0,
-            width,
-            height,
-            Phaser.Display.Color.HexStringToColor(DesignTokens.colors.overlay).color,
-            0.8
-        ).setOrigin(0, 0);
+        const overlay = this.add
+            .rectangle(
+                0,
+                0,
+                width,
+                height,
+                Phaser.Display.Color.HexStringToColor(DesignTokens.colors.overlay).color,
+                0.8
+            )
+            .setOrigin(0, 0);
 
         // Confirmation panel
-        const confirmBg = this.add.rectangle(
-            centerX,
-            centerY,
-            400,
-            200,
-            Phaser.Display.Color.HexStringToColor(DesignTokens.colors.bgMedium).color
-        ).setStrokeStyle(
-            2,
-            Phaser.Display.Color.HexStringToColor(DesignTokens.colors.borderAccent).color
-        );
+        const confirmBg = this.add
+            .rectangle(
+                centerX,
+                centerY,
+                400,
+                200,
+                Phaser.Display.Color.HexStringToColor(DesignTokens.colors.bgMedium).color
+            )
+            .setStrokeStyle(
+                2,
+                Phaser.Display.Color.HexStringToColor(DesignTokens.colors.borderAccent).color
+            );
 
         const confirmText = this.add
             .text(centerX, centerY - 30, 'Reset all progress?', {

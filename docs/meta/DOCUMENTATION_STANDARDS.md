@@ -130,7 +130,7 @@ Changes are tracked, validated, and sustainable.
 
 **Commit Message Format**:
 
-```
+```text
 docs: [category] brief description
 
 - Specific change 1

@@ -39,7 +39,7 @@ The game follows a modular architecture that separates concerns into distinct, r
 
 The system architecture follows a modular design with the following key components:
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────────┐
 │                         Phaser Game                             │
 ├─────────────────────────────────────────────────────────────────┤
@@ -105,7 +105,7 @@ Cross-cutting concerns that support multiple components:
 
 The modules interact primarily through the Event System, which decouples the components and allows for flexible communication:
 
-```
+```text
 ┌─────────────┐     ┌─────────────┐     ┌─────────────┐
 │    Game     │     │    Event    │     │   Physics   │
 │    Scene    │────▶│    System   │◀────│   Manager   │
@@ -168,7 +168,7 @@ The modules interact primarily through the Event System, which decouples the com
 
 ### Code Organization
 
-```
+```text
 src/
 ├── main.js                 # Entry point
 ├── constants/              # Game constants and configurations

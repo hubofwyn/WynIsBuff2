@@ -26,7 +26,7 @@
 
 The Level Select Screen integrates with WynIsBuff2's architecture:
 
-```
+```text
 MainMenuScene (Level Select)
        ↓
    ┌───┴────────────────────────────────┐
@@ -50,7 +50,7 @@ MainMenuScene (Level Select)
 
 ### File Structure
 
-```
+```text
 src/
 ├── scenes/
 │   └── MainMenu.js ⭐ (Update: Level Select Screen)
@@ -82,7 +82,7 @@ src/
 
 **Phaser Scene Layout** (1024x768 default):
 
-```
+```text
 ┌─────────────────────────────────────────────────┐
 │  Hero Section (200px height)                   │
 │  ┌──────────────────────────────────────────┐  │
@@ -161,7 +161,7 @@ const CARD = {
 
 **Visual Hierarchy:**
 
-```
+```text
 ┌──────────────────────┐
 │   Illustration       │  120px (60% of 200px width)
 │   (centered)         │
@@ -188,6 +188,7 @@ const CARD = {
 **File**: `src/scenes/MainMenu.js`
 
 **Changes**:
+
 ```javascript
 import { BaseScene } from '@features/core';
 import { DesignTokens } from '../constants/DesignTokens.js';
@@ -213,6 +214,7 @@ export class MainMenu extends BaseScene {
 ```
 
 **Acceptance Criteria**:
+
 - [ ] MainMenuScene extends BaseScene
 - [ ] DesignTokens imported and used
 - [ ] UIManager initialized
@@ -255,6 +257,7 @@ createHeroSection(width, height) {
 ```
 
 **Acceptance Criteria**:
+
 - [ ] Logo scales responsively (0.3x mobile, 0.5x desktop)
 - [ ] Background uses DesignTokens colors
 - [ ] Subtitle uses DesignTokens typography
@@ -461,6 +464,7 @@ export class LevelCardComponent {
 ```
 
 **Acceptance Criteria**:
+
 - [ ] Component creates all card elements
 - [ ] Uses DesignTokens for all styling
 - [ ] Hover effects smooth (60fps)
@@ -549,6 +553,7 @@ createLevelGrid(width, height) {
 ```
 
 **Acceptance Criteria**:
+
 - [ ] Grid adapts to screen size (1/2/3 columns)
 - [ ] Cards centered horizontally
 - [ ] Proper spacing using DesignTokens
@@ -603,6 +608,7 @@ createSpecialEventBanner(width, height) {
 ```
 
 **Acceptance Criteria**:
+
 - [ ] Banner max width 600px
 - [ ] Gradient background (if supported)
 - [ ] Pulsing animation
@@ -655,6 +661,7 @@ handleResetProgress() {
 ```
 
 **Acceptance Criteria**:
+
 - [ ] Positioned at bottom
 - [ ] Hover color change
 - [ ] Confirmation before reset
@@ -719,6 +726,7 @@ focusCard(index) {
 ```
 
 **Acceptance Criteria**:
+
 - [ ] TAB cycles through cards
 - [ ] ENTER selects focused card
 - [ ] Visual focus indicator
@@ -768,6 +776,7 @@ this.elements.bg.on('pointerdown', () => {
 ```
 
 **Acceptance Criteria**:
+
 - [ ] Cards animate in on scene start
 - [ ] Hover sound plays
 - [ ] Click sound plays
@@ -804,20 +813,24 @@ const title = this.add.text(x, y, 'Title', {
 ### WCAG AA Compliance
 
 ✅ **Color Contrast**: All text meets 4.5:1 minimum
+
 - Primary text on dark: `#FFFFFF` on `#0F1B2B` (15:1)
 - Accent text on dark: `#FFD700` on `#0F1B2B` (8:1)
 
 ✅ **Touch Targets**: All interactive elements ≥ 44px
+
 - Play buttons: 44px height
 - Reset link: 44px touch area
 - Cards: Full card clickable
 
 ✅ **Keyboard Navigation**: TAB and ENTER support
+
 - TAB cycles through cards
 - ENTER selects card
 - Visual focus indicator
 
 ✅ **Screen Reader**: ARIA labels
+
 ```javascript
 this.elements.bg.setData('ariaLabel', `Select ${this.data.name} level - ${this.data.difficulty}`);
 this.elements.bg.setData('ariaRole', 'button');
@@ -893,6 +906,7 @@ setTimeout(() => {
 ```
 
 **Test Cases**:
+
 - [ ] LoadingScreen shows when level selected
 - [ ] Progress updates during load
 - [ ] LoadingScreen hides before game starts
@@ -903,21 +917,25 @@ setTimeout(() => {
 ## Related Documentation
 
 **Core Architecture:**
+
 - [UI/UX Architecture](../architecture/UI_UX_ARCHITECTURE.md) - Design system and patterns
 - [DesignTokens](../architecture/UI_UX_ARCHITECTURE.md#design-tokens) - Design token reference
 - [Responsive Design](../architecture/UI_UX_ARCHITECTURE.md#responsive-design) - Adaptive layouts
 - [Accessibility](../architecture/UI_UX_ARCHITECTURE.md#accessibility) - WCAG compliance
 
 **Component Systems:**
+
 - [UIManager](../systems/UIManager.md) - UI element management
 - [LoadingScreenManager](../systems/LOADING_SCREEN_ARCHITECTURE.md) - Loading screens
 - [BaseScene](../architecture/adrs/ADR-001-vendor-abstraction-layer.md) - Scene abstraction
 
 **Design Guidelines:**
+
 - [Art Style Guide](../design/ArtStyleAndAssetPlan.md) - Visual design
 - [Game Design Principles](../design/GameDesignPrinciples.md) - UX principles
 
 **Implementation:**
+
 - [Level System](LevelImplementationArchitecture.md) - Level architecture
 - [MainMenu Scene](../../src/scenes/MainMenu.js) - Current implementation
 
@@ -925,25 +943,29 @@ setTimeout(() => {
 
 ## Deliverables
 
-### Phase 1 (Core):
+### Phase 1 (Core)
+
 - [ ] Updated `MainMenu.js` with new layout
 - [ ] New `LevelCardComponent.js` component
 - [ ] Hero section with responsive logo
 - [ ] Level grid with 1-3 columns adaptive layout
 
-### Phase 2 (Features):
+### Phase 2 (Features)
+
 - [ ] Special event banner with animation
 - [ ] Footer with reset progress
 - [ ] Locked level state
 - [ ] Level completion badges
 
-### Phase 3 (Accessibility):
+### Phase 3 (Accessibility)
+
 - [ ] Keyboard navigation (TAB/ENTER)
 - [ ] ARIA labels for screen readers
 - [ ] Contrast ratios verified
 - [ ] Touch target sizes verified
 
-### Phase 4 (Polish):
+### Phase 4 (Polish)
+
 - [ ] Entry animations (staggered cards)
 - [ ] Hover/click audio feedback
 - [ ] Smooth transitions (60fps)
@@ -954,12 +976,14 @@ setTimeout(() => {
 ## Next Steps
 
 **After QA Passes:**
+
 1. Add particle effects on card hover (optional)
 2. Implement level preview (modal/overlay)
 3. Add achievement display
 4. Create special event variant themes
 
 **Future Enhancements:**
+
 - [ ] Level preview modal
 - [ ] Achievement badges on cards
 - [ ] Leaderboard integration

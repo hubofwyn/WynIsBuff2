@@ -107,7 +107,7 @@ import { EventSystem } from '../modules/EventSystem';
 import { EventNames } from '../constants/EventNames';
 ```
 
-2. Add an eventSystem property to the Game class:
+1. Add an eventSystem property to the Game class:
 
 ```javascript
 constructor() {
@@ -117,7 +117,7 @@ constructor() {
 }
 ```
 
-3. Initialize the Event System in the create method:
+1. Initialize the Event System in the create method:
 
 ```javascript
 async create() {
@@ -153,7 +153,7 @@ async create() {
 }
 ```
 
-4. Add a setupEventListeners method:
+1. Add a setupEventListeners method:
 
 ```javascript
 setupEventListeners() {
@@ -181,7 +181,7 @@ Modify `src/modules/PhysicsManager.js`:
 import { EventNames } from '../constants/EventNames';
 ```
 
-2. Update the constructor to accept the Event System:
+1. Update the constructor to accept the Event System:
 
 ```javascript
 constructor(scene, eventSystem) {
@@ -191,7 +191,7 @@ constructor(scene, eventSystem) {
 }
 ```
 
-3. Emit events in the initialize method:
+1. Emit events in the initialize method:
 
 ```javascript
 async initialize(gravityX = 0.0, gravityY = 20.0) {
@@ -222,7 +222,7 @@ Modify `src/modules/PlayerController.js`:
 import { EventNames } from '../constants/EventNames';
 ```
 
-2. Update the constructor to accept the Event System:
+1. Update the constructor to accept the Event System:
 
 ```javascript
 constructor(scene, world, eventSystem, x = 512, y = 300) {
@@ -241,7 +241,7 @@ constructor(scene, world, eventSystem, x = 512, y = 300) {
 }
 ```
 
-3. Emit jump events in the handleJumping method:
+1. Emit jump events in the handleJumping method:
 
 ```javascript
 handleJumping(jumpText) {
@@ -280,7 +280,7 @@ handleJumping(jumpText) {
 }
 ```
 
-4. Emit land events in the processCollisions method:
+1. Emit land events in the processCollisions method:
 
 ```javascript
 processCollisions(platforms) {

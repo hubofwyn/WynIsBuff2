@@ -18,6 +18,7 @@ export class MyScene extends BaseScene {
 ```
 
 **Strict rules:**
+
 - Use `SceneKeys.*` constants for all scene references (constructor, transitions)
 - Use `ImageAssets.*` / `AudioAssets.*` for asset loading
 - Use `EventNames.*` for event emission

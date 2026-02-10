@@ -6,7 +6,7 @@ The WynIsBuff2 project uses a **centralized, auto-generated asset management sys
 
 ## Architecture
 
-```
+```text
 assets/
 ├── manifest.json          # Single source of truth
 ├── images/               # Image assets
@@ -80,7 +80,7 @@ bun run dev   # Starts at http://localhost:5173/
 
 1. **Place asset file** in appropriate directory:
 
-    ```
+    ```text
     assets/
     ├── images/         # UI, backgrounds, static images
     ├── sounds/         # Sound effects
@@ -271,16 +271,16 @@ The project includes placeholder assets for quick development:
 When `bun run validate-assets` reports orphaned files, handle them deliberately:
 
 - Keep (in use soon):
-    - Add entries to `assets/manifest.json`
-    - Run `bun run generate-assets`
-    - Reference via `ImageAssets/*`, `ImagePaths/*`, or audio equivalents
+  - Add entries to `assets/manifest.json`
+  - Run `bun run generate-assets`
+  - Reference via `ImageAssets/*`, `ImagePaths/*`, or audio equivalents
 
 - Archive (not in use):
-    - Move under `assets/archive/` preserving structure
-    - Add a note in `assets/archive/README.md` if context is useful
+  - Move under `assets/archive/` preserving structure
+  - Add a note in `assets/archive/README.md` if context is useful
 
 - Remove (accidental/temporary):
-    - Delete from the repo if clearly unused
+  - Delete from the repo if clearly unused
 
 Guidelines:
 

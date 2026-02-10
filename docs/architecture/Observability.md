@@ -127,7 +127,7 @@ The new system is built on five foundational pillars:
 
 ### 1.2 Component Architecture
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────┐
 │                    Application Layer                         │
 │  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐   │
@@ -174,7 +174,7 @@ The new system is built on five foundational pillars:
 
 ### 1.3 Data Flow
 
-```
+```text
 Frame N Start
     │
     ├─> Update DebugContext (frame++, dt, subsystem)
@@ -3779,7 +3779,7 @@ console.log('Remediation result:', result);
 
 ## Success Criteria Checklist
 
-### ✅ Migration Complete When:
+### ✅ Migration Complete When
 
 - [ ] All Phase 0-9 tasks completed without errors
 - [ ] TypeScript compiles without errors (`npx tsc --noEmit`)
@@ -3795,7 +3795,7 @@ console.log('Remediation result:', result);
 - [ ] Crash dumps working (test with fatal error)
 - [ ] Migration report generated
 
-### 📊 Production Readiness:
+### 📊 Production Readiness
 
 - [ ] Production config tested (`NODE_ENV=production npm run build`)
 - [ ] JSON_STREAM connected to monitoring backend

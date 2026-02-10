@@ -853,17 +853,17 @@ export class Game extends BaseScene {
             this.eventSystem.off(EventNames.COLLECTIBLE_COLLECTED);
             this.eventSystem.off(EventNames.LEVEL_COMPLETE);
             this.eventSystem.off(EventNames.BOSS_DEFEATED);
-            
+
             LOG.dev('GAME_EVENTS_CLEANED', {
                 subsystem: 'scene',
                 scene: SceneKeys.GAME,
                 message: 'Event listeners removed',
                 events: [
                     'PLAYER_LANDED',
-                    'PLAYER_JUMPED', 
+                    'PLAYER_JUMPED',
                     'COLLECTIBLE_COLLECTED',
                     'LEVEL_COMPLETE',
-                    'BOSS_DEFEATED'
+                    'BOSS_DEFEATED',
                 ],
             });
         }

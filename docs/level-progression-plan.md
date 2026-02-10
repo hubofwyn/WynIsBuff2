@@ -101,7 +101,7 @@ if (isGrounded) jumpIndex = 0;
 
 ## 3 ️⃣ DATA‑DRIVEN LEVEL PIPELINE
 
-```
+```text
 assets/levels/
   Z2_MomentumMountains/
     stage-1.yaml

@@ -21,14 +21,14 @@ while (this.accumulator >= fixedTimeStep) {
 }
 ```
 
-### Key Features:
+### Key Features
 
 1. **Frame Rate Independence** - Physics runs at consistent 60 Hz regardless of display refresh rate
 2. **Catch-up Mechanism** - Slower systems can run multiple physics steps per frame to stay synchronized
 3. **Spiral of Death Prevention** - Maximum 3 physics steps per frame prevents freezing
 4. **Interpolation** - Smooth visual rendering between physics steps
 
-### Benefits:
+### Benefits
 
 - Consistent jump heights and movement speeds on all systems
 - No "slow motion" effect on lower-end hardware

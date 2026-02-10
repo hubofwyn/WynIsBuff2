@@ -41,7 +41,7 @@ WynIsBuff2's UI/UX architecture provides a **consistent, accessible, and respons
 
 ## Architecture Overview
 
-```
+```text
 ┌─────────────────────────────────────────────────────────┐
 │                   Game Scenes Layer                     │
 │    (Boot, Preloader, MainMenu, Game, Settings, etc.)  │
@@ -78,6 +78,7 @@ WynIsBuff2's UI/UX architecture provides a **consistent, accessible, and respons
 Design tokens are **named constants** that store visual design attributes. Instead of hardcoding values like `fontSize: 24` or `color: '#FFD700'`, you use semantic tokens like `DesignTokens.fontSize.large` or `DesignTokens.colors.accent`.
 
 **Benefits**:
+
 - ✅ Consistent design across all screens
 - ✅ Easy global theming (change one value, update everywhere)
 - ✅ Responsive by default (helper functions for scaling)
@@ -223,6 +224,7 @@ export class MyScene extends BaseScene {
 **Purpose**: Centralized management of UI elements (text, buttons, groups)
 
 **Key Features**:
+
 - Create and manage text elements
 - Create interactive buttons with callbacks
 - Group related UI elements
@@ -231,6 +233,7 @@ export class MyScene extends BaseScene {
 - Visibility control
 
 **Usage**:
+
 ```javascript
 import { UIManager } from '@features/core';
 import { DesignTokens } from '../constants/DesignTokens.js';
@@ -262,6 +265,7 @@ uiManager.addToGroup('mainMenu', 'playButton');
 **Purpose**: Unified loading screen system for all loading scenarios
 
 **Key Features**:
+
 - Show/hide with fade animations
 - Progress bar with percentage
 - Status message updates
@@ -271,6 +275,7 @@ uiManager.addToGroup('mainMenu', 'playButton');
 - Full observability integration
 
 **Usage**:
+
 ```javascript
 import { LoadingScreenManager } from '@features/core';
 
@@ -298,6 +303,7 @@ await loadingManager.hide(300);
 **Purpose**: Accessibility feature for captions and subtitles
 
 **Key Features**:
+
 - Display subtitles for audio/dialog
 - Queuing system for multiple subtitles
 - Customizable styling
@@ -430,6 +436,7 @@ button.setData('ariaRole', 'button');
 ### ✅ DO
 
 **Use Design Tokens**
+
 ```javascript
 // ✅ GOOD - Using design tokens
 const title = this.add.text(x, y, 'Title', {
@@ -439,6 +446,7 @@ const title = this.add.text(x, y, 'Title', {
 ```
 
 **Group Related UI**
+
 ```javascript
 // ✅ GOOD - Grouping UI elements
 this.uiManager.createGroup('pauseMenu');
@@ -451,6 +459,7 @@ this.uiManager.showGroup('pauseMenu');
 ```
 
 **Use LoadingScreenManager**
+
 ```javascript
 // ✅ GOOD - Using unified loading system
 const loading = LoadingScreenManager.getInstance();
@@ -458,6 +467,7 @@ loading.show(this, { title: 'Loading...' });
 ```
 
 **Responsive Design**
+
 ```javascript
 // ✅ GOOD - Adapting to screen size
 const width = this.cameras.main.width;
@@ -467,6 +477,7 @@ const cardWidth = width < 480 ? 150 : 200;
 ### ❌ DON'T
 
 **Hardcode Design Values**
+
 ```javascript
 // ❌ BAD - Magic numbers
 const title = this.add.text(x, y, 'Title', {
@@ -482,6 +493,7 @@ const title = this.add.text(x, y, 'Title', {
 ```
 
 **Create UI Without Manager**
+
 ```javascript
 // ❌ BAD - Managing UI manually
 this.title = this.add.text(x, y, 'Title', style);
@@ -494,6 +506,7 @@ this.uiManager.createButton('button', x, y, w, h, callback);
 ```
 
 **Ignore Accessibility**
+
 ```javascript
 // ❌ BAD - Too small touch targets
 const button = this.add.rectangle(x, y, 20, 20, color);
@@ -507,6 +520,7 @@ const button = this.add.rectangle(x, y,
 ```
 
 **Use UIConfig (Deprecated)**
+
 ```javascript
 // ❌ BAD - Using deprecated UIConfig
 import { UIConfig } from '../constants/UIConfig.js';
@@ -527,6 +541,7 @@ const style = {
 ### Migrating from UIConfig to DesignTokens
 
 **Why migrate?**
+
 - ✅ More comprehensive design system
 - ✅ Responsive helpers
 - ✅ Better accessibility support
@@ -629,18 +644,22 @@ const card = {
 ## Related Documentation
 
 ### Core Documentation
+
 - [LOADING_SCREEN_ARCHITECTURE.md](../systems/LOADING_SCREEN_ARCHITECTURE.md) - Complete loading screen guide
 - [UIManager.md](../systems/UIManager.md) - UI component management
 - [SUBTITLE_SYSTEM.md](../SUBTITLE_SYSTEM.md) - Accessibility subtitles
 
 ### Design Guidelines
+
 - [ArtStyleAndAssetPlan.md](../design/ArtStyleAndAssetPlan.md) - Visual design guide
 - [pixelart-style.md](../design/pixelart-style.md) - Pixel art guidelines
 
 ### Implementation
+
 - [game-settings.md](../game-settings.md) - Settings UI implementation tasks
 
 ### Architecture
+
 - [ARCHITECTURE.md](ARCHITECTURE.md) - Overall system architecture
 - [ADR-001: Vendor Abstraction](adrs/ADR-001-vendor-abstraction-layer.md) - BaseScene pattern
 
@@ -651,6 +670,7 @@ const card = {
 ### Common Patterns
 
 **Create a Menu Screen:**
+
 ```javascript
 import { BaseScene } from '@features/core';
 import { DesignTokens } from '../constants/DesignTokens.js';
@@ -679,6 +699,7 @@ export class MyMenuScene extends BaseScene {
 ```
 
 **Show Loading Screen:**
+
 ```javascript
 import { LoadingScreenManager } from '@features/core';
 

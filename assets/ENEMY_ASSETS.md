@@ -6,7 +6,7 @@ Purpose: Keep enemy animation assets organized and discoverable so they can be i
 
 All enemy animations are under:
 
-```
+```text
 assets/spritesheets/animations/characters/enemies/
   skeleton1/
     attack/
@@ -41,13 +41,13 @@ Example entry:
 }
 ```
 
-2) Regenerate constants
+1) Regenerate constants
 
-```
+```bash
 bun run generate-assets
 ```
 
-3) Load in Preloader
+1) Load in Preloader
 
 ```javascript
 import { SpritesheetAssets, SpritesheetPaths } from '../constants/Assets.js';
@@ -59,7 +59,7 @@ this.load.spritesheet(
 );
 ```
 
-4) Create animations in a scene or animation factory
+1) Create animations in a scene or animation factory
 
 ```javascript
 this.anims.create({
@@ -79,4 +79,3 @@ this.anims.create({
 
 - If enemies move onto the near-term roadmap, prefer adding them to the manifest rather than archiving.
 - If you later decide to archive, move entire enemy folders to `assets/archive/` to keep validation clean.
-

@@ -27,7 +27,7 @@ The modular level architecture follows these SOLID principles:
 
 The level system will be organized into the following directory structure:
 
-```
+```text
 src/
   modules/
     level/
@@ -186,7 +186,7 @@ clearLevel();
 
 ## Interaction Diagram
 
-```
+```text
 Game Scene
     |
     v

@@ -9,7 +9,8 @@
 ## Problem
 
 ### Error Message
-```
+
+```text
 [ERROR] AUDIO_PLAYBACK_ERROR Playback error for music track
 error: 'Playback was unable to start. This is most commonly an issue 
        where playback was not within a user interaction.'
@@ -17,6 +18,7 @@ track: 'proteinPixelAnthem'
 ```
 
 ### Symptoms
+
 - Audio unlock overlay works correctly ("Tap to Play")
 - User clicks overlay, audio unlocks
 - Game loads successfully
@@ -56,6 +58,7 @@ The AudioContext was unlocked during the initial "Tap to Play" interaction, but:
 ### WelcomeScene.js Changes
 
 **Before** (Synchronous, no error handling):
+
 ```javascript
 const startGame = () => {
     // Try to unlock audio context
@@ -71,6 +74,7 @@ const startGame = () => {
 ```
 
 **After** (Async with proper error handling):
+
 ```javascript
 const startGame = async () => {
     // Ensure audio context is resumed (belt and suspenders approach)
@@ -131,11 +135,13 @@ const startGame = async () => {
 ### Verify Fix
 
 1. **Clear localStorage** (to trigger audio unlock):
+
    ```javascript
    localStorage.removeItem('audioUnlocked');
    ```
 
 2. **Reload page**:
+
    ```bash
    bun run dev
    ```
@@ -172,15 +178,18 @@ window.LOG.export().logs.filter(l =>
 Different browsers handle AudioContext differently:
 
 **Chrome/Edge**:
+
 - Unlocks on first user gesture
 - May suspend if no audio activity
 - Requires resume on subsequent interactions
 
 **Firefox**:
+
 - More lenient
 - Usually stays unlocked
 
 **Safari (iOS)**:
+
 - Strictest policy
 - May require resume on each interaction
 - Requires dummy sound playback
@@ -188,6 +197,7 @@ Different browsers handle AudioContext differently:
 ### Our Solution
 
 The "belt and suspenders" approach:
+
 1. **Initial Unlock**: AudioUnlockManager handles first unlock
 2. **Per-Scene Check**: Each scene verifies AudioContext state
 3. **Graceful Degradation**: Game works without audio
@@ -226,6 +236,7 @@ Game scene plays music on level start. Same pattern applies.
 ### For All Scenes That Play Audio
 
 1. **Check AudioContext State**:
+
    ```javascript
    if (window.Howler?.ctx?.state === 'suspended') {
        await window.Howler.ctx.resume();
@@ -233,6 +244,7 @@ Game scene plays music on level start. Same pattern applies.
    ```
 
 2. **Wrap Audio Calls in Try/Catch**:
+
    ```javascript
    try {
        audio.playMusic(track);
@@ -242,6 +254,7 @@ Game scene plays music on level start. Same pattern applies.
    ```
 
 3. **Log Audio Events**:
+
    ```javascript
    LOG.dev('AUDIO_PLAYING', {
        subsystem: 'audio',
@@ -281,11 +294,13 @@ Game scene plays music on level start. Same pattern applies.
 ## Next Steps
 
 ### Immediate
+
 - 🔄 Test the fix (clear localStorage, reload)
 - 🔄 Verify music plays in WelcomeScene
 - 🔄 Check console for errors
 
 ### Future
+
 - 🔄 Apply same pattern to MainMenu
 - 🔄 Apply same pattern to Game scene
 - 🔄 Create helper function for audio resume

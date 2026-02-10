@@ -4,18 +4,18 @@ import { BaseManager } from './BaseManager.js';
 
 /**
  * AudioUnlockManager - Handles browser audio autoplay restrictions
- * 
+ *
  * ARCHITECTURE:
  * - Extends BaseManager for singleton pattern
  * - Orchestrates user gesture requirement before audio playback
  * - Works with Howler's internal AudioContext
  * - Integrates with observability system
- * 
+ *
  * BROWSER AUTOPLAY POLICY:
  * - Web Audio API requires user gesture to start
  * - iOS Safari has additional restrictions
  * - This manager handles all edge cases
- * 
+ *
  * USAGE:
  * ```javascript
  * const unlockManager = AudioUnlockManager.getInstance();

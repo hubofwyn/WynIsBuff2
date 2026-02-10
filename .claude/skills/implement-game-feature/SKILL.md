@@ -3,6 +3,7 @@
 Execute a complete game feature development workflow for WynIsBuff2.
 
 ## Usage
+
 `/implement-game-feature "Feature description"`
 
 ## Workflow
@@ -28,6 +29,7 @@ Execute a complete game feature development workflow for WynIsBuff2.
    - Verify event consistency and structured logging
 
 ## Quality Gates
+
 - Uses barrel exports (@features/*)
 - Follows manager patterns (extends BaseManager)
 - No magic strings (uses constants)

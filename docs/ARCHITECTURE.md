@@ -26,10 +26,12 @@ This document explains system architecture, design goals, event flows, and core 
 **Rule**: Only the `core` layer may import vendor libraries directly. All other layers use abstractions exported via `@features/core`.
 
 **Key Abstractions:**
+
 - **BaseScene** - Abstracts `Phaser.Scene` with built-in observability and EventBus integration
 - **PhysicsTypes** - Abstracts Rapier physics types and helper functions
 
 **Benefits:**
+
 - Easy library upgrades (change version in one place)
 - Simplified testing (mock abstractions, not vendors)
 - Enforced boundaries (ESLint catches violations at development time)
@@ -38,7 +40,7 @@ See [ADR-001](./architecture/adrs/ADR-001-vendor-abstraction-layer.md) for imple
 
 ## 📊 System Layers
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────┐
 │                        Scenes Layer                         │
 │  (Boot, Preloader, Game, MainMenu, PauseScene,            │
@@ -68,10 +70,12 @@ See [ADR-001](./architecture/adrs/ADR-001-vendor-abstraction-layer.md) for imple
 Infrastructure and shared services that all features depend on.
 
 **Vendor Abstractions:**
+
 - **BaseScene** - Phaser Scene abstraction with observability
 - **PhysicsTypes** - Rapier physics type exports and helpers
 
 **Core Managers:**
+
 - **BaseManager** - Singleton lifecycle management
 - **EventBus** - Environment-agnostic event system
 - **AudioManager** - Centralized audio management
@@ -86,7 +90,7 @@ Domain-specific implementations organized by functional area.
 
 #### Player System (`modules/player/`)
 
-```
+```text
 PlayerController.js     # Main coordinator
 ├── MovementController  # Horizontal movement logic
 ├── JumpController     # Jump mechanics and multi-jump
@@ -95,7 +99,7 @@ PlayerController.js     # Main coordinator
 
 #### Level System (`modules/level/`)
 
-```
+```text
 LevelManager.js         # Level coordinator
 ├── LevelLoader        # Level data loading
 ├── GroundFactory      # Ground/platform creation
@@ -107,7 +111,7 @@ LevelManager.js         # Level coordinator
 
 #### Effects System (`modules/effects/`)
 
-```
+```text
 ParticleManager.js     # Particle effects
 ├── CameraManager      # Camera shake, zoom, follow
 └── ColorManager       # Color themes, accessibility
@@ -115,7 +119,7 @@ ParticleManager.js     # Particle effects
 
 #### Enemy System (`modules/enemy/`)
 
-```
+```text
 EnemyController.js     # Enemy behavior and AI
 ```
 
@@ -141,7 +145,7 @@ export { MovementController } from '../../modules/player/MovementController.js';
 
 ### Event Flow
 
-```
+```text
 User Input → InputManager → EventNames → Feature Controllers → Game State Changes
     ↑                                                              ↓
 UI Updates ← UIManager ← EventNames ← Audio/Visual Effects ← State Changes
@@ -242,7 +246,7 @@ this.eventSystem.on(EventNames.COLLECTIBLE_COLLECTED, (data) => {
 
 ### Scene Lifecycle
 
-```
+```text
 init(data) → preload() → create() → update(time, delta) → destroy()
     ↓            ↓           ↓             ↓                  ↓
   Setup      Load Assets  Initialize   Per-frame        Cleanup
@@ -291,7 +295,7 @@ export class GameScene extends BaseScene {
 
 Assets use a code generation pipeline to eliminate magic strings:
 
-```
+```text
 manifest.json → bun run generate-assets → Assets.js constants → Scene loading
 ```
 
@@ -308,7 +312,7 @@ See [ASSET_MANAGEMENT.md](../ASSET_MANAGEMENT.md) for complete workflow and guid
 
 ## 🧩 Module Dependency Graph
 
-```
+```text
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
 │     Scenes      │    │    Features     │    │   Constants     │
 │                 │    │                 │    │                 │

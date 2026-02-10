@@ -153,7 +153,7 @@ This script should be created at .husky/pre-commit and made executable. It will 
 
 Bash
 
-#!/usr/bin/env sh
+# !/usr/bin/env sh
 . "$(dirname -- "$0")/\_/husky.sh"
 
 echo "Running pre-commit hook..."
@@ -200,20 +200,20 @@ Execute the entire test suite with bun test.
 Create the production build artifact using bun run build.
 Example ci.yml Workflow:
 
-YAML
-
+```yaml
 name: CI
 on:
-push:
-branches: [ "main" ]
-pull_request:
-branches: [ "main" ]
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
 
 jobs:
-build-and-test:
-runs-on: ubuntu-latest
-steps: - name: Checkout Repository
-uses: actions/checkout@v4
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
 
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
@@ -233,6 +233,7 @@ uses: actions/checkout@v4
 
       - name: Build Project
         run: bun run build
+```
 
 Managing Security Audits
 
@@ -271,34 +272,34 @@ Conclusion
 
 The migration to Bun 1.3.1 offers a transformative opportunity to enhance the project's performance, stability, and developer experience. By following the strategic plan detailed in this report, the project can move beyond a simple replacement of commands to a deep, idiomatic adoption of the Bun ecosystem. The key decisions—a full migration to the native bun test runner, the consistent use of the --bun flag to maximize runtime performance, and the overhaul of the CI/CD pipeline—are critical to realizing these benefits. This comprehensive approach will result in a faster, more streamlined development lifecycle, eliminate sources of architectural fragility, and position the project on a modern, high-performance foundation prepared for future challenges in the JavaScript landscape.
 Works cited
-Bun (software) - Wikipedia, accessed October 31, 2025, https://en.wikipedia.org/wiki/Bun_(software)
-The JavaScript Package Manager Showdown: NPM, Yarn, PNPM, and Bun in 2025, accessed October 31, 2025, https://medium.com/@simplycodesmart/the-javascript-package-manager-showdown-npm-yarn-pnpm-and-bun-in-2025-076f659c743f
-Lockfile - Bun, accessed October 31, 2025, https://bun.com/docs/pm/lockfile
-Errors with Bun: "lockfile had changes, but lockfile is frozen" - #2 by rohitpaulk - Bug Reports, accessed October 31, 2025, https://forum.codecrafters.io/t/errors-with-bun-lockfile-had-changes-but-lockfile-is-frozen/193/2
-Error: lockfile had changes, but lockfile is frozen - Cloudflare Community, accessed October 31, 2025, https://community.cloudflare.com/t/error-lockfile-had-changes-but-lockfile-is-frozen/582525
-Errors with Bun: "lockfile had changes, but lockfile is frozen" - Bug Reports - CodeCrafters, accessed October 31, 2025, https://forum.codecrafters.io/t/errors-with-bun-lockfile-had-changes-but-lockfile-is-frozen/193
-Bun Runtime - Bun, accessed October 31, 2025, https://bun.com/docs/runtime
-bunx - Bun, accessed October 31, 2025, https://bun.com/docs/pm/bunx
-Build a frontend using Vite and Bun - Bun, accessed October 31, 2025, https://bun.com/docs/guides/ecosystem/vite
-bun.com, accessed October 31, 2025, https://bun.com/docs/runtime/nodejs-compat#:~:text=Every%20day%2C%20Bun%20gets%20closer,Node%20just%20work%20with%20Bun.
-Node.js Compatibility - Bun, accessed October 31, 2025, https://bun.com/docs/runtime/nodejs-compat
-Leveraging Bun on Vultr: A superior Node.js alternative - MDN Web Docs, accessed October 31, 2025, https://developer.mozilla.org/en-US/blog/leveraging-bun-on-vultr-a-superior-node-js-alternative/
-Introduction to Bun for Node.js Users | Better Stack Community, accessed October 31, 2025, https://betterstack.com/community/guides/scaling-nodejs/introduction-to-bun-for-nodejs-users/
-Shebang (Unix) - Wikipedia, accessed October 31, 2025, https://en.wikipedia.org/wiki/Shebang_(Unix)
-CommonJS vs. ES Modules | Better Stack Community, accessed October 31, 2025, https://betterstack.com/community/guides/scaling-nodejs/commonjs-vs-esm/
-Module Resolution - Bun, accessed October 31, 2025, https://bun.com/docs/runtime/module-resolution
-The transition from CommonJS to ES modules has been slow and ..., accessed October 31, 2025, https://news.ycombinator.com/item?id=37435945
-Run your tests with the Bun test runner, accessed October 31, 2025, https://bun.com/docs/guides/test/run-tests
-Bun v1.3.1 | Bun Blog, accessed October 31, 2025, https://bun.com/blog/bun-v1.3.1
-How to build an application using Vite and Bun - Educative.io, accessed October 31, 2025, https://www.educative.io/answers/how-to-build-an-application-using-vite-and-bun
-Get started | Husky, accessed October 31, 2025, https://typicode.github.io/husky/get-started.html
-How To | Husky, accessed October 31, 2025, https://typicode.github.io/husky/how-to.html
-Install · Prettier, accessed October 31, 2025, https://prettier.io/docs/install
-import - JavaScript - MDN Web Docs - Mozilla, accessed October 31, 2025, https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/import
-Documentation - Modules - Theory - TypeScript, accessed October 31, 2025, https://www.typescriptlang.org/docs/handbook/modules/theory.html
-Install dependencies with Bun in GitHub Actions - Bun, accessed October 31, 2025, https://bun.com/docs/guides/install/cicd
-Setup Bun · Actions · GitHub Marketplace, accessed October 31, 2025, https://github.com/marketplace/actions/setup-bun
-oven-sh/setup-bun: Set up your GitHub Actions workflow ... - GitHub, accessed October 31, 2025, https://github.com/oven-sh/setup-bun
-bun audit - Bun, accessed October 31, 2025, https://bun.com/docs/pm/cli/audit
-Ask HN: How do you security-audit external software using NPM packages? | Hacker News, accessed October 31, 2025, https://news.ycombinator.com/item?id=29078836
-NPM Audit: 5 Ways to Use it to Protect Your Code - Jit.io, accessed October 31, 2025, https://www.jit.io/resources/appsec-tools/npm-audit-to-protect-your-code
+Bun (software) - Wikipedia, accessed October 31, 2025, <https://en.wikipedia.org/wiki/Bun_(software)>
+The JavaScript Package Manager Showdown: NPM, Yarn, PNPM, and Bun in 2025, accessed October 31, 2025, <https://medium.com/@simplycodesmart/the-javascript-package-manager-showdown-npm-yarn-pnpm-and-bun-in-2025-076f659c743f>
+Lockfile - Bun, accessed October 31, 2025, <https://bun.com/docs/pm/lockfile>
+Errors with Bun: "lockfile had changes, but lockfile is frozen" - #2 by rohitpaulk - Bug Reports, accessed October 31, 2025, <https://forum.codecrafters.io/t/errors-with-bun-lockfile-had-changes-but-lockfile-is-frozen/193/2>
+Error: lockfile had changes, but lockfile is frozen - Cloudflare Community, accessed October 31, 2025, <https://community.cloudflare.com/t/error-lockfile-had-changes-but-lockfile-is-frozen/582525>
+Errors with Bun: "lockfile had changes, but lockfile is frozen" - Bug Reports - CodeCrafters, accessed October 31, 2025, <https://forum.codecrafters.io/t/errors-with-bun-lockfile-had-changes-but-lockfile-is-frozen/193>
+Bun Runtime - Bun, accessed October 31, 2025, <https://bun.com/docs/runtime>
+bunx - Bun, accessed October 31, 2025, <https://bun.com/docs/pm/bunx>
+Build a frontend using Vite and Bun - Bun, accessed October 31, 2025, <https://bun.com/docs/guides/ecosystem/vite>
+bun.com, accessed October 31, 2025, <https://bun.com/docs/runtime/nodejs-compat#:~:text=Every%20day%2C%20Bun%20gets%20closer,Node%20just%20work%20with%20Bun>.
+Node.js Compatibility - Bun, accessed October 31, 2025, <https://bun.com/docs/runtime/nodejs-compat>
+Leveraging Bun on Vultr: A superior Node.js alternative - MDN Web Docs, accessed October 31, 2025, <https://developer.mozilla.org/en-US/blog/leveraging-bun-on-vultr-a-superior-node-js-alternative/>
+Introduction to Bun for Node.js Users | Better Stack Community, accessed October 31, 2025, <https://betterstack.com/community/guides/scaling-nodejs/introduction-to-bun-for-nodejs-users/>
+Shebang (Unix) - Wikipedia, accessed October 31, 2025, <https://en.wikipedia.org/wiki/Shebang_(Unix)>
+CommonJS vs. ES Modules | Better Stack Community, accessed October 31, 2025, <https://betterstack.com/community/guides/scaling-nodejs/commonjs-vs-esm/>
+Module Resolution - Bun, accessed October 31, 2025, <https://bun.com/docs/runtime/module-resolution>
+The transition from CommonJS to ES modules has been slow and ..., accessed October 31, 2025, <https://news.ycombinator.com/item?id=37435945>
+Run your tests with the Bun test runner, accessed October 31, 2025, <https://bun.com/docs/guides/test/run-tests>
+Bun v1.3.1 | Bun Blog, accessed October 31, 2025, <https://bun.com/blog/bun-v1.3.1>
+How to build an application using Vite and Bun - Educative.io, accessed October 31, 2025, <https://www.educative.io/answers/how-to-build-an-application-using-vite-and-bun>
+Get started | Husky, accessed October 31, 2025, <https://typicode.github.io/husky/get-started.html>
+How To | Husky, accessed October 31, 2025, <https://typicode.github.io/husky/how-to.html>
+Install · Prettier, accessed October 31, 2025, <https://prettier.io/docs/install>
+import - JavaScript - MDN Web Docs - Mozilla, accessed October 31, 2025, <https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/import>
+Documentation - Modules - Theory - TypeScript, accessed October 31, 2025, <https://www.typescriptlang.org/docs/handbook/modules/theory.html>
+Install dependencies with Bun in GitHub Actions - Bun, accessed October 31, 2025, <https://bun.com/docs/guides/install/cicd>
+Setup Bun · Actions · GitHub Marketplace, accessed October 31, 2025, <https://github.com/marketplace/actions/setup-bun>
+oven-sh/setup-bun: Set up your GitHub Actions workflow ... - GitHub, accessed October 31, 2025, <https://github.com/oven-sh/setup-bun>
+bun audit - Bun, accessed October 31, 2025, <https://bun.com/docs/pm/cli/audit>
+Ask HN: How do you security-audit external software using NPM packages? | Hacker News, accessed October 31, 2025, <https://news.ycombinator.com/item?id=29078836>
+NPM Audit: 5 Ways to Use it to Protect Your Code - Jit.io, accessed October 31, 2025, <https://www.jit.io/resources/appsec-tools/npm-audit-to-protect-your-code>

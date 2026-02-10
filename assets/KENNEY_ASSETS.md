@@ -6,7 +6,7 @@ Professional 2D platformer assets from Kenney.nl integrated for all non-characte
 
 ## Organization
 
-```
+```text
 assets/kenney/
 ├── spritesheets/        # Texture atlases (optimized for performance)
 │   ├── spritesheet_enemies.png/xml       (129KB, 57 enemy sprites)
@@ -27,7 +27,9 @@ assets/kenney/
 ## Usage Strategy
 
 ### Spritesheets (Recommended)
+
 Use texture atlases for better performance:
+
 ```javascript
 // In Preloader.js
 this.load.atlasXML(
@@ -41,7 +43,9 @@ this.add.image(x, y, 'kenneyEnemies', 'bee.png');
 ```
 
 ### Individual Assets (When Needed)
+
 For specific one-off assets:
+
 ```javascript
 // Add to manifest.json
 "coinGold": {
@@ -57,6 +61,7 @@ this.load.image(ImageAssets.COIN_GOLD, ImagePaths.COIN_GOLD);
 ## Asset Categories
 
 ### Enemies (57 sprites)
+
 - Barnacle: `barnacle.png`, `barnacle_attack.png`, `barnacle_dead.png`
 - Bee: `bee.png`, `bee_move.png`, `bee_dead.png`
 - Fish (Blue/Green/Pink): Multiple states (idle, move, dead, fall)
@@ -67,6 +72,7 @@ this.load.image(ImageAssets.COIN_GOLD, ImagePaths.COIN_GOLD);
 - Worm (Green/Pink): Multiple states
 
 ### Items (24 collectibles)
+
 - **Coins**: `coinBronze.png`, `coinSilver.png`, `coinGold.png`
 - **Gems**: `gemBlue.png`, `gemGreen.png`, `gemRed.png`, `gemYellow.png`
 - **Keys**: `keyBlue.png`, `keyGreen.png`, `keyRed.png`, `keyYellow.png`
@@ -74,6 +80,7 @@ this.load.image(ImageAssets.COIN_GOLD, ImagePaths.COIN_GOLD);
 - **Star**: `star.png`
 
 ### Tiles (72 platform variations)
+
 - **Boxes**: Crates, coin boxes, explosive boxes, item boxes
 - **Bricks**: Brown, grey
 - **Bridges**: Various types (A-H)
@@ -85,20 +92,25 @@ this.load.image(ImageAssets.COIN_GOLD, ImagePaths.COIN_GOLD);
 - **Snow**: Center, half, cliffs
 
 ### Backgrounds (8 elements)
+
 Available in `backgrounds/` directory
 
 ### Particles (3 types)
+
 Available in `particles/` directory
 
 ### Ground (6 variations)
+
 Available in `ground/` directory
 
 ### HUD (36 UI elements)
+
 Available in `hud/` directory
 
 ## Integration Examples
 
 ### Coins (Common Use Case)
+
 ```json
 // In manifest.json
 "kenneyCoins": {
@@ -110,6 +122,7 @@ Available in `hud/` directory
 ```
 
 ### Platform Tiles
+
 ```json
 // In manifest.json
 "kenneyTiles": {
@@ -121,6 +134,7 @@ Available in `hud/` directory
 ```
 
 ### Enemy Sprites
+
 ```json
 // In manifest.json
 "kenneyEnemies": {
@@ -148,6 +162,7 @@ Available in `hud/` directory
 ## Character Assets (Separate)
 
 Custom family character sprites remain in `assets/images/characters/`:
+
 - `axel_sprite.png` - Axel (custom photo)
 - `ila_sprite.png` - Ila (custom photo)
 - `wyn_sprite.png` - Wyn (custom photo)
@@ -157,7 +172,7 @@ Custom family character sprites remain in `assets/images/characters/`:
 ## License
 
 Kenney assets are CC0 (public domain). Attribution appreciated but not required.
-See: https://kenney.nl/assets/platformer-pack-redux
+See: <https://kenney.nl/assets/platformer-pack-redux>
 
 ## Quick Reference
 

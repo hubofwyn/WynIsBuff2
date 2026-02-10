@@ -65,14 +65,13 @@ export default [
                 { type: 'core', pattern: 'src/core/**' },
                 { type: 'scenes', pattern: 'src/scenes/**' },
                 { type: 'gameplay-agents', pattern: 'src/modules/{player,enemy}/**' },
-                { type: 'gameplay-systems', pattern: 'src/modules/{level,effects,idle,boss,analytics,ui}/**' },
+                {
+                    type: 'gameplay-systems',
+                    pattern: 'src/modules/{level,effects,idle,boss,analytics,ui}/**',
+                },
                 { type: 'public-api', pattern: 'src/features/**' },
             ],
-            'boundaries/ignore': [
-                'src/main.js',
-                'src/utils/**',
-                'src/types/**',
-            ],
+            'boundaries/ignore': ['src/main.js', 'src/utils/**', 'src/types/**'],
         },
         rules: {
             'no-console': 'warn',

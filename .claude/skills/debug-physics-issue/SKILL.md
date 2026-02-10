@@ -3,6 +3,7 @@
 Multi-agent physics debugging workflow for WynIsBuff2.
 
 ## Usage
+
 `/debug-physics-issue "Physics problem description"`
 
 ## Workflow
@@ -30,6 +31,7 @@ Multi-agent physics debugging workflow for WynIsBuff2.
    - Run `bun test`
 
 ## Physics Checks
+
 - Collision detection accuracy
 - 60 FPS performance maintained
 - No physics body leaks
