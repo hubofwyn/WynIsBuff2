@@ -73,7 +73,65 @@ export class BirthdayMinigame extends BaseScene {
         this.streakText = null;
     }
 
+    /**
+     * Phaser invokes `init` every time a scene is started or restarted.
+     * Because Phaser re-uses the same scene instance (the constructor only
+     * runs once), any flags mutated during a prior round persist into the
+     * next session.  Without this reset, `this.gameOver` stays `true` and
+     * `update()` early-returns, causing the "second play has no movement" bug.
+     */
+    init() {
+        // Core run-state flags
+        this.gameOver = false;
+        this.gameStarted = false;
+
+        // Player state
+        this.currentLane = 1;
+        this.isChangingLanes = false;
+        this.isCarrying = false;
+
+        // Scoring
+        this.score = 0;
+        this.totalPoints = 0;
+        this.deliveries = 0;
+        this.combo = 0;
+        this.perfectDeliveries = 0;
+        this.speedBonus = 1;
+        this.missStreak = 0;
+
+        // Lives
+        this.lives = 3;
+
+        // Difficulty / pacing
+        this.speedMultiplier = 1.0;
+        this.speedLevel = 1;
+        this.difficultyLevel = 1;
+
+        // Timers
+        this.deliveryTimer = this.maxDeliveryTime;
+
+        // Groups & containers – recreated in `create`
+        this.scrollingObjects = null;
+        this.obstacles = null;
+
+        // Resume physics if paused from a previous round
+        if (this.physics && this.physics.world && this.physics.world.isPaused) {
+            this.physics.resume();
+        }
+
+        LOG.dev('BIRTHDAYMINIGAME_INIT_RESET', {
+            subsystem: 'scene',
+            scene: SceneKeys.BIRTHDAY_MINIGAME,
+            message: 'Runtime state reset for new round',
+        });
+    }
+
     create() {
+        // Clear lingering keyboard listeners from prior rounds
+        if (this.input && this.input.keyboard) {
+            this.input.keyboard.removeAllListeners();
+        }
+
         // Ensure camera is properly reset and faded in
         this.cameras.main.fadeIn(300);
 

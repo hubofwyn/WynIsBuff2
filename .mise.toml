@@ -1,0 +1,9 @@
+[tools]
+node = "24"
+bun = "latest"
+
+[tasks]
+test = "bun test"
+lint = "bun run lint"
+dev = "bun run dev"
+build = "bun run build"
