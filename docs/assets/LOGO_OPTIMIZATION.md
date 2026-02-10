@@ -31,7 +31,7 @@ The logo optimization system provides intelligent multi-resolution asset loading
 
 ### Directory Structure
 
-```
+```text
 assets/images/ui/logo/
 ├── mainlogo.svg              # Master source (2.2MB)
 ├── mainlogo@1x.png          # 512×512 PNG fallback (325KB)
@@ -89,6 +89,7 @@ this.load.image(ImageAssets.LOGO, logoPath);
 ```
 
 **Automatic Selection Logic:**
+
 - Detects device pixel ratio (DPR)
 - Checks WebP browser support via Phaser
 - Selects optimal resolution tier (1x vs 2x)
@@ -151,6 +152,7 @@ console.log(`Expected load time: ${loadTime}ms`);
 Returns optimal logo file path based on device capabilities.
 
 **Parameters:**
+
 - `game` (Phaser.Game, optional): Game instance for browser detection
 - `options` (Object, optional):
   - `dpr` (number): Force specific device pixel ratio
@@ -160,6 +162,7 @@ Returns optimal logo file path based on device capabilities.
 **Returns:** `string` - Path to optimal logo file
 
 **Example:**
+
 ```javascript
 const path = LogoLoader.getOptimalPath(this.sys.game);
 // => "assets/images/ui/logo/mainlogo@2x.webp"
@@ -170,6 +173,7 @@ const path = LogoLoader.getOptimalPath(this.sys.game);
 Detects WebP browser support.
 
 **Parameters:**
+
 - `game` (Phaser.Game, optional): Game instance for Phaser detection
 
 **Returns:** `boolean` - True if WebP is supported
@@ -185,11 +189,13 @@ Gets clamped device pixel ratio (1.0-3.0).
 Selects resolution tier based on DPR.
 
 **Parameters:**
+
 - `dpr` (number, optional): Device pixel ratio (auto-detected if omitted)
 
 **Returns:** `'1x'|'2x'|'fallback'` - Resolution tier
 
 **Logic:**
+
 - DPR >= 1.5 → '2x' (1024×1024)
 - DPR < 1.5 → '1x' (512×512)
 
@@ -198,10 +204,12 @@ Selects resolution tier based on DPR.
 Preloads all logo variants for critical assets.
 
 **Parameters:**
+
 - `scene` (Phaser.Scene): Scene with loader
 - `keyPrefix` (string, optional): Key prefix (default: 'logo')
 
 **Creates Keys:**
+
 - `${keyPrefix}_1x`
 - `${keyPrefix}_2x`
 - `${keyPrefix}_fallback`
@@ -211,6 +219,7 @@ Preloads all logo variants for critical assets.
 Gets metadata for specific resolution.
 
 **Parameters:**
+
 - `resolution` ('1x'|'2x'|'fallback'): Resolution tier
 
 **Returns:** `Object` - Variant metadata
@@ -220,6 +229,7 @@ Gets metadata for specific resolution.
 Calculates expected load time.
 
 **Parameters:**
+
 - `resolution` ('1x'|'2x'|'fallback'): Resolution tier
 - `format` ('webp'|'png'): File format
 - `speedMbps` (number, optional): Connection speed in Mbps (default: 5)
@@ -244,6 +254,7 @@ Calculates expected load time.
 | No WebP support | .png | Fallback (full size) |
 
 **Browsers with WebP Support** (97%+ coverage):
+
 - Chrome 23+
 - Firefox 65+
 - Edge 18+
@@ -257,6 +268,7 @@ Calculates expected load time.
 ### Log Events
 
 #### LOGO_LOADER_SELECTED
+
 Logged when optimal logo variant is selected.
 
 ```javascript
@@ -281,6 +293,7 @@ Logged when optimal logo variant is selected.
 ```
 
 #### LOGO_PRELOAD_VARIANT
+
 Logged for each preloaded variant.
 
 ```javascript
@@ -357,6 +370,7 @@ ls -lh mainlogo*
 ### Fallback Behavior
 
 For browsers without WebP support:
+
 1. LogoLoader detects lack of WebP support
 2. Automatically selects PNG variant
 3. Still benefits from multi-resolution (1x vs 2x)
@@ -396,6 +410,7 @@ Both load the same asset key (`ImageAssets.LOGO`), so existing code using the lo
 ### Logo Not Loading
 
 **Check 1:** Verify files exist
+
 ```bash
 ls -lh assets/images/ui/logo/mainlogo@*.webp
 ```
@@ -403,6 +418,7 @@ ls -lh assets/images/ui/logo/mainlogo@*.webp
 **Check 2:** Check browser console for LOGO_LOADER_SELECTED log
 
 **Check 3:** Verify WebP support
+
 ```javascript
 console.log('WebP Support:', LogoLoader.supportsWebP(game));
 ```
@@ -410,6 +426,7 @@ console.log('WebP Support:', LogoLoader.supportsWebP(game));
 ### Wrong Resolution Selected
 
 **Check device pixel ratio:**
+
 ```javascript
 console.log('DPR:', window.devicePixelRatio);
 console.log('Selected:', LogoLoader.selectResolution());
@@ -418,6 +435,7 @@ console.log('Selected:', LogoLoader.selectResolution());
 ### PNG Loading Instead of WebP
 
 **Verify WebP browser support:**
+
 ```javascript
 // In browser console
 var canvas = document.createElement('canvas');
@@ -484,16 +502,17 @@ const logoPath = LogoLoader.getOptimalPath(game, options);
 
 ## References
 
-- **WebP Documentation**: https://developers.google.com/speed/webp
-- **Browser Support**: https://caniuse.com/webp
-- **Image Optimization Best Practices**: https://web.dev/fast/#optimize-your-images
-- **Phaser Asset Loading**: https://photonstorm.github.io/phaser3-docs/Phaser.Loader.LoaderPlugin.html
+- **WebP Documentation**: <https://developers.google.com/speed/webp>
+- **Browser Support**: <https://caniuse.com/webp>
+- **Image Optimization Best Practices**: <https://web.dev/fast/#optimize-your-images>
+- **Phaser Asset Loading**: <https://photonstorm.github.io/phaser3-docs/Phaser.Loader.LoaderPlugin.html>
 
 ---
 
 **Last Updated:** October 31, 2025
 **Maintained By:** WynIsBuff2 Development Team
 **Related Docs:**
+
 - [Asset Management Guide](../ASSET_MANAGEMENT.md)
 - [Performance Optimization](../architecture/Performance.md)
 - [Preloader Scene](../scenes/Preloader.md)

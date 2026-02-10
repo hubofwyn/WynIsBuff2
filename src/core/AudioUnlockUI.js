@@ -4,13 +4,13 @@ import { AudioUnlockManager } from './AudioUnlockManager.js';
 
 /**
  * AudioUnlockUI - Creates and manages the "Tap to Play" overlay
- * 
+ *
  * ARCHITECTURE:
  * - Pure function approach (no class needed)
  * - Creates DOM overlay before Phaser boots
  * - Integrates with AudioUnlockManager
  * - Self-removes after unlock
- * 
+ *
  * DESIGN:
  * - Matches WynIsBuff2 branding
  * - Gradient background

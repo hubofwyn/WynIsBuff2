@@ -11,9 +11,9 @@ This document is the authoritative guide for Rapier 0.19+ API changes and their 
 - [Overview](#overview)
 - [Version Information](#version-information)
 - [Breaking API Changes](#breaking-api-changes)
-    - [1. EventQueue Requirement](#1-eventqueue-requirement)
-    - [2. World Body Iteration](#2-world-body-iteration)
-    - [3. Ground Detection](#3-ground-detection)
+  - [1. EventQueue Requirement](#1-eventqueue-requirement)
+  - [2. World Body Iteration](#2-world-body-iteration)
+  - [3. Ground Detection](#3-ground-detection)
 - [Migration Patterns](#migration-patterns)
 - [Implementation in WynIsBuff2](#implementation-in-wynisbuff2)
 - [Common Pitfalls](#common-pitfalls)
@@ -207,6 +207,7 @@ updateGroundState(desiredMovement, correctedMovement) {
 1. **First attempt**: Changed `isGrounded()` to `numGroundedColliders` property
 2. **Result**: `undefined` (not even 0!)
 3. **Introspection**: Checked `Object.keys(characterController)`:
+
     ```javascript
     [
         'params',
@@ -219,6 +220,7 @@ updateGroundState(desiredMovement, correctedMovement) {
         '_characterMass',
     ];
     ```
+
 4. **Realization**: Ground detection API doesn't exist!
 5. **Solution**: Implemented physics-based detection algorithm
 

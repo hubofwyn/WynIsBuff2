@@ -52,7 +52,7 @@ This plan outlines incremental architectural improvements to WynIsBuff2, leverag
 
 **Current Structure** → **Enhanced Structure** (Minimal Disruption)
 
-```
+```text
 Current State (Keep):
 src/
 ├── core/              # ✅ Infrastructure managers (keep as-is)

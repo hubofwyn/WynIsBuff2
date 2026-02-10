@@ -76,11 +76,10 @@ export class MovingPlatformController {
                     );
 
                     // Create a kinematic rigid body for the moving platform
-                    const platformBodyDesc =
-                        RigidBodyDesc.kinematicPositionBased().setTranslation(
-                            platform.x,
-                            platform.y
-                        );
+                    const platformBodyDesc = RigidBodyDesc.kinematicPositionBased().setTranslation(
+                        platform.x,
+                        platform.y
+                    );
 
                     const platformBody = this.world.createRigidBody(platformBodyDesc);
 

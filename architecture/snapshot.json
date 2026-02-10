@@ -1,111 +1,97 @@
 {
-  "version": "1.0.0",
-  "timestamp": "2025-11-03T20:39:27.909Z",
-  "stats": {
-    "totalFiles": 109,
-    "totalDirs": 30,
-    "layerCounts": {
-      "scenes": 16,
-      "types": 1,
-      "core": 20,
-      "constants": 9,
-      "public-api": 9,
-      "utils": 1,
-      "observability": 21,
-      "other": 1,
-      "game-systems": 19,
-      "enemy-agent": 3,
-      "player-agent": 9
+    "version": "1.0.0",
+    "timestamp": "2025-11-03T20:39:27.909Z",
+    "stats": {
+        "totalFiles": 109,
+        "totalDirs": 30,
+        "layerCounts": {
+            "scenes": 16,
+            "types": 1,
+            "core": 20,
+            "constants": 9,
+            "public-api": 9,
+            "utils": 1,
+            "observability": 21,
+            "other": 1,
+            "game-systems": 19,
+            "enemy-agent": 3,
+            "player-agent": 9
+        },
+        "violationCount": 0
     },
-    "violationCount": 0
-  },
-  "layers": {
-    "scenes": {
-      "fileCount": 16,
-      "examples": [
-        "scenes/RunScene.js",
-        "scenes/Boot.js",
-        "scenes/Game.js"
-      ]
+    "layers": {
+        "scenes": {
+            "fileCount": 16,
+            "examples": ["scenes/RunScene.js", "scenes/Boot.js", "scenes/Game.js"]
+        },
+        "types": {
+            "fileCount": 1,
+            "examples": ["types/InputState.js"]
+        },
+        "core": {
+            "fileCount": 20,
+            "examples": [
+                "core/LoadingScreenManager.js",
+                "core/AudioUnlockManager.js",
+                "core/AgentOrchestrator.js"
+            ]
+        },
+        "constants": {
+            "fileCount": 9,
+            "examples": [
+                "constants/EventNames.js",
+                "constants/PhysicsConstants.js",
+                "constants/SceneKeys.js"
+            ]
+        },
+        "public-api": {
+            "fileCount": 9,
+            "examples": ["features/ui/index.js", "features/idle/index.js", "features/core/index.js"]
+        },
+        "utils": {
+            "fileCount": 1,
+            "examples": ["utils/LogoLoader.js"]
+        },
+        "observability": {
+            "fileCount": 21,
+            "examples": [
+                "observability/context/index.js",
+                "observability/context/StateProvider.js",
+                "observability/context/DebugContext.js"
+            ]
+        },
+        "other": {
+            "fileCount": 1,
+            "examples": ["main.js"]
+        },
+        "game-systems": {
+            "fileCount": 19,
+            "examples": [
+                "modules/ui/FeedbackSystem.js",
+                "modules/idle/TimeEchoRecorder.js",
+                "modules/idle/DNAExtractor.js"
+            ]
+        },
+        "enemy-agent": {
+            "fileCount": 3,
+            "examples": [
+                "modules/enemy/BossController.js",
+                "modules/enemy/PulsatingBoss.js",
+                "modules/enemy/EnemyController.js"
+            ]
+        },
+        "player-agent": {
+            "fileCount": 9,
+            "examples": [
+                "modules/player/PrecisionTimingController.js",
+                "modules/player/PlayerController.js",
+                "modules/player/EnhancedJumpController.js"
+            ]
+        }
     },
-    "types": {
-      "fileCount": 1,
-      "examples": [
-        "types/InputState.js"
-      ]
-    },
-    "core": {
-      "fileCount": 20,
-      "examples": [
-        "core/LoadingScreenManager.js",
-        "core/AudioUnlockManager.js",
-        "core/AgentOrchestrator.js"
-      ]
-    },
-    "constants": {
-      "fileCount": 9,
-      "examples": [
-        "constants/EventNames.js",
-        "constants/PhysicsConstants.js",
-        "constants/SceneKeys.js"
-      ]
-    },
-    "public-api": {
-      "fileCount": 9,
-      "examples": [
-        "features/ui/index.js",
-        "features/idle/index.js",
-        "features/core/index.js"
-      ]
-    },
-    "utils": {
-      "fileCount": 1,
-      "examples": [
-        "utils/LogoLoader.js"
-      ]
-    },
-    "observability": {
-      "fileCount": 21,
-      "examples": [
-        "observability/context/index.js",
-        "observability/context/StateProvider.js",
-        "observability/context/DebugContext.js"
-      ]
-    },
-    "other": {
-      "fileCount": 1,
-      "examples": [
-        "main.js"
-      ]
-    },
-    "game-systems": {
-      "fileCount": 19,
-      "examples": [
-        "modules/ui/FeedbackSystem.js",
-        "modules/idle/TimeEchoRecorder.js",
-        "modules/idle/DNAExtractor.js"
-      ]
-    },
-    "enemy-agent": {
-      "fileCount": 3,
-      "examples": [
-        "modules/enemy/BossController.js",
-        "modules/enemy/PulsatingBoss.js",
-        "modules/enemy/EnemyController.js"
-      ]
-    },
-    "player-agent": {
-      "fileCount": 9,
-      "examples": [
-        "modules/player/PrecisionTimingController.js",
-        "modules/player/PlayerController.js",
-        "modules/player/EnhancedJumpController.js"
-      ]
+    "violations": [],
+    "summary": {
+        "healthScore": 100,
+        "recommendation": "Excellent! Architecture is clean."
     }
-  },
-  "violations": [],
-  "summary": {
-    "healthScore": 100,
-    "recommendation": "Excellent! Architecture is clean."
-  }
 }

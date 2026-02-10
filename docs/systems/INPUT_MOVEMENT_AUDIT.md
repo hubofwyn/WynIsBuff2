@@ -299,7 +299,7 @@ emit(event, data) {
 
 ### 3.3 Event Flow for Movement Input
 
-```
+```text
 USER PRESSES LEFT ARROW
     ↓
 InputManager.keys.cursors.left 'down' event fires
@@ -861,7 +861,7 @@ export function pixelsToMeters(pixels) {
 
 ### 6.1 Step-by-Step Trace (Left Arrow Press)
 
-```
+```text
 ┌──────────────────────────────────────────────────────────────────┐
 │ STEP 1: USER INPUT                                                │
 │ - User presses Left Arrow key                                     │
@@ -940,7 +940,7 @@ export function pixelsToMeters(pixels) {
 
 ### 6.2 Timing Diagram (Single Frame)
 
-```
+```text
 Frame N (16.67ms at 60 FPS):
 
 0ms   ┌─────────────────────────────────────────┐
@@ -1161,13 +1161,13 @@ export function metersToPixels(meters) {
 dt = Math.min(dt, 0.05); // Cap at 50ms
 ```
 
-2. **PhysicsManager** (Line 209):
+1. **PhysicsManager** (Line 209):
 
 ```javascript
 const cappedDelta = Math.min(deltaSeconds, 1 / 20); // Cap at 50ms
 ```
 
-3. **Fallback** (Line 202):
+1. **Fallback** (Line 202):
 
 ```javascript
 let dt = deltaTime ? deltaTime / 1000 : 1 / 60;
@@ -1245,7 +1245,7 @@ console.log('[DEBUG] Controls setup:', {
 });
 ```
 
-2. **Verify Input Polling**:
+1. **Verify Input Polling**:
 
 ```javascript
 // Add to PlayerController.calculateMovement() after Line 339
@@ -1256,7 +1256,7 @@ console.log('[DEBUG] Input:', {
 });
 ```
 
-3. **Verify Movement Calculation**:
+1. **Verify Movement Calculation**:
 
 ```javascript
 // Add to PlayerController.calculateMovement() after Line 420
@@ -1266,7 +1266,7 @@ console.log('[DEBUG] Movement:', {
 });
 ```
 
-4. **Verify Physics Body**:
+1. **Verify Physics Body**:
 
 ```javascript
 // Add to PlayerController.update() after Line 214
@@ -1277,7 +1277,7 @@ console.log('[DEBUG] Physics:', {
 });
 ```
 
-5. **Verify Collision Correction**:
+1. **Verify Collision Correction**:
 
 ```javascript
 // Add after Line 235 in PlayerController.update()
@@ -1287,7 +1287,7 @@ console.log('[DEBUG] Collision:', {
 });
 ```
 
-6. **Verify Sprite Sync**:
+1. **Verify Sprite Sync**:
 
 ```javascript
 // Add to PlayerController.updateSpritePosition() after Line 481
@@ -1301,7 +1301,7 @@ console.log('[DEBUG] Sprite:', {
 
 When moving left, you should see:
 
-```
+```text
 [DEBUG] Input: { left: true, right: false, horizontalInput: -1 }
 [DEBUG] Movement: { velocity: { x: -2.5, y: 0 }, movement: { x: -0.0417, y: 0 } }
 [DEBUG] Collision: { desired: Vector2(-0.0417, 0), corrected: Vector2(-0.0417, 0) }

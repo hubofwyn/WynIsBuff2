@@ -88,9 +88,9 @@ Players should feel extraordinarily powerful and agile, with movement abilities 
 #### Jumping
 
 - **Triple Jump System**:
-    - First Jump: Standard height and distance
-    - Second Jump: 10% more height and distance
-    - Third Jump: 20% more height and distance, plus special visual effects
+  - First Jump: Standard height and distance
+  - Second Jump: 10% more height and distance
+  - Third Jump: 20% more height and distance, plus special visual effects
 - **Jump Buffering**: Brief window to input jump before landing
 - **Coyote Time**: Short grace period for jumping after leaving a platform
 - **Jump Cancellation**: Ability to shorten jump by releasing button

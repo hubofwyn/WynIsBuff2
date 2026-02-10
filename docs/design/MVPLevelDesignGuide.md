@@ -101,7 +101,7 @@ Here are detailed recommendations for each of the 5 MVP levels:
 
 **Layout Sketch**:
 
-```
+```text
                   🏁
                   ■■
                 ■■
@@ -128,7 +128,7 @@ Here are detailed recommendations for each of the 5 MVP levels:
 
 **Layout Sketch**:
 
-```
+```text
                       🏁
                       ■■■■
         ■■■■                  ■■■■
@@ -149,7 +149,7 @@ Here are detailed recommendations for each of the 5 MVP levels:
 
 **Layout Sketch**:
 
-```
+```text
                                   🏁
                                   ■■
 
@@ -185,7 +185,7 @@ Here are detailed recommendations for each of the 5 MVP levels:
 
 **Layout Sketch**:
 
-```
+```text
       ■■■■                                  🏁
                   ■■■■                      ■■
                               ■■■■
@@ -207,7 +207,7 @@ Here are detailed recommendations for each of the 5 MVP levels:
 
 **Layout Sketch**:
 
-```
+```text
                                               🏁
                                           ■■■■
                                       ↕️
@@ -240,7 +240,7 @@ For the MVP, focus on these core platform patterns:
 
 ### 1. Step Sequence
 
-```
+```text
         ■■
       ■■
     ■■
@@ -252,7 +252,7 @@ For the MVP, focus on these core platform patterns:
 
 ### 2. Gap Challenge
 
-```
+```text
 ■■■■      ■■■■      ■■■■
 ```
 
@@ -260,7 +260,7 @@ For the MVP, focus on these core platform patterns:
 
 ### 3. Vertical Challenge
 
-```
+```text
                 ■■
 
             ■■
@@ -276,7 +276,7 @@ For the MVP, focus on these core platform patterns:
 
 ### 4. Moving Platform Sequence
 
-```
+```text
 ■■■■  ↔️  ↔️  ↔️  ■■■■
 ```
 
@@ -284,7 +284,7 @@ For the MVP, focus on these core platform patterns:
 
 ### 5. Buff Moment Setup
 
-```
+```text
                               ■■
 
                       ■■
@@ -342,11 +342,11 @@ Use these visual elements to create memorable levels:
 ### 3. Color Coding
 
 - Use consistent color language:
-    - Green: First jump state/platforms
-    - Yellow: Second jump state/platforms
-    - Red: Third jump state/platforms
-    - Blue: Safe areas
-    - Purple: Special interactions
+  - Green: First jump state/platforms
+  - Yellow: Second jump state/platforms
+  - Red: Third jump state/platforms
+  - Blue: Safe areas
+  - Purple: Special interactions
 
 ### 4. Background Elements
 

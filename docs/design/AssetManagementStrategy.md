@@ -26,7 +26,7 @@ Effective asset management is crucial for game performance, maintainability, and
 
 ### Directory Structure
 
-```
+```text
 assets/
 ├── images/
 │   ├── characters/

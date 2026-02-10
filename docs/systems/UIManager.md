@@ -190,18 +190,22 @@ See [Design Tokens](../architecture/UI_UX_ARCHITECTURE.md#design-tokens) for com
 ## Related Documentation
 
 **Core Documentation:**
+
 - [UI/UX Architecture](../architecture/UI_UX_ARCHITECTURE.md) - Complete UI/UX architecture guide
 - [Loading Screen Architecture](LOADING_SCREEN_ARCHITECTURE.md) - Unified loading screen system
 - [Subtitle System](../SUBTITLE_SYSTEM.md) - Accessibility features
 
 **Design System:**
+
 - [DesignTokens Reference](../architecture/UI_UX_ARCHITECTURE.md#design-tokens) - Design token documentation
 - **DesignTokens** (`src/constants/DesignTokens.js`) - Source code
 
 **Migration:**
+
 - [UIConfig → DesignTokens Migration](../architecture/UI_UX_ARCHITECTURE.md#migration-guide) - Migration guide
 
 **Best Practices:**
+
 - [UI Best Practices](../architecture/UI_UX_ARCHITECTURE.md#best-practices) - Recommended patterns
 - [Responsive Design](../architecture/UI_UX_ARCHITECTURE.md#responsive-design) - Adaptive layouts
 - [Accessibility](../architecture/UI_UX_ARCHITECTURE.md#accessibility) - WCAG compliance

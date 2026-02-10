@@ -16,6 +16,6 @@ Task: Implement a multi-layer parallax background for level1 to enhance the “W
 ## Change Log
 
 - Added parallax layers support:
-    - Preloaded layer images in Preloader
-    - Extended LevelData with background.layers config
-    - Rendered layers with scrollFactor in LevelLoader.setupBackground
+  - Preloaded layer images in Preloader
+  - Extended LevelData with background.layers config
+  - Rendered layers with scrollFactor in LevelLoader.setupBackground

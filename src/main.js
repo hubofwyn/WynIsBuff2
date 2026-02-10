@@ -68,104 +68,104 @@ function bootPhaser() {
     });
 
     const config = {
-    type: Phaser.WEBGL,
-    width: 1024,
-    height: 768,
-    parent: 'game-container',
-    backgroundColor: '#028af8',
-    scale: {
-        mode: Phaser.Scale.FIT,
-        autoCenter: Phaser.Scale.CENTER_BOTH,
-        autoRound: true,
-    },
-    physics: {
-        default: 'arcade',
-        arcade: {
-            gravity: { y: 0 },
-            debug: false,
+        type: Phaser.WEBGL,
+        width: 1024,
+        height: 768,
+        parent: 'game-container',
+        backgroundColor: '#028af8',
+        scale: {
+            mode: Phaser.Scale.FIT,
+            autoCenter: Phaser.Scale.CENTER_BOTH,
+            autoRound: true,
         },
-    },
-    // Performance optimizations
-    fps: {
-        target: 60,
-        forceSetTimeOut: false,
-        smoothStep: false,
-    },
-    render: {
-        // TRIAGE FIX: Completely disable mipmaps to prevent WebGL errors
-        // Setting mipmapFilter to undefined/null prevents Phaser from generating mipmaps
-        antialias: false, // Disable anti-aliasing to reduce VRAM usage
-        antialiasGL: false, // Explicitly disable WebGL anti-aliasing
-        pixelArt: false,
-        roundPixels: true, // Reduce sub-pixel rendering overhead
-        transparent: false,
-        clearBeforeRender: true,
-        powerPreference: 'high-performance', // Request dedicated GPU if available
-        // Additional safety settings
-        failIfMajorPerformanceCaveat: false, // Don't fail on slower hardware
-        premultipliedAlpha: false, // Reduce texture complexity
-        preserveDrawingBuffer: false, // Don't preserve buffer (saves memory)
-    },
-    scene: [
-        Boot,
-        Preloader,
-        WelcomeScene,
-        CharacterSelect,
-        MainMenu,
-        Game,
-        RunScene,
-        ResultsScene,
-        HubScene,
-        FactoryScene,
-        PauseScene,
-        SettingsScene,
-        GameOver,
-        BirthdayMinigame,
-        TestScene,
-    ],
-};
+        physics: {
+            default: 'arcade',
+            arcade: {
+                gravity: { y: 0 },
+                debug: false,
+            },
+        },
+        // Performance optimizations
+        fps: {
+            target: 60,
+            forceSetTimeOut: false,
+            smoothStep: false,
+        },
+        render: {
+            // TRIAGE FIX: Completely disable mipmaps to prevent WebGL errors
+            // Setting mipmapFilter to undefined/null prevents Phaser from generating mipmaps
+            antialias: false, // Disable anti-aliasing to reduce VRAM usage
+            antialiasGL: false, // Explicitly disable WebGL anti-aliasing
+            pixelArt: false,
+            roundPixels: true, // Reduce sub-pixel rendering overhead
+            transparent: false,
+            clearBeforeRender: true,
+            powerPreference: 'high-performance', // Request dedicated GPU if available
+            // Additional safety settings
+            failIfMajorPerformanceCaveat: false, // Don't fail on slower hardware
+            premultipliedAlpha: false, // Reduce texture complexity
+            preserveDrawingBuffer: false, // Don't preserve buffer (saves memory)
+        },
+        scene: [
+            Boot,
+            Preloader,
+            WelcomeScene,
+            CharacterSelect,
+            MainMenu,
+            Game,
+            RunScene,
+            ResultsScene,
+            HubScene,
+            FactoryScene,
+            PauseScene,
+            SettingsScene,
+            GameOver,
+            BirthdayMinigame,
+            TestScene,
+        ],
+    };
 
-const game = new Phaser.Game(config);
+    const game = new Phaser.Game(config);
 
-// Add game event listeners for debugging
-game.events.on('ready', () => {
-    LOG.info('MAIN_PHASER_READY', {
-        subsystem: 'bootstrap',
-        message: 'Phaser game is ready',
-        sceneCount: game.scene.scenes.length,
+    // Add game event listeners for debugging
+    game.events.on('ready', () => {
+        LOG.info('MAIN_PHASER_READY', {
+            subsystem: 'bootstrap',
+            message: 'Phaser game is ready',
+            sceneCount: game.scene.scenes.length,
+        });
     });
-});
 
-// TRIAGE FIX: Handle WebGL context loss gracefully
-game.events.on('contextlost', (event) => {
-    LOG.warn('MAIN_WEBGL_CONTEXT_LOST', {
-        subsystem: 'bootstrap',
-        message: 'WebGL context lost - pausing game',
-        activeScenes: game.scene.scenes.filter((s) => s.scene.isActive()).length,
-        hint: 'Context loss may be due to GPU issues, browser tab management, or system memory pressure. Game will attempt to recover.',
+    // TRIAGE FIX: Handle WebGL context loss gracefully
+    game.events.on('contextlost', (event) => {
+        LOG.warn('MAIN_WEBGL_CONTEXT_LOST', {
+            subsystem: 'bootstrap',
+            message: 'WebGL context lost - pausing game',
+            activeScenes: game.scene.scenes.filter((s) => s.scene.isActive()).length,
+            hint: 'Context loss may be due to GPU issues, browser tab management, or system memory pressure. Game will attempt to recover.',
+        });
+        event.preventDefault(); // Prevent default browser behavior
+        // Pause all scenes
+        game.scene.scenes.forEach((scene) => {
+            if (scene.scene.isActive()) {
+                scene.scene.pause();
+            }
+        });
     });
-    event.preventDefault(); // Prevent default browser behavior
-    // Pause all scenes
-    game.scene.scenes.forEach((scene) => {
-        if (scene.scene.isActive()) {
-            scene.scene.pause();
-        }
-    });
-});
 
-game.events.on('contextrestored', () => {
-    LOG.info('MAIN_WEBGL_CONTEXT_RESTORED', {
-        subsystem: 'bootstrap',
-        message: 'WebGL context restored - resuming game',
-        pausedScenes: game.scene.scenes.filter((s) => s.scene.isPaused()).length,
+    game.events.on('contextrestored', () => {
+        LOG.info('MAIN_WEBGL_CONTEXT_RESTORED', {
+            subsystem: 'bootstrap',
+            message: 'WebGL context restored - resuming game',
+            pausedScenes: game.scene.scenes.filter((s) => s.scene.isPaused()).length,
+        });
+        // Resume all paused scenes
+        game.scene.scenes.forEach((scene) => {
+            if (scene.scene.isPaused()) {
+                scene.scene.resume();
+            }
+        });
     });
-    // Resume all paused scenes
-    game.scene.scenes.forEach((scene) => {
-        if (scene.scene.isPaused()) {
-            scene.scene.resume();
-        }
-    });
-});
 
     LOG.info('MAIN_PHASER_INSTANCE_CREATED', {
         subsystem: 'bootstrap',

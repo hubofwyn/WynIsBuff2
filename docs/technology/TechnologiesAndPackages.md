@@ -4,12 +4,12 @@
 
 - [Project Overview](#project-overview)
 - [Core Technologies](#core-technologies)
-    - [Phaser](#phaser)
-    - [Rapier Physics](#rapier-physics)
-    - [Vite](#vite)
+  - [Phaser](#phaser)
+  - [Rapier Physics](#rapier-physics)
+  - [Vite](#vite)
 - [Project Dependencies](#project-dependencies)
-    - [Production Dependencies](#production-dependencies)
-    - [Development Dependencies](#development-dependencies)
+  - [Production Dependencies](#production-dependencies)
+  - [Development Dependencies](#development-dependencies)
 - [Project Structure](#project-structure)
 - [Build System](#build-system)
 - [Asset Management](#asset-management)
@@ -22,7 +22,7 @@
 - **Project Name**: WynIsBuff2
 - **Version**: 1.0.1
 - **Type**: ES Module (uses import/export syntax)
-- **Repository**: Based on https://github.com/phaserjs/template-rapier
+- **Repository**: Based on <https://github.com/phaserjs/template-rapier>
 
 ## Core Technologies
 
@@ -30,7 +30,7 @@
 
 - **Version**: 3.90.x
 - **Description**: Phaser is a fast, free, and fun open source HTML5 game framework that offers WebGL and Canvas rendering across desktop and mobile web browsers.
-- **Official Documentation**: https://newdocs.phaser.io/docs/3.90.0
+- **Official Documentation**: <https://newdocs.phaser.io/docs/3.90.0>
 - **Usage in Project**: Provides the core game engine functionality including scene management, sprite handling, animation system, input handling, and rendering.
 
 ### Rapier Physics
@@ -38,14 +38,14 @@
 - **Package**: @dimforge/rapier2d-compat
 - **Version**: 0.19.x
 - **Description**: Rapier is a set of 2D and 3D physics engines written in Rust, with JavaScript bindings. It's used for realistic physics simulations in games.
-- **Official Documentation**: https://rapier.rs/docs/
+- **Official Documentation**: <https://rapier.rs/docs/>
 - **Usage in Project**: Provides the physics simulation for the game, including rigid bodies, colliders, and physics-based movement.
 
 ### Vite
 
 - **Version**: 7.1.x
 - **Description**: Vite is a modern frontend build tool that provides a faster and leaner development experience.
-- **Official Documentation**: https://vite.dev/
+- **Official Documentation**: <https://vite.dev/>
 - **Usage in Project**: Used for bundling the game assets and code, providing a development server with hot module replacement, and building production-ready bundles.
 
 ## Project Dependencies
@@ -69,7 +69,7 @@
 
 The project follows a standard structure for Phaser games:
 
-```
+```text
 /
 ├── assets/                  # Game assets (images, spritesheets, etc.)
 │   ├── 2D Pixel Dungeon Asset Pack v2.0/  # Original dungeon tileset assets
@@ -102,18 +102,18 @@ The project follows a standard structure for Phaser games:
 The project uses Vite for its build system with the following Bun scripts:
 
 - **dev**: `bun log.js dev & bunx --bun vite --config vite/config.dev.mjs`
-    - Starts the development server with hot module replacement
-    - Runs on http://localhost:8080 by default
+  - Starts the development server with hot module replacement
+  - Runs on <http://localhost:8080> by default
 
 - **build**: `bun log.js build & bunx --bun vite build --config vite/config.prod.mjs`
-    - Creates a production build in the `dist` folder
-    - Optimizes and minifies the code using Terser
+  - Creates a production build in the `dist` folder
+  - Optimizes and minifies the code using Terser
 
 - **dev-nolog**: `bunx --bun vite --config vite/config.dev.mjs`
-    - Same as `dev` but without sending anonymous usage data
+  - Same as `dev` but without sending anonymous usage data
 
 - **build-nolog**: `bunx --bun vite build --config vite/config.prod.mjs`
-    - Same as `build` but without sending anonymous usage data
+  - Same as `build` but without sending anonymous usage data
 
 ### Vite Configuration
 
@@ -137,7 +137,7 @@ Assets are organized in a structured manner as detailed in `docs/assets.md`:
 
 ### Main Asset Directory Structure
 
-```
+```text
 assets/
 ├── 2D Pixel Dungeon Asset Pack v2.0/  # Original dungeon tileset assets
 ├── Enemy_Animations_Set/              # Original enemy animation spritesheets
@@ -205,6 +205,7 @@ The game integrates Rapier physics in the Game scene:
     ```
 
 4. **Updating Physics**:
+
     ```javascript
     update() {
         this.rapierWorld.step();

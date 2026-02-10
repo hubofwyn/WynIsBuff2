@@ -9,6 +9,7 @@
 ## Project Context
 
 WynIsBuff2 is a Phaser 3 platformer with:
+
 - Feature-based modular architecture
 - Event-driven communication via EventBus
 - Rapier physics integration via PhysicsManager
@@ -16,6 +17,7 @@ WynIsBuff2 is a Phaser 3 platformer with:
 - Strict vendor abstraction layer
 
 **Tech Stack:**
+
 - Phaser 3.90.x (game framework)
 - Rapier 0.19.x (physics engine)
 - Howler 2.2.4 (audio)
@@ -63,6 +65,7 @@ See: `docs/architecture/adrs/ADR-001-vendor-abstraction-layer.md`
 - **Events:** `EventNames.*`
 
 **Workflow:**
+
 1. Add asset to `/assets/manifest.json`
 2. Run `bun run generate-assets`
 3. Use via constants
@@ -120,6 +123,7 @@ console.error('Error:', error);  // FORBIDDEN
 ```
 
 **Log Levels:**
+
 - `LOG.dev()` - Development/verbose (1% sampled)
 - `LOG.info()` - Important state changes
 - `LOG.warn()` - Unexpected but handled situations
@@ -160,18 +164,18 @@ bun run deps:check       # Check dependency rules
 
 ## Code Change Workflow
 
-### For Any Code Change:
+### For Any Code Change
 
 1. **Read existing patterns** in similar modules first
 2. **Follow barrel export structure** (@features/*)
 3. **Add events to EventNames.js** if needed
 4. **Update manifest.json** for new assets
 5. **Run `bun run generate-assets`** after manifest changes
-6. **Use structured logging** (LOG.* not console.*)
+6. **Use structured logging** (LOG.*not console.*)
 7. **Test with `bun run test`**
 8. **Run `bun run arch:health`** to verify compliance
 
-### For New Features:
+### For New Features
 
 1. Create module in `src/modules/yourFeature/`
 2. Implement classes following singleton pattern if manager
@@ -180,7 +184,7 @@ bun run deps:check       # Check dependency rules
 5. Import via `@features/yourFeature`
 6. Add tests in `tests/` (CommonJS .cjs format)
 
-### For New Scenes:
+### For New Scenes
 
 1. Add key to `SceneKeys.js`
 2. Create scene in `src/scenes/` extending `BaseScene` from `@features/core`
@@ -188,7 +192,7 @@ bun run deps:check       # Check dependency rules
 4. Use constants for all assets and scene references
 5. Emit events for state changes
 
-### For Bug Fixes:
+### For Bug Fixes
 
 1. Reproduce the issue first
 2. Check event flow and manager states
@@ -212,7 +216,7 @@ bun run deps:check       # Check dependency rules
 
 ## Project Structure
 
-```
+```text
 src/
 ├── constants/        # AUTO-GENERATED: Assets.js | MANUAL: EventNames.js, SceneKeys.js
 ├── core/             # Vendor abstractions + Core managers (ONLY place for vendor imports)
@@ -257,9 +261,11 @@ src/
 ## Special Notes
 
 ### Birthday Minigame
+
 The birthday minigame is a special feature for Wyn's 9th birthday. Handle with care and test thoroughly across scenes (MainMenu, Game, BirthdayMinigame).
 
 ### Deterministic Testing
+
 Use `GoldenSeedTester` and `DeterministicRNG` for reproducible gameplay testing.
 
 ---

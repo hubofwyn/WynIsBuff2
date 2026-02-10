@@ -44,7 +44,7 @@
 
 ### Architecture & Deep Dives
 
-3. **[Observability.md](architecture/Observability.md)** - Architecture Deep Dive
+1. **[Observability.md](architecture/Observability.md)** - Architecture Deep Dive
    - System architecture overview
    - Migration guide (Phases 0-10)
    - Component architecture
@@ -52,7 +52,7 @@
    - **Lines**: 3988
    - **Audience**: Architects, senior developers
 
-4. **[OBSERVABILITY_IMPLEMENTATION.md](../OBSERVABILITY_IMPLEMENTATION.md)** - Master Plan
+2. **[OBSERVABILITY_IMPLEMENTATION.md](../OBSERVABILITY_IMPLEMENTATION.md)** - Master Plan
    - Phase-by-phase implementation details
    - Status tracking
    - Technical specifications
@@ -60,12 +60,12 @@
 
 ### Workflow & Guides
 
-5. **[OBSERVABILITY_WORKFLOW.md](../OBSERVABILITY_WORKFLOW.md)** - Agent Workflow
+1. **[OBSERVABILITY_WORKFLOW.md](../OBSERVABILITY_WORKFLOW.md)** - Agent Workflow
    - AI agent integration patterns
    - Workflow examples
    - **Audience**: AI agents, automation
 
-6. **[guides/DEBUGGING.md](guides/DEBUGGING.md)** - Practical Debugging
+2. **[guides/DEBUGGING.md](guides/DEBUGGING.md)** - Practical Debugging
    - Common debugging scenarios
    - Step-by-step solutions
    - Browser console examples
@@ -88,6 +88,7 @@ Each topic has **one canonical location**:
 ### Cross-Referencing
 
 All documents link to related content using relative paths:
+
 - Use `[text](../path/to/doc.md)` for cross-references
 - Use `[text](../path/to/doc.md#section)` for section links
 - Keep links up-to-date when moving files
@@ -105,7 +106,7 @@ All documents link to related content using relative paths:
 
 ### ERROR_HANDLING_LOGGING.md Structure
 
-```
+```text
 1. Quick Start
    ├── In Code (import and usage)
    └── In Browser Console (window.LOG API)
@@ -124,11 +125,13 @@ All documents link to related content using relative paths:
 ### When to Add New Documentation
 
 **Add to existing docs** when:
+
 - Content fits within an existing section
 - It's a variation of existing examples
 - It's a clarification or update
 
 **Create new doc** when:
+
 - Entirely new system or feature
 - Different audience (e.g., operations guide)
 - Standalone tutorial or guide
@@ -148,6 +151,7 @@ All documents link to related content using relative paths:
 ### Deprecating Documentation
 
 When removing outdated docs:
+
 1. Check for references: `grep -r "filename" docs/`
 2. Update all cross-references
 3. Add redirect or note in INDEX.md
@@ -168,6 +172,7 @@ When removing outdated docs:
 ### Rationale
 
 The quick-start document was created during a debugging session and contained:
+
 - ✅ Useful browser console API examples → **Migrated**
 - ❌ Duplicate log level documentation → **Removed**
 - ❌ Duplicate code examples → **Removed**

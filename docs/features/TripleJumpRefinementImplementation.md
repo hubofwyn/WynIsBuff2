@@ -83,13 +83,13 @@ The ParticleManager provides rich particle effects for various player actions:
 The CameraManager provides contextual screen shake effects:
 
 - **Jump Shake**:
-    - No shake for first jump
-    - Subtle shake for second jump
-    - Stronger shake for third jump
+  - No shake for first jump
+  - Subtle shake for second jump
+  - Stronger shake for third jump
 
 - **Landing Shake**:
-    - Intensity based on landing velocity
-    - Direction influenced by movement direction
+  - Intensity based on landing velocity
+  - Direction influenced by movement direction
 
 ### 4. Squash and Stretch Effects
 

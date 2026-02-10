@@ -38,4 +38,3 @@ Rationale: Not referenced by `assets/manifest.json` and not used by current scen
 - Confirm near-term enemy animation needs with design
 - If unused, move skeleton animation folders to `assets/archive/` in one batch
 - Re-run validation and update this plan
-

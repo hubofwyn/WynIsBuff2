@@ -80,6 +80,7 @@ window.LOG.export().logs
 ### Issue: Runaway Sound Effects
 
 **Symptoms:**
+
 - Sound effects playing repeatedly
 - Multiple instances of same sound
 - Audio overlapping excessively
@@ -87,6 +88,7 @@ window.LOG.export().logs
 **Diagnostic Steps:**
 
 1. **Check Event Listener Count**
+
    ```javascript
    // Count how many times events are registered
    window.LOG.export().logs.filter(l => 
@@ -96,12 +98,14 @@ window.LOG.export().logs
    ```
 
 2. **Check for Multiple Scene Instances**
+
    ```javascript
    // Should only have active scenes
    window.game.scene.scenes.filter(s => s.scene.isActive())
    ```
 
 3. **Check Audio Play Frequency**
+
    ```javascript
    // Count audio plays in last minute
    window.LOG.export().logs.filter(l => 
@@ -112,12 +116,14 @@ window.LOG.export().logs
    ```
 
 **Common Causes:**
+
 - Event listeners not cleaned up on scene restart
 - Multiple event bus instances
 - Scene not properly destroyed before reload
 - Audio triggered in update loop instead of events
 
 **Fixes:**
+
 - Add `this.events.off()` in scene `shutdown()`
 - Use `once()` instead of `on()` for one-time events
 - Ensure scene cleanup in `shutdown()` method
@@ -126,6 +132,7 @@ window.LOG.export().logs
 ### Issue: Collectible Errors
 
 **Symptoms:**
+
 - `Cannot read properties of undefined (reading 'type')`
 - Collectibles not appearing
 - Collectibles not being collected
@@ -133,6 +140,7 @@ window.LOG.export().logs
 **Diagnostic Steps:**
 
 1. **Check Collectible Configuration**
+
    ```javascript
    // View level collectible config
    import { LevelData } from './src/constants/LevelData.js'
@@ -140,6 +148,7 @@ window.LOG.export().logs
    ```
 
 2. **Check Recent Collectible Errors**
+
    ```javascript
    window.LOG.export().logs.filter(l => 
        l.subsystem === 'level' && 
@@ -148,6 +157,7 @@ window.LOG.export().logs
    ```
 
 3. **Check Physics World State**
+
    ```javascript
    window.LOG.export().logs
        .filter(l => l.context?.physics)
@@ -155,11 +165,13 @@ window.LOG.export().logs
    ```
 
 **Common Causes:**
+
 - Data structure mismatch (accessing `config.type` instead of `type`)
 - Physics world not initialized before collectible creation
 - Collectible sprites created before textures loaded
 
 **Fixes:**
+
 - Verify data structure matches level config
 - Ensure physics world exists before creating collectibles
 - Wait for texture loading before sprite creation
@@ -167,6 +179,7 @@ window.LOG.export().logs
 ### Issue: Physics Instability
 
 **Symptoms:**
+
 - Player falling through platforms
 - Erratic movement
 - Circuit breaker triggered
@@ -174,6 +187,7 @@ window.LOG.export().logs
 **Diagnostic Steps:**
 
 1. **Check Physics Errors**
+
    ```javascript
    window.LOG.export().logs.filter(l => 
        l.subsystem === 'physics' && 
@@ -182,6 +196,7 @@ window.LOG.export().logs
    ```
 
 2. **Check Player State**
+
    ```javascript
    window.LOG.export().logs
        .filter(l => l.context?.player)
@@ -190,6 +205,7 @@ window.LOG.export().logs
    ```
 
 3. **Check Circuit Breaker Status**
+
    ```javascript
    window.LOG.export().logs.filter(l => 
        l.code?.includes('CIRCUIT_BREAKER')
@@ -252,6 +268,7 @@ copy(report)
 ### Step 5: Create Issue Report
 
 Use the exported report to create a detailed issue report with:
+
 - Error messages and stack traces
 - System state before/after
 - Steps to reproduce

@@ -10,6 +10,7 @@
 ## Overview
 
 The Loading Screen Architecture provides a centralized system for all loading states in WynIsBuff2, ensuring consistent user experience across:
+
 - Initial game load (Preloader)
 - Level transitions
 - Asset loading
@@ -36,6 +37,7 @@ The Loading Screen Architecture provides a centralized system for all loading st
 **Purpose**: Single source of truth for all design values
 
 **Categories:**
+
 - **Spacing**: 8px base unit scale (xs → xxxl)
 - **Colors**: Brand, semantic, difficulty, gradients
 - **Typography**: Font sizes, weights, families
@@ -49,6 +51,7 @@ The Loading Screen Architecture provides a centralized system for all loading st
 - **Accessibility**: Contrast ratios, touch targets
 
 **Usage:**
+
 ```javascript
 import { DesignTokens } from '../constants/DesignTokens.js';
 
@@ -72,6 +75,7 @@ const bgColor = DesignTokens.colors.bgDark; // '#0f1b2b'
 **Pattern**: Singleton (extends BaseManager)
 
 **Responsibilities:**
+
 - Show/hide loading screens
 - Update progress bars
 - Display status messages
@@ -80,6 +84,7 @@ const bgColor = DesignTokens.colors.bgDark; // '#0f1b2b'
 - Manage z-index layering
 
 **API:**
+
 ```javascript
 const loadingManager = LoadingScreenManager.getInstance();
 
@@ -112,7 +117,7 @@ if (loadingManager.isVisible()) {
 
 ### Standard Layout
 
-```
+```text
 ┌─────────────────────────────────────┐
 │                                     │
 │            [LOGO]                   │  25% height
@@ -132,7 +137,7 @@ if (loadingManager.isVisible()) {
 
 ### Compact Layout (no logo)
 
-```
+```text
 ┌─────────────────────────────────────┐
 │                                     │
 │         Loading...                  │  30% height
@@ -148,7 +153,7 @@ if (loadingManager.isVisible()) {
 
 ### Minimal Layout (no progress)
 
-```
+```text
 ┌─────────────────────────────────────┐
 │                                     │
 │            [LOGO]                   │  30% height
@@ -295,6 +300,7 @@ container.setData('role', 'status');
 ### Color Contrast
 
 All text meets WCAG AA standards:
+
 - Primary text: #FFFFFF on #000000 (21:1)
 - Secondary text: #E0E0E0 on #000000 (17:1)
 - Accent text: #4ECDC4 on #000000 (9:1)
@@ -481,15 +487,18 @@ this.scene.start('Game');
 ## Related Documentation
 
 **Core Documentation:**
+
 - [UI/UX Architecture](../architecture/UI_UX_ARCHITECTURE.md) - Complete UI/UX architecture guide
 - [UIManager.md](UIManager.md) - UI element management
 - [ERROR_HANDLING_LOGGING.md](ERROR_HANDLING_LOGGING.md) - Observability system
 
 **Design System:**
+
 - [DesignTokens](../architecture/UI_UX_ARCHITECTURE.md#design-tokens) - Design token reference
 - **DesignTokens.js** (`src/constants/DesignTokens.js`) - Source code
 
 **Best Practices:**
+
 - [Responsive Design](../architecture/UI_UX_ARCHITECTURE.md#responsive-design) - Adaptive layouts
 - [Accessibility](../architecture/UI_UX_ARCHITECTURE.md#accessibility) - WCAG compliance
 

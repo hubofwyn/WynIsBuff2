@@ -35,7 +35,7 @@ WynIsBuff2 follows a **feature-based architecture** with **barrel exports** for 
 
 ## 📁 Folder Structure
 
-```
+```text
 src/
 ├── main.js                    # Entry point
 ├── constants/                 # Shared constants and configurations
@@ -237,13 +237,13 @@ export class MyScene extends Scene {
 }
 ```
 
-2. **Regenerate Constants**:
+1. **Regenerate Constants**:
 
 ```bash
 bun run generate-assets
 ```
 
-3. **Use in Code**:
+1. **Use in Code**:
 
 ```javascript
 import { ImageAssets, ImagePaths } from '../constants/Assets.js';
@@ -257,7 +257,7 @@ this.add.image(100, 100, ImageAssets.NEW_SPRITE);
 
 ### Asset Organization
 
-```
+```text
 assets/
 ├── manifest.json             # Asset catalog
 ├── images/
@@ -343,7 +343,7 @@ bun run generate-assets
 
 Use conventional commit format:
 
-```
+```text
 feat: add new particle effect system
 fix: resolve audio loading issue in Safari
 docs: update asset management guide

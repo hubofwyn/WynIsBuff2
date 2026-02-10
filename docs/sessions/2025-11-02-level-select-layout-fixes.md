@@ -3,7 +3,9 @@
 ## Critical Lessons
 
 ### 1. Phaser Positioning Model
+
 **Phaser GameObjects position by CENTER, not edges.** Layout calculations must add half-height offsets:
+
 ```javascript
 // WRONG: Positions card center where top edge should be
 this.layout.grid.startY = currentY;
@@ -13,7 +15,9 @@ this.layout.grid.startY = currentY + (cardHeight / 2);
 ```
 
 ### 2. Two-Pass Layout Calculation
+
 **First calculate relative to Y=0, then apply centering offset:**
+
 ```javascript
 // Pass 1: Calculate total height
 let currentY = 0;
@@ -26,7 +30,9 @@ const verticalOffset = (viewportHeight - totalHeight) / 2;
 ```
 
 ### 3. Dynamic Card Layout
+
 **Sequential positioning with bounds measurement prevents text overlap:**
+
 ```javascript
 let currentY = -halfHeight;
 const element1 = createText(...);
@@ -37,7 +43,9 @@ currentY += bounds1.height + spacing;
 ```
 
 ### 4. Generous Sizing Philosophy
+
 Match reference screens (WelcomeScene) by keeping elements large:
+
 - Logo: 0.3/0.4/0.5 scale (not 0.2/0.25/0.35)
 - Cards: Full size (280px) on constrained viewports
 - Spacing: 1.2x on large screens for breathing room
@@ -47,6 +55,7 @@ Match reference screens (WelcomeScene) by keeping elements large:
 **MainMenu.js (src/scenes/MainMenu.js)**
 
 Key sections:
+
 - Lines 84-109: `updateBreakpoint()` - Sets logo/card scales per viewport
 - Lines 124-284: `calculateLayout()` - Two-pass layout with centering
 - Lines 194-204: Grid positioning with center-point offset correction
@@ -54,6 +63,7 @@ Key sections:
 **LevelCardComponent.js (src/modules/level/LevelCardComponent.js)**
 
 Key sections:
+
 - Lines 70-75: `scaleFactorHeight` calculation for compact mode
 - Lines 184-295: `createContent()` - Dynamic sequential layout with bounds measurement
 

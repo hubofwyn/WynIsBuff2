@@ -11,13 +11,14 @@
 
 During asset loading in the Preloader scene, you may see WebGL warnings in the browser console:
 
-```
+```text
 WebGL: INVALID_VALUE: texImage2D: bad image data
 ```
 
 ### Root Cause
 
 These warnings occur during Phaser's internal texture processing (`_processTexture`) when:
+
 1. WebP images are being uploaded to WebGL
 2. Images may not have an alpha channel
 3. Phaser's texture processing pipeline encounters format mismatches
@@ -25,6 +26,7 @@ These warnings occur during Phaser's internal texture processing (`_processTextu
 ### Impact
 
 **✅ NON-CRITICAL** - These are warnings, not errors:
+
 - Game loads and runs correctly
 - All textures display properly
 - No performance impact
@@ -33,7 +35,8 @@ These warnings occur during Phaser's internal texture processing (`_processTextu
 ### Technical Details
 
 **Stack Trace Pattern:**
-```
+
+```text
 _processTexture @ phaser.js
 createResource @ phaser.js
 WebGLTextureWrapper2 @ phaser.js
@@ -42,6 +45,7 @@ createTextureFromSource @ phaser.js
 ```
 
 **Affected Assets:**
+
 - WebP images (especially logo files)
 - Non-power-of-two textures
 - Images without alpha channels
@@ -65,6 +69,7 @@ We've tried several approaches:
 ### Current Approach
 
 **Accept and Monitor:**
+
 - These are browser warnings, not application errors
 - Phaser handles the recovery internally
 - We track via observability system for monitoring
@@ -88,6 +93,7 @@ window.getLogStats()
 ### When to Investigate Further
 
 Investigate if you see:
+
 - ❌ Textures not displaying correctly
 - ❌ Game crashes during asset loading
 - ❌ Performance degradation

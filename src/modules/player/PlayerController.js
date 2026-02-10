@@ -137,10 +137,7 @@ export class PlayerController {
 
             // Create capsule collider for smooth movement over edges
             const halfHeight = pixelsToMeters(playerHeight / 2) - PhysicsConfig.player.radius;
-            const colliderDesc = ColliderDesc.capsule(
-                halfHeight,
-                PhysicsConfig.player.radius
-            )
+            const colliderDesc = ColliderDesc.capsule(halfHeight, PhysicsConfig.player.radius)
                 .setFriction(PhysicsConfig.player.friction)
                 .setRestitution(PhysicsConfig.player.restitution)
                 .setDensity(PhysicsConfig.player.density);
@@ -762,10 +759,7 @@ export class PlayerController {
             const duckHalfHeight =
                 pixelsToMeters(duckPixelHeight / 2) - PhysicsConfig.player.radius;
 
-            const colliderDesc = ColliderDesc.capsule(
-                duckHalfHeight,
-                PhysicsConfig.player.radius
-            ) // ✅ METERS
+            const colliderDesc = ColliderDesc.capsule(duckHalfHeight, PhysicsConfig.player.radius) // ✅ METERS
                 .setFriction(PhysicsConfig.player.friction)
                 .setRestitution(PhysicsConfig.player.restitution)
                 .setDensity(PhysicsConfig.player.density);
@@ -788,10 +782,7 @@ export class PlayerController {
             const standHalfHeight =
                 pixelsToMeters(standPixelHeight / 2) - PhysicsConfig.player.radius;
 
-            const colliderDesc = ColliderDesc.capsule(
-                standHalfHeight,
-                PhysicsConfig.player.radius
-            ) // ✅ METERS
+            const colliderDesc = ColliderDesc.capsule(standHalfHeight, PhysicsConfig.player.radius) // ✅ METERS
                 .setFriction(PhysicsConfig.player.friction)
                 .setRestitution(PhysicsConfig.player.restitution)
                 .setDensity(PhysicsConfig.player.density);

@@ -19,7 +19,7 @@ export class Preloader extends BaseScene {
     init() {
         // Initialize unified loading screen
         this.loadingManager = LoadingScreenManager.getInstance();
-        
+
         LOG.info('PRELOADER_INIT', {
             subsystem: 'scene',
             scene: SceneKeys.PRELOADER,
@@ -83,7 +83,7 @@ export class Preloader extends BaseScene {
                 hint: 'Check asset path and file existence. Verify manifest.json configuration.',
             });
         });
-        
+
         // NOTE: WebGL texture upload warnings (INVALID_VALUE: texImage2D) are expected
         // during asset loading. These are non-critical browser warnings that Phaser
         // handles internally. See docs/systems/KNOWN_WEBGL_ISSUES.md for details.
@@ -229,7 +229,7 @@ export class Preloader extends BaseScene {
 
         // Brief pause to show completion, then hide loading screen
         await new Promise((resolve) => this.time.delayedCall(500, resolve));
-        
+
         // Hide loading screen with fade
         await this.loadingManager.hide(600);
 
@@ -239,7 +239,7 @@ export class Preloader extends BaseScene {
             scene: SceneKeys.PRELOADER,
             message: 'Asset loading complete, transitioning to Welcome scene',
         });
-        
+
         this.scene.start(SceneKeys.WELCOME);
     }
 
@@ -252,7 +252,7 @@ export class Preloader extends BaseScene {
         // This prevents WebGL errors with non-power-of-two textures
         let configuredCount = 0;
         const textureManager = this.textures;
-        
+
         textureManager.each((texture) => {
             if (texture.key !== '__DEFAULT' && texture.key !== '__MISSING') {
                 // Set LINEAR filter for all texture sources

@@ -1,192 +1,174 @@
 {
-  "$schema": "https://windsurf.ai/schemas/cascade-config.json",
-  "version": "1.0",
-  "project": {
-    "name": "WynIsBuff2",
-    "description": "Phaser 3 platformer with feature-based architecture and event-driven communication",
-    "type": "game",
-    "framework": "phaser",
-    "language": "javascript",
-    "packageManager": "bun"
-  },
-  "rules": {
-    "workspace": ".windsurf/workspace-rules.md",
-    "fileScoped": [
-      {
-        "pattern": "src/scenes/**/*.js",
-        "rules": ".windsurf/rules-scenes.md"
-      },
-      {
-        "pattern": "src/modules/**/*.js",
-        "rules": ".windsurf/rules-modules.md"
-      },
-      {
-        "pattern": "src/core/**/*.js",
-        "rules": ".windsurf/rules-core.md"
-      },
-      {
-        "pattern": "src/constants/**/*.js",
-        "rules": ".windsurf/rules-constants.md"
-      }
-    ]
-  },
-  "context": {
-    "alwaysInclude": [
-      "CLAUDE.md",
-      "AGENTS.md",
-      "package.json",
-      "src/constants/SceneKeys.js",
-      "src/constants/EventNames.js"
+    "$schema": "https://windsurf.ai/schemas/cascade-config.json",
+    "version": "1.0",
+    "project": {
+        "name": "WynIsBuff2",
+        "description": "Phaser 3 platformer with feature-based architecture and event-driven communication",
+        "type": "game",
+        "framework": "phaser",
+        "language": "javascript",
+        "packageManager": "bun"
+    },
+    "rules": {
+        "workspace": ".windsurf/workspace-rules.md",
+        "fileScoped": [
+            {
+                "pattern": "src/scenes/**/*.js",
+                "rules": ".windsurf/rules-scenes.md"
+            },
+            {
+                "pattern": "src/modules/**/*.js",
+                "rules": ".windsurf/rules-modules.md"
+            },
+            {
+                "pattern": "src/core/**/*.js",
+                "rules": ".windsurf/rules-core.md"
+            },
+            {
+                "pattern": "src/constants/**/*.js",
+                "rules": ".windsurf/rules-constants.md"
+            }
+        ]
+    },
+    "context": {
+        "alwaysInclude": [
+            "CLAUDE.md",
+            "AGENTS.md",
+            "package.json",
+            "src/constants/SceneKeys.js",
+            "src/constants/EventNames.js"
+        ],
+        "documentation": {
+            "architecture": "docs/ARCHITECTURE.md",
+            "contributing": "CONTRIBUTING.md",
+            "debugging": "docs/guides/DEBUGGING.md",
+            "assetManagement": "ASSET_MANAGEMENT.md"
+        }
+    },
+    "commands": {
+        "dev": "bun run dev",
+        "build": "bun run build",
+        "test": "bun run test",
+        "lint": "bun run lint",
+        "format": "bun run format",
+        "generateAssets": "bun run generate-assets",
+        "validateAssets": "bun run validate-assets",
+        "archHealth": "bun run arch:health",
+        "archValidate": "bun run arch:validate"
+    },
+    "workflows": {
+        "beforeCommit": ["bun run lint", "bun run test", "bun run arch:health"],
+        "afterAssetChange": ["bun run generate-assets", "bun run validate-assets"],
+        "beforeDeploy": ["bun run lint", "bun run test", "bun run arch:check", "bun run build"]
+    },
+    "patterns": {
+        "imports": {
+            "barrel": {
+                "description": "Use barrel exports from @features/*",
+                "examples": [
+                    "import { PlayerController } from '@features/player';",
+                    "import { BaseScene, PhysicsTypes } from '@features/core';"
+                ],
+                "antiPatterns": [
+                    "import { PlayerController } from '../modules/player/PlayerController.js';"
+                ]
+            },
+            "constants": {
+                "description": "Use generated constants, never magic strings",
+                "examples": [
+                    "import { ImageAssets, SceneKeys, EventNames } from '../constants/...';"
+                ],
+                "antiPatterns": [
+                    "this.load.image('player', 'sprites/player.png');",
+                    "this.scene.start('MainMenu');"
+                ]
+            },
+            "vendorAbstraction": {
+                "description": "Only src/core/ imports vendors; others use @features/core",
+                "examples": ["import { BaseScene } from '@features/core';"],
+                "antiPatterns": [
+                    "import { Scene } from 'phaser';",
+                    "import RAPIER from '@dimforge/rapier2d-compat';"
+                ]
+            }
+        },
+        "logging": {
+            "structured": {
+                "description": "Use LOG.* from @observability, never console.*",
+                "examples": ["LOG.info('PLAYER_SPAWN', { subsystem: 'player', message: '...' });"],
+                "antiPatterns": [
+                    "console.log('Player spawned');",
+                    "console.error('Error:', error);"
+                ]
+            }
+        },
+        "managers": {
+            "singleton": {
+                "description": "Extend BaseManager with init() and getInstance()",
+                "example": "class MyManager extends BaseManager { ... }"
+            }
+        },
+        "events": {
+            "namespaced": {
+                "description": "Use namespace:action format via EventNames",
+                "examples": ["EventNames.PLAYER_JUMP = 'player:jump'"]
+            }
+        }
+    },
+    "validation": {
+        "preCommit": {
+            "checkMagicStrings": true,
+            "checkVendorImports": true,
+            "checkConsoleUsage": true,
+            "checkBarrelImports": true
+        },
+        "architecture": {
+            "enforceVendorAbstraction": true,
+            "enforceBarrelExports": true,
+            "enforceConstants": true,
+            "enforceStructuredLogging": true
+        }
+    },
+    "ignore": [
+        "node_modules/**",
+        "dist/**",
+        "bun.lock",
+        ".git/**",
+        ".husky/**",
+        "*.log",
+        "src/constants/Assets.js"
     ],
-    "documentation": {
-      "architecture": "docs/ARCHITECTURE.md",
-      "contributing": "CONTRIBUTING.md",
-      "debugging": "docs/guides/DEBUGGING.md",
-      "assetManagement": "ASSET_MANAGEMENT.md"
-    }
-  },
-  "commands": {
-    "dev": "bun run dev",
-    "build": "bun run build",
-    "test": "bun run test",
-    "lint": "bun run lint",
-    "format": "bun run format",
-    "generateAssets": "bun run generate-assets",
-    "validateAssets": "bun run validate-assets",
-    "archHealth": "bun run arch:health",
-    "archValidate": "bun run arch:validate"
-  },
-  "workflows": {
-    "beforeCommit": [
-      "bun run lint",
-      "bun run test",
-      "bun run arch:health"
-    ],
-    "afterAssetChange": [
-      "bun run generate-assets",
-      "bun run validate-assets"
-    ],
-    "beforeDeploy": [
-      "bun run lint",
-      "bun run test",
-      "bun run arch:check",
-      "bun run build"
-    ]
-  },
-  "patterns": {
-    "imports": {
-      "barrel": {
-        "description": "Use barrel exports from @features/*",
-        "examples": [
-          "import { PlayerController } from '@features/player';",
-          "import { BaseScene, PhysicsTypes } from '@features/core';"
-        ],
-        "antiPatterns": [
-          "import { PlayerController } from '../modules/player/PlayerController.js';"
-        ]
-      },
-      "constants": {
-        "description": "Use generated constants, never magic strings",
-        "examples": [
-          "import { ImageAssets, SceneKeys, EventNames } from '../constants/...';"
-        ],
-        "antiPatterns": [
-          "this.load.image('player', 'sprites/player.png');",
-          "this.scene.start('MainMenu');"
-        ]
-      },
-      "vendorAbstraction": {
-        "description": "Only src/core/ imports vendors; others use @features/core",
-        "examples": [
-          "import { BaseScene } from '@features/core';"
-        ],
-        "antiPatterns": [
-          "import { Scene } from 'phaser';",
-          "import RAPIER from '@dimforge/rapier2d-compat';"
-        ]
-      }
+    "agents": {
+        "routing": {
+            "architecture": {
+                "keywords": ["architecture", "pattern", "structure", "boundary", "abstraction"],
+                "agent": "architecture-guardian"
+            },
+            "physics": {
+                "keywords": ["physics", "rapier", "collision", "movement", "jump"],
+                "agent": "game-physics-expert"
+            },
+            "design": {
+                "keywords": ["gameplay", "mechanic", "feature", "design", "balance"],
+                "agent": "game-design-innovator"
+            }
+        }
     },
-    "logging": {
-      "structured": {
-        "description": "Use LOG.* from @observability, never console.*",
-        "examples": [
-          "LOG.info('PLAYER_SPAWN', { subsystem: 'player', message: '...' });"
-        ],
-        "antiPatterns": [
-          "console.log('Player spawned');",
-          "console.error('Error:', error);"
-        ]
-      }
+    "testing": {
+        "framework": "bun:test",
+        "format": "commonjs",
+        "extension": ".cjs",
+        "directory": "tests/",
+        "coverage": {
+            "enabled": false
+        }
     },
-    "managers": {
-      "singleton": {
-        "description": "Extend BaseManager with init() and getInstance()",
-        "example": "class MyManager extends BaseManager { ... }"
-      }
-    },
-    "events": {
-      "namespaced": {
-        "description": "Use namespace:action format via EventNames",
-        "examples": [
-          "EventNames.PLAYER_JUMP = 'player:jump'"
-        ]
-      }
+    "build": {
+        "tool": "vite",
+        "configs": {
+            "dev": "vite/config.dev.mjs",
+            "prod": "vite/config.prod.mjs"
+        },
+        "output": "dist/"
     }
-  },
-  "validation": {
-    "preCommit": {
-      "checkMagicStrings": true,
-      "checkVendorImports": true,
-      "checkConsoleUsage": true,
-      "checkBarrelImports": true
-    },
-    "architecture": {
-      "enforceVendorAbstraction": true,
-      "enforceBarrelExports": true,
-      "enforceConstants": true,
-      "enforceStructuredLogging": true
-    }
-  },
-  "ignore": [
-    "node_modules/**",
-    "dist/**",
-    "bun.lock",
-    ".git/**",
-    ".husky/**",
-    "*.log",
-    "src/constants/Assets.js"
-  ],
-  "agents": {
-    "routing": {
-      "architecture": {
-        "keywords": ["architecture", "pattern", "structure", "boundary", "abstraction"],
-        "agent": "architecture-guardian"
-      },
-      "physics": {
-        "keywords": ["physics", "rapier", "collision", "movement", "jump"],
-        "agent": "game-physics-expert"
-      },
-      "design": {
-        "keywords": ["gameplay", "mechanic", "feature", "design", "balance"],
-        "agent": "game-design-innovator"
-      }
-    }
-  },
-  "testing": {
-    "framework": "bun:test",
-    "format": "commonjs",
-    "extension": ".cjs",
-    "directory": "tests/",
-    "coverage": {
-      "enabled": false
-    }
-  },
-  "build": {
-    "tool": "vite",
-    "configs": {
-      "dev": "vite/config.dev.mjs",
-      "prod": "vite/config.prod.mjs"
-    },
-    "output": "dist/"
-  }
 }

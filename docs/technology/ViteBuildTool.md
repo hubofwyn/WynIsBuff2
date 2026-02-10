@@ -5,15 +5,15 @@
 - [Overview](#overview)
 - [Version Information](#version-information)
 - [Core Concepts](#core-concepts)
-    - [Development Server](#development-server)
-    - [Build Process](#build-process)
-    - [Configuration](#configuration)
-    - [Plugins](#plugins)
+  - [Development Server](#development-server)
+  - [Build Process](#build-process)
+  - [Configuration](#configuration)
+  - [Plugins](#plugins)
 - [Implementation in WynIsBuff2](#implementation-in-wynisbuff2)
-    - [Development Configuration](#development-configuration)
-    - [Production Configuration](#production-configuration)
-    - [NPM Scripts](#npm-scripts)
-    - [Asset Handling](#asset-handling)
+  - [Development Configuration](#development-configuration)
+  - [Production Configuration](#production-configuration)
+  - [NPM Scripts](#npm-scripts)
+  - [Asset Handling](#asset-handling)
 - [Best Practices](#best-practices)
 - [Common Issues and Solutions](#common-issues-and-solutions)
 - [Resources](#resources)
@@ -26,8 +26,8 @@ Vite (French for "quick", pronounced `/vit/`) is a modern frontend build tool th
 
 - **Package**: vite
 - **Version**: 5.3.1
-- **Official Documentation**: https://vitejs.dev/
-- **GitHub Repository**: https://github.com/vitejs/vite
+- **Official Documentation**: <https://vitejs.dev/>
+- **GitHub Repository**: <https://github.com/vitejs/vite>
 
 ## Core Concepts
 
@@ -204,7 +204,7 @@ import logoImg from './assets/logo.png';
 this.load.image('logo', logoImg);
 ```
 
-2. **Public Assets**: Assets in the `public` folder are served as-is:
+1. **Public Assets**: Assets in the `public` folder are served as-is:
 
 ```javascript
 // In preload method

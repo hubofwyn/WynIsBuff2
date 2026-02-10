@@ -13,6 +13,7 @@ The Audio Unlock System ensures audio works properly across all browsers by hand
 ### Browser Autoplay Policy
 
 Modern browsers require user interaction before audio can play:
+
 - **Web Audio API**: Requires user gesture to start AudioContext
 - **iOS Safari**: Has additional restrictions requiring silent sound playback
 - **Chrome/Firefox**: Block autoplay unless user has interacted with site
@@ -31,7 +32,7 @@ Modern browsers require user interaction before audio can play:
 
 ### Components
 
-```
+```text
 src/core/
 ├── AudioUnlockManager.js    ← Core unlock logic (singleton)
 └── AudioUnlockUI.js          ← "Tap to Play" overlay UI
@@ -41,7 +42,7 @@ src/main.js                   ← Integration point (pre-boot)
 
 ### Data Flow
 
-```
+```text
 Page Load
     ↓
 initGame() called
@@ -87,6 +88,7 @@ getStatus(): Object
 **Observability:**
 
 All unlock events are logged with structured logging:
+
 - `AUDIO_UNLOCK_REQUIRED` - Unlock needed
 - `AUDIO_UNLOCK_ATTEMPT` - Unlock attempt started
 - `AUDIO_UNLOCK_SUCCESS` - Unlock succeeded
@@ -238,6 +240,7 @@ async function customUnlockFlow() {
 ### Known Issues
 
 **None** - System handles all known edge cases:
+
 - ✅ iOS Safari silent mode
 - ✅ Browser autoplay settings
 - ✅ Tab backgrounding during unlock

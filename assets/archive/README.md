@@ -20,4 +20,3 @@ Use this folder to keep the working set lean while preserving files that may be 
   - Delete if confirmed unused
 
 See also: ASSET_MANAGEMENT.md (Orphaned Assets Policy)
-

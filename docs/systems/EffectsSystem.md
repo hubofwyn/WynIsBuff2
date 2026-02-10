@@ -6,9 +6,9 @@ This document explains how WynIsBuff2 implements game effects (particles, camera
 
 - Event-driven: Effect managers listen to namespaced events via `EventSystem`.
 - Managers:
-    - `ParticleManager` — Builds and emits particles for jump/land/move and custom FX.
-    - `CameraManager` — Screen shake, zoom, and camera reactions to events.
-    - `ColorManager` — Palette and color transitions based on state.
+  - `ParticleManager` — Builds and emits particles for jump/land/move and custom FX.
+  - `CameraManager` — Screen shake, zoom, and camera reactions to events.
+  - `ColorManager` — Palette and color transitions based on state.
 - Assets: All particle textures come from generated constants in `src/constants/Assets.js`.
 - Scenes: Effect managers are created in `Game` scene and cleaned up with the scene lifecycle.
 
@@ -98,14 +98,14 @@ Cleanup:
 ## Debugging Effects
 
 - Observability:
-    - `LOG` tags for creation and emission (`PARTICLEMANAGER_*`).
-    - `DebugContext` captures player, physics, and input state automatically.
+  - `LOG` tags for creation and emission (`PARTICLEMANAGER_*`).
+  - `DebugContext` captures player, physics, and input state automatically.
 - Quick checks:
-    - Preloader loads `ImageAssets.PARTICLE_WHITE`
-    - Events carry `position` and `velocity` as required
-    - Ensure handlers are attached (constructed in `Game.create()`)
+  - Preloader loads `ImageAssets.PARTICLE_WHITE`
+  - Events carry `position` and `velocity` as required
+  - Ensure handlers are attached (constructed in `Game.create()`)
 - Manual emit (custom):
-    - Emit `EventNames.EMIT_PARTICLES` with `{ type, position, config }` from any scene/manager for one-off testing.
+  - Emit `EventNames.EMIT_PARTICLES` with `{ type, position, config }` from any scene/manager for one-off testing.
 
 Example (custom FX):
 

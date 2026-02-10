@@ -1,18 +1,18 @@
 /**
  * Design Tokens - WynIsBuff2
- * 
+ *
  * Centralized design system for consistent UI across all screens
- * 
+ *
  * ARCHITECTURE:
  * - Single source of truth for spacing, colors, typography
  * - Responsive values using clamp() for fluid scaling
  * - Semantic naming for easy theming
  * - Follows CSS custom properties pattern
- * 
+ *
  * USAGE:
  * ```javascript
  * import { DesignTokens } from '../constants/DesignTokens.js';
- * 
+ *
  * // Use in Phaser scenes
  * this.add.text(x, y, 'Title', {
  *     fontSize: DesignTokens.fontSize.heading,

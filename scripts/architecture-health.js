@@ -35,7 +35,7 @@ function runCheck(name, command, options = {}) {
     try {
         const output = execSync(command, {
             stdio: silent ? 'pipe' : 'inherit',
-            encoding: 'utf8'
+            encoding: 'utf8',
         });
 
         if (silent) {
@@ -58,24 +58,19 @@ const results = [];
 
 // Check 1: A-Spec Validation
 console.log(colorize('1. A-Spec Schema Validation', 'blue'));
-const aspecResult = runCheck(
-    'A-Spec Validation',
-    'bun run arch:validate',
-    { silent: true }
-);
+const aspecResult = runCheck('A-Spec Validation', 'bun run arch:validate', { silent: true });
 results.push({ name: 'A-Spec Validation', ...aspecResult });
-console.log(aspecResult.success ?
-    colorize('   ✅ A-Spec schema valid\n', 'green') :
-    colorize('   ❌ A-Spec validation failed\n', 'red')
+console.log(
+    aspecResult.success
+        ? colorize('   ✅ A-Spec schema valid\n', 'green')
+        : colorize('   ❌ A-Spec validation failed\n', 'red')
 );
 
 // Check 2: Layer Boundaries
 console.log(colorize('2. Layer Boundary Compliance', 'blue'));
-const boundariesResult = runCheck(
-    'Layer Boundaries',
-    'bun run lint:boundaries --max-warnings=1',
-    { silent: true }
-);
+const boundariesResult = runCheck('Layer Boundaries', 'bun run lint:boundaries --max-warnings=1', {
+    silent: true,
+});
 results.push({ name: 'Layer Boundaries', ...boundariesResult });
 
 // Parse boundary results to show warning count
@@ -87,52 +82,52 @@ if (boundariesResult.output) {
     }
 }
 
-console.log(boundariesResult.success ?
-    colorize(`   ✅ Boundaries valid (${warningCount} warning allowed)\n`, 'green') :
-    colorize(`   ❌ Boundary violations detected (${warningCount} issues)\n`, 'red')
+console.log(
+    boundariesResult.success
+        ? colorize(`   ✅ Boundaries valid (${warningCount} warning allowed)\n`, 'green')
+        : colorize(`   ❌ Boundary violations detected (${warningCount} issues)\n`, 'red')
 );
 
 // Check 3: Dependency Graph
 console.log(colorize('3. Dependency Graph Validation', 'blue'));
-const depsResult = runCheck(
-    'Dependency Graph',
-    'bun run deps:check',
-    { silent: true }
-);
+const depsResult = runCheck('Dependency Graph', 'bun run deps:check', { silent: true });
 results.push({ name: 'Dependency Graph', ...depsResult });
-console.log(depsResult.success ?
-    colorize('   ✅ No circular or forbidden dependencies\n', 'green') :
-    colorize('   ❌ Dependency issues detected\n', 'red')
+console.log(
+    depsResult.success
+        ? colorize('   ✅ No circular or forbidden dependencies\n', 'green')
+        : colorize('   ❌ Dependency issues detected\n', 'red')
 );
 
 // Check 4: Test Suite
 console.log(colorize('4. Test Suite', 'blue'));
-const testResult = runCheck(
-    'Test Suite',
-    'bun test',
-    { silent: true }
-);
+const testResult = runCheck('Test Suite', 'bun test', { silent: true });
 results.push({ name: 'Test Suite', ...testResult });
-console.log(testResult.success ?
-    colorize('   ✅ All tests passing\n', 'green') :
-    colorize('   ❌ Tests failing\n', 'red')
+console.log(
+    testResult.success
+        ? colorize('   ✅ All tests passing\n', 'green')
+        : colorize('   ❌ Tests failing\n', 'red')
 );
 
 // Calculate health score
-const passed = results.filter(r => r.success).length;
+const passed = results.filter((r) => r.success).length;
 const total = results.length;
 const score = Math.round((passed / total) * 100);
 
 // Display summary
 console.log('='.repeat(60));
-console.log(colorize(`\n📊 Health Score: ${passed}/${total} (${score}%)`, score === 100 ? 'green' : 'yellow'));
+console.log(
+    colorize(
+        `\n📊 Health Score: ${passed}/${total} (${score}%)`,
+        score === 100 ? 'green' : 'yellow'
+    )
+);
 
 if (score === 100) {
     console.log(colorize('🎉 Perfect architectural health!\n', 'green'));
 } else {
     console.log(colorize('\n💡 Issues detected. Run individual checks for details:\n', 'yellow'));
 
-    results.forEach(result => {
+    results.forEach((result) => {
         if (!result.success) {
             console.log(colorize(`   • ${result.name}`, 'red'));
         }
@@ -155,10 +150,14 @@ try {
         const violations = status.violationStatus.current;
         console.log(colorize('\n⚠️  Known Issues:', 'cyan'));
         if (violations.dependencyCruiser) {
-            console.log(`   • Dependency: ${violations.dependencyCruiser.errors} errors, ${violations.dependencyCruiser.warnings} warnings`);
+            console.log(
+                `   • Dependency: ${violations.dependencyCruiser.errors} errors, ${violations.dependencyCruiser.warnings} warnings`
+            );
         }
         if (violations.eslintBoundaries) {
-            console.log(`   • Boundaries: ${violations.eslintBoundaries.errors} errors, ${violations.eslintBoundaries.warnings} warnings`);
+            console.log(
+                `   • Boundaries: ${violations.eslintBoundaries.errors} errors, ${violations.eslintBoundaries.warnings} warnings`
+            );
         }
     }
 } catch (e) {

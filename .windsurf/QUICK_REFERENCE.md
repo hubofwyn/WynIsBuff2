@@ -79,10 +79,13 @@ bun run lint && bun run test && bun run arch:health
 ## Adding Events
 
 1. Add to `src/constants/EventNames.js`:
+
    ```javascript
    PLAYER_JUMP: 'player:jump',
    ```
+
 2. Use in code:
+
    ```javascript
    this.eventSystem.emit(EventNames.PLAYER_JUMP, data);
    ```
@@ -90,9 +93,11 @@ bun run lint && bun run test && bun run arch:health
 ## Adding Scenes
 
 1. Add to `src/constants/SceneKeys.js`:
+
    ```javascript
    MY_SCENE: 'MyScene',
    ```
+
 2. Create scene extending `BaseScene`
 3. Use key: `super(SceneKeys.MY_SCENE)`
 

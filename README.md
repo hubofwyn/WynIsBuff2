@@ -69,7 +69,7 @@ bun run test          # Run tests (Path A runner)
 
 ## Project Structure
 
-```
+```text
 WynIsBuff2/
 ├── assets/              # Game assets
 │   └── manifest.json    # Asset catalog (generates constants)
@@ -152,6 +152,7 @@ this.eventSystem.on(EventNames.LEVEL_COMPLETE, this.handleComplete);
 
 1. Place asset in `assets/` subdirectory
 2. Add to `/assets/manifest.json`:
+
     ```json
     {
         "type": "image",
@@ -159,6 +160,7 @@ this.eventSystem.on(EventNames.LEVEL_COMPLETE, this.handleComplete);
         "path": "images/my-asset.png"
     }
     ```
+
 3. Run `bun run generate-assets`
 4. Use via `ImageAssets.MY_ASSET`
 

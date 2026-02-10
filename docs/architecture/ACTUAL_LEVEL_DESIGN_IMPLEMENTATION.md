@@ -15,12 +15,14 @@ This document describes the **actual, working implementation** of level design i
 ## Current Implementation Status
 
 ### ✅ Fully Implemented
+
 - **Level 1** ("First Steps") - Complete with boss, collectibles, platforms
 - **Level 1 Scene 2** ("Victory Lap") - Post-boss celebration scene
 - **Character Selection** - 3 playable characters
 - **PulsatingBoss** - Level 1's unique obstacle-based boss
 
 ### 📝 Defined But Not Implemented
+
 - Level 2, 3, 4, 5 - Data exists in `LevelData.js` but not tested/used
 - Generic `BossController` - Code exists but not used
 - Generic `EnemyController` - Code exists but not spawned in level 1
@@ -30,7 +32,8 @@ This document describes the **actual, working implementation** of level design i
 ## Architecture: How Levels Actually Work
 
 ### **Scene Flow**
-```
+
+```text
 Preloader → WelcomeScene → CharacterSelect → MainMenu → Game Scene
                                                           ↓
                                                     LevelManager loads level data
@@ -38,7 +41,7 @@ Preloader → WelcomeScene → CharacterSelect → MainMenu → Game Scene
 
 ### **Component Hierarchy**
 
-```
+```text
 Game.js (Scene)
   ├─ LevelManager (Facade for all level systems)
   │   ├─ LevelLoader (Loads level data, spawns entities)
@@ -148,9 +151,11 @@ All levels are defined as **static configuration objects**, not procedurally gen
 ## Level 1: "First Steps" - Detailed Analysis
 
 ### **Theme**: Gym/Buff Training
+
 ### **Goal**: Navigate platforms, avoid pulsating boss, reach completion trigger
 
 ### **Playable Characters** (3 options)
+
 1. **Ila** (`ilaSprite`) - "Favorite Sister" - Swift and agile
 2. **Axel** (`axelSprite`) - "Not Buff Axel" - Balanced fighter
 3. **Wyn** (`wynSprite`) - "Wyn the Buff" - Maximum power
@@ -158,6 +163,7 @@ All levels are defined as **static configuration objects**, not procedurally gen
 All characters use the **same PlayerController** with identical physics. Character selection is **cosmetic only** (different sprites).
 
 ### **Physics System**
+
 - **Engine**: Rapier (via PhysicsManager)
 - **Player**: KinematicCharacterController (advanced movement, not basic RigidBody)
 - **Gravity**: Defined in `PhysicsConfig` (default: 9.8 m/s²)
@@ -168,13 +174,15 @@ All characters use the **same PlayerController** with identical physics. Charact
 
 **Dimensions**: 1024px wide × 768px tall viewport
 
-**Ground**: 
+**Ground**:
+
 - Position: y=700
 - Width: 1024px
 - Height: 50px
 - Type: Static platform
 
 **Static Platforms**: 10 platforms
+
 ```javascript
 // Starting section
 { x: 200, y: 640, width: 150, height: 20 }  // First jump
@@ -202,14 +210,17 @@ All characters use the **same PlayerController** with identical physics. Charact
 ### **Collectibles**: 8 items
 
 **Proteins** (6 items, 10-25 points each):
+
 - On main path platforms (4 items)
 - On bonus platforms (2 items)
 
 **Dumbbells** (2 items, 50-100 points):
+
 - Victory platform (50 points)
 - Secret high jump reward (100 points)
 
 **Collection Mechanic**:
+
 - Managed by `CollectibleManager`
 - Sensor colliders detect player overlap
 - Emits `COLLECTIBLE_COLLECTED` event
@@ -222,6 +233,7 @@ All characters use the **same PlayerController** with identical physics. Charact
 **Goal**: Avoid it, don't fight it
 
 **Implementation** (`src/modules/enemy/PulsatingBoss.js`):
+
 ```javascript
 class PulsatingBoss {
     // Visual
@@ -247,6 +259,7 @@ class PulsatingBoss {
 ```
 
 **Boss Mechanics**:
+
 1. Player must navigate around the boss
 2. Touching boss triggers scene transition (not death)
 3. Transition goes to `level1_scene2` (Victory Lap)
@@ -255,18 +268,21 @@ class PulsatingBoss {
 ### **Decorations**: 14 elements
 
 **Text Signs** (4 items):
+
 - "GET BUFF!" at start
 - "KEEP GOING!" mid-level
 - "DANGER AHEAD!" before boss
 - "VICTORY!" at end
 
 **Emojis** (4 items):
+
 - 🏋️ Weight lifter
 - 💪 Flex
 - 🥤 Protein shake
 - 🏆 Trophy (at victory area)
 
 **Background Props** (2 items):
+
 - Weight rack (gray rectangle)
 - Bench (gray rectangle)
 
@@ -275,6 +291,7 @@ class PulsatingBoss {
 ### **Background Layers**
 
 **Parallax Scrolling** (3 layers):
+
 1. Sky layer (scrollFactor: 0.2) - Slowest
 2. Mountains layer (scrollFactor: 0.5) - Medium
 3. Foreground layer (scrollFactor: 0.8) - Fastest
@@ -284,12 +301,14 @@ class PulsatingBoss {
 ### **Level Completion**
 
 **Trigger Zone**:
+
 - Position: x=1150, y=400
 - Size: 60px × 100px
 - Type: Sensor collider
 - Requirement: `requireAllCollectibles: false` (can skip collectibles)
 
 **Completion Flow**:
+
 1. Player enters trigger zone
 2. `LevelCompletionManager` detects overlap
 3. Emits `LEVEL_COMPLETE` event
@@ -299,6 +318,7 @@ class PulsatingBoss {
 ### **UI Elements**
 
 **HUD** (managed by UIManager):
+
 - Score display
 - Health/lives (if implemented)
 - Instruction text: "Get Buff! Use WASD or Arrow Keys to pump up and SPACE to jump!"
@@ -312,6 +332,7 @@ class PulsatingBoss {
 ### **Purpose**: Celebration scene after avoiding boss
 
 **Differences from Level 1**:
+
 - Wider (1600px vs 1024px)
 - Gold-colored platforms (0xFFD700)
 - 1 moving platform (vertical, 150px distance)
@@ -329,18 +350,21 @@ class PulsatingBoss {
 ### **Movement System**: KinematicCharacterController
 
 **Not** a simple RigidBody - uses Rapier's advanced character controller for:
+
 - Smooth movement
 - Proper ground detection
 - Coyote time (grace period after leaving platform)
 - Jump buffering (press jump slightly before landing)
 - Variable jump height (hold jump for higher)
 
-### **Controls**:
+### **Controls**
+
 - **Movement**: WASD or Arrow Keys
 - **Jump**: SPACE
 - **Abilities**: (Not implemented in level 1)
 
-### **Physics Properties** (from PlayerController):
+### **Physics Properties** (from PlayerController)
+
 ```javascript
 // Movement
 maxSpeed: 5.0 m/s (horizontal)
@@ -357,7 +381,8 @@ jumpBufferTime: 0.1s (early jump input)
 gravity: 9.8 m/s² (from PhysicsConfig)
 ```
 
-### **Player Sprite**:
+### **Player Sprite**
+
 - Selected character sprite (ilaSprite, axelSprite, or wynSprite)
 - Animations: idle, walk, jump (if defined in Preloader)
 - Scale: Adjusted for larger sprites
@@ -368,18 +393,21 @@ gravity: 9.8 m/s² (from PhysicsConfig)
 ## Enemy System (Partially Implemented)
 
 ### **EnemyController** (`src/modules/enemy/EnemyController.js`)
+
 - Generic enemy class
 - **Not used in level 1** (enemies array is empty)
 - Would support basic AI and physics
 - Designed for future levels
 
 ### **BossController** (`src/modules/enemy/BossController.js`)
+
 - Generic boss class
 - **Not used** (level 1 uses PulsatingBoss instead)
 - Would support more complex boss fights
 - Designed for future levels
 
 ### **PulsatingBoss** (Level 1 specific)
+
 - **Only implemented boss type**
 - Obstacle-based, not combat-based
 - See detailed description above
@@ -388,7 +416,7 @@ gravity: 9.8 m/s² (from PhysicsConfig)
 
 ## Level Loading Process
 
-### **Flow** (from `LevelLoader.js`):
+### **Flow** (from `LevelLoader.js`)
 
 ```javascript
 1. Game.create() calls LevelManager.loadLevel('level1')
@@ -410,8 +438,10 @@ gravity: 9.8 m/s² (from PhysicsConfig)
 5. Game loop begins
 ```
 
-### **Dynamic Imports**:
+### **Dynamic Imports**
+
 Boss classes are loaded dynamically to avoid loading unused code:
+
 ```javascript
 // In LevelLoader.js
 if (levelConfig.boss.type === 'pulsating') {
@@ -425,14 +455,16 @@ if (levelConfig.boss.type === 'pulsating') {
 
 ## Event-Driven Architecture
 
-### **Key Events** (from `EventNames.js`):
+### **Key Events** (from `EventNames.js`)
 
 **Level Events**:
+
 - `LEVEL_LOADED` - Level initialization complete
 - `LEVEL_COMPLETE` - Player reached completion trigger
 - `SCENE_TRANSITION` - Transition to different scene (e.g., boss passed)
 
 **Player Events**:
+
 - `PLAYER_SPAWN` - Player created
 - `PLAYER_JUMP` - Player jumped
 - `PLAYER_LAND` - Player landed on ground
@@ -440,14 +472,17 @@ if (levelConfig.boss.type === 'pulsating') {
 - `PLAYER_DEATH` - Player died
 
 **Collectible Events**:
+
 - `COLLECTIBLE_COLLECTED` - Player collected item
 
 **Collision Events**:
+
 - `COLLISION_START` - Physics collision began
 - `COLLISION_END` - Physics collision ended
 
-### **Event Flow Example** (Collectible):
-```
+### **Event Flow Example** (Collectible)
+
+```text
 1. Player overlaps collectible sensor
 2. PhysicsManager detects collision
 3. Emits COLLISION_START event
@@ -464,23 +499,27 @@ if (levelConfig.boss.type === 'pulsating') {
 ## Factory Pattern for Level Elements
 
 ### **GroundFactory**
+
 - Creates static ground platform
 - Single large rectangle at bottom of level
 - Fixed RigidBody with box collider
 
 ### **PlatformFactory**
+
 - Creates static platforms from array
 - Each platform: position, size, color
 - Fixed RigidBody with box collider
 - Stores body-to-sprite mapping for rendering
 
 ### **MovingPlatformController**
+
 - Creates kinematic platforms (not in level 1)
 - Supports horizontal/vertical movement
 - Updates platform positions each frame
 - Syncs physics body with sprite
 
 ### **CollectibleManager**
+
 - Spawns collectibles from array
 - Creates sensor colliders (no physics response)
 - Tracks collected items
@@ -490,7 +529,8 @@ if (levelConfig.boss.type === 'pulsating') {
 
 ## Differences from Design Documents
 
-### **What's Actually Implemented**:
+### **What's Actually Implemented**
+
 ✅ Level 1 with platforms, collectibles, boss  
 ✅ Level 1 Scene 2 (victory lap)  
 ✅ Character selection (3 characters)  
@@ -500,7 +540,8 @@ if (levelConfig.boss.type === 'pulsating') {
 ✅ Parallax backgrounds  
 ✅ Collectible system  
 
-### **What's Planned But Not Implemented**:
+### **What's Planned But Not Implemented**
+
 ❌ Levels 2-5 (data exists, not tested)  
 ❌ Generic enemy spawning (code exists, not used)  
 ❌ Combat-based bosses (BossController not used)  
@@ -509,7 +550,8 @@ if (levelConfig.boss.type === 'pulsating') {
 ❌ External level file loading  
 ❌ Level editor  
 
-### **Architectural Simplifications**:
+### **Architectural Simplifications**
+
 - **No modular level chunks** - Levels are monolithic configs
 - **No level streaming** - Entire level loads at once
 - **No dynamic difficulty** - Static configurations
@@ -520,9 +562,10 @@ if (levelConfig.boss.type === 'pulsating') {
 
 ## Level Design Workflow (Current)
 
-### **To Add a New Level**:
+### **To Add a New Level**
 
 1. **Add level data** to `src/constants/LevelData.js`:
+
    ```javascript
    export const LevelData = {
        level2: {
@@ -534,6 +577,7 @@ if (levelConfig.boss.type === 'pulsating') {
    ```
 
 2. **Update level list** in `getLevelIds()`:
+
    ```javascript
    export function getLevelIds() {
        return ['level1', 'level1_scene2', 'level2'];
@@ -548,6 +592,7 @@ if (levelConfig.boss.type === 'pulsating') {
    - Run `bun run generate-assets`
 
 4. **Test level**:
+
    ```javascript
    // In MainMenu or Game scene
    this.scene.start(SceneKeys.GAME, { levelId: 'level2' });
@@ -559,14 +604,16 @@ if (levelConfig.boss.type === 'pulsating') {
 
 ## Performance Considerations
 
-### **Optimizations**:
+### **Optimizations**
+
 - Static platforms use shared textures
 - Physics bodies reuse collider shapes
 - Decorations are visual only (no physics)
 - Boss uses dynamic import (lazy loading)
 - Parallax layers use sprite reuse
 
-### **Limitations**:
+### **Limitations**
+
 - All level data in memory (not streamed)
 - No object pooling for collectibles
 - No spatial partitioning for collisions
@@ -576,13 +623,15 @@ if (levelConfig.boss.type === 'pulsating') {
 
 ## Testing & Debugging
 
-### **Observability**:
+### **Observability**
+
 - All level events logged via `LOG` system
 - Debug mode shows physics bodies
 - Error pattern detection for crashes
 - State providers for player/physics debugging
 
-### **Debug Commands** (in browser console):
+### **Debug Commands** (in browser console)
+
 ```javascript
 // View level data
 window.debugAPI.getLevelConfig('level1')
@@ -601,7 +650,8 @@ window.LOG.export()
 
 ## Summary
 
-### **Current Reality**:
+### **Current Reality**
+
 - **1 fully implemented level** (level 1 + victory lap)
 - **Simple, data-driven architecture** (no complex systems)
 - **Event-driven communication** (clean separation of concerns)
@@ -609,21 +659,24 @@ window.LOG.export()
 - **Obstacle-based boss** (avoid, not fight)
 - **3 cosmetic character choices** (same physics)
 
-### **Architecture Strengths**:
+### **Architecture Strengths**
+
 - ✅ Clean separation (LevelManager facade)
 - ✅ Event-driven (loose coupling)
 - ✅ Factory pattern (reusable)
 - ✅ Observable (comprehensive logging)
 - ✅ Extensible (easy to add levels)
 
-### **Architecture Gaps**:
+### **Architecture Gaps**
+
 - ❌ No modular level system
 - ❌ No advanced enemy AI
 - ❌ No combat mechanics
 - ❌ No checkpoint/save system
 - ❌ No level editor
 
-### **Recommendation**:
+### **Recommendation**
+
 The current implementation is **solid for a simple platformer**. Before adding complexity (modular chunks, procedural generation, advanced AI), **complete and test levels 2-5** using the existing system. The architecture can scale to 5-10 levels without major changes.
 
 ---

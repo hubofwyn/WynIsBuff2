@@ -6,7 +6,7 @@ This document outlines the asset structure for the WynIsBuff2 game project. Unde
 
 ## Main Asset Directory Structure
 
-```
+```text
 
 ### 3. Sounds Directory (`assets/sounds/`)
 
@@ -40,7 +40,7 @@ sounds/
 ├── hover3.mp3
 └── hover4.mp3
 
-```
+```text
 assets/
 ├── 2D Pixel Dungeon Asset Pack v2.0/  # Original dungeon tileset assets
 ├── Enemy_Animations_Set/              # Original enemy animation spritesheets
@@ -54,7 +54,7 @@ assets/
 
 Static images organized by asset type:
 
-```
+```text
 images/
 ├── characters/                        # Character sprites
 ├── items/                             # Game items
@@ -68,7 +68,7 @@ images/
 
 Contains animation frames and organized sprite collections:
 
-```
+```text
 spritesheets/
 ├── animations/
 │   └── characters/
@@ -109,10 +109,10 @@ spritesheets/
 Animation frames follow a consistent naming pattern:
 
 - Character animations: `[character_type]_[animation_state]_v[variation]_[frame_number].png`
-    - Example: `skeleton1_attack_v1_1.png`
+  - Example: `skeleton1_attack_v1_1.png`
 
 - Item animations: `[item_name]_[variation]_[frame_number].png`
-    - Example: `chest_1_1.png`
+  - Example: `chest_1_1.png`
 
 ## Asset Processing
 

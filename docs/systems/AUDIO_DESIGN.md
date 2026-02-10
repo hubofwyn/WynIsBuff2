@@ -54,7 +54,7 @@ The game features a triple jump system where each jump should feel progressively
 
 **ElevenLabs Prompt**:
 
-```
+```text
 A short, punchy platform game jump sound. Soft fabric whoosh with a quick puff of air,
 like a character pushing off the ground. Clean, not harsh. Mid-range frequencies,
 slightly muffled, organic feel. 0.3 seconds maximum. No echo or reverb.
@@ -79,7 +79,7 @@ slightly muffled, organic feel. 0.3 seconds maximum. No echo or reverb.
 
 **ElevenLabs Prompt**:
 
-```
+```text
 A medium-energy platform game double jump sound. Enhanced whoosh with magical sparkle,
 like activating a special ability mid-air. Include subtle energy charge-up (tiny reverse
 whoosh), then explosive release. Brighter and more energetic than a regular jump.
@@ -108,14 +108,14 @@ High-frequency shimmer. 0.4 seconds. Light airy tail.
 - **Dynamics**: LOUD (+6-8dB over Jump 1), compressed for maximum impact
 - **Tone**: Epic, heroic, explosive, cinematic
 - **Layering**: Multiple elements:
-    - Sub-bass rumble (explosion)
-    - Mid punch (impact)
-    - High shimmer (magic/energy)
-    - Ascending pitch sweep (power-up feeling)
+  - Sub-bass rumble (explosion)
+  - Mid punch (impact)
+  - High shimmer (magic/energy)
+  - Ascending pitch sweep (power-up feeling)
 
 **ElevenLabs Prompt**:
 
-```
+```text
 An EPIC, explosive triple jump sound for a platform game - the ultimate movement ability.
 MASSIVE energy burst with cinematic impact. Combine: rocket boost ignition, super smash
 explosion, energy beam charge-up. Full frequency spectrum - deep sub-bass rumble, punchy
@@ -141,7 +141,7 @@ power-up feel. Dramatic long tail with reverb. 0.7 seconds. Hero moment. BUFF.
 
 **ElevenLabs Prompt**:
 
-```
+```text
 A soft landing sound for a platform game. Gentle footstep impact, like soft shoes touching
 ground from a small jump. Muffled thump, low-mid frequencies, organic feel. Very short,
 0.15 seconds. No harshness.
@@ -163,7 +163,7 @@ ground from a small jump. Muffled thump, low-mid frequencies, organic feel. Very
 
 **ElevenLabs Prompt**:
 
-```
+```text
 A medium impact landing sound for a platform game. Solid footstep with dust cloud puff.
 Mid-range thump with airy high-frequency dust sound. Satisfying but not harsh. 0.2 seconds.
 ```
@@ -184,7 +184,7 @@ Mid-range thump with airy high-frequency dust sound. Satisfying but not harsh. 0
 
 **ElevenLabs Prompt**:
 
-```
+```text
 A HEAVY impact landing sound for a platform game. Player fell from great height.
 Strong low-end rumble with sharp metallic transient. Screen shake quality - deep,
 weighty, slightly dangerous. 0.3 seconds with rumbling tail.
@@ -207,7 +207,7 @@ weighty, slightly dangerous. 0.3 seconds with rumbling tail.
 
 **ElevenLabs Prompt**:
 
-```
+```text
 Quick, light footstep sound for platform game running. Soft tap, slightly synthetic
 and cartoony (not realistic). Very short, 0.1 seconds. Can loop seamlessly.
 Quiet and non-fatiguing.
@@ -228,7 +228,7 @@ Quiet and non-fatiguing.
 
 **ElevenLabs Prompt**:
 
-```
+```text
 Fast dash/slide sound for platform game. Quick horizontal whoosh through air with
 slight friction or static quality. Speedy, energetic. 0.4 seconds.
 ```
@@ -253,7 +253,7 @@ slight friction or static quality. Speedy, energetic. 0.4 seconds.
 
 **ElevenLabs Prompt**:
 
-```
+```text
 A pleasant coin/collectible pickup sound for a platform game. Light bell or xylophone
 tone, bright and crystalline. Quick, rewarding but not overwhelming. 0.2 seconds with
 short ringing tail. Positive, happy feeling.
@@ -274,7 +274,7 @@ short ringing tail. Positive, happy feeling.
 
 **ElevenLabs Prompt**:
 
-```
+```text
 A significant power-up collection sound for a platform game. Magical energy absorption
 with ascending pitch (arpeggio or chord). Full spectrum, bright and powerful. Charge-up
 feel, like gaining a new ability. 0.7 seconds with sparkly tail.
@@ -295,7 +295,7 @@ feel, like gaining a new ability. 0.7 seconds with sparkly tail.
 
 **ElevenLabs Prompt**:
 
-```
+```text
 A rare treasure item pickup sound for a platform game. SPECIAL golden seed collection.
 Majestic, celebratory, like opening a treasure chest. Rich full spectrum with sparkly
 highs. Slow magical build-up, then satisfying payoff. 1 second. Makes player feel lucky.
@@ -320,7 +320,7 @@ highs. Slow magical build-up, then satisfying payoff. 1 second. Makes player fee
 
 **ElevenLabs Prompt**:
 
-```
+```text
 A satisfying enemy hit sound for a platform game. Punchy impact when player damages enemy.
 Mid-range crunch with slight "squish" quality. Quick, 0.15 seconds. Feels rewarding.
 ```
@@ -340,7 +340,7 @@ Mid-range crunch with slight "squish" quality. Quick, 0.15 seconds. Feels reward
 
 **ElevenLabs Prompt**:
 
-```
+```text
 A player damage sound for a platform game. Negative feedback - player got hit. Harsh
 mid-range with downward pitch bend, slightly metallic or synthetic. Quick, 0.25 seconds.
 Clear "danger" feeling but not annoying. "Oof" or "ouch" quality without voice.
@@ -361,7 +361,7 @@ Clear "danger" feeling but not annoying. "Oof" or "ouch" quality without voice.
 
 **ElevenLabs Prompt**:
 
-```
+```text
 An enemy defeat sound for a platform game. Small explosion or "poof" when enemy is destroyed.
 Full spectrum, victorious feeling. Quick explosive transient then fadeout. 0.4 seconds.
 Satisfying finality.
@@ -386,7 +386,7 @@ Satisfying finality.
 
 **ElevenLabs Prompt**:
 
-```
+```text
 A dramatic boss entrance sound for a platform game. EPIC, intimidating arrival. Deep
 sub-bass rumble building to menacing crescendo. Cinematic, creates tension and excitement.
 2.5 seconds. Makes player go "oh no..." then "let's do this!"
@@ -407,7 +407,7 @@ sub-bass rumble building to menacing crescendo. Cinematic, creates tension and e
 
 **ElevenLabs Prompt**:
 
-```
+```text
 A boss attack charge-up sound for a platform game. Rising tension, energy building,
 danger warning. Ascending pitch from low to high over 1.2 seconds. Gives player time
 to react. Synthesized energy beam charge quality.
@@ -428,7 +428,7 @@ to react. Synthesized energy beam charge quality.
 
 **ElevenLabs Prompt**:
 
-```
+```text
 A MASSIVE boss defeat sound for a platform game. EPIC victory moment. Huge explosion
 followed by triumphant energy dissipation. Full spectrum, cinematic, heroic. Player
 just achieved something major. 4 seconds. Includes sub-bass rumble, explosive midrange,
@@ -454,7 +454,7 @@ and sparkly high-frequency celebration.
 
 **ElevenLabs Prompt**:
 
-```
+```text
 A subtle menu navigation sound for a game UI. Quick, clean tick when hovering over menu
 items. High-frequency, precise, digital. Very short, 0.08 seconds. Not annoying with
 rapid selection changes.
@@ -474,7 +474,7 @@ rapid selection changes.
 
 **ElevenLabs Prompt**:
 
-```
+```text
 A menu selection confirmation sound for a game UI. Positive, affirming tone when player
 confirms a choice. Bright, bell-like quality. 0.2 seconds. Makes player feel good about
 their decision.
@@ -494,7 +494,7 @@ their decision.
 
 **ElevenLabs Prompt**:
 
-```
+```text
 A menu cancel/back sound for a game UI. Neutral tone when backing out of menus.
 Slightly descending pitch, mid-range. Quick, 0.12 seconds. Not negative, just indicates
 returning to previous screen.
@@ -514,7 +514,7 @@ returning to previous screen.
 
 **ElevenLabs Prompt**:
 
-```
+```text
 An error/invalid action sound for a game UI. Gentle negative feedback, like a soft buzzer.
 Low frequency dull buzz. Communicates "can't do that" without being annoying. 0.25 seconds.
 ```
@@ -537,7 +537,7 @@ Low frequency dull buzz. Communicates "can't do that" without being annoying. 0.
 
 **ElevenLabs Prompt**:
 
-```
+```text
 A checkpoint activation sound for a platform game. Rewarding, reassuring save point reached.
 Warm healing tone with magical sparkle. Progress saved, player is safe. 1.2 seconds.
 Restorative, calming quality. Makes player feel accomplished.
@@ -557,7 +557,7 @@ Restorative, calming quality. Makes player feel accomplished.
 
 **ElevenLabs Prompt**:
 
-```
+```text
 A door or gate opening sound for a platform game. Satisfying mechanical unlocking and
 opening. New area access unlocked. Can include: lock click, mechanism turning, heavy
 door sliding open. 1.5 seconds. Feels like progress.
@@ -577,7 +577,7 @@ door sliding open. 1.5 seconds. Feels like progress.
 
 **ElevenLabs Prompt**:
 
-```
+```text
 A moving platform activation sound for a platform game. Mechanical mechanism starting up.
 Smooth hum or gear sound, loopable. Mid-range frequencies. 0.8 seconds. Not harsh,
 can play continuously without fatigue.
@@ -604,17 +604,17 @@ can play continuously without fatigue.
 - **Tempo**: 100-120 BPM (Medium energy, not rushed)
 - **Key**: Major key (C major, G major, or D major for positive, uplifting feel)
 - **Instrumentation**:
-    - Synth pad foundation (warm, inviting)
-    - Melodic lead (bell-like synth or electric piano)
-    - Subtle bass (not overpowering)
-    - Light percussion (optional, can be absent for calmer feel)
+  - Synth pad foundation (warm, inviting)
+  - Melodic lead (bell-like synth or electric piano)
+  - Subtle bass (not overpowering)
+  - Light percussion (optional, can be absent for calmer feel)
 - **Structure**: Loopable 32-64 bar phrase, no jarring transitions
 - **Mood**: Welcoming, optimistic, slightly mysterious
 - **Duration**: 2-3 minute loop
 
 **ElevenLabs/MusicGen Prompt**:
 
-```
+```text
 Upbeat electronic game menu music. Medium tempo (110 BPM), major key. Ambient synth pads
 with melodic bell-like lead. Welcoming and optimistic. Loopable, no jarring transitions.
 Blend of Celeste ambient style and Splatoon energy. Slightly futuristic, fun. 2 minutes.
@@ -640,18 +640,18 @@ Blend of Celeste ambient style and Splatoon energy. Slightly futuristic, fun. 2 
 - **Tempo**: 128-140 BPM (Energetic platforming pace)
 - **Key**: E major or A major (bright, natural feeling)
 - **Instrumentation**:
-    - Plucky synth arpeggios (representing growth/DNA)
-    - Organic percussion (wood blocks, shakers)
-    - Pulsing sub-bass (heartbeat of the facility)
-    - Bell-like melody (bioluminescence)
-    - Breath-like pads (life, growth)
+  - Plucky synth arpeggios (representing growth/DNA)
+  - Organic percussion (wood blocks, shakers)
+  - Pulsing sub-bass (heartbeat of the facility)
+  - Bell-like melody (bioluminescence)
+  - Breath-like pads (life, growth)
 - **Structure**: Loopable with occasional build-ups and breakdowns
 - **Mood**: Curious, alive, hopeful, slightly futuristic
 - **Duration**: 3-4 minute loop with variation
 
 **ElevenLabs/MusicGen Prompt**:
 
-```
+```text
 Organic electronic platformer level music. 135 BPM, E major. Bioluminescent greenhouse theme -
 alive and growing. Plucky synth arpeggios, organic wood percussion, pulsing sub-bass like a
 heartbeat. Bell-like melody, breath-like pads. Natural + technological fusion. Energetic but
@@ -671,7 +671,7 @@ mysterious. Loopable with build-ups. 3 minutes.
 
 **ElevenLabs/MusicGen Prompt**:
 
-```
+```text
 Industrial electronic platformer music. 150 BPM, D minor. Heavy mechanical factory theme.
 Metallic percussion, driving bassline, mechanical rhythms. Intense and dangerous.
 Loopable. 3 minutes.
@@ -690,7 +690,7 @@ Loopable. 3 minutes.
 
 **ElevenLabs/MusicGen Prompt**:
 
-```
+```text
 Ethereal ambient platformer music. 110 BPM, Lydian mode. Crystal cavern theme with
 bell-like tones and deep echoing pads. Mysterious and magical. Sparse percussion.
 Vast, spacious. Loopable. 3 minutes.
@@ -714,21 +714,21 @@ Vast, spacious. Loopable. 3 minutes.
 - **Tempo**: 140-170 BPM (High energy, heart-pumping)
 - **Key**: Minor key (A minor, E minor) for tension, can shift to relative major for victory
 - **Instrumentation**:
-    - Driving, aggressive bassline (ominous, powerful)
-    - Epic orchestral-style synth hits (brass stabs, string swells)
-    - Complex drum patterns (urgency)
-    - Heroic melody (player is the hero facing the challenge)
+  - Driving, aggressive bassline (ominous, powerful)
+  - Epic orchestral-style synth hits (brass stabs, string swells)
+  - Complex drum patterns (urgency)
+  - Heroic melody (player is the hero facing the challenge)
 - **Structure**:
-    - Intro (0-10 seconds): Dramatic build-up
-    - Battle Phase 1 (30-60 seconds): Intense combat loop
-    - Battle Phase 2 (30-60 seconds): Higher intensity (higher pitch, more layers)
-    - Victory transition (optional 10-second triumphant ending)
+  - Intro (0-10 seconds): Dramatic build-up
+  - Battle Phase 1 (30-60 seconds): Intense combat loop
+  - Battle Phase 2 (30-60 seconds): Higher intensity (higher pitch, more layers)
+  - Victory transition (optional 10-second triumphant ending)
 - **Mood**: Epic, intense, dangerous, heroic, "final showdown"
 - **Duration**: 2-3 minute loop
 
 **ElevenLabs/MusicGen Prompt**:
 
-```
+```text
 Epic boss battle music for a platform game. 160 BPM, A minor. INTENSE electronic combat theme.
 Driving aggressive bassline, epic synth brass hits, complex drums. Heroic melody over dangerous
 rhythm. Two-phase structure with intensity escalation. Final showdown energy. Makes player
@@ -753,7 +753,7 @@ feel like a hero facing a legendary foe. 2.5 minutes loopable.
 
 **ElevenLabs/MusicGen Prompt**:
 
-```
+```text
 A short level complete victory jingle for a platform game. 6 seconds. C major.
 Triumphant rising melody with satisfying resolution. Bright synth fanfare style.
 Makes player feel accomplished. Happy and victorious.
@@ -772,7 +772,7 @@ Makes player feel accomplished. Happy and victorious.
 
 **ElevenLabs/MusicGen Prompt**:
 
-```
+```text
 An EPIC boss defeat victory jingle for a platform game. 10 seconds. Major key.
 Elaborate triumphant fanfare with heroic melody. Player defeated a major foe.
 Cinematic, celebratory, makes player feel like a champion.
@@ -796,7 +796,7 @@ Cinematic, celebratory, makes player feel like a champion.
 
 **ElevenLabs/MusicGen Prompt**:
 
-```
+```text
 Calm hub world music for a platform game. 90 BPM, major key. Relaxed and safe home base
 theme. Soft pads, gentle melody, minimal percussion. Contemplative and peaceful.
 Player can take their time here. 2.5 minutes loopable.
@@ -815,7 +815,7 @@ Player can take their time here. 2.5 minutes loopable.
 
 **ElevenLabs/MusicGen Prompt**:
 
-```
+```text
 A gentle game over theme for a platform game. 12 seconds. Minor key. Sad but not harsh.
 Descending melody with hopeful resolution. Player failed but music says "you can do this,
 try again." Not discouraging.
@@ -833,8 +833,8 @@ try again." Not discouraging.
 - **Sample Rate**: 44.1 kHz (CD quality)
 - **Bit Depth**: 16-bit
 - **Bitrate**:
-    - SFX: 128-192 kbps (high quality, small files)
-    - Music: 192-256 kbps (higher quality for music)
+  - SFX: 128-192 kbps (high quality, small files)
+  - Music: 192-256 kbps (higher quality for music)
 - **Channels**: Stereo for music, Mono acceptable for short SFX
 
 **Fallback Formats** (for broader compatibility):
@@ -848,7 +848,7 @@ Follow manifest.json structure:
 
 **SFX**:
 
-```
+```text
 sfx_[category]_[action]_[variant].ogg
 
 Examples:
@@ -861,7 +861,7 @@ sfx_boss_defeat_pulsar.ogg
 
 **Music**:
 
-```
+```text
 music_[context]_[location/type].ogg
 
 Examples:
@@ -984,6 +984,7 @@ music_victory_level_complete.ogg
 1. Generate jump sounds using ElevenLabs with prompts from Section 1.1
 2. Post-process and normalize
 3. Add to manifest.json:
+
     ```json
     {
         "type": "audio",
@@ -991,6 +992,7 @@ music_victory_level_complete.ogg
         "path": "audio/sfx/sfx_player_jump1_01.ogg"
     }
     ```
+
 4. Update ParticleManager.js to play sounds alongside particle effects
 5. Test in-game and adjust volumes
 6. Generate remaining landing sounds

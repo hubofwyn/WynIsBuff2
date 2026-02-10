@@ -5,28 +5,28 @@ import { BaseManager } from './BaseManager.js';
 
 /**
  * LoadingScreenManager - Unified loading screen architecture
- * 
+ *
  * ARCHITECTURE:
  * - Extends BaseManager for singleton pattern
  * - Provides consistent loading UX across all screens
  * - Responsive design with proper proportions
  * - Accessible with ARIA labels
  * - Integrates with observability system
- * 
+ *
  * USAGE:
  * ```javascript
  * const loadingManager = LoadingScreenManager.getInstance();
- * 
+ *
  * // Show loading screen
  * loadingManager.show(scene, {
  *     title: 'Loading Level 1',
  *     showLogo: true,
  *     showProgress: true
  * });
- * 
+ *
  * // Update progress
  * loadingManager.updateProgress(0.5, 'Loading assets...');
- * 
+ *
  * // Hide loading screen
  * loadingManager.hide();
  * ```
@@ -176,9 +176,21 @@ export class LoadingScreenManager extends BaseManager {
         // Background bar
         const bgBar = this.scene.add.graphics();
         bgBar.fillStyle(barConfig.backgroundColor, 1);
-        bgBar.fillRoundedRect(barX, progressY, barConfig.width, barConfig.height, barConfig.borderRadius);
+        bgBar.fillRoundedRect(
+            barX,
+            progressY,
+            barConfig.width,
+            barConfig.height,
+            barConfig.borderRadius
+        );
         bgBar.lineStyle(barConfig.borderWidth, barConfig.borderColor);
-        bgBar.strokeRoundedRect(barX, progressY, barConfig.width, barConfig.height, barConfig.borderRadius);
+        bgBar.strokeRoundedRect(
+            barX,
+            progressY,
+            barConfig.width,
+            barConfig.height,
+            barConfig.borderRadius
+        );
         this.container.add(bgBar);
 
         // Progress fill
@@ -259,7 +271,13 @@ export class LoadingScreenManager extends BaseManager {
 
         this.progressBar.clear();
         this.progressBar.fillStyle(config.color, 1);
-        this.progressBar.fillRoundedRect(config.x, config.y, fillWidth, config.height, config.radius);
+        this.progressBar.fillRoundedRect(
+            config.x,
+            config.y,
+            fillWidth,
+            config.height,
+            config.radius
+        );
 
         // Update percentage text
         if (this.progressText) {

@@ -59,7 +59,7 @@ const playerLogs = LOG.getBySubsystem('player', 50);
 
 1. **Check console for circuit breaker**:
 
-    ```
+    ```text
     [PlayerController] Too many errors, player disabled
     ```
 
@@ -122,6 +122,7 @@ if (!this.body || !this.characterController) {
     ```
 
 3. **Analyze error patterns**:
+
     ```javascript
     import { ErrorPatternDetector } from '@observability';
     const detector = new ErrorPatternDetector(LOG);
@@ -687,7 +688,7 @@ window.debugAPI.getRelatedLogs(error, { timeWindow: 5000 });
 
 ## Best Practices
 
-### DO:
+### DO
 
 ✅ **Use appropriate log levels**:
 
@@ -724,7 +725,7 @@ LOG.error('PLATFORM_CREATE_ERROR', {
 hint: 'Check if physics world is initialized. Verify Rapier loaded correctly.';
 ```
 
-### DON'T:
+### DON'T
 
 ❌ **Don't use console.\* in new code**:
 

@@ -1,0 +1,31 @@
+{
+  "config": {
+    "default": true,
+    // MD001/heading-increment: Allow heading level jumps in docs with complex structure
+    "MD001": false,
+    // MD013/line-length: Disabled - too many existing long lines across docs, tables, URLs
+    // Re-enable once legacy docs are cleaned up
+    "MD013": false,
+    // MD022/blanks-around-headings: Allow headings without blank lines (common in frontmatter-heavy docs)
+    "MD022": { "lines_above": 1, "lines_below": 0 },
+    // MD024/no-duplicate-heading: Allow duplicates in different sections
+    "MD024": { "siblings_only": true },
+    // MD029/ol-prefix: Use ordered numbering (1. 2. 3.)
+    "MD029": { "style": "ordered" },
+    // MD033/no-inline-html: Allow common structural HTML elements
+    "MD033": { "allowed_elements": ["details", "summary", "br", "sub", "sup", "img"] },
+    // MD036/no-emphasis-as-heading: Allow bold text used as visual emphasis
+    "MD036": false,
+    // MD040/fenced-code-language: Require language specifier on code blocks
+    "MD040": true,
+    // MD041/first-line-heading: Allow frontmatter and other first-line content
+    "MD041": false,
+    // MD046/code-block-style: Consistent fenced code blocks
+    "MD046": { "style": "fenced" },
+    // MD051/link-fragments: Disabled - many auto-generated fragment links
+    "MD051": false,
+    // MD060/table-column-style: Disabled - compact pipe tables are standard in this codebase
+    "MD060": false
+  },
+  "ignores": ["node_modules", "dist", "CHANGELOG.md"]
+}

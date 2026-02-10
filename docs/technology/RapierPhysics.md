@@ -10,14 +10,14 @@
 - [Version Information](#version-information)
 - [Integration with Phaser](#integration-with-phaser)
 - [Core Concepts](#core-concepts)
-    - [World](#world)
-    - [Rigid Bodies](#rigid-bodies)
-    - [Colliders](#colliders)
+  - [World](#world)
+  - [Rigid Bodies](#rigid-bodies)
+  - [Colliders](#colliders)
 - [Implementation in WynIsBuff2](#implementation-in-wynisbuff2)
-    - [Initialization](#initialization)
-    - [Creating Game Objects with Physics](#creating-game-objects-with-physics)
-    - [Physics Simulation Loop](#physics-simulation-loop)
-    - [Collision Detection](#collision-detection)
+  - [Initialization](#initialization)
+  - [Creating Game Objects with Physics](#creating-game-objects-with-physics)
+  - [Physics Simulation Loop](#physics-simulation-loop)
+  - [Collision Detection](#collision-detection)
 - [Best Practices](#best-practices)
 - [Common Issues and Solutions](#common-issues-and-solutions)
 - [Resources](#resources)
@@ -33,9 +33,9 @@ Rapier is a high-performance physics engine written in Rust with JavaScript bind
 - **Package**: @dimforge/rapier2d-compat
 - **Version**: 0.19+ (current)
 - **Previous Version**: 0.14.0 (deprecated)
-- **Official Documentation**: https://rapier.rs/docs/
-- **GitHub Repository**: https://github.com/dimforge/rapier
-- **JavaScript API Reference**: https://rapier.rs/javascript2d/index.html
+- **Official Documentation**: <https://rapier.rs/docs/>
+- **GitHub Repository**: <https://github.com/dimforge/rapier>
+- **JavaScript API Reference**: <https://rapier.rs/javascript2d/index.html>
 
 **Breaking Changes**: Rapier 0.19+ introduced significant API changes. See [RAPIER_019_MIGRATION.md](./RAPIER_019_MIGRATION.md) for details.
 
@@ -244,6 +244,7 @@ this.updateGroundState(desiredMovement, correctedMovement);
     ```
 
 3. **Ground Detection After Movement**: Call ground detection AFTER `computeColliderMovement()`
+
     ```javascript
     characterController.computeColliderMovement(collider, desired);
     const corrected = characterController.computedMovement();
@@ -252,31 +253,31 @@ this.updateGroundState(desiredMovement, correctedMovement);
 
 ### General Best Practices
 
-4. **Async Initialization**: Always initialize Rapier with `await RAPIER.init()` before creating a world.
+1. **Async Initialization**: Always initialize Rapier with `await RAPIER.init()` before creating a world.
 
-5. **Body-Sprite Association**: Maintain a mapping between physics bodies and game objects for synchronization.
+2. **Body-Sprite Association**: Maintain a mapping between physics bodies and game objects for synchronization.
 
-6. **Consistent Units**: Use consistent units for positions, sizes, and forces (WynIsBuff2 uses meters for physics, pixels for rendering).
+3. **Consistent Units**: Use consistent units for positions, sizes, and forces (WynIsBuff2 uses meters for physics, pixels for rendering).
 
-7. **Performance Optimization**:
+4. **Performance Optimization**:
     - Use appropriate collision shapes (cuboid for rectangles, ball for circles)
     - Limit the number of dynamic bodies
     - Consider using sensor colliders for triggers that don't need physical response
     - Use fixed timestep (1/60) for deterministic physics
 
-8. **Error Handling**: Wrap Rapier operations in try-catch blocks with circuit breakers (see [ERROR_HANDLING_LOGGING.md](../systems/ERROR_HANDLING_LOGGING.md))
+5. **Error Handling**: Wrap Rapier operations in try-catch blocks with circuit breakers (see [ERROR_HANDLING_LOGGING.md](../systems/ERROR_HANDLING_LOGGING.md))
 
-9. **Movement Implementation**:
+6. **Movement Implementation**:
     - Use CharacterController for player movement
     - Apply appropriate friction when no movement keys are pressed
     - Balance movement speed with game scale and physics simulation
 
-10. **Jumping Mechanics**:
+7. **Jumping Mechanics**:
     - Implement variable jump heights for more dynamic gameplay
     - Use "coyote time" (short grace period after leaving platform)
     - Scale jump forces appropriately with gravity settings
 
-11. **Collision Detection**:
+8. **Collision Detection**:
     - Use CharacterController for robust character collision
     - Consider velocity direction in ground detection
     - Implement small tolerance values (epsilon) for floating-point comparisons

@@ -19,7 +19,7 @@ WynIsBuff2 is now optimally configured for Windsurf and Cascade AI with:
 
 ### Created Files
 
-```
+```text
 .windsurf/
 ├── cascade.json              # Main Cascade configuration
 ├── workspace-rules.md        # Global workspace rules
@@ -67,16 +67,19 @@ When editing files, Cascade automatically applies specific rules:
 Pre-configured workflows for common tasks:
 
 **Before Commit:**
+
 ```bash
 bun run lint && bun run test && bun run arch:health
 ```
 
 **After Asset Changes:**
+
 ```bash
 bun run generate-assets && bun run validate-assets
 ```
 
 **Before Deploy:**
+
 ```bash
 bun run lint && bun run test && bun run arch:check && bun run build
 ```
@@ -84,6 +87,7 @@ bun run lint && bun run test && bun run arch:check && bun run build
 ### 4. Context Awareness
 
 Cascade always includes:
+
 - `CLAUDE.md` - Development guide
 - `AGENTS.md` - Agent system
 - `package.json` - Project metadata
@@ -93,6 +97,7 @@ Cascade always includes:
 ### 5. Pattern Recognition
 
 Cascade knows about:
+
 - Import patterns (barrel exports, constants, vendor abstraction)
 - Logging patterns (structured logging with subsystems)
 - Manager patterns (singleton with BaseManager)
@@ -101,6 +106,7 @@ Cascade knows about:
 ### 6. Agent Routing
 
 Intelligent routing to specialized agents:
+
 - **architecture-guardian** - Architecture, patterns, boundaries
 - **game-physics-expert** - Physics, Rapier, collision, movement
 - **game-design-innovator** - Gameplay, mechanics, features
@@ -116,6 +122,7 @@ Intelligent routing to specialized agents:
 ### Quick Reference
 
 See [.windsurf/QUICK_REFERENCE.md](.windsurf/QUICK_REFERENCE.md) for:
+
 - Critical rules (DO/DON'T)
 - Common commands
 - Asset workflow
@@ -126,6 +133,7 @@ See [.windsurf/QUICK_REFERENCE.md](.windsurf/QUICK_REFERENCE.md) for:
 ### Full Documentation
 
 See [.windsurf/README.md](.windsurf/README.md) for:
+
 - Complete configuration details
 - How rules work
 - Validation features
@@ -137,12 +145,14 @@ See [.windsurf/README.md](.windsurf/README.md) for:
 The configuration includes validation for:
 
 ### Pre-Commit Checks
+
 - ✓ No magic strings
 - ✓ No direct vendor imports (outside `src/core/`)
 - ✓ No `console.*` usage
 - ✓ Barrel imports used correctly
 
 ### Architecture Checks
+
 - ✓ Vendor abstraction enforced
 - ✓ Barrel exports enforced
 - ✓ Constants enforced
@@ -207,6 +217,7 @@ See `.windsurfignore` for complete list.
 ### Rule Pruning
 
 Periodically review to:
+
 - Remove outdated patterns
 - Consolidate duplicate rules
 - Move project-specific rules to workspace
@@ -228,6 +239,7 @@ The schema URL warning in `cascade.json` is expected - it's a placeholder for fu
 ### Compatibility
 
 This configuration is designed for:
+
 - Windsurf ≥ 1.2
 - Cascade ≥ 0.9.8
 - Follows global rules from user settings

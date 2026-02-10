@@ -29,7 +29,7 @@ This directory contains Windsurf and Cascade AI configuration optimized for the 
 
 When Cascade works on a file, it automatically loads the most specific rules:
 
-```
+```text
 src/scenes/GameScene.js       → workspace-rules.md + rules-scenes.md
 src/modules/player/Player.js  → workspace-rules.md + rules-modules.md
 src/core/PhysicsManager.js    → workspace-rules.md + rules-core.md
@@ -94,6 +94,7 @@ Intelligent routing to specialized agents:
 ### Working on a Scene
 
 When editing `src/scenes/GameScene.js`, Cascade will:
+
 1. Load workspace rules (architecture patterns, commands, workflows)
 2. Load scene-specific rules (BaseScene usage, asset loading, cleanup)
 3. Enforce: Use `BaseScene`, `SceneKeys.*`, structured logging
@@ -102,6 +103,7 @@ When editing `src/scenes/GameScene.js`, Cascade will:
 ### Working on a Module
 
 When editing `src/modules/player/PlayerController.js`, Cascade will:
+
 1. Load workspace rules
 2. Load module-specific rules (no vendor imports, manager pattern)
 3. Enforce: Use `@features/core` abstractions, `EventNames.*`
@@ -110,6 +112,7 @@ When editing `src/modules/player/PlayerController.js`, Cascade will:
 ### Adding Assets
 
 When updating `/assets/manifest.json`, Cascade will:
+
 1. Recognize asset workflow
 2. Suggest running `bun run generate-assets`
 3. Remind to use generated constants
@@ -118,6 +121,7 @@ When updating `/assets/manifest.json`, Cascade will:
 ### Fixing Bugs
 
 Cascade will:
+
 1. Check event flow and manager states
 2. Verify constants usage
 3. Add structured logging for debugging
@@ -129,12 +133,14 @@ Cascade will:
 The configuration includes validation rules:
 
 ### Pre-Commit Checks
+
 - ✓ No magic strings
 - ✓ No direct vendor imports (outside `src/core/`)
 - ✓ No `console.*` usage
 - ✓ Barrel imports used correctly
 
 ### Architecture Checks
+
 - ✓ Vendor abstraction enforced
 - ✓ Barrel exports enforced
 - ✓ Constants enforced
@@ -182,6 +188,7 @@ bun run arch:validate    # Validate architecture
 
 1. Create new rule file: `.windsurf/rules-yourpattern.md`
 2. Add to `cascade.json`:
+
 ```json
 {
   "pattern": "src/yourdir/**/*.js",
@@ -192,6 +199,7 @@ bun run arch:validate    # Validate architecture
 ### Updating Workflows
 
 Edit `cascade.json` workflows section:
+
 ```json
 "workflows": {
   "yourWorkflow": [
@@ -204,6 +212,7 @@ Edit `cascade.json` workflows section:
 ### Adding Context
 
 Edit `cascade.json` context section:
+
 ```json
 "context": {
   "alwaysInclude": [
@@ -243,6 +252,7 @@ The schema URL warning is expected - it's a placeholder for future validation. T
 ### Rule Pruning
 
 Periodically review rules to:
+
 - Remove outdated patterns
 - Consolidate duplicate rules
 - Move project-specific rules to workspace rules

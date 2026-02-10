@@ -5,17 +5,17 @@
 - [Overview](#overview)
 - [Version Information](#version-information)
 - [Core Concepts](#core-concepts)
-    - [Game Configuration](#game-configuration)
-    - [Scene System](#scene-system)
-    - [Game Objects](#game-objects)
-    - [Asset Loading](#asset-loading)
-    - [Input Handling](#input-handling)
-    - [Animation System](#animation-system)
+  - [Game Configuration](#game-configuration)
+  - [Scene System](#scene-system)
+  - [Game Objects](#game-objects)
+  - [Asset Loading](#asset-loading)
+  - [Input Handling](#input-handling)
+  - [Animation System](#animation-system)
 - [Implementation in WynIsBuff2](#implementation-in-wynisbuff2)
-    - [Game Configuration](#game-configuration-1)
-    - [Scene Structure](#scene-structure)
-    - [Asset Management](#asset-management)
-    - [Game Loop](#game-loop)
+  - [Game Configuration](#game-configuration-1)
+  - [Scene Structure](#scene-structure)
+  - [Asset Management](#asset-management)
+  - [Game Loop](#game-loop)
 - [Best Practices](#best-practices)
 - [Common Issues and Solutions](#common-issues-and-solutions)
 - [Resources](#resources)
@@ -28,8 +28,8 @@ Phaser is a fast, free, and open-source HTML5 game framework that offers WebGL a
 
 - **Package**: phaser
 - **Version**: 3.88.0
-- **Official Documentation**: https://newdocs.phaser.io/docs/3.88.0
-- **GitHub Repository**: https://github.com/photonstorm/phaser
+- **Official Documentation**: <https://newdocs.phaser.io/docs/3.88.0>
+- **GitHub Repository**: <https://github.com/photonstorm/phaser>
 
 ## Core Concepts
 

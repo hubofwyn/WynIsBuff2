@@ -13,6 +13,7 @@
 This document outlines the complete plan to revise the Level Select Screen (MainMenuScene) to follow our established architecture patterns, use our DesignTokens system, and ensure high-quality, responsive, accessible UI.
 
 **Key Objectives**:
+
 1. ✅ Use DesignTokens design system (not custom CSS)
 2. ✅ Integrate with existing architecture (BaseScene, UIManager, LoadingScreenManager)
 3. ✅ Ensure responsive design (mobile → desktop)
@@ -28,6 +29,7 @@ This document outlines the complete plan to revise the Level Select Screen (Main
 **File**: `docs/features/LEVEL_SELECT_SCREEN_IMPLEMENTATION.md`
 
 **Contents** (800+ lines):
+
 - Architecture integration overview
 - Design specifications using DesignTokens
 - Step-by-step implementation tasks (4 phases)
@@ -37,6 +39,7 @@ This document outlines the complete plan to revise the Level Select Screen (Main
 - Integration with existing systems
 
 **Quality Score**: 8/8
+
 - ✅ Clear purpose (level select UI implementation)
 - ✅ Complete examples (working Phaser code)
 - ✅ Proper structure (phases, tasks, checklist)
@@ -52,7 +55,7 @@ This document outlines the complete plan to revise the Level Select Screen (Main
 
 ### System Dependencies
 
-```
+```text
 MainMenuScene (Level Select)
     ↓
     ├─→ BaseScene (vendor abstraction)
@@ -68,6 +71,7 @@ MainMenuScene (Level Select)
 #### 1. Use DesignTokens (Not Custom CSS)
 
 **Original Plan** (HTML/CSS):
+
 ```css
 :root {
   --space-xs: 4px;
@@ -77,6 +81,7 @@ MainMenuScene (Level Select)
 ```
 
 **WynIsBuff2 Approach** (Phaser + DesignTokens):
+
 ```javascript
 import { DesignTokens } from '../constants/DesignTokens.js';
 
@@ -86,6 +91,7 @@ const fontSize = DesignTokens.fontSize.large; // 24px
 ```
 
 **Benefits**:
+
 - ✅ Single source of truth (400+ line design system)
 - ✅ Responsive helpers built-in
 - ✅ Accessibility standards enforced
@@ -96,6 +102,7 @@ const fontSize = DesignTokens.fontSize.large; // 24px
 **Created**: `LevelCardComponent.js`
 
 Reusable component that:
+
 - Encapsulates card logic
 - Uses DesignTokens for styling
 - Supports locked state
@@ -104,6 +111,7 @@ Reusable component that:
 - Fully observable (LOG integration)
 
 **Benefits**:
+
 - ✅ DRY (Don't Repeat Yourself)
 - ✅ Testable in isolation
 - ✅ Easy to extend (badges, animations)
@@ -112,6 +120,7 @@ Reusable component that:
 #### 3. Responsive Layout Strategy
 
 **Adaptive Grid**:
+
 ```javascript
 const isMobile = width < DesignTokens.breakpoints.mobile;   // < 480px
 const isTablet = width < DesignTokens.breakpoints.tablet;   // < 768px
@@ -124,6 +133,7 @@ const columns = isMobile ? 1 : isTablet ? 2 : 3;
 #### 4. Integration with Existing Managers
 
 **LoadingScreenManager**:
+
 ```javascript
 // When level selected
 loading.show(this, { title: 'Loading Level 1', showProgress: true });
@@ -133,6 +143,7 @@ this.scene.start('Game', { levelId: 'level-1' });
 ```
 
 **AudioManager**:
+
 ```javascript
 // Hover sound
 AudioManager.getInstance().playSFX('ui-hover');
@@ -142,6 +153,7 @@ AudioManager.getInstance().playSFX('ui-click');
 ```
 
 **GameStateManager**:
+
 ```javascript
 // Get level completion data
 const progress = GameStateManager.getInstance().getLevelProgress('level-1');
@@ -156,12 +168,14 @@ card.data.stars = progress.stars;
 ### Phase 1: Core Structure (2-3 hours)
 
 **Tasks**:
+
 1. Update MainMenuScene layout (4 sections)
 2. Create hero section (logo + subtitle)
 3. Create LevelCardComponent
 4. Create level grid (adaptive columns)
 
 **Deliverables**:
+
 - Functional level selection
 - Responsive layout
 - Interactive cards
@@ -169,12 +183,14 @@ card.data.stars = progress.stars;
 ### Phase 2: Special Features (1-2 hours)
 
 **Tasks**:
+
 1. Special event banner (animated)
 2. Footer with reset progress
 3. Locked level state
 4. Level stats display
 
 **Deliverables**:
+
 - Special event integration
 - Progress reset functionality
 - Visual polish
@@ -182,12 +198,14 @@ card.data.stars = progress.stars;
 ### Phase 3: Responsive & Accessibility (1 hour)
 
 **Tasks**:
+
 1. Resize handler
 2. Keyboard navigation (TAB/ENTER)
 3. ARIA labels
 4. Focus indicators
 
 **Deliverables**:
+
 - WCAG AA compliance
 - Keyboard-accessible UI
 - Screen reader support
@@ -195,12 +213,14 @@ card.data.stars = progress.stars;
 ### Phase 4: Polish & Animation (1 hour)
 
 **Tasks**:
+
 1. Entry animations (staggered cards)
 2. Audio integration
 3. Hover effects
 4. LoadingScreen transitions
 
 **Deliverables**:
+
 - 60fps animations
 - Audio feedback
 - Professional polish
@@ -213,7 +233,7 @@ card.data.stars = progress.stars;
 
 ### Layout Dimensions (1024x768 default)
 
-```
+```text
 ┌─────────────────────────────────────────────────┐
 │  Hero Section             (200px)              │
 │  - Logo (responsive: 0.3x-0.5x)                │
@@ -235,7 +255,7 @@ card.data.stars = progress.stars;
 
 ### Level Card Structure (200x280px)
 
-```
+```text
 ┌──────────────────────┐
 │   Illustration       │  120px (60% width)
 ├──────────────────────┤
@@ -291,22 +311,26 @@ const spacing = isMobile ? DesignTokens.spacing.md : DesignTokens.spacing.lg;
 ### WCAG AA Compliance Checklist
 
 ✅ **Color Contrast** (4.5:1 minimum):
+
 - Primary text: `#FFFFFF` on `#0F1B2B` = 15:1 ✅
 - Accent text: `#FFD700` on `#0F1B2B` = 8:1 ✅
 - Difficulty badges: All > 4.5:1 ✅
 
 ✅ **Touch Targets** (44px minimum):
+
 - Play buttons: 44px height ✅
 - Full cards: Entire card clickable ✅
 - Reset link: 44px touch area ✅
 
 ✅ **Keyboard Navigation**:
+
 - TAB cycles through cards ✅
 - ENTER selects focused card ✅
 - Visual focus indicator ✅
 - ESC returns to main menu ✅
 
 ✅ **Screen Reader Support**:
+
 ```javascript
 card.elements.bg.setData('ariaLabel', 'Select Protein Plant level - Beginner');
 card.elements.bg.setData('ariaRole', 'button');
@@ -319,6 +343,7 @@ card.elements.bg.setData('ariaRole', 'button');
 ### Test Phases
 
 #### 1. Visual QA
+
 - [ ] Layout on 320px mobile
 - [ ] Layout on 768px tablet
 - [ ] Layout on 1024px+ desktop
@@ -327,6 +352,7 @@ card.elements.bg.setData('ariaRole', 'button');
 - [ ] Typography consistency
 
 #### 2. Interaction QA
+
 - [ ] Hover effects (60fps)
 - [ ] Click selects level
 - [ ] Locked levels disabled
@@ -335,6 +361,7 @@ card.elements.bg.setData('ariaRole', 'button');
 - [ ] Audio feedback
 
 #### 3. Responsive QA
+
 - [ ] Cards reflow at breakpoints
 - [ ] Logo scales appropriately
 - [ ] Text remains readable
@@ -342,6 +369,7 @@ card.elements.bg.setData('ariaRole', 'button');
 - [ ] Footer stays at bottom
 
 #### 4. Accessibility QA
+
 - [ ] Screen reader test
 - [ ] Keyboard-only navigation
 - [ ] Focus indicators visible
@@ -349,6 +377,7 @@ card.elements.bg.setData('ariaRole', 'button');
 - [ ] Touch target sizes
 
 #### 5. Integration QA
+
 - [ ] LoadingScreen shows on select
 - [ ] Progress loads correctly
 - [ ] Game starts with level data
@@ -356,6 +385,7 @@ card.elements.bg.setData('ariaRole', 'button');
 - [ ] Observability logging
 
 #### 6. Performance QA
+
 - [ ] 60fps animations
 - [ ] No layout jank
 - [ ] Fast asset loading
@@ -366,20 +396,24 @@ card.elements.bg.setData('ariaRole', 'button');
 ## Related Documentation
 
 ### Implementation Guide
+
 - **[LEVEL_SELECT_SCREEN_IMPLEMENTATION.md](features/LEVEL_SELECT_SCREEN_IMPLEMENTATION.md)** - Complete implementation plan
 
 ### Architecture
+
 - [UI/UX Architecture](architecture/UI_UX_ARCHITECTURE.md) - Design system and patterns
 - [DesignTokens](architecture/UI_UX_ARCHITECTURE.md#design-tokens) - Design token reference
 - [Responsive Design](architecture/UI_UX_ARCHITECTURE.md#responsive-design) - Adaptive layouts
 - [Accessibility](architecture/UI_UX_ARCHITECTURE.md#accessibility) - WCAG compliance
 
 ### Systems
+
 - [UIManager](systems/UIManager.md) - UI element management
 - [LoadingScreenManager](systems/LOADING_SCREEN_ARCHITECTURE.md) - Loading screens
 - [BaseScene](architecture/adrs/ADR-001-vendor-abstraction-layer.md) - Scene abstraction
 
 ### Design
+
 - [Art Style Guide](design/ArtStyleAndAssetPlan.md) - Visual design
 - [Game Design Principles](design/GameDesignPrinciples.md) - UX principles
 
@@ -429,12 +463,14 @@ card.elements.bg.setData('ariaRole', 'button');
 ### Implementation Order
 
 **Week 1**:
+
 - Day 1-2: Phase 1 (Core Structure)
 - Day 3: Phase 2 (Special Features)
 - Day 4: Phase 3 (Responsive & Accessibility)
 - Day 5: Phase 4 (Polish & Animation)
 
 **Week 2**:
+
 - Day 1-2: Testing & QA
 - Day 3: Bug fixes
 - Day 4-5: Final polish and review
@@ -442,6 +478,7 @@ card.elements.bg.setData('ariaRole', 'button');
 ### Future Enhancements
 
 **Post-Launch** (after QA passes):
+
 - [ ] Particle effects on card hover
 - [ ] Level preview modal
 - [ ] Achievement display on cards
@@ -454,12 +491,14 @@ card.elements.bg.setData('ariaRole', 'button');
 ## Deliverables Summary
 
 ### Documentation
+
 - ✅ Implementation plan (800+ lines)
 - ✅ Updated INDEX.md
 - ✅ This revision plan
 - ✅ Cross-references added
 
 ### Code (To Be Implemented)
+
 - [ ] Updated MainMenu.js
 - [ ] New LevelCardComponent.js
 - [ ] Responsive layout system
@@ -468,6 +507,7 @@ card.elements.bg.setData('ariaRole', 'button');
 - [ ] LoadingScreen integration
 
 ### Testing
+
 - [ ] Visual QA report
 - [ ] Interaction QA report
 - [ ] Accessibility QA report

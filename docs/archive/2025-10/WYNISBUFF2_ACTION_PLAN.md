@@ -70,9 +70,9 @@ FLOW_STATE_CHANGE: 'player:flowState'
 - **100ms coyote time** (6 frames at 60fps)
 - **Variable jump** with proper velocity curves
 - **Triple jump** with escalating forces:
-    - Jump 1: -680 velocity
-    - Jump 2: -740 velocity + 15% horizontal
-    - Jump 3: -860 velocity + 30% horizontal
+  - Jump 1: -680 velocity
+  - Jump 2: -740 velocity + 15% horizontal
+  - Jump 3: -860 velocity + 30% horizontal
 - **Wall-dash** at 720 px/s with 70% momentum transfer
 - **Fixed timestep** physics for deterministic behavior
 
@@ -182,7 +182,7 @@ FLOW_STATE_CHANGE: 'player:flowState'
 
 ## File Structure
 
-```
+```text
 src/
 ├── core/
 │   ├── CloneManager.js (NEW)

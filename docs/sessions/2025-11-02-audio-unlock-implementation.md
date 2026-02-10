@@ -10,8 +10,8 @@
 
 ### Browser Console Warnings
 
-```
-The AudioContext was not allowed to start. 
+```text
+The AudioContext was not allowed to start.
 It must be resumed (or created) after a user gesture on the page.
 
 HTML5 Audio pool exhausted, returning potentially locked audio object.
@@ -20,6 +20,7 @@ HTML5 Audio pool exhausted, returning potentially locked audio object.
 ### Root Cause
 
 Modern browsers block audio autoplay until user interaction:
+
 - **Web Audio API**: Requires user gesture to start AudioContext
 - **iOS Safari**: Additional restrictions requiring silent sound playback
 - **Howler.js**: Attempts to create audio objects before unlock
@@ -37,7 +38,7 @@ Modern browsers block audio autoplay until user interaction:
 
 ### Architecture Overview
 
-```
+```text
 Pre-Boot Flow:
 1. Page loads → initGame() called
 2. Check if audio unlock needed
@@ -57,6 +58,7 @@ Pre-Boot Flow:
 **Lines**: 260
 
 **Responsibilities:**
+
 - Detect if audio unlock is needed
 - Orchestrate unlock process with user gesture
 - Handle iOS-specific requirements (silent dummy sound)
@@ -64,6 +66,7 @@ Pre-Boot Flow:
 - Integrate with observability system
 
 **Key Methods:**
+
 ```javascript
 shouldShowPrompt(): boolean        // Check if overlay needed
 waitForUnlock(): Promise<void>     // Wait for user gesture
@@ -72,6 +75,7 @@ getStatus(): Object                // Get current state
 ```
 
 **Observability Integration:**
+
 - `AUDIO_UNLOCK_REQUIRED` - Unlock needed
 - `AUDIO_UNLOCK_ATTEMPT` - Unlock started
 - `AUDIO_UNLOCK_SUCCESS` - Unlock succeeded
@@ -86,6 +90,7 @@ getStatus(): Object                // Get current state
 **Lines**: 220
 
 **Responsibilities:**
+
 - Create "Tap to Play" overlay DOM
 - Handle user interaction
 - Animate overlay (fade in/out)
@@ -93,6 +98,7 @@ getStatus(): Object                // Get current state
 - Handle unlock failures gracefully
 
 **Design Features:**
+
 - Gradient background (WynIsBuff2 branding)
 - Animated button with hover/active states
 - Mobile-optimized responsive design
@@ -102,12 +108,14 @@ getStatus(): Object                // Get current state
 #### 3. main.js Integration
 
 **Changes:**
+
 - Added `initGame()` async function
 - Moved Phaser boot to `bootPhaser()` function
 - Added audio unlock check before boot
 - Exposed `window.game` for debugging
 
 **Boot Sequence:**
+
 ```javascript
 // Old (synchronous)
 const game = new Phaser.Game(config);
@@ -147,27 +155,32 @@ initGame();
 ### ✅ Follows Project Patterns
 
 **Singleton Pattern:**
+
 - AudioUnlockManager extends BaseManager
 - Uses `getInstance()` static method
 - Single instance per session
 
 **Barrel Exports:**
+
 - Exported via `@features/core`
 - No direct imports from `src/core/`
 - Follows established import patterns
 
 **Observability Integration:**
+
 - All events logged with structured logging
 - Uses `LOG.info()`, `LOG.warn()`, `LOG.dev()`
 - Includes subsystem, message, hint fields
 - Queryable via `window.LOG.export()`
 
 **Vendor Abstraction:**
+
 - Howler.js accessed only in core modules
 - No direct Howler imports in scenes
 - AudioManager remains single point of audio control
 
 **Code Quality:**
+
 - ESLint compliant
 - JSDoc comments
 - Defensive error handling
@@ -219,7 +232,7 @@ AudioUnlockManager.getInstance().getStatus()
 
 ### Boot Time Comparison
 
-```
+```text
 Before (synchronous boot):
 Page load → Phaser boot → Audio locked → Console warnings
 Total: ~500ms (but audio doesn't work)
@@ -318,6 +331,7 @@ localStorage.getItem('audioUnlocked');
 **File**: `docs/systems/AUDIO_UNLOCK_SYSTEM.md`
 
 **Sections:**
+
 - Overview & browser autoplay policy
 - Architecture & data flow
 - Implementation details

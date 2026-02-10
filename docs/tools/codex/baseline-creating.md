@@ -33,18 +33,18 @@
 
 | File                    | Location           | Purpose                                                                                                               |
 | ----------------------- | ------------------ | --------------------------------------------------------------------------------------------------------------------- |
-| `current-foundation.md` | `.codex/baseline/` | **Single‑source of truth** for architecture, invariants, standards. _(We started this; you’ll regenerate/extend it.)_ |
+| `current-foundation.md` | `.codex/baseline/` | **Single‑source of truth** for architecture, invariants, standards. *(We started this; you’ll regenerate/extend it.)* |
 | `includes.txt`          | `.codex/baseline/` | Line‑delimited list of additional files the grader must treat as canonical (e.g., design docs, interface contracts).  |
 | `invariants.yml`        | `.codex/baseline/` | Machine‑readable list of critical invariants (id + statement + source reference).                                     |
 | `style‑rules.json`      | `.codex/baseline/` | Extracted formatter / linter configs distilled to a minimal JSON schema.                                              |
 
-_Everything else that lives under `.codex/baseline/` is considered immutable unless explicitly updated._
+*Everything else that lives under `.codex/baseline/` is considered immutable unless explicitly updated.*
 
 ---
 
 #### 3 `current-foundation.md` template (required sections)
 
-```
+```text
 # WynIsBuff2 — Architecture & Baseline (vX.Y)
 
 1. Project Context & Goals
@@ -56,7 +56,7 @@ _Everything else that lives under `.codex/baseline/` is considered immutable unl
 7. Open Questions / TODOs       ← unresolved ambiguities you spotted
 ```
 
-_≤ 700 lines, headings exactly as shown, deterministic sub‑ordering._
+*≤ 700 lines, headings exactly as shown, deterministic sub‑ordering.*
 
 ---
 
