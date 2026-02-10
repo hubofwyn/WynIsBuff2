@@ -1,68 +1,34 @@
 {
-  "model": "claude-sonnet-4-20250514",
-  "ANTHROPIC_SMALL_FAST_MODEL": "claude-haiku-4-20250514",
-  "enableAllProjectMcpServers": true,
   "permissions": {
     "allow": [
-      "Task",
-      "Bash",
-      "Edit", 
-      "MultiEdit",
-      "Write",
+      "Bash(bun *)",
+      "Bash(bunx *)",
+      "Bash(git *)",
+      "Bash(ls *)",
       "Read",
+      "Write",
+      "Edit",
+      "MultiEdit",
       "Glob",
       "Grep",
       "WebSearch",
       "WebFetch",
-      "TodoWrite"
+      "mcp__memory__*",
+      "mcp__github__*"
     ],
-    "additionalDirectories": [
-      "./assets/",
-      "./docs/",
-      "./tests/",
-      "./scripts/"
-    ],
-    "defaultMode": "acceptEdits"
+    "deny": []
   },
-  "hooks": [
-    {
-      "matcher": "Task",
-      "hooks": [
-        {
-          "type": "command",
-          "command": "echo '[ORCHESTRATION] Spawning subagent: $TASK_DESCRIPTION' >> .claude/orchestration.log"
-        }
-      ]
-    },
-    {
-      "matcher": "PreToolUse:Edit|MultiEdit|Write", 
-      "hooks": [
-        {
-          "type": "command",
-          "command": "echo '[QUALITY_GATE] Pre-edit validation for: $FILE_PATH' >> .claude/orchestration.log"
-        }
-      ]
-    }
-  ],
-  "env": {
-    "CLAUDE_BASH_MAINTAIN_PROJECT_WORKING_DIR": "1",
-    "MAX_THINKING_TOKENS": "8192",
-    "DISABLE_COST_WARNINGS": "1",
-    "GAME_PROJECT": "WynIsBuff2",
-    "ORCHESTRATION_ENABLED": "1",
-    "OBSERVABILITY_ENABLED": "1",
-    "OBSERVABILITY_STATUS": "STATUS_OBSERVABILITY.json"
-  },
-  "projectSpecific": {
-    "gameEngine": "Phaser 3.90.x",
-    "physicsEngine": "Rapier 0.19.x (compat)",
-    "buildTool": "Vite 7.1.x",
-    "testFramework": "Node.js Assert",
-    "architecture": "feature-based-modules",
-    "orchestrationConfig": ".claude-orchestration.json",
-    "observabilitySystem": "production-ready",
-    "observabilityPhase": "7-complete",
-    "loggingFramework": "@observability/LOG",
-    "debugAPI": "window.debugAPI"
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Write|Edit|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo \"[QUALITY_GATE] $(date -Iseconds) Pre-edit: $CLAUDE_TOOL_INPUT_FILE_PATH\" >> .claude/orchestration.log"
+          }
+        ]
+      }
+    ]
   }
 }
