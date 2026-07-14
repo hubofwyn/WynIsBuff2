@@ -1,5 +1,9 @@
 # Dependencies
 node_modules/
+scripts/venv/
+scripts/audio-generation/audio-generation-venv/
+scripts/audio-generation/venv/
+scripts/audio-generation/.venv/
 
 # Build outputs
 dist/

@@ -27,5 +27,14 @@
     // MD060/table-column-style: Disabled - compact pipe tables are standard in this codebase
     "MD060": false
   },
-  "ignores": ["node_modules", "dist", "CHANGELOG.md"]
+  "ignores": [
+    "**/node_modules",
+    "dist",
+    "CHANGELOG.md",
+    "scripts/venv",
+    "scripts/audio-generation/audio-generation-venv",
+    "scripts/audio-generation/venv",
+    "scripts/audio-generation/.venv",
+    "docs/meta/AGENTIC_WORKFLOW.md"
+  ]
 }

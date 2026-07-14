@@ -2,6 +2,15 @@
 
 A 2D platformer where Wyn achieves maximum buffness through triple-jump mechanics and physics-based movement.
 
+This is the original independent JavaScript and Phaser 3 game. Wyn der Schrank
+is a separate TypeScript and Phaser 4 rebuild with its own repository, history,
+roadmap, issues, releases, and deployment state—not a rename, fork target, or
+in-place migration of this project.
+
+Current maintenance posture and the next-agent work order live in
+[docs/PROJECT_STATUS.md](docs/PROJECT_STATUS.md). Older plans and status
+snapshots are historical unless promoted there.
+
 ## What Is This?
 
 **WynIsBuff2** is a Phaser 3 game featuring:
@@ -16,7 +25,7 @@ Play as Wyn, navigate levels with precise jumping, and experience increasingly b
 ## Quick Start
 
 ```bash
-bun install           # Install dependencies (generates bun.lockb)
+bun install           # Install dependencies from bun.lock
 bun run dev           # Start dev server (port 8080 per Vite config)
 bun run build         # Production build
 bun run test          # Run tests (Path A runner)
@@ -62,9 +71,9 @@ bun run test          # Run tests (Path A runner)
 | Technology      | Version | Purpose              |
 | --------------- | ------- | -------------------- |
 | Phaser 3        | 3.90.x  | HTML5 game framework |
-| Rapier (compat) | 0.19.x  | 2D physics engine    |
+| Rapier (compat) | 0.19.3  | 2D physics engine    |
 | Howler.js       | 2.2.4   | Audio management     |
-| Vite            | 7.1.x   | Build tool           |
+| Vite            | 7.3.6   | Build tool           |
 | JavaScript      | ES6+    | Language             |
 
 ## Project Structure
@@ -212,6 +221,7 @@ See [docs/guides/DEBUGGING.md](docs/guides/DEBUGGING.md) for complete guide.
 
 ## Documentation
 
+- **Current status**: [docs/PROJECT_STATUS.md](docs/PROJECT_STATUS.md) - Current-work authority and audited maintenance queue
 - **Windsurf/Cascade**: [.windsurf/README.md](.windsurf/README.md) - AI configuration and rules
 - **Development Guide**: [CLAUDE.md](CLAUDE.md) - AI assistant and developer guide
 - **Debugging Guide**: [docs/guides/DEBUGGING.md](docs/guides/DEBUGGING.md) - Observability and debugging
