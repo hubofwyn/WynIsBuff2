@@ -6,13 +6,24 @@
 
 **WynIsBuff2** - A skill-to-automation 2D platformer where player performance creates idle automation through "clone forging."
 
+WynIsBuff2 is the original independent JavaScript and Phaser 3 game. Wyn der
+Schrank is a separate TypeScript and Phaser 4 rebuild with its own Git history,
+remote, issues, plans, releases, and deployment state. It is not a rename,
+in-place migration, replacement remote, branch destination, or shared project
+identity. Never merge the histories, retarget this origin, or use either
+repository's status as authority for the other.
+
+Read `docs/PROJECT_STATUS.md` before selecting work. It is the sole current-work
+ledger; older plans and generated status snapshots are historical evidence
+unless that file explicitly promotes them.
+
 | Technology | Version | Purpose |
 |---|---|---|
 | Phaser 3 | 3.90.x | Game framework |
 | Rapier (compat) | 0.19.x | 2D physics (via PhysicsManager) |
 | Howler | 2.2.4 | Audio (via AudioManager) |
-| Vite | 7.1.x | Build tool |
-| Bun | latest | Runtime & package manager |
+| Vite | 7.x | Build tool |
+| Bun | 1.3.x | Runtime and package manager; pin policy is queued in the status ledger |
 
 ## Architecture Principles
 
@@ -232,6 +243,7 @@ const value = rng.int(1, 100, 'streamName');
 
 ## Documentation
 
+- [Current Project Status](docs/PROJECT_STATUS.md)
 - [Architecture](docs/ARCHITECTURE.md) | [Systems](docs/systems/) | [Features](docs/features/)
 - [Debugging Guide](docs/guides/DEBUGGING.md) | [Asset Management](docs/guides/ASSET_MANAGEMENT.md)
 - [Contributing](CONTRIBUTING.md) | [Full Index](docs/INDEX.md)

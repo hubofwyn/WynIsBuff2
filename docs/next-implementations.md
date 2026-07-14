@@ -1,3 +1,9 @@
+# Historical Implementation Questionnaire
+
+> **Historical and unverified.** This 2025 questionnaire contains obsolete
+> dependency versions and unverified mobile/PWA claims. Do not execute it as a
+> roadmap. Use [`PROJECT_STATUS.md`](PROJECT_STATUS.md) for current work.
+
 ## 1  Project Context & Targets
 
 | Item                            | Answer                                                                                                                                                                                                                              |

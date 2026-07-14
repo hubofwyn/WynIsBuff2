@@ -2,6 +2,11 @@
 
 @AGENTS.md
 
+Read [docs/PROJECT_STATUS.md](docs/PROJECT_STATUS.md) before choosing work. It
+is the current-work authority. Wyn der Schrank is a separate rebuild and must
+not be treated as this repository's remote, migration branch, issue tracker,
+deployment, or status source.
+
 ## Claude Code
 
 - **Skills**: /implement-game-feature, /debug-physics-issue, /manage-assets, /add-scene, /add-module, /arch-health, /playtest-check
@@ -24,5 +29,6 @@ See [.windsurf/README.md](.windsurf/README.md) for workspace rules and configura
 
 ## Docs
 
+- [Current status and next work](docs/PROJECT_STATUS.md)
 - [Architecture](docs/ARCHITECTURE.md) | [Debugging](docs/guides/DEBUGGING.md) | [Assets](docs/guides/ASSET_MANAGEMENT.md)
 - [Contributing](CONTRIBUTING.md) | [Full Index](docs/INDEX.md)

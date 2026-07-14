@@ -2,9 +2,14 @@
 
 Complete navigation hub for all WynIsBuff2 documentation.
 
-**Last Updated**: November 2, 2025
+**Last Updated**: July 14, 2026
 **Documentation Health**: See [DOC_ANALYSIS_SUMMARY.md](../DOC_ANALYSIS_SUMMARY.md)
 **Agentic System**: See [meta/doc_index.yaml](meta/doc_index.yaml) for queryable cross-reference system
+
+> **Current-work authority:** [PROJECT_STATUS.md](PROJECT_STATUS.md). Older
+> roadmaps, action plans, and generated status snapshots are historical input,
+> not authorization to begin work. This index still contains broken legacy
+> links; their repair is tracked in the current status ledger.
 
 ---
 
@@ -34,9 +39,10 @@ bun run arch:health        # Check architecture compliance
 **New to WynIsBuff2?** Start here:
 
 1. [README.md](../README.md) - Game overview and installation
-2. [CLAUDE.md](../CLAUDE.md) - Development guide for AI assistants
-3. [meta/AGENTIC_WORKFLOW.md](meta/AGENTIC_WORKFLOW.md) - AI-assisted development
-4. [CONTRIBUTING.md](../CONTRIBUTING.md) - Contributing guidelines
+2. [PROJECT_STATUS.md](PROJECT_STATUS.md) - Current status and next work
+3. [CLAUDE.md](../CLAUDE.md) - Development guide for AI assistants
+4. [meta/AGENTIC_WORKFLOW.md](meta/AGENTIC_WORKFLOW.md) - AI-assisted development
+5. [CONTRIBUTING.md](../CONTRIBUTING.md) - Contributing guidelines
 
 ---
 
@@ -215,14 +221,15 @@ bun run arch:health        # Check architecture compliance
 
 ### Implementation Plans
 
-**Historical and active implementation plans**
+**Historical implementation plans**
 
 | Document                                                  | Status     | Purpose                       |
 | --------------------------------------------------------- | ---------- | ----------------------------- |
-| [IMPLEMENTATION_PLAN_V2.md](../IMPLEMENTATION_PLAN_V2.md) | Current    | Active implementation roadmap |
+| [PROJECT_STATUS.md](PROJECT_STATUS.md)                    | Current    | Sole current-work ledger       |
+| [IMPLEMENTATION_PLAN_V2.md](../IMPLEMENTATION_PLAN_V2.md) | Historical | Earlier implementation roadmap |
 | [IMPLEMENTATION_PLAN.md](../IMPLEMENTATION_PLAN.md)       | Historical | Original implementation plan  |
-| [WYNISBUFF2_ACTION_PLAN.md](../WYNISBUFF2_ACTION_PLAN.md) | Active     | Current action items          |
-| [next-implementations.md](next-implementations.md)        | Active     | Next planned implementations  |
+| [WYNISBUFF2_ACTION_PLAN.md](../WYNISBUFF2_ACTION_PLAN.md) | Historical | Earlier action items           |
+| [next-implementations.md](next-implementations.md)        | Historical | Unverified planning questionnaire |
 
 ### Project Management
 
@@ -230,7 +237,8 @@ bun run arch:health        # Check architecture compliance
 
 | Document                                            | Purpose                     |
 | --------------------------------------------------- | --------------------------- |
-| [STATUS_REPORT.md](../STATUS_REPORT.md)             | Current project status      |
+| [PROJECT_STATUS.md](PROJECT_STATUS.md)               | Current project status      |
+| [STATUS_REPORT.md](../STATUS_REPORT.md)              | Historical status snapshot  |
 | [EXECUTION_CHECKLIST.md](../EXECUTION_CHECKLIST.md) | Execution checklist         |
 | [CHANGELOG.md](../CHANGELOG.md)                     | Version history and changes |
 | [QUICK_TEST.md](../QUICK_TEST.md)                   | Quick test procedures       |
