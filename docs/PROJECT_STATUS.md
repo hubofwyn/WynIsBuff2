@@ -26,7 +26,8 @@ the owner independently approves an engine migration here.
 - **Clean remote-default SHA:**
   `6a5f91cd54ec1bd6798b468ed36f15f24575c925`
 - **Verified:** 2026-07-14
-- **GitHub queue:** no issues; PR #11 open and mergeable but five months stale
+- **GitHub queue:** no issues; stale PR #11 is superseded by the compatible
+  dependency refresh recorded here
 - **Deployment:** no GitHub Pages configuration or verified deployment; latest
   default-branch deploy failed at Setup Pages
 - **Release:** no tags or releases
@@ -34,8 +35,12 @@ the owner independently approves an engine migration here.
 - **Structural checks:** one direct-Phaser warning in
   `src/scenes/SettingsScene.js`; one orphan warning for
   `src/constants/PerformanceConfig.js`
-- **Security:** `bun audit --audit-level=high` reports 14 high advisories on
-  current `main`; old green CI does not clear this current finding
+- **Dependencies:** Vite 7.3.6, Rapier 0.19.3, and compatible tooling floors are
+  recorded in `package.json`; Phaser remains 3.90.0
+- **Security:** `bun audit --audit-level=high` reports zero findings against the
+  regenerated lockfile; Handlebars 4.7.9 is the sole transitive override
+- **Toolchain:** Bun 1.3.14 is pinned once in `packageManager`; Mise and all
+  workflows use that pin through `oven-sh/setup-bun@v2`; checkout uses v7
 
 ## Next-Agent Work Order
 
@@ -44,19 +49,20 @@ Do not deploy merely to change inventory or portfolio wording.
 
 ### L-001: Refresh dependency/security work
 
-- **Status:** ready
+- **Status:** completed 2026-07-14
 - **Priority:** P0
-- **Starting point:** inspect and rebase or supersede PR #11; do not merge its
-  February 2026 result unchanged
-- **Compatible lane:** update Vite within 7.x beyond the affected `<=7.3.4`
-  range and refresh affected transitive lock entries; re-run audit and all gates
-- **Major lane:** review ESLint, dependency-cruiser, knip, lint-staged, and other
-  majors separately
-- **Invariant:** Phaser 4.2.1 is not an update target here; Phaser 4 belongs to
-  the separate rebuild
-- **Acceptance:** zero high audit findings or a documented upstream-only
-  exception, reproducible Bun pin policy, tests/lint/dependency/build gates
-  green, and a current PR description
+- **Result:** refreshed all compatible direct dependencies, regenerated
+  `bun.lock`, and raised Vite beyond the affected `<=7.3.4` range
+- **Transitives:** the fresh resolution selects patched LinkifyIt, Minimatch,
+  fast-uri, flatted, Rollup, and Picomatch releases; the exact Handlebars pin in
+  `@boundaries/elements` requires the explicit 4.7.9 override
+- **Toolchain:** Bun 1.3.14 is the reproducible package and workflow pin;
+  `actions/checkout@v7` removes the Node 20 action-runtime warning
+- **Verification:** frozen install, audit, tests, lint, architecture health,
+  dependency structure, formatting, and production build pass; the two known
+  structural warnings remain owned by L-003
+- **Deferred majors:** Phaser 4, Vite 8, ESLint 10, dependency-cruiser 18, and
+  other cross-major upgrades remain separate work, not part of this refresh
 
 ### L-002: Make architecture validation pure and blocking
 

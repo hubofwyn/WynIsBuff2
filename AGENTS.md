@@ -20,10 +20,10 @@ unless that file explicitly promotes them.
 | Technology | Version | Purpose |
 |---|---|---|
 | Phaser 3 | 3.90.x | Game framework |
-| Rapier (compat) | 0.19.x | 2D physics (via PhysicsManager) |
+| Rapier (compat) | 0.19.3 | 2D physics (via PhysicsManager) |
 | Howler | 2.2.4 | Audio (via AudioManager) |
-| Vite | 7.x | Build tool |
-| Bun | 1.3.x | Runtime and package manager; pin policy is queued in the status ledger |
+| Vite | 7.3.6 | Build tool |
+| Bun | 1.3.14 | Runtime and package manager; pinned by `packageManager` and CI |
 
 ## Architecture Principles
 

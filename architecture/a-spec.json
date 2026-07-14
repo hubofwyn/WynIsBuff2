@@ -1,9 +1,9 @@
 {
     "version": "2.0.0",
     "meta": {
-        "vite": "7.1.12",
+        "vite": "7.3.6",
         "phaser": "3.90.0",
-        "rapier": "0.19.2",
+        "rapier": "0.19.3",
         "runtime": "bun",
         "esm": true,
         "target": "baseline-widely-available",

@@ -25,7 +25,7 @@ Play as Wyn, navigate levels with precise jumping, and experience increasingly b
 ## Quick Start
 
 ```bash
-bun install           # Install dependencies (generates bun.lockb)
+bun install           # Install dependencies from bun.lock
 bun run dev           # Start dev server (port 8080 per Vite config)
 bun run build         # Production build
 bun run test          # Run tests (Path A runner)
@@ -71,9 +71,9 @@ bun run test          # Run tests (Path A runner)
 | Technology      | Version | Purpose              |
 | --------------- | ------- | -------------------- |
 | Phaser 3        | 3.90.x  | HTML5 game framework |
-| Rapier (compat) | 0.19.x  | 2D physics engine    |
+| Rapier (compat) | 0.19.3  | 2D physics engine    |
 | Howler.js       | 2.2.4   | Audio management     |
-| Vite            | 7.1.x   | Build tool           |
+| Vite            | 7.3.6   | Build tool           |
 | JavaScript      | ES6+    | Language             |
 
 ## Project Structure
