@@ -1,0 +1,20 @@
+# Meta-inventory interop header; contract:
+#   meta-inventory/docs/decisions/0002-project-intelligence-spec.md section D3
+spec_version: 0.1
+project:
+  id: WynIsBuff2
+  display_name: WynIsBuff2
+  owner_entity: hubofwyn
+role: canonical
+peers: []
+status:
+  posture: working-prototype
+  operational_state: unknown
+  local_phase: "Working prototype; current development activity unverified."
+  as_of: "2026-07-14"
+authority:
+  status_of_record: docs/PROJECT_STATUS.md
+presentation:
+  visibility: public-available
+  public_alias: null
+  link_policy: link-ok

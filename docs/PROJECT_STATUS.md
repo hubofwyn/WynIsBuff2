@@ -24,10 +24,10 @@ the owner independently approves an engine migration here.
 
 - **Remote/default:** `hubofwyn/WynIsBuff2`, `main`
 - **Clean remote-default SHA:**
-  `6a5f91cd54ec1bd6798b468ed36f15f24575c925`
+  `c091fd7fbc76f0cda1f741d22f118330265cc6a4`
 - **Verified:** 2026-07-14
-- **GitHub queue:** no issues; stale PR #11 is superseded by the compatible
-  dependency refresh recorded here
+- **GitHub queue:** no issues; PR #12 merged the independent-project boundary
+  and compatible dependency refresh; stale PR #11 is closed and superseded
 - **Deployment:** no GitHub Pages configuration or verified deployment; latest
   default-branch deploy failed at Setup Pages
 - **Release:** no tags or releases
@@ -130,14 +130,29 @@ Do not deploy merely to change inventory or portfolio wording.
 
 - **Status:** pending-owner
 - **Priority:** P2
-- **Evidence:** `main` has no protection; description/topics are empty; two
-  historical workflow records exist remotely without default-branch files
+- **Evidence:** `main` has no protection; public-safe description and topics are
+  now populated; two historical workflow records exist remotely without
+  default-branch files
 - **Acceptance:** required checks and main protection match actual CI; stale
-  workflow records and public-safe repository metadata have an owner-approved
-  disposition
+  workflow records have an owner-approved disposition
 
 ## Session Closeout
 
 Update this file with commands, warnings, exact branch/PR state, and the next
 bounded action. Do not mark the project active or deployed based on a local
 branch, old CI, a workflow file, or documentation alone.
+
+### 2026-07-14 manifest alignment
+
+- **Branch/PR:** `fix/meta-inventory-manifest`; PR #13 is the publication record
+- **Change:** added the root `project.yaml` v0.1 interop manifest with the
+  case-sensitive remote join key, registered owner entity, independent
+  canonical role, current status wording, and this file as status authority
+- **Manifest validation:** meta-inventory's parser and enum validator report no
+  record or graph errors; the standalone producer self-check reports `OK`
+- **Repository validation:** tests, lint, boundary lint, architecture health,
+  dependency analysis, and production build pass
+- **Known warnings:** the existing `SettingsScene` direct-Phaser import and
+  orphaned `PerformanceConfig` remain owned by L-003
+- **Next bounded action after publication:** hand the accepted default-branch
+  SHA to the meta-inventory operator for source-lock reintegration
